@@ -317,6 +317,8 @@ struct MenuBarEntryView: View {
         let totals = store.lastSevenDaysTotals
         let maxVal = max(1, totals.max() ?? 1)
         let avg = store.sevenDayAverage
+        let bestIdx = totals.enumerated().max(by: { $0.element < $1.element })?.offset ?? -1
+        let bestValue = totals.max() ?? 0
         return VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text("7 derniers jours")
@@ -331,26 +333,37 @@ struct MenuBarEntryView: View {
                 ForEach(Array(totals.enumerated()), id: \.offset) { idx, value in
                     let h = max(2, CGFloat(value) / CGFloat(maxVal) * 22)
                     let isToday = idx == totals.count - 1
+                    let isBest = idx == bestIdx && bestValue > 0
                     RoundedRectangle(cornerRadius: 1.5)
                         .fill(value == 0 ? Color.labelMuted.opacity(0.2)
                               : isToday ? Color.accent
+                              : isBest ? Color.accentGreen
                               : Color.accent.opacity(0.55))
                         .frame(height: h)
-                        .help(sparklineTooltip(daysAgo: totals.count - 1 - idx, value: value))
+                        .help(sparklineTooltip(daysAgo: totals.count - 1 - idx, value: value, isBest: isBest))
                 }
             }
             .frame(height: 24)
+            if bestValue > 0, bestIdx >= 0 {
+                HStack(spacing: 3) {
+                    Circle().fill(Color.accentGreen).frame(width: 5, height: 5)
+                    Text("Meilleur jour : \(store.formatCountShort(bestValue))")
+                        .font(.system(size: 9))
+                        .foregroundColor(.labelMuted.opacity(0.7))
+                }
+            }
         }
     }
 
-    private func sparklineTooltip(daysAgo: Int, value: Int) -> String {
+    private func sparklineTooltip(daysAgo: Int, value: Int, isBest: Bool = false) -> String {
         let label: String
         switch daysAgo {
         case 0: label = "Aujourd'hui"
         case 1: label = "Hier"
         default: label = "Il y a \(daysAgo) jours"
         }
-        return "\(label) · \(store.formatCount(value))"
+        let suffix = isBest && value > 0 ? " · 🏆 meilleur jour" : ""
+        return "\(label) · \(store.formatCount(value))\(suffix)"
     }
 
     // MARK: - Progress
