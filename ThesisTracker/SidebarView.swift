@@ -245,6 +245,24 @@ struct SidebarView: View {
                 }
                 .buttonStyle(.plain)
                 .help(store.data.sortProjectsAlphabetically ? "Ordre alphabétique (actif)" : "Trier A → Z")
+                Button {
+                    withAnimation {
+                        if expandedProjects.count >= sortedProjects.count {
+                            expandedProjects.removeAll()
+                        } else {
+                            expandedProjects = Set(sortedProjects.map(\.id))
+                        }
+                    }
+                } label: {
+                    Image(systemName: expandedProjects.count >= sortedProjects.count
+                          ? "chevron.up.chevron.down" : "chevron.down.chevron.up")
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundColor(.labelMuted)
+                        .frame(width: 22, height: 22)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                }
+                .buttonStyle(.plain)
+                .help(expandedProjects.count >= sortedProjects.count ? "Tout replier" : "Tout déplier")
                 Button { editingFolderName = ""; showAddFolder = true } label: {
                     Image(systemName: "folder.badge.plus")
                         .font(.system(size: 11, weight: .semibold)).foregroundColor(.labelMuted)
