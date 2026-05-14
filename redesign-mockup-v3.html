@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Writing Process — Mockup v3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:       #0c0b0a;
+  --sb:       #0a0908;
+  --card:     #141210;
+  --card2:    #1a1815;
+  --card3:    #201e1b;
+  --b1:       #272320;
+  --b2:       #302c29;
+  --b3:       #3d3834;
+
+  --t1:       #f5efe8;
+  --t2:       #a09890;
+  --t3:       #5a5450;
+  --t4:       #302c29;
+
+  --amber:    #f59e0b;
+  --amber2:   #d97706;
+  --orange:   #ea580c;
+  --green:    #22c55e;
+  --blue:     #60a5fa;
+  --purple:   #a78bfa;
+  --rose:     #f43f5e;
+  --teal:     #2dd4bf;
+
+  --r:        10px;
+  --rs:       7px;
+  --rxs:      5px;
+  font-size:13px;
+}
+
+html,body{height:100%;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+/* ────────────────────────────────── LAYOUT */
+.app{display:flex;height:100vh;width:100vw;flex-direction:column}
+.titlebar{height:38px;background:var(--sb);border-bottom:1px solid var(--b1);display:flex;align-items:center;flex-shrink:0;-webkit-user-select:none}
+.traffic{display:flex;gap:6px;padding:0 14px}
+.tl{width:12px;height:12px;border-radius:50%;cursor:default;flex-shrink:0}
+.tl.r{background:#ff5f57;box-shadow:0 0 0 0.5px rgba(0,0,0,.3)}.tl.y{background:#febc2e;box-shadow:0 0 0 0.5px rgba(0,0,0,.3)}.tl.g{background:#28c840;box-shadow:0 0 0 0.5px rgba(0,0,0,.3)}
+.tb-title{flex:1;text-align:center;font-size:12px;font-weight:500;color:var(--t3);letter-spacing:0.01em}
+.tb-right{width:98px;padding-right:14px;display:flex;justify-content:flex-end;gap:5px}
+.tb-btn{height:22px;padding:0 9px;background:rgba(255,255,255,.05);border:1px solid var(--b2);border-radius:5px;color:var(--t3);font-size:10.5px;cursor:pointer;font-family:inherit;letter-spacing:0.01em;transition:all .1s}
+.tb-btn:hover{background:rgba(255,255,255,.09);color:var(--t2)}
+
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ────────────────────────────────── SIDEBAR */
+.sidebar{
+  width:240px;min-width:240px;max-width:240px;
+  background:var(--sb);
+  border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+
+.sb-header{
+  padding:13px 13px 11px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--b1);
+}
+.app-icon{
+  width:27px;height:27px;border-radius:7px;flex-shrink:0;
+  background:linear-gradient(145deg,#f59e0b,#ea580c);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  box-shadow:0 1px 6px rgba(245,158,11,.35);
+}
+.app-name{font-size:12.5px;font-weight:600;color:var(--t1);flex:1;letter-spacing:-0.15px}
+.streak-chip{
+  display:flex;align-items:center;gap:2.5px;
+  background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.22);
+  border-radius:99px;padding:2.5px 7px;
+  font-size:10px;font-weight:700;color:var(--amber);letter-spacing:.01em;
+}
+.icloud-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);margin-left:4px;opacity:.6}
+
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 0 6px}
+.sb-scroll::-webkit-scrollbar{width:0}
+
+/* nav groups */
+.ng{margin:0}
+.ng-label{
+  padding:9px 16px 3px;
+  font-size:8.5px;font-weight:700;letter-spacing:1.3px;
+  color:var(--t4);text-transform:uppercase;
+}
+.ni{
+  display:flex;align-items:center;gap:0;
+  margin:1px 7px;border-radius:var(--rs);
+  cursor:pointer;position:relative;
+  transition:background .08s;
+  overflow:hidden;
+}
+.ni-bar{width:3px;height:16px;border-radius:0 2px 2px 0;flex-shrink:0;margin-left:-1px;transition:opacity .12s,background .12s}
+.ni-bar.off{background:transparent}
+.ni-bar.on{background:linear-gradient(to bottom,var(--amber),var(--orange))}
+.ni-inner{display:flex;align-items:center;gap:7.5px;flex:1;padding:6px 8px 6px 8px}
+.ni:hover{background:rgba(255,255,255,.035)}
+.ni.active{background:rgba(245,158,11,.07)}
+.ni-icon{width:15px;height:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.45;font-size:11px}
+.ni.active .ni-icon{opacity:1;color:var(--amber)}
+.ni-lbl{font-size:12.5px;font-weight:400;color:var(--t2);flex:1;letter-spacing:-0.05px}
+.ni.active .ni-lbl{color:var(--t1);font-weight:500}
+.ni:hover .ni-lbl{color:var(--t1)}
+.ni-kbd{font-size:9px;color:var(--t4);background:var(--card3);border:1px solid var(--b2);padding:1px 4.5px;border-radius:3.5px;font-family:'SF Mono',monospace;opacity:0;transition:opacity .1s;margin-right:4px}
+.ni:hover .ni-kbd{opacity:1}
+.nd{height:1px;background:var(--b1);margin:4px 13px}
+
+/* projects */
+.ps{padding:0 7px 6px}
+.ps-hdr{display:flex;align-items:center;gap:4px;padding:9px 9px 5px;color:var(--t4)}
+.ps-hdr-lbl{font-size:8.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;flex:1;color:var(--t4)}
+.ibtn{width:18px;height:18px;border-radius:4px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--t4);transition:all .1s}
+.ibtn:hover{background:rgba(255,255,255,.06);color:var(--t2)}
+.ibtn.accent{color:var(--amber);background:rgba(245,158,11,.09)}
+.ibtn.accent:hover{background:rgba(245,158,11,.16)}
+
+.proj{margin-bottom:2px}
+.proj-hdr{display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:var(--rs);cursor:pointer;transition:background .08s}
+.proj-hdr:hover{background:rgba(255,255,255,.03)}
+.proj-hdr.open{background:rgba(245,158,11,.04)}
+.chev{font-size:8px;color:var(--t4);transition:transform .18s;flex-shrink:0;width:10px;text-align:center}
+.chev.r{transform:rotate(90deg)}
+.pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.pname{flex:1;font-size:12px;font-weight:500;color:var(--t1)}
+.ring-wrap{position:relative;width:20px;height:20px;flex-shrink:0}
+.ring-wrap svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring-lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:6.5px;font-weight:800;color:var(--amber)}
+
+.ch-list{padding:1px 0 3px 18px;overflow:hidden}
+.ch-row{display:flex;align-items:center;gap:6px;padding:4.5px 9px 4.5px 5px;border-radius:var(--rxs);cursor:pointer;transition:background .08s}
+.ch-row:hover{background:rgba(255,255,255,.025)}
+.ch-row.active{background:rgba(245,158,11,.06)}
+.ch-sdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.ch-name{flex:1;font-size:11.5px;color:var(--t2)}
+.ch-row.active .ch-name{color:var(--t1);font-weight:500}
+.ch-pct{font-size:10.5px;font-weight:600;color:var(--t3);min-width:28px;text-align:right}
+.ch-row.active .ch-pct{color:var(--amber)}
+.ch-bar{width:32px;height:2px;background:var(--b2);border-radius:1px;overflow:hidden;flex-shrink:0}
+.ch-barfill{height:100%;border-radius:1px}
+
+/* sb bottom */
+.sb-bottom{border-top:1px solid var(--b1);flex-shrink:0}
+.sb-prog{padding:9px 13px 7px}
+.sb-prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.sb-prog-lbl{font-size:9.5px;color:var(--t3)}
+.sb-prog-val{font-size:9.5px;font-weight:700;color:var(--amber)}
+.sb-prog-track{height:2px;background:var(--b2);border-radius:1px;overflow:hidden}
+.sb-prog-fill{height:100%;background:linear-gradient(to right,var(--amber),var(--orange));border-radius:1px}
+.sb-footer{display:flex;gap:5px;padding:6px 13px 10px}
+.sfbtn{flex:1;height:26px;background:rgba(255,255,255,.04);border:1px solid var(--b2);border-radius:var(--rs);cursor:pointer;font-size:11px;color:var(--t3);font-family:inherit;transition:all .1s;display:flex;align-items:center;justify-content:center;gap:4px}
+.sfbtn:hover{background:rgba(255,255,255,.07);color:var(--t2)}
+.sfbtn.accent{color:var(--amber);border-color:rgba(245,158,11,.2);background:rgba(245,158,11,.07)}
+.sfbtn.accent:hover{background:rgba(245,158,11,.13)}
+
+/* ────────────────────────────────── STATUS BAR */
+.status-bar{
+  background:rgba(10,9,8,.9);
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:stretch;height:33px;flex-shrink:0;
+  backdrop-filter:blur(8px);
+}
+.si{
+  display:flex;align-items:center;gap:5px;
+  padding:0 14px;border-right:1px solid var(--b1);
+  font-size:11px;color:var(--t3);
+  white-space:nowrap;
+}
+.si:last-child{border-right:none;margin-left:auto;border-left:1px solid var(--b1)}
+.si strong{color:var(--t1);font-weight:600}
+.si .dot{width:5px;height:5px;border-radius:50%}
+.si .dot.g{background:#22c55e;box-shadow:0 0 6px #22c55e88}
+
+/* ────────────────────────────────── MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.main-scroll{flex:1;overflow-y:auto;overflow-x:hidden}
+.main-scroll::-webkit-scrollbar{width:5px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+.page{padding:20px 22px;max-width:980px;animation:fin .13s ease}
+@keyframes fin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hidden{display:none!important}
+
+/* page header */
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.ph-toggle{
+  width:28px;height:28px;border-radius:6px;flex-shrink:0;
+  background:rgba(255,255,255,.04);border:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:11.5px;color:var(--t3);transition:all .1s
+}
+.ph-toggle:hover{background:rgba(255,255,255,.08);color:var(--t2)}
+.ph-title{font-size:18px;font-weight:700;color:var(--t1);letter-spacing:-0.4px;line-height:1.1}
+.ph-sub{font-size:11px;color:var(--t3);margin-top:2px;display:flex;align-items:center;gap:5px}
+.ph-crumb{display:inline-flex;align-items:center;gap:3px}
+.ph-crumb-dot{width:4px;height:4px;border-radius:50%;background:var(--amber);opacity:.7}
+.ph-actions{margin-left:auto;display:flex;gap:6px;align-items:center}
+.tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.tag-amber{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.tag-green{background:rgba(34,197,94,.09);color:var(--green);border:1px solid rgba(34,197,94,.15)}
+.tag-blue{background:rgba(96,165,250,.09);color:var(--blue);border:1px solid rgba(96,165,250,.15)}
+.tag-rose{background:rgba(244,63,94,.09);color:var(--rose);border:1px solid rgba(244,63,94,.15)}
+.ph-btn{background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:6px;padding:4px 10px;color:var(--t2);cursor:pointer;font-size:11px;font-family:inherit;transition:all .1s}
+.ph-btn:hover{background:rgba(255,255,255,.07);border-color:var(--b2)}
+
+/* layout grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ────────────────────────────────── CARDS */
+.card{
+  background:var(--card);
+  border:1px solid var(--b1);
+  border-radius:var(--r);
+  padding:14px 15px;
+  position:relative;
+  transition:border-color .15s;
+}
+.card:hover{border-color:var(--b2)}
+.card-accent{
+  background:linear-gradient(135deg,rgba(245,158,11,.06) 0%,transparent 60%),var(--card);
+  border-color:rgba(245,158,11,.16);
+}
+.card-accent:hover{border-color:rgba(245,158,11,.26)}
+.ct{
+  font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;
+  color:var(--t3);margin-bottom:12px;display:flex;align-items:center;gap:5px;
+}
+.ct-dot{width:4px;height:4px;border-radius:50%}
+
+/* selector card */
+.sel-row{display:flex;align-items:center;gap:8px;margin-bottom:0}
+.sel-lbl{font-size:10.5px;color:var(--t3);width:52px;flex-shrink:0}
+.sel-pill{
+  display:flex;align-items:center;gap:6px;
+  background:var(--card2);border:1px solid var(--b2);
+  border-radius:var(--rs);padding:5px 9px;
+  cursor:pointer;transition:all .1s;flex:1;
+}
+.sel-pill:hover{border-color:var(--b3);background:var(--card3)}
+.sp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sp-name{font-size:12px;font-weight:500;color:var(--t1);flex:1}
+.sp-chev{font-size:9px;color:var(--t3)}
+.sel-div{height:1px;background:var(--b1);margin:9px 0}
+
+/* entry card */
+.date-nav{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.dnav{
+  width:22px;height:22px;border-radius:5px;
+  background:var(--card2);border:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:10px;color:var(--t3);transition:all .1s
+}
+.dnav:hover{background:var(--card3);color:var(--t2)}
+.dlbl{flex:1;font-size:11.5px;font-weight:500;color:var(--t2);text-align:center}
+.today-tag{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--amber);background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.2);padding:2px 6px;border-radius:3.5px}
+
+.hero{text-align:center;padding:14px 0 11px;border-bottom:1px solid var(--b1);margin-bottom:12px;position:relative}
+.hero-num{font-size:46px;font-weight:800;letter-spacing:-2px;line-height:1;color:var(--t1)}
+.hero-num.live{
+  background:linear-gradient(135deg,#f5efe8 40%,rgba(245,158,11,.75) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-unit{font-size:13px;color:var(--t3);margin-left:2px;font-weight:400;vertical-align:middle}
+.hero-delta{font-size:11px;color:var(--green);margin-top:4px;display:flex;align-items:center;justify-content:center;gap:3px}
+.hero-delta::before{content:'↑';font-weight:700}
+.hero-empty{font-size:11px;color:var(--t3);margin-top:5px}
+.hero-badge{position:absolute;top:12px;right:0}
+
+.goal-bar{margin-bottom:12px}
+.gb-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.gb-top .glbl{font-size:10.5px;color:var(--t3)}
+.gb-pct{font-size:10.5px;font-weight:700;color:var(--amber)}
+.gb-track{height:3px;background:var(--b2);border-radius:1.5px;overflow:hidden}
+.gb-fill{height:100%;border-radius:1.5px;background:linear-gradient(to right,var(--amber) 0%,var(--orange) 100%);position:relative}
+.gb-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:4px;background:rgba(255,255,255,.3);border-radius:2px}
+
+.inp-row{display:flex;gap:6px}
+.inp{
+  flex:1;background:var(--card2);border:1px solid var(--b1);
+  border-radius:var(--rs);padding:7.5px 10px;
+  font-size:13px;color:var(--t1);font-family:inherit;
+  outline:none;transition:all .12s;
+}
+.inp::placeholder{color:var(--t4)}
+.inp:focus{border-color:rgba(245,158,11,.4);background:var(--card3);box-shadow:0 0 0 2.5px rgba(245,158,11,.07)}
+.save-btn{
+  padding:7.5px 14px;border-radius:var(--rs);
+  background:linear-gradient(135deg,var(--amber),var(--orange));
+  border:none;cursor:pointer;
+  font-size:11.5px;font-weight:700;color:#000;letter-spacing:.05px;
+  font-family:inherit;transition:all .1s;
+  box-shadow:0 1px 8px rgba(245,158,11,.25);
+}
+.save-btn:hover{filter:brightness(1.08);transform:translateY(-0.5px);box-shadow:0 2px 14px rgba(245,158,11,.32)}
+.save-btn:active{transform:none;filter:brightness(.95)}
+
+.note-row{display:flex;align-items:center;gap:6px;margin-top:9px;padding-top:9px;border-top:1px solid var(--b1)}
+.note-icon{font-size:10px;color:var(--t4)}
+.note-inp{flex:1;background:transparent;border:none;outline:none;font-size:11.5px;color:var(--t2);font-family:inherit}
+.note-inp::placeholder{color:var(--t4)}
+
+/* week calendar */
+.week-grid{display:flex;gap:4px}
+.wday{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 3px;border-radius:7px;cursor:default;transition:background .1s}
+.wday:hover{background:rgba(255,255,255,.025)}
+.wday.today{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.16)}
+.wlbl{font-size:8.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.wnum{font-size:11px;font-weight:500;color:var(--t3)}
+.wday.today .wnum{color:var(--amber);font-weight:700}
+.wdot{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:700;color:rgba(255,255,255,.6)}
+.wdot.e{background:rgba(255,255,255,.04);border:1px solid var(--b1);color:transparent}
+.wdot.l{background:rgba(245,158,11,.13);border:1px solid rgba(245,158,11,.15)}
+.wdot.m{background:rgba(245,158,11,.27);border:1px solid rgba(245,158,11,.28)}
+.wdot.h{background:rgba(245,158,11,.50);border:1px solid rgba(245,158,11,.45)}
+.wdot.t{background:linear-gradient(145deg,var(--amber),var(--orange));border:none;box-shadow:0 2px 10px rgba(245,158,11,.3);color:rgba(0,0,0,.6)}
+.wbar{width:100%;height:2px;border-radius:1px;background:rgba(255,255,255,.05);overflow:hidden;margin-top:2px}
+.wbarfill{height:100%;border-radius:1px;background:var(--amber)}
+.week-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:9px;border-top:1px solid var(--b1)}
+.wf-lbl{font-size:9.5px;color:var(--t3)}
+.wf-val{font-size:11px;font-weight:700;color:var(--amber)}
+
+/* ────────── STREAK */
+.streak-card{display:flex;align-items:center;gap:0;padding:2px 0}
+.streak-fire{font-size:36px;line-height:1;margin-right:12px;filter:drop-shadow(0 2px 8px rgba(245,158,11,.4))}
+.streak-body{flex:1}
+.streak-num{
+  font-size:48px;font-weight:900;line-height:1;letter-spacing:-2px;
+  background:linear-gradient(135deg,var(--amber),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.streak-lbl{font-size:10px;color:var(--t3);margin-top:1px}
+.streak-milestones{display:flex;gap:4px;margin-top:7px;align-items:center}
+.sm{width:7px;height:7px;border-radius:50%}
+.streak-side{text-align:right;margin-left:auto}
+.sr-val{font-size:22px;font-weight:800;color:var(--t1);line-height:1}
+.sr-lbl{font-size:9px;color:var(--t3);margin-top:2px}
+.sr-sublbl{font-size:8.5px;color:var(--t4);margin-top:1px}
+
+/* ────────── STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-card{
+  background:var(--card2);border:1px solid var(--b1);
+  border-radius:8px;padding:11px 12px;
+  transition:border-color .12s;
+}
+.stat-card:hover{border-color:var(--b3)}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.sc-icon{width:27px;height:27px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12.5px}
+.sc-badge{font-size:9px;font-weight:600;padding:2px 5px;border-radius:3.5px;letter-spacing:.01em}
+.sc-badge.up{background:rgba(34,197,94,.1);color:var(--green)}
+.sc-badge.neutral{background:rgba(245,158,11,.1);color:var(--amber)}
+.sc-badge.blue{background:rgba(96,165,250,.1);color:var(--blue)}
+.sc-val{font-size:22px;font-weight:800;color:var(--t1);letter-spacing:-.5px;line-height:1}
+.sc-lbl{font-size:9.5px;color:var(--t3);margin-top:3px}
+
+/* ────────── CHART */
+.chart-area{padding:4px 0}
+.chart-bars{height:56px;display:flex;align-items:flex-end;gap:3px;position:relative}
+.chart-bars::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--b1)}
+.cb-col{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;cursor:default}
+.cb-col:hover .cb-tip{opacity:1;transform:translateY(0)}
+.cb-tip{
+  position:absolute;bottom:calc(100% + 5px);
+  background:var(--card3);border:1px solid var(--b2);border-radius:5px;
+  padding:4px 7px;font-size:9.5px;color:var(--t1);white-space:nowrap;
+  pointer-events:none;opacity:0;transform:translateY(2px);transition:all .1s;z-index:5;
+  box-shadow:0 4px 12px rgba(0,0,0,.35);
+}
+.cb-bar{width:100%;border-radius:3px 3px 0 0;background:rgba(245,158,11,.13);transition:background .1s;min-height:2px}
+.cb-col:hover .cb-bar{background:rgba(245,158,11,.27)}
+.cb-bar.today{background:linear-gradient(to top,var(--orange),var(--amber));box-shadow:0 0 10px rgba(245,158,11,.2)}
+.chart-xlabels{display:flex;gap:3px;margin-top:5px}
+.cxl{flex:1;text-align:center;font-size:8px;color:var(--t3)}
+.cxl.today{color:var(--amber);font-weight:700}
+
+/* ────────── CHAPTERS */
+.ch-prog-list{display:flex;flex-direction:column;gap:9px}
+.cp-item{}
+.cp-hdr{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.cp-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.cp-name{font-size:11.5px;color:var(--t2);flex:1}
+.cp-pct{font-size:11px;font-weight:700;min-width:30px;text-align:right}
+.cp-status{font-size:8.5px;font-weight:600;padding:1.5px 6px;border-radius:3px;margin-right:1px}
+.cp-track{height:2.5px;background:rgba(255,255,255,.05);border-radius:1.5px;overflow:hidden}
+.cp-fill{height:100%;border-radius:1.5px;transition:width .3s}
+
+/* ────────── PROJECTION */
+.proj-rows{display:flex;flex-direction:column}
+.pr{display:flex;align-items:center;justify-content:space-between;padding:7.5px 0;border-bottom:1px solid var(--b1)}
+.pr:first-child{padding-top:2px}
+.pr:last-child{border-bottom:none;padding-bottom:0}
+.pr-key{font-size:11.5px;color:var(--t3)}
+.pr-val{font-size:11.5px;font-weight:600;color:var(--t1)}
+.pr-tag{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.01em}
+.prt-amber{background:rgba(245,158,11,.1);color:var(--amber)}
+.prt-blue{background:rgba(96,165,250,.1);color:var(--blue)}
+.prt-green{background:rgba(34,197,94,.1);color:var(--green)}
+.prt-rose{background:rgba(244,63,94,.1);color:var(--rose)}
+
+/* ────────── PLACEHOLDER PAGES */
+.placeholder{padding:60px;text-align:center;color:var(--t3)}
+.pl-icon{font-size:40px;margin-bottom:14px;opacity:.2}
+.pl-title{font-size:15px;font-weight:600;color:var(--t2);margin-bottom:5px}
+.pl-sub{font-size:12px}
+
+/* divider rule */
+hr.rule{border:none;border-top:1px solid var(--b1);margin:10px 0}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══════════════════════════ TITLEBAR -->
+<div class="titlebar">
+  <div class="traffic">
+    <div class="tl r"></div>
+    <div class="tl y"></div>
+    <div class="tl g"></div>
+  </div>
+  <div class="tb-title">Writing Process</div>
+  <div class="tb-right">
+    <button class="tb-btn" onclick="toggleSidebar()">⌃⌘S</button>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- ══════════════════════════ SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sb-header">
+    <div class="app-icon">✍️</div>
+    <span class="app-name">Writing Process</span>
+    <div class="streak-chip">🔥 14</div>
+    <div class="icloud-dot" title="iCloud actif"></div>
+  </div>
+
+  <div class="sb-scroll">
+
+    <div class="ng">
+      <div class="ng-label">Écriture</div>
+      <div class="ni active" onclick="nav(this,'dashboard')">
+        <div class="ni-bar on"></div>
+        <div class="ni-inner">
+          <span class="ni-icon">⌂</span>
+          <span class="ni-lbl">Tableau de bord</span>
+          <span class="ni-kbd">⌘2</span>
+        </div>
+      </div>
+      <div class="ni" onclick="nav(this,'overview')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">⊞</span><span class="ni-lbl">Vue d'ensemble</span><span class="ni-kbd">⌘1</span></div>
+      </div>
+      <div class="ni" onclick="nav(this,'deadlines')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">📅</span><span class="ni-lbl">Échéances</span><span class="ni-kbd">⌘3</span></div>
+      </div>
+      <div class="ni" onclick="nav(this,'kanban')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">▦</span><span class="ni-lbl">Kanban</span></div>
+      </div>
+    </div>
+
+    <div class="nd"></div>
+
+    <div class="ng">
+      <div class="ng-label">Analyse</div>
+      <div class="ni" onclick="nav(this,'charts')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">↗</span><span class="ni-lbl">Graphiques</span><span class="ni-kbd">⌘5</span></div>
+      </div>
+      <div class="ni" onclick="nav(this,'activity')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">⊟</span><span class="ni-lbl">Activité</span><span class="ni-kbd">⌘6</span></div>
+      </div>
+      <div class="ni" onclick="nav(this,'calendar')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">🗓</span><span class="ni-lbl">Calendrier</span><span class="ni-kbd">⌘8</span></div>
+      </div>
+      <div class="ni" onclick="nav(this,'history')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">↺</span><span class="ni-lbl">Historique</span><span class="ni-kbd">⌘7</span></div>
+      </div>
+    </div>
+
+    <div class="nd"></div>
+
+    <div class="ng">
+      <div class="ng-label">Outils</div>
+      <div class="ni" onclick="nav(this,'timer')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">⏱</span><span class="ni-lbl">Minuteur</span><span class="ni-kbd">⌘9</span></div>
+      </div>
+      <div class="ni" onclick="nav(this,'search')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">⌕</span><span class="ni-lbl">Recherche</span><span class="ni-kbd">⌘4</span></div>
+      </div>
+      <div class="ni" onclick="nav(this,'achievements')">
+        <div class="ni-bar off"></div>
+        <div class="ni-inner"><span class="ni-icon">🏅</span><span class="ni-lbl">Accomplissements</span></div>
+      </div>
+    </div>
+
+    <div class="nd"></div>
+
+    <!-- Projects -->
+    <div class="ps">
+      <div class="ps-hdr">
+        <span class="ps-hdr-lbl">Projets</span>
+        <button class="ibtn" title="Nouveau dossier">📁</button>
+        <button class="ibtn accent" title="Nouveau projet">+</button>
+      </div>
+
+      <div class="proj">
+        <div class="proj-hdr open" onclick="toggleProj('th')">
+          <span class="chev r" id="th-c">▶</span>
+          <span class="pdot" style="background:#f59e0b"></span>
+          <span class="pname">Ma Thèse</span>
+          <div class="ring-wrap">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="7.5" stroke="rgba(245,158,11,.15)" stroke-width="2.5"/>
+              <circle cx="10" cy="10" r="7.5" stroke="#f59e0b" stroke-width="2.5"
+                stroke-dasharray="47.12" stroke-dashoffset="24.97" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-lbl">47%</div>
+          </div>
+        </div>
+        <div class="ch-list" id="th-chapters">
+          <div class="ch-row active">
+            <div class="ch-sdot" style="background:#f59e0b"></div>
+            <span class="ch-name">Introduction</span>
+            <div class="ch-bar"><div class="ch-barfill" style="width:78%;background:linear-gradient(to right,#f59e0b,#ea580c)"></div></div>
+            <span class="ch-pct">78%</span>
+          </div>
+          <div class="ch-row">
+            <div class="ch-sdot" style="background:#60a5fa"></div>
+            <span class="ch-name">Chapitre 1</span>
+            <div class="ch-bar"><div class="ch-barfill" style="width:45%;background:#60a5fa"></div></div>
+            <span class="ch-pct">45%</span>
+          </div>
+          <div class="ch-row">
+            <div class="ch-sdot" style="background:#5a5450"></div>
+            <span class="ch-name">Chapitre 2</span>
+            <div class="ch-bar"><div class="ch-barfill" style="width:12%;background:#5a5450"></div></div>
+            <span class="ch-pct">12%</span>
+          </div>
+          <div class="ch-row">
+            <div class="ch-sdot" style="background:#22c55e"></div>
+            <span class="ch-name">Conclusion</span>
+            <div class="ch-bar"><div class="ch-barfill" style="width:100%;background:#22c55e"></div></div>
+            <span class="ch-pct">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj">
+        <div class="proj-hdr" onclick="toggleProj('ar')">
+          <span class="chev" id="ar-c">▶</span>
+          <span class="pdot" style="background:#60a5fa"></span>
+          <span class="pname">Article EPFL</span>
+          <div class="ring-wrap">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="7.5" stroke="rgba(96,165,250,.15)" stroke-width="2.5"/>
+              <circle cx="10" cy="10" r="7.5" stroke="#60a5fa" stroke-width="2.5"
+                stroke-dasharray="47.12" stroke-dashoffset="14.14" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-lbl" style="color:#60a5fa">70%</div>
+          </div>
+        </div>
+        <div class="ch-list hidden" id="ar-chapters">
+          <div class="ch-row">
+            <div class="ch-sdot" style="background:#60a5fa"></div>
+            <span class="ch-name">Abstract</span>
+            <div class="ch-bar"><div class="ch-barfill" style="width:90%;background:#60a5fa"></div></div>
+            <span class="ch-pct">90%</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /sb-scroll -->
+
+  <div class="sb-bottom">
+    <div class="sb-prog">
+      <div class="sb-prog-hdr">
+        <span class="sb-prog-lbl">Ma Thèse · progression globale</span>
+        <span class="sb-prog-val">47%</span>
+      </div>
+      <div class="sb-prog-track"><div class="sb-prog-fill" style="width:47%"></div></div>
+    </div>
+    <div class="sb-footer">
+      <button class="sfbtn" title="Importer">↓ Import</button>
+      <button class="sfbtn" title="Exporter">↑ Export</button>
+      <button class="sfbtn accent" title="Nouveau projet">+ Projet</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ══════════════════════════ MAIN CONTENT -->
+<main class="main">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="si">
+      <div class="dot g"></div>
+      <strong>14 jours</strong> consécutifs
+    </div>
+    <div class="si">⚡ Vitesse &nbsp;<strong>1 240 car/j</strong></div>
+    <div class="si">🎯 Hebdo &nbsp;<strong>8 640 / 10 500</strong>&nbsp;<span style="color:var(--amber);font-weight:700">82%</span></div>
+    <div class="si">📖 Introduction &nbsp;<strong>78%</strong></div>
+    <div class="si">
+      <span>Fin estimée</span>&nbsp;<strong>25 juin 2026</strong>
+      <span class="tag tag-amber" style="font-size:8.5px;padding:1.5px 6px;margin-left:3px">63 j</span>
+    </div>
+  </div>
+
+  <div class="main-scroll">
+
+    <!-- ─── DASHBOARD ─── -->
+    <div id="page-dashboard" class="page">
+      <div class="ph">
+        <button class="ph-toggle" onclick="toggleSidebar()">☰</button>
+        <div>
+          <div class="ph-title">Tableau de bord</div>
+          <div class="ph-sub">
+            <span>Jeudi 24 avril 2026</span>
+            <span style="color:var(--b2)">·</span>
+            <span class="ph-crumb"><span class="ph-crumb-dot"></span>&nbsp;Ma Thèse &rsaquo; Introduction</span>
+          </div>
+        </div>
+        <div class="ph-actions">
+          <span class="tag tag-amber">🔥 Série active · 14j</span>
+          <button class="ph-btn">⚙ Paramètres</button>
+        </div>
+      </div>
+
+      <div class="grid">
+
+        <!-- ═══ LEFT ═══ -->
+        <div style="display:flex;flex-direction:column;gap:11px">
+
+          <!-- Projet actif -->
+          <div class="card">
+            <div class="ct"><span class="ct-dot" style="background:var(--amber)"></span> Projet actif</div>
+            <div class="sel-row">
+              <span class="sel-lbl">Projet</span>
+              <div class="sel-pill">
+                <div class="sp-dot" style="background:#f59e0b"></div>
+                <span class="sp-name">Ma Thèse</span>
+                <span class="sp-chev">⌄</span>
+              </div>
+            </div>
+            <div class="sel-div"></div>
+            <div class="sel-row">
+              <span class="sel-lbl">Chapitre</span>
+              <div class="sel-pill">
+                <div class="sp-dot" style="background:#f59e0b"></div>
+                <span class="sp-name">Introduction</span>
+                <span class="sp-chev">⌄</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Saisie -->
+          <div class="card card-accent">
+            <div class="date-nav">
+              <button class="dnav">‹</button>
+              <span class="dlbl">Aujourd'hui</span>
+              <span class="today-tag">Aujourd'hui</span>
+              <button class="dnav">›</button>
+            </div>
+
+            <div class="hero">
+              <div>
+                <span class="hero-num live">12 450</span><span class="hero-unit">car.</span>
+              </div>
+              <div class="hero-delta">+1 240 depuis hier</div>
+              <div class="hero-badge"><span class="tag tag-green">✓ Objectif</span></div>
+            </div>
+
+            <div class="goal-bar">
+              <div class="gb-top">
+                <span class="glbl">Objectif quotidien — 1 500 car.</span>
+                <span class="gb-pct">83%</span>
+              </div>
+              <div class="gb-track"><div class="gb-fill" style="width:83%"></div></div>
+            </div>
+
+            <div class="inp-row">
+              <input class="inp" type="number" placeholder="Nouveau total (caractères)…" />
+              <button class="save-btn" onclick="flashSave(this)">Enregistrer</button>
+            </div>
+
+            <div class="note-row">
+              <span class="note-icon">✏</span>
+              <input class="note-inp" type="text" placeholder="Note du jour — contexte, blocages, idées…" />
+            </div>
+          </div>
+
+          <!-- Semaine -->
+          <div class="card">
+            <div class="ct"><span class="ct-dot" style="background:var(--blue)"></span> Cette semaine</div>
+            <div class="week-grid">
+              <div class="wday">
+                <span class="wlbl">Lun</span>
+                <span class="wnum">21</span>
+                <div class="wdot m">73%</div>
+                <div class="wbar"><div class="wbarfill" style="width:73%"></div></div>
+              </div>
+              <div class="wday">
+                <span class="wlbl">Mar</span>
+                <span class="wnum">22</span>
+                <div class="wdot h">✓</div>
+                <div class="wbar"><div class="wbarfill" style="width:100%;background:#22c55e"></div></div>
+              </div>
+              <div class="wday">
+                <span class="wlbl">Mer</span>
+                <span class="wnum">23</span>
+                <div class="wdot l">45%</div>
+                <div class="wbar"><div class="wbarfill" style="width:45%"></div></div>
+              </div>
+              <div class="wday today">
+                <span class="wlbl">Jeu</span>
+                <span class="wnum">24</span>
+                <div class="wdot t">83%</div>
+                <div class="wbar"><div class="wbarfill" style="width:83%;background:linear-gradient(to right,var(--amber),var(--orange))"></div></div>
+              </div>
+              <div class="wday">
+                <span class="wlbl">Ven</span>
+                <span class="wnum">25</span>
+                <div class="wdot e"></div>
+                <div class="wbar"></div>
+              </div>
+              <div class="wday">
+                <span class="wlbl">Sam</span>
+                <span class="wnum">26</span>
+                <div class="wdot e"></div>
+                <div class="wbar"></div>
+              </div>
+              <div class="wday">
+                <span class="wlbl">Dim</span>
+                <span class="wnum">27</span>
+                <div class="wdot e"></div>
+                <div class="wbar"></div>
+              </div>
+            </div>
+            <div class="week-footer">
+              <span class="wf-lbl">Total · objectif 10 500 car.</span>
+              <span class="wf-val">8 640 car. &nbsp;·&nbsp; 82%</span>
+            </div>
+          </div>
+
+        </div><!-- /left -->
+
+        <!-- ═══ RIGHT ═══ -->
+        <div style="display:flex;flex-direction:column;gap:11px">
+
+          <!-- Streak -->
+          <div class="card card-accent">
+            <div class="streak-card">
+              <div class="streak-fire">🔥</div>
+              <div class="streak-body">
+                <div class="streak-num">14</div>
+                <div class="streak-lbl">jours consécutifs</div>
+                <div class="streak-milestones">
+                  <div class="sm" style="background:#f59e0b" title="Étincelle · 3j"></div>
+                  <div class="sm" style="background:#f97316" title="Régulier · 7j"></div>
+                  <div class="sm" style="background:#ea580c" title="Persévérant · 14j"></div>
+                  <div class="sm" style="background:var(--b2)"></div>
+                  <div class="sm" style="background:var(--b2)"></div>
+                  <div class="sm" style="background:var(--b2)"></div>
+                  <span style="font-size:9px;color:var(--t3);margin-left:3px">30j, 60j, 100j</span>
+                </div>
+              </div>
+              <div class="streak-side">
+                <div style="font-size:9.5px;color:var(--t3);margin-bottom:2px">Record</div>
+                <div class="sr-val">21</div>
+                <div class="sr-lbl">jours</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 stats -->
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="sc-top">
+                <div class="sc-icon" style="background:rgba(245,158,11,.1)">⚡</div>
+                <span class="sc-badge up">↑ 8%</span>
+              </div>
+              <div class="sc-val">1 240</div>
+              <div class="sc-lbl">car/jour · moy. 14j</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-top">
+                <div class="sc-icon" style="background:rgba(96,165,250,.1)">🎯</div>
+                <span class="sc-badge blue">semaine</span>
+              </div>
+              <div class="sc-val">82%</div>
+              <div class="sc-lbl">objectif hebdomadaire</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-top">
+                <div class="sc-icon" style="background:rgba(34,197,94,.1)">📈</div>
+                <span class="sc-badge up">+12%</span>
+              </div>
+              <div class="sc-val">8 640</div>
+              <div class="sc-lbl">caractères cette semaine</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-top">
+                <div class="sc-icon" style="background:rgba(244,63,94,.1)">🏁</div>
+                <span class="sc-badge neutral">estimé</span>
+              </div>
+              <div class="sc-val">63 j</div>
+              <div class="sc-lbl">avant la soutenance</div>
+            </div>
+          </div>
+
+          <!-- Chart 7j -->
+          <div class="card">
+            <div class="ct"><span class="ct-dot" style="background:var(--amber)"></span> 7 derniers jours</div>
+            <div class="chart-area">
+              <div class="chart-bars">
+                <div class="cb-col"><div class="cb-tip">Lun · 1 100 car.</div><div class="cb-bar" style="height:46%"></div></div>
+                <div class="cb-col"><div class="cb-tip">Mar · 2 400 car.</div><div class="cb-bar" style="height:100%"></div></div>
+                <div class="cb-col"><div class="cb-tip">Mer · 680 car.</div><div class="cb-bar" style="height:28%"></div></div>
+                <div class="cb-col"><div class="cb-tip">Jeu · 1 800 car.</div><div class="cb-bar" style="height:75%"></div></div>
+                <div class="cb-col"><div class="cb-tip">Ven · 2 100 car.</div><div class="cb-bar" style="height:87%"></div></div>
+                <div class="cb-col"><div class="cb-tip">Sam · 0 car.</div><div class="cb-bar" style="height:3%"></div></div>
+                <div class="cb-col"><div class="cb-tip">Dim · 1 240 car.</div><div class="cb-bar today" style="height:52%"></div></div>
+              </div>
+              <div class="chart-xlabels">
+                <span class="cxl">L</span><span class="cxl">M</span><span class="cxl">M</span>
+                <span class="cxl">J</span><span class="cxl">V</span><span class="cxl">S</span>
+                <span class="cxl today">D</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chapitres -->
+          <div class="card">
+            <div class="ct"><span class="ct-dot" style="background:var(--purple)"></span> Chapitres — Ma Thèse</div>
+            <div class="ch-prog-list">
+              <div class="cp-item">
+                <div class="cp-hdr">
+                  <div class="cp-dot" style="background:#f59e0b"></div>
+                  <span class="cp-name">Introduction</span>
+                  <span class="cp-status" style="background:rgba(245,158,11,.1);color:#f59e0b">Rédaction</span>
+                  <span class="cp-pct" style="color:#f59e0b">78%</span>
+                </div>
+                <div class="cp-track"><div class="cp-fill" style="width:78%;background:linear-gradient(to right,#f59e0b,#ea580c)"></div></div>
+              </div>
+              <div class="cp-item">
+                <div class="cp-hdr">
+                  <div class="cp-dot" style="background:#60a5fa"></div>
+                  <span class="cp-name">Chapitre 1</span>
+                  <span class="cp-status" style="background:rgba(96,165,250,.1);color:#60a5fa">Révision</span>
+                  <span class="cp-pct" style="color:#60a5fa">45%</span>
+                </div>
+                <div class="cp-track"><div class="cp-fill" style="width:45%;background:#60a5fa"></div></div>
+              </div>
+              <div class="cp-item">
+                <div class="cp-hdr">
+                  <div class="cp-dot" style="background:#5a5450"></div>
+                  <span class="cp-name">Chapitre 2</span>
+                  <span class="cp-status" style="background:rgba(90,84,80,.15);color:#7a7470">Plan</span>
+                  <span class="cp-pct" style="color:#7a7470">12%</span>
+                </div>
+                <div class="cp-track"><div class="cp-fill" style="width:12%;background:#5a5450"></div></div>
+              </div>
+              <div class="cp-item">
+                <div class="cp-hdr">
+                  <div class="cp-dot" style="background:#22c55e"></div>
+                  <span class="cp-name">Conclusion</span>
+                  <span class="cp-status" style="background:rgba(34,197,94,.1);color:#22c55e">✓ Terminé</span>
+                  <span class="cp-pct" style="color:#22c55e">100%</span>
+                </div>
+                <div class="cp-track"><div class="cp-fill" style="width:100%;background:#22c55e"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Projection -->
+          <div class="card">
+            <div class="ct"><span class="ct-dot" style="background:var(--teal)"></span> Projection</div>
+            <div class="proj-rows">
+              <div class="pr">
+                <span class="pr-key">Vitesse actuelle</span>
+                <span class="pr-val">1 240 car/j</span>
+              </div>
+              <div class="pr">
+                <span class="pr-key">Restant sur la thèse</span>
+                <span class="pr-val">78 240 car.</span>
+              </div>
+              <div class="pr">
+                <span class="pr-key">Date de fin estimée</span>
+                <span class="pr-tag prt-amber">25 juin 2026</span>
+              </div>
+              <div class="pr">
+                <span class="pr-key">Objectif adaptatif</span>
+                <span class="pr-tag prt-blue">1 500 car/j</span>
+              </div>
+              <div class="pr">
+                <span class="pr-key">Avance / retard</span>
+                <span class="pr-tag prt-green">+3 jours d'avance</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /right -->
+      </div><!-- /grid -->
+    </div><!-- /dashboard -->
+
+    <!-- ─── PLACEHOLDER PAGES ─── -->
+    <div id="page-overview" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Vue d'ensemble</div></div></div>
+      <div class="placeholder"><div class="pl-icon">⊞</div><div class="pl-title">Vue d'ensemble</div><div class="pl-sub">Cockpit · pipeline chapitres · rapport directeur</div></div>
+    </div>
+    <div id="page-deadlines" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Échéances</div></div></div>
+      <div class="placeholder"><div class="pl-icon">📅</div><div class="pl-title">Kanban des échéances</div><div class="pl-sub">Plan → Rédaction → Révision → Terminé</div></div>
+    </div>
+    <div id="page-kanban" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Kanban</div></div></div>
+      <div class="placeholder"><div class="pl-icon">▦</div><div class="pl-title">Kanban</div></div>
+    </div>
+    <div id="page-charts" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Graphiques</div></div></div>
+      <div class="placeholder"><div class="pl-icon">↗</div><div class="pl-title">Graphiques</div><div class="pl-sub">Courbes · histogrammes · tendances</div></div>
+    </div>
+    <div id="page-activity" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Activité</div></div></div>
+      <div class="placeholder"><div class="pl-icon">⊟</div><div class="pl-title">Carte de chaleur</div></div>
+    </div>
+    <div id="page-calendar" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Calendrier</div></div></div>
+      <div class="placeholder"><div class="pl-icon">🗓</div><div class="pl-title">Calendrier mensuel</div></div>
+    </div>
+    <div id="page-history" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Historique</div></div></div>
+      <div class="placeholder"><div class="pl-icon">↺</div><div class="pl-title">Historique complet</div></div>
+    </div>
+    <div id="page-timer" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Minuteur</div></div></div>
+      <div class="placeholder"><div class="pl-icon">⏱</div><div class="pl-title">Minuteur Pomodoro</div><div class="pl-sub">Focus · Pause courte · Pause longue</div></div>
+    </div>
+    <div id="page-search" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Recherche</div></div></div>
+      <div class="placeholder"><div class="pl-icon">⌕</div><div class="pl-title">Recherche plein texte</div></div>
+    </div>
+    <div id="page-achievements" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Accomplissements</div></div></div>
+      <div class="placeholder"><div class="pl-icon">🏅</div><div class="pl-title">Badges &amp; Accomplissements</div></div>
+    </div>
+
+  </div><!-- /main-scroll -->
+</main>
+</div><!-- /body -->
+</div><!-- /app -->
+
+<script>
+function nav(el, page) {
+  document.querySelectorAll('.ni').forEach(n => {
+    n.classList.remove('active');
+    n.querySelector('.ni-bar')?.classList.replace('on','off');
+  });
+  el.classList.add('active');
+  el.querySelector('.ni-bar')?.classList.replace('off','on');
+  document.querySelectorAll('[id^="page-"]').forEach(p => p.classList.add('hidden'));
+  const t = document.getElementById('page-' + page);
+  if (t) { t.classList.remove('hidden'); void t.offsetWidth; t.style.animation='none'; void t.offsetWidth; t.style.animation=''; }
+}
+function toggleSidebar() {
+  const s = document.getElementById('sidebar');
+  s.style.display = s.style.display === 'none' ? 'flex' : 'none';
+}
+function toggleProj(id) {
+  const c = document.getElementById(id + '-chapters');
+  const v = document.getElementById(id + '-c');
+  c.classList.toggle('hidden');
+  v.classList.toggle('r');
+}
+function flashSave(btn) {
+  const orig = btn.textContent;
+  btn.textContent = '✓ Enregistré';
+  btn.style.background = '#22c55e';
+  btn.style.color = '#000';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 1800);
+}
+</script>
+</body>
+</html>

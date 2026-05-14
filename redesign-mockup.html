@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Writing Process — Redesign</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0d0d0d;
+    --sidebar:   #111111;
+    --card:      #181818;
+    --card2:     #1e1e1e;
+    --border:    #262626;
+    --border2:   #2e2e2e;
+    --text:      #f0f0f0;
+    --text2:     #a0a0a0;
+    --text3:     #555555;
+    --accent:    #f59e0b;
+    --accent2:   #ea580c;
+    --green:     #22c55e;
+    --blue:      #3b82f6;
+    --purple:    #a855f7;
+    --red:       #ef4444;
+    --radius:    10px;
+    --radius-sm: 6px;
+  }
+
+  html, body { height: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; font-size: 13px; }
+
+  /* ─── Layout ─────────────────────────────────────────────── */
+  .app { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+
+  /* ─── Sidebar ─────────────────────────────────────────────── */
+  .sidebar {
+    width: 248px; min-width: 248px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    height: 100vh; overflow: hidden;
+    user-select: none;
+  }
+
+  .sidebar-header {
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 9px;
+    flex-shrink: 0;
+  }
+  .app-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .app-title { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+  .streak-badge {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 20px;
+    padding: 3px 8px;
+    font-size: 11px; font-weight: 600;
+    color: var(--accent);
+  }
+  .streak-badge .flame { font-size: 10px; }
+
+  .sidebar-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 0; }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* Nav groups */
+  .nav-group { margin-bottom: 2px; }
+  .nav-group-label {
+    padding: 8px 18px 3px;
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.8px;
+    color: var(--text3); text-transform: uppercase;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 6px 10px 6px 14px;
+    margin: 1px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer; position: relative;
+    transition: background 0.1s;
+    color: var(--text2);
+    font-size: 13px; font-weight: 400;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .nav-item.active {
+    background: rgba(245,158,11,0.09);
+    color: var(--text);
+    font-weight: 500;
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 16px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    border-radius: 0 2px 2px 0;
+  }
+  .nav-icon { width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; opacity: 0.75; }
+  .nav-item.active .nav-icon { opacity: 1; color: var(--accent); }
+  .nav-shortcut {
+    margin-left: auto;
+    font-size: 10px; color: var(--text3);
+    background: var(--card); border: 1px solid var(--border);
+    padding: 1px 5px; border-radius: 4px;
+    font-family: -apple-system, monospace;
+    opacity: 0; transition: opacity 0.1s;
+  }
+  .nav-item:hover .nav-shortcut { opacity: 1; }
+
+  .nav-divider {
+    height: 1px; background: var(--border);
+    margin: 6px 14px;
+  }
+
+  /* Projects section */
+  .projects-section { padding: 0 8px; }
+  .projects-header {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 10px 6px;
+    color: var(--text3);
+  }
+  .projects-header-label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; flex: 1; }
+  .icon-btn {
+    width: 20px; height: 20px;
+    border-radius: 5px; border: none;
+    background: transparent; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--text3);
+    transition: background 0.1s, color 0.1s;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.06); color: var(--text2); }
+  .icon-btn.accent { color: var(--accent); background: rgba(245,158,11,0.1); }
+  .icon-btn.accent:hover { background: rgba(245,158,11,0.18); }
+
+  .project-row {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .project-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px; cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: background 0.1s;
+  }
+  .project-header:hover { background: rgba(255,255,255,0.04); }
+  .project-header.active { background: rgba(245,158,11,0.06); }
+  .project-chevron { font-size: 9px; color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
+  .project-chevron.open { transform: rotate(90deg); }
+  .project-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .project-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); }
+  .sparkline { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+  .spark-bar { width: 3px; border-radius: 1px; background: var(--accent); opacity: 0.6; }
+
+  .chapter-list { padding: 2px 0 4px 16px; }
+  .chapter-row {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 2px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .chapter-row:hover { background: rgba(255,255,255,0.03); }
+  .chapter-row.active { background: rgba(245,158,11,0.07); }
+  .chapter-top { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+  .chapter-status-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .chapter-name { font-size: 12px; font-weight: 400; color: var(--text); flex: 1; }
+  .chapter-row.active .chapter-name { font-weight: 500; }
+  .chapter-pct { font-size: 11px; color: var(--text2); }
+  .chapter-row.active .chapter-pct { color: var(--accent); }
+  .chapter-bar-track { height: 2.5px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .chapter-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+
+  /* Sidebar footer */
+  .sidebar-progress {
+    padding: 8px 14px 6px;
+    border-top: 1px solid var(--border);
+  }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .progress-label span:first-child { font-size: 10px; color: var(--text3); }
+  .progress-label span:last-child { font-size: 10px; font-weight: 600; color: var(--accent); }
+  .progress-track { height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(to right, var(--accent), var(--accent2)); border-radius: 2px; }
+
+  .sidebar-footer {
+    padding: 8px 10px 12px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .footer-badges { display: flex; align-items: center; gap: 6px; padding: 0 4px; margin-bottom: 8px; }
+  .badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .footer-actions { display: flex; gap: 6px; }
+  .footer-btn {
+    flex: 1; height: 30px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--text3);
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+  }
+  .footer-btn:hover { background: rgba(255,255,255,0.07); color: var(--text2); border-color: var(--border2); }
+  .footer-btn.primary { color: var(--accent); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.06); }
+  .footer-btn.primary:hover { background: rgba(245,158,11,0.12); }
+
+  /* ─── Main content ────────────────────────────────────────── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+
+  .main-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; }
+  .main-scroll::-webkit-scrollbar { width: 6px; }
+  .main-scroll::-webkit-scrollbar-track { background: transparent; }
+  .main-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  .main-inner { padding: 22px 24px; max-width: 900px; }
+
+  /* Page header */
+  .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .sidebar-toggle {
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 13px; color: var(--text3);
+    transition: background 0.1s, color 0.1s;
+    flex-shrink: 0;
+  }
+  .sidebar-toggle:hover { background: rgba(255,255,255,0.07); color: var(--text2); }
+  .page-title { font-size: 20px; font-weight: 700; color: var(--text); }
+  .page-sub {
+    font-size: 12px; color: var(--text3); margin-top: 1px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .page-sub .dot { color: var(--border2); }
+  .page-sub .project-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--text2);
+  }
+  .page-sub .project-pill .dot-color { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* Grid */
+  .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .card-sm { padding: 13px 15px; }
+  .card-title {
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.6px; color: var(--text3); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card-title-icon { font-size: 11px; }
+
+  /* Project/chapter selector card */
+  .selector-card { }
+  .selector-row { display: flex; align-items: center; gap: 10px; }
+  .selector-label { font-size: 10px; color: var(--text3); width: 60px; flex-shrink: 0; }
+  .selector-pill {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--card2); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 5px 10px;
+    cursor: pointer; transition: border-color 0.1s, background 0.1s;
+    flex: 1;
+  }
+  .selector-pill:hover { border-color: var(--border); background: #222; }
+  .selector-pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .selector-pill-name { font-size: 12px; font-weight: 500; color: var(--text); flex: 1; }
+  .selector-pill-chevron { font-size: 10px; color: var(--text3); }
+  .selector-divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+  /* Entry card */
+  .entry-card { }
+  .entry-date-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .date-nav-btn {
+    width: 26px; height: 26px; border-radius: 6px;
+    background: var(--card2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 11px; color: var(--text3);
+    transition: background 0.1s, color 0.1s;
+  }
+  .date-nav-btn:hover { background: #252525; color: var(--text2); }
+  .date-label { flex: 1; font-size: 12px; font-weight: 500; color: var(--text2); text-align: center; }
+  .today-badge {
+    font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--accent); background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+    padding: 2px 6px; border-radius: 4px;
+  }
+
+  .entry-count-display {
+    text-align: center; margin: 8px 0;
+  }
+  .entry-count-big {
+    font-size: 44px; font-weight: 700; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, var(--text) 40%, var(--text2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .entry-count-unit { font-size: 14px; font-weight: 400; color: var(--text3); margin-left: 4px; }
+  .entry-delta {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; margin-top: 4px;
+    color: var(--green);
+  }
+  .entry-delta.neg { color: var(--red); }
+
+  .entry-input-row { display: flex; gap: 8px; margin-top: 14px; }
+  .entry-input {
+    flex: 1; background: var(--card2); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 8px 11px;
+    font-size: 13px; color: var(--text); font-family: inherit;
+    outline: none; transition: border-color 0.15s, background 0.15s;
+  }
+  .entry-input::placeholder { color: var(--text3); }
+  .entry-input:focus { border-color: rgba(245,158,11,0.4); background: #1c1c1c; }
+  .save-btn {
+    padding: 8px 16px; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; cursor: pointer;
+    font-size: 12px; font-weight: 600; color: #000;
+    transition: opacity 0.15s, transform 0.1s;
+    font-family: inherit;
+  }
+  .save-btn:hover { opacity: 0.9; transform: translateY(-0.5px); }
+  .save-btn:active { transform: translateY(0); }
+
+  /* Goal progress ring */
+  .ring-container { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+  .ring-label {
+    position: absolute; text-align: center;
+  }
+  .ring-pct { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
+  .ring-sub { font-size: 9px; color: var(--text3); margin-top: 2px; }
+
+  /* Stat cards */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 13px;
+  }
+  .stat-icon { font-size: 16px; margin-bottom: 8px; }
+  .stat-value { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
+  .stat-label { font-size: 10px; color: var(--text3); margin-top: 3px; }
+
+  /* Week calendar */
+  .week-cal { display: flex; gap: 6px; justify-content: space-between; }
+  .cal-day { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .cal-day-label { font-size: 9.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.3px; }
+  .cal-day-num { font-size: 11px; font-weight: 500; color: var(--text2); }
+  .cal-dot { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+  .cal-dot.empty { background: var(--card2); border: 1px solid var(--border); }
+  .cal-dot.low { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.2); }
+  .cal-dot.mid { background: rgba(245,158,11,0.3); border: 1px solid rgba(245,158,11,0.35); }
+  .cal-dot.high { background: rgba(245,158,11,0.55); border: 1px solid rgba(245,158,11,0.5); }
+  .cal-dot.today { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; }
+  .cal-dot-inner { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.9; }
+  .cal-dot.today .cal-dot-inner { background: #000; opacity: 0.6; }
+  .cal-dot.empty .cal-dot-inner { display: none; }
+
+  /* Chapter progress card */
+  .chapter-progress-list { display: flex; flex-direction: column; gap: 10px; }
+  .ch-prog-item { }
+  .ch-prog-header { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .ch-prog-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .ch-prog-name { font-size: 12px; color: var(--text2); flex: 1; }
+  .ch-prog-pct { font-size: 11px; font-weight: 600; }
+  .ch-prog-track { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .ch-prog-fill { height: 100%; border-radius: 2px; }
+
+  /* Mini sparkline chart */
+  .mini-chart { height: 54px; display: flex; align-items: flex-end; gap: 4px; }
+  .chart-bar {
+    flex: 1; border-radius: 3px 3px 0 0;
+    background: rgba(245,158,11,0.2);
+    transition: background 0.1s;
+    position: relative;
+    cursor: default;
+  }
+  .chart-bar:hover { background: rgba(245,158,11,0.4); }
+  .chart-bar.today-bar { background: linear-gradient(to top, var(--accent), var(--accent2)); opacity: 0.85; }
+  .chart-labels { display: flex; gap: 4px; margin-top: 5px; }
+  .chart-label { flex: 1; text-align: center; font-size: 8.5px; color: var(--text3); }
+
+  /* Velocity card */
+  .velocity-row { display: flex; align-items: center; justify-content: space-between; }
+  .velocity-big { font-size: 32px; font-weight: 700; color: var(--text); }
+  .velocity-unit { font-size: 12px; color: var(--text3); margin-top: 4px; }
+  .velocity-trend { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--green); }
+
+  /* Planning card */
+  .planning-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .planning-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .planning-row:first-child { padding-top: 0; }
+  .planning-key { font-size: 12px; color: var(--text3); }
+  .planning-val { font-size: 12px; font-weight: 600; color: var(--text); }
+  .planning-badge {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 4px;
+  }
+  .planning-badge.green { background: rgba(34,197,94,0.1); color: var(--green); }
+  .planning-badge.amber { background: rgba(245,158,11,0.1); color: var(--accent); }
+  .planning-badge.blue { background: rgba(59,130,246,0.1); color: var(--blue); }
+
+  /* Goal completion ring card */
+  .ring-card { display: flex; flex-direction: column; align-items: center; padding: 18px 16px; }
+  .ring-card .card-title { align-self: flex-start; margin-bottom: 16px; }
+  .ring-stats { display: flex; gap: 24px; margin-top: 14px; text-align: center; }
+  .ring-stat-val { font-size: 16px; font-weight: 700; color: var(--text); }
+  .ring-stat-label { font-size: 9.5px; color: var(--text3); margin-top: 2px; }
+
+  /* Streak highlight card */
+  .streak-card-inner { display: flex; align-items: center; gap: 14px; }
+  .streak-fire { font-size: 36px; }
+  .streak-days { font-size: 40px; font-weight: 800; color: var(--accent); line-height: 1; }
+  .streak-label { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .streak-dots { display: flex; gap: 4px; margin-top: 10px; }
+  .streak-milestone { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* Pill tag */
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 600;
+  }
+  .pill.amber { background: rgba(245,158,11,0.12); color: var(--accent); border: 1px solid rgba(245,158,11,0.2); }
+  .pill.green { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+  .pill.blue { background: rgba(59,130,246,0.1); color: var(--blue); border: 1px solid rgba(59,130,246,0.15); }
+
+  /* Weekly challenge */
+  .challenge-card-inner { }
+  .challenge-bar-track { height: 4px; background: var(--border2); border-radius: 2px; margin: 10px 0 8px; overflow: hidden; }
+  .challenge-bar-fill { height: 100%; background: linear-gradient(to right, var(--accent), var(--accent2)); border-radius: 2px; }
+  .challenge-stats { display: flex; justify-content: space-between; }
+  .challenge-stat { text-align: center; }
+  .challenge-stat-val { font-size: 14px; font-weight: 700; color: var(--text); }
+  .challenge-stat-label { font-size: 9.5px; color: var(--text3); margin-top: 2px; }
+
+  /* "Overview" placeholder pages */
+  .placeholder-content { padding: 40px; text-align: center; color: var(--text3); }
+  .placeholder-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.3; }
+  .placeholder-title { font-size: 16px; font-weight: 600; color: var(--text2); margin-bottom: 6px; }
+  .placeholder-sub { font-size: 13px; }
+
+  /* Scrollbar for main */
+  .main-scroll::-webkit-scrollbar { width: 6px; }
+  .main-scroll::-webkit-scrollbar-track { background: transparent; }
+  .main-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+
+  /* SVG ring */
+  .ring-svg { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: var(--card2); }
+  .ring-progress { fill: none; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+
+  /* Tooltip on bar hover */
+  .chart-bar-wrap { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; }
+  .chart-bar-wrap:hover .bar-tooltip { display: block; }
+  .bar-tooltip {
+    display: none; position: absolute; bottom: 100%; margin-bottom: 5px;
+    background: #1a1a1a; border: 1px solid var(--border2);
+    border-radius: 5px; padding: 3px 7px;
+    font-size: 10px; color: var(--text); white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* Transition classes */
+  .fade { animation: fadeIn 0.15s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hidden { display: none !important; }
+
+  /* macOS traffic lights sim */
+  .traffic-lights { display: flex; gap: 7px; padding: 14px 16px 0; flex-shrink: 0; }
+  .tl { width: 12px; height: 12px; border-radius: 50%; }
+  .tl.red { background: #ff5f57; }
+  .tl.yellow { background: #ffbd2e; }
+  .tl.green { background: #28ca42; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ─── SIDEBAR ─────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <!-- macOS traffic lights -->
+    <div class="traffic-lights">
+      <div class="tl red"></div>
+      <div class="tl yellow"></div>
+      <div class="tl green"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="app-icon">✍️</div>
+      <span class="app-title">Writing Process</span>
+      <div class="streak-badge"><span class="flame">🔥</span> 14</div>
+    </div>
+
+    <!-- Scrollable nav + projects -->
+    <div class="sidebar-scroll">
+
+      <!-- NAV: Écriture -->
+      <div class="nav-group">
+        <div class="nav-group-label">Écriture</div>
+        <div class="nav-item active" onclick="setNav(this, 'dashboard')">
+          <span class="nav-icon">⌂</span>
+          <span>Tableau de bord</span>
+          <span class="nav-shortcut">⌘2</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this, 'overview')">
+          <span class="nav-icon">⊞</span>
+          <span>Vue d'ensemble</span>
+          <span class="nav-shortcut">⌘1</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this, 'deadlines')">
+          <span class="nav-icon">📅</span>
+          <span>Échéances</span>
+          <span class="nav-shortcut">⌘3</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this, 'kanban')">
+          <span class="nav-icon">▦</span>
+          <span>Kanban</span>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- NAV: Analyse -->
+      <div class="nav-group">
+        <div class="nav-group-label">Analyse</div>
+        <div class="nav-item" onclick="setNav(this, 'charts')">
+          <span class="nav-icon">↗</span>
+          <span>Graphiques</span>
+          <span class="nav-shortcut">⌘5</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this, 'activity')">
+          <span class="nav-icon">⊟</span>
+          <span>Activité</span>
+          <span class="nav-shortcut">⌘6</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this, 'calendar')">
+          <span class="nav-icon">🗓</span>
+          <span>Calendrier</span>
+          <span class="nav-shortcut">⌘8</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this, 'history')">
+          <span class="nav-icon">↺</span>
+          <span>Historique</span>
+          <span class="nav-shortcut">⌘7</span>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- NAV: Outils -->
+      <div class="nav-group">
+        <div class="nav-group-label">Outils</div>
+        <div class="nav-item" onclick="setNav(this, 'timer')">
+          <span class="nav-icon">⏱</span>
+          <span>Minuteur</span>
+          <span class="nav-shortcut">⌘9</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this, 'search')">
+          <span class="nav-icon">⌕</span>
+          <span>Recherche</span>
+          <span class="nav-shortcut">⌘4</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this, 'achievements')">
+          <span class="nav-icon">🏅</span>
+          <span>Accomplissements</span>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Projects -->
+      <div class="projects-section">
+        <div class="projects-header">
+          <span class="projects-header-label">Projets</span>
+          <button class="icon-btn" title="Nouveau dossier">📁</button>
+          <button class="icon-btn accent" title="Nouveau projet">+</button>
+        </div>
+
+        <!-- Project 1 — Ma Thèse (expanded) -->
+        <div class="project-row">
+          <div class="project-header active" onclick="toggleProject('thesis')">
+            <span class="project-chevron open" id="thesis-chevron">▶</span>
+            <span class="project-dot" style="background:#f59e0b"></span>
+            <span class="project-name">Ma Thèse</span>
+            <!-- mini sparkline -->
+            <div class="sparkline">
+              <div class="spark-bar" style="height:4px"></div>
+              <div class="spark-bar" style="height:8px"></div>
+              <div class="spark-bar" style="height:6px"></div>
+              <div class="spark-bar" style="height:11px"></div>
+              <div class="spark-bar" style="height:7px"></div>
+              <div class="spark-bar" style="height:14px"></div>
+              <div class="spark-bar" style="height:10px"></div>
+            </div>
+          </div>
+          <div class="chapter-list" id="thesis-chapters">
+            <div class="chapter-row active">
+              <div class="chapter-top">
+                <div class="chapter-status-dot" style="background:#f59e0b"></div>
+                <span class="chapter-name">Introduction</span>
+                <span class="chapter-pct">78%</span>
+              </div>
+              <div class="chapter-bar-track">
+                <div class="chapter-bar-fill" style="width:78%;background:linear-gradient(to right,#f59e0b,#ea580c)"></div>
+              </div>
+            </div>
+            <div class="chapter-row">
+              <div class="chapter-top">
+                <div class="chapter-status-dot" style="background:#3b82f6"></div>
+                <span class="chapter-name">Chapitre 1</span>
+                <span class="chapter-pct">45%</span>
+              </div>
+              <div class="chapter-bar-track">
+                <div class="chapter-bar-fill" style="width:45%;background:#3b82f6"></div>
+              </div>
+            </div>
+            <div class="chapter-row">
+              <div class="chapter-top">
+                <div class="chapter-status-dot" style="background:#555"></div>
+                <span class="chapter-name">Chapitre 2</span>
+                <span class="chapter-pct">12%</span>
+              </div>
+              <div class="chapter-bar-track">
+                <div class="chapter-bar-fill" style="width:12%;background:#555"></div>
+              </div>
+            </div>
+            <div class="chapter-row">
+              <div class="chapter-top">
+                <div class="chapter-status-dot" style="background:#22c55e"></div>
+                <span class="chapter-name">Conclusion</span>
+                <span class="chapter-pct">100%</span>
+              </div>
+              <div class="chapter-bar-track">
+                <div class="chapter-bar-fill" style="width:100%;background:#22c55e"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 — collapsed -->
+        <div class="project-row" style="margin-top:4px">
+          <div class="project-header" onclick="toggleProject('article')">
+            <span class="project-chevron" id="article-chevron">▶</span>
+            <span class="project-dot" style="background:#3b82f6"></span>
+            <span class="project-name">Article EPFL</span>
+            <div class="sparkline">
+              <div class="spark-bar" style="height:5px;background:#3b82f6"></div>
+              <div class="spark-bar" style="height:9px;background:#3b82f6"></div>
+              <div class="spark-bar" style="height:4px;background:#3b82f6"></div>
+              <div class="spark-bar" style="height:12px;background:#3b82f6"></div>
+              <div class="spark-bar" style="height:8px;background:#3b82f6"></div>
+            </div>
+          </div>
+          <div class="chapter-list hidden" id="article-chapters">
+            <div class="chapter-row">
+              <div class="chapter-top">
+                <div class="chapter-status-dot" style="background:#3b82f6"></div>
+                <span class="chapter-name">Abstract</span>
+                <span class="chapter-pct">90%</span>
+              </div>
+              <div class="chapter-bar-track">
+                <div class="chapter-bar-fill" style="width:90%;background:#3b82f6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project overall progress -->
+    <div class="sidebar-progress">
+      <div class="progress-label">
+        <span>Ma Thèse — global</span>
+        <span>47%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:47%"></div>
+      </div>
+    </div>
+
+    <!-- Streak badges + footer actions -->
+    <div class="sidebar-footer">
+      <div class="footer-badges">
+        <span style="font-size:9px;color:var(--text3)">🔥</span>
+        <div class="badge-dot" style="background:#f59e0b" title="Étincelle — 3j ✓"></div>
+        <div class="badge-dot" style="background:#f97316" title="Régulier — 7j ✓"></div>
+        <div class="badge-dot" style="background:#ea580c" title="Persévérant — 14j ✓"></div>
+        <div class="badge-dot" style="background:#333" title="Acharné — 30j (verrouillé)"></div>
+        <div class="badge-dot" style="background:#333" title="Légende — 60j (verrouillé)"></div>
+        <div class="badge-dot" style="background:#333" title="Immortel — 100j (verrouillé)"></div>
+        <span style="font-size:9px;color:var(--accent);font-weight:600;margin-left:auto">14 j</span>
+      </div>
+      <div class="footer-actions">
+        <button class="footer-btn" title="Importer">↓</button>
+        <button class="footer-btn" title="Exporter">↑</button>
+        <button class="footer-btn primary" title="Nouveau projet">+</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN CONTENT ─────────────────────────────────── -->
+  <main class="main">
+    <div class="main-scroll">
+      <!-- DASHBOARD PAGE -->
+      <div id="page-dashboard" class="main-inner fade">
+        <!-- Page header -->
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()" title="Afficher/masquer la barre latérale">☰</button>
+          <div>
+            <div class="page-title">Tableau de bord</div>
+            <div class="page-sub">
+              <span>Mercredi 23 avril 2026</span>
+              <span class="dot">·</span>
+              <span class="project-pill">
+                <span class="dot-color"></span>
+                Ma Thèse
+              </span>
+              <span class="dot">›</span>
+              <span style="color:var(--text2);font-weight:500">Introduction</span>
+            </div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <span class="pill amber">🔥 Série active</span>
+            <button style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;color:var(--text2);cursor:pointer;font-size:12px;font-family:inherit" title="Paramètres">⚙</button>
+          </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="dashboard-grid">
+
+          <!-- ── LEFT COLUMN ── -->
+          <div style="display:flex;flex-direction:column;gap:14px">
+
+            <!-- Selector card -->
+            <div class="card card-sm">
+              <div class="card-title"><span class="card-title-icon">📂</span> Projet actif</div>
+              <div class="selector-row">
+                <span class="selector-label">Projet</span>
+                <div class="selector-pill">
+                  <div class="selector-pill-dot" style="background:#f59e0b"></div>
+                  <span class="selector-pill-name">Ma Thèse</span>
+                  <span class="selector-pill-chevron">⌄</span>
+                </div>
+              </div>
+              <div class="selector-divider"></div>
+              <div class="selector-row">
+                <span class="selector-label">Chapitre</span>
+                <div class="selector-pill">
+                  <div class="selector-pill-dot" style="background:#f59e0b"></div>
+                  <span class="selector-pill-name">Introduction</span>
+                  <span class="selector-pill-chevron">⌄</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Entry card -->
+            <div class="card entry-card">
+              <div class="entry-date-row">
+                <button class="date-nav-btn">‹</button>
+                <span class="date-label">Aujourd'hui</span>
+                <span class="today-badge">Auj.</span>
+                <button class="date-nav-btn">›</button>
+              </div>
+
+              <div class="entry-count-display">
+                <div>
+                  <span class="entry-count-big">12 450</span>
+                  <span class="entry-count-unit">car.</span>
+                </div>
+                <div class="entry-delta">
+                  ↑ +1 240 depuis hier
+                </div>
+              </div>
+
+              <div style="margin-top:14px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                  <span style="font-size:10px;color:var(--text3)">Objectif quotidien — 1 500 car.</span>
+                  <span style="font-size:10px;font-weight:600;color:var(--accent)">83%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width:83%"></div>
+                </div>
+              </div>
+
+              <div class="entry-input-row" style="margin-top:14px">
+                <input class="entry-input" type="number" placeholder="Nouveau total…" />
+                <button class="save-btn">Enregistrer</button>
+              </div>
+
+              <div style="margin-top:10px">
+                <input class="entry-input" style="width:100%" type="text" placeholder="Note (optionnelle)…" />
+              </div>
+            </div>
+
+            <!-- Week mini-calendar -->
+            <div class="card card-sm">
+              <div class="card-title"><span class="card-title-icon">📆</span> Cette semaine</div>
+              <div class="week-cal">
+                <div class="cal-day">
+                  <span class="cal-day-label">Lun</span>
+                  <div class="cal-dot mid"><div class="cal-dot-inner"></div></div>
+                  <span class="cal-day-num" style="font-size:9.5px;color:var(--text3)">1.1k</span>
+                </div>
+                <div class="cal-day">
+                  <span class="cal-day-label">Mar</span>
+                  <div class="cal-dot high"><div class="cal-dot-inner"></div></div>
+                  <span class="cal-day-num" style="font-size:9.5px;color:var(--text3)">2.4k</span>
+                </div>
+                <div class="cal-day">
+                  <span class="cal-day-label">Mer</span>
+                  <div class="cal-dot low"><div class="cal-dot-inner"></div></div>
+                  <span class="cal-day-num" style="font-size:9.5px;color:var(--text3)">680</span>
+                </div>
+                <div class="cal-day">
+                  <span class="cal-day-label">Jeu</span>
+                  <div class="cal-dot mid"><div class="cal-dot-inner"></div></div>
+                  <span class="cal-day-num" style="font-size:9.5px;color:var(--text3)">1.3k</span>
+                </div>
+                <div class="cal-day">
+                  <span class="cal-day-label">Ven</span>
+                  <div class="cal-dot high"><div class="cal-dot-inner"></div></div>
+                  <span class="cal-day-num" style="font-size:9.5px;color:var(--text3)">2.1k</span>
+                </div>
+                <div class="cal-day">
+                  <span class="cal-day-label">Sam</span>
+                  <div class="cal-dot empty"><div class="cal-dot-inner"></div></div>
+                  <span class="cal-day-num" style="font-size:9.5px;color:var(--text3)">—</span>
+                </div>
+                <div class="cal-day">
+                  <span class="cal-day-label">Dim</span>
+                  <div class="cal-dot today"><div class="cal-dot-inner"></div></div>
+                  <span class="cal-day-num" style="font-size:9.5px;color:var(--accent);font-weight:600">1.2k</span>
+                </div>
+              </div>
+              <!-- Week total bar -->
+              <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+                  <span style="font-size:10px;color:var(--text3)">Objectif hebdo — 10 500 car.</span>
+                  <span style="font-size:10px;font-weight:600;color:var(--accent)">82%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width:82%"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ── RIGHT COLUMN ── -->
+          <div style="display:flex;flex-direction:column;gap:14px">
+
+            <!-- Streak card -->
+            <div class="card card-sm">
+              <div class="streak-card-inner">
+                <div class="streak-fire">🔥</div>
+                <div>
+                  <div class="streak-days">14</div>
+                  <div class="streak-label">jours consécutifs</div>
+                  <div class="streak-dots" style="margin-top:8px">
+                    <div class="streak-milestone" style="background:#f59e0b" title="3j ✓"></div>
+                    <div class="streak-milestone" style="background:#f97316" title="7j ✓"></div>
+                    <div class="streak-milestone" style="background:#ea580c" title="14j ✓"></div>
+                    <div class="streak-milestone" style="background:#333" title="30j"></div>
+                    <div class="streak-milestone" style="background:#333" title="60j"></div>
+                    <div class="streak-milestone" style="background:#333" title="100j"></div>
+                  </div>
+                </div>
+                <div style="margin-left:auto;text-align:right">
+                  <div style="font-size:10px;color:var(--text3)">Record</div>
+                  <div style="font-size:20px;font-weight:700;color:var(--text)">21</div>
+                  <div style="font-size:9.5px;color:var(--text3)">jours</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4-stat grid -->
+            <div class="stat-grid">
+              <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-value">1 240</div>
+                <div class="stat-label">car/jour (14j)</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">67%</div>
+                <div class="stat-label">objectif semaine</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value">8 740</div>
+                <div class="stat-label">cette semaine</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🏁</div>
+                <div class="stat-value">63 j</div>
+                <div class="stat-label">avant la fin</div>
+              </div>
+            </div>
+
+            <!-- Mini bar chart -->
+            <div class="card card-sm">
+              <div class="card-title"><span class="card-title-icon">📊</span> 7 derniers jours</div>
+              <div class="mini-chart">
+                <div class="chart-bar-wrap">
+                  <div class="bar-tooltip">Lun · 1 100</div>
+                  <div class="chart-bar" style="height:38%"></div>
+                </div>
+                <div class="chart-bar-wrap">
+                  <div class="bar-tooltip">Mar · 2 400</div>
+                  <div class="chart-bar" style="height:82%"></div>
+                </div>
+                <div class="chart-bar-wrap">
+                  <div class="bar-tooltip">Mer · 680</div>
+                  <div class="chart-bar" style="height:23%"></div>
+                </div>
+                <div class="chart-bar-wrap">
+                  <div class="bar-tooltip">Jeu · 1 300</div>
+                  <div class="chart-bar" style="height:45%"></div>
+                </div>
+                <div class="chart-bar-wrap">
+                  <div class="bar-tooltip">Ven · 2 100</div>
+                  <div class="chart-bar" style="height:72%"></div>
+                </div>
+                <div class="chart-bar-wrap">
+                  <div class="bar-tooltip">Sam · 0</div>
+                  <div class="chart-bar" style="height:3%"></div>
+                </div>
+                <div class="chart-bar-wrap">
+                  <div class="bar-tooltip">Dim · 1 240</div>
+                  <div class="chart-bar today-bar" style="height:43%"></div>
+                </div>
+              </div>
+              <div class="chart-labels">
+                <span class="chart-label">L</span>
+                <span class="chart-label">M</span>
+                <span class="chart-label">M</span>
+                <span class="chart-label">J</span>
+                <span class="chart-label">V</span>
+                <span class="chart-label">S</span>
+                <span class="chart-label" style="color:var(--accent)">D</span>
+              </div>
+            </div>
+
+            <!-- Chapter progress -->
+            <div class="card card-sm">
+              <div class="card-title"><span class="card-title-icon">📖</span> Progression des chapitres</div>
+              <div class="chapter-progress-list">
+                <div class="ch-prog-item">
+                  <div class="ch-prog-header">
+                    <div class="ch-prog-dot" style="background:#f59e0b"></div>
+                    <span class="ch-prog-name">Introduction</span>
+                    <span class="ch-prog-pct" style="color:#f59e0b">78%</span>
+                  </div>
+                  <div class="ch-prog-track">
+                    <div class="ch-prog-fill" style="width:78%;background:linear-gradient(to right,#f59e0b,#ea580c)"></div>
+                  </div>
+                </div>
+                <div class="ch-prog-item">
+                  <div class="ch-prog-header">
+                    <div class="ch-prog-dot" style="background:#3b82f6"></div>
+                    <span class="ch-prog-name">Chapitre 1</span>
+                    <span class="ch-prog-pct" style="color:#3b82f6">45%</span>
+                  </div>
+                  <div class="ch-prog-track">
+                    <div class="ch-prog-fill" style="width:45%;background:#3b82f6"></div>
+                  </div>
+                </div>
+                <div class="ch-prog-item">
+                  <div class="ch-prog-header">
+                    <div class="ch-prog-dot" style="background:#555"></div>
+                    <span class="ch-prog-name">Chapitre 2</span>
+                    <span class="ch-prog-pct" style="color:#888">12%</span>
+                  </div>
+                  <div class="ch-prog-track">
+                    <div class="ch-prog-fill" style="width:12%;background:#555"></div>
+                  </div>
+                </div>
+                <div class="ch-prog-item">
+                  <div class="ch-prog-header">
+                    <div class="ch-prog-dot" style="background:#22c55e"></div>
+                    <span class="ch-prog-name">Conclusion</span>
+                    <span class="ch-prog-pct" style="color:#22c55e">100% ✓</span>
+                  </div>
+                  <div class="ch-prog-track">
+                    <div class="ch-prog-fill" style="width:100%;background:#22c55e"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Planning -->
+            <div class="card card-sm">
+              <div class="card-title"><span class="card-title-icon">🗺</span> Projection</div>
+              <div>
+                <div class="planning-row">
+                  <span class="planning-key">Vitesse actuelle</span>
+                  <span class="planning-val">1 240 car/j</span>
+                </div>
+                <div class="planning-row">
+                  <span class="planning-key">Restant (thèse)</span>
+                  <span class="planning-val">78 240 car.</span>
+                </div>
+                <div class="planning-row">
+                  <span class="planning-key">Date estimée</span>
+                  <span class="planning-badge amber">25 juin 2026</span>
+                </div>
+                <div class="planning-row">
+                  <span class="planning-key">Objectif adapté</span>
+                  <span class="planning-badge blue">1 500 car/j</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- PLACEHOLDER pages -->
+      <div id="page-overview" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Vue d'ensemble</div><div class="page-sub">Cockpit de rédaction</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">⊞</div>
+          <div class="placeholder-title">Vue d'ensemble</div>
+          <div class="placeholder-sub">Statistiques globales, pipeline de chapitres,<br>rapport directeur.</div>
+        </div>
+      </div>
+      <div id="page-deadlines" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Échéances</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">📅</div>
+          <div class="placeholder-title">Tableau Kanban des échéances</div>
+          <div class="placeholder-sub">Plan → Rédaction → Révision → Terminé</div>
+        </div>
+      </div>
+      <div id="page-kanban" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Kanban</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">▦</div>
+          <div class="placeholder-title">Organisation Kanban</div>
+          <div class="placeholder-sub">Organisation des chapitres par dossiers.</div>
+        </div>
+      </div>
+      <div id="page-charts" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Graphiques</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">↗</div>
+          <div class="placeholder-title">Graphiques de progression</div>
+          <div class="placeholder-sub">Courbes multi-chapitres, histogrammes, tendances.</div>
+        </div>
+      </div>
+      <div id="page-activity" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Activité</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">⊟</div>
+          <div class="placeholder-title">Carte de chaleur</div>
+          <div class="placeholder-sub">Heatmap GitHub-style de ton activité.</div>
+        </div>
+      </div>
+      <div id="page-calendar" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Calendrier</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">🗓</div>
+          <div class="placeholder-title">Vue calendrier</div>
+          <div class="placeholder-sub">Mois avec entrées et dates épinglées.</div>
+        </div>
+      </div>
+      <div id="page-history" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Historique</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">↺</div>
+          <div class="placeholder-title">Historique complet</div>
+          <div class="placeholder-sub">Toutes les entrées avec filtres et recherche.</div>
+        </div>
+      </div>
+      <div id="page-timer" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Minuteur Pomodoro</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">⏱</div>
+          <div class="placeholder-title">Minuteur Pomodoro</div>
+          <div class="placeholder-sub">Focus · Pause courte · Pause longue</div>
+        </div>
+      </div>
+      <div id="page-search" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Recherche</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">⌕</div>
+          <div class="placeholder-title">Recherche plein texte</div>
+          <div class="placeholder-sub">Recherche dans toutes les notes et entrées.</div>
+        </div>
+      </div>
+      <div id="page-achievements" class="main-inner hidden">
+        <div class="page-header">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div><div class="page-title">Accomplissements</div></div>
+        </div>
+        <div class="placeholder-content">
+          <div class="placeholder-icon">🏅</div>
+          <div class="placeholder-title">Badges &amp; Accomplissements</div>
+          <div class="placeholder-sub">Séries, défis hebdomadaires, jalons.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Nav switching
+  function setNav(el, page) {
+    // Deactivate all nav items
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+
+    // Hide all pages
+    document.querySelectorAll('[id^="page-"]').forEach(p => {
+      p.classList.add('hidden');
+      p.classList.remove('fade');
+    });
+
+    // Show target page
+    const target = document.getElementById('page-' + page);
+    if (target) {
+      target.classList.remove('hidden');
+      requestAnimationFrame(() => target.classList.add('fade'));
+    }
+  }
+
+  // Sidebar toggle
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.style.display = sidebar.style.display === 'none' ? 'flex' : 'none';
+  }
+
+  // Project expand/collapse
+  function toggleProject(id) {
+    const chapters = document.getElementById(id + '-chapters');
+    const chevron = document.getElementById(id + '-chevron');
+    if (chapters.classList.contains('hidden')) {
+      chapters.classList.remove('hidden');
+      chevron.classList.add('open');
+    } else {
+      chapters.classList.add('hidden');
+      chevron.classList.remove('open');
+    }
+  }
+
+  // Interactive: save button flash
+  document.querySelector('.save-btn').addEventListener('click', function() {
+    const orig = this.textContent;
+    this.textContent = '✓ Enregistré';
+    this.style.background = '#22c55e';
+    setTimeout(() => {
+      this.textContent = orig;
+      this.style.background = '';
+    }, 1600);
+  });
+</script>
+</body>
+</html>
