@@ -21,10 +21,10 @@ final class QuickEntryPanelManager {
         }
 
         let hosting = NSHostingView(rootView: contentView)
-        hosting.frame = NSRect(x: 0, y: 0, width: 360, height: 290)
+        hosting.frame = NSRect(x: 0, y: 0, width: 360, height: 320)
 
         let p = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 290),
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 320),
             styleMask: [.titled, .closable, .fullSizeContentView, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -65,7 +65,15 @@ struct QuickEntryView: View {
     @State private var savedConfirmation = false
     @State private var selectedProjectId: UUID? = nil
     @State private var selectedChapterId: UUID? = nil
+    @State private var targetIsYesterday: Bool = false
     @FocusState private var inputFocused: Bool
+
+    private var targetDate: String {
+        guard targetIsYesterday else { return DataStore.today }
+        let cal = Calendar(identifier: .gregorian)
+        let yesterday = cal.date(byAdding: .day, value: -1, to: Date()) ?? Date()
+        return DataStore.dateString(from: yesterday)
+    }
 
     private var selectedProject: Project? {
         let id = selectedProjectId ?? store.data.activeProjectId
@@ -85,7 +93,7 @@ struct QuickEntryView: View {
     }
 
     private var currentTotal: Int {
-        selectedChapter?.entryForDate(DataStore.today)?.totalCount ?? 0
+        selectedChapter?.entryForDate(targetDate)?.totalCount ?? 0
     }
 
     /// Différence entre l'input et le total actuel : combien sera ajouté/retiré au save.
@@ -145,6 +153,24 @@ struct QuickEntryView: View {
                 }
 
                 Divider()
+
+                // Toggle Aujourd'hui / Hier — pour rattraper une saisie oubliée
+                HStack(spacing: 6) {
+                    quickEntryDateChip("Aujourd'hui", selected: !targetIsYesterday) {
+                        targetIsYesterday = false
+                        refreshInput()
+                    }
+                    quickEntryDateChip("Hier", selected: targetIsYesterday) {
+                        targetIsYesterday = true
+                        refreshInput()
+                    }
+                    Spacer()
+                    if targetIsYesterday {
+                        Label("Saisie passée", systemImage: "clock.arrow.circlepath")
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundColor(.orange)
+                    }
+                }
 
                 // Sélecteurs compacts
                 if store.data.projects.count > 1 {
@@ -288,7 +314,7 @@ struct QuickEntryView: View {
         guard let count = inputInt,
               let chapter = selectedChapter,
               let project = selectedProject else { return }
-        store.setTotalForDate(count, for: chapter.id, in: project.id, date: DataStore.today)
+        store.setTotalForDate(count, for: chapter.id, in: project.id, date: targetDate)
         // Sync active project/chapter
         store.data.activeProjectId = project.id
         if let idx = store.data.projects.firstIndex(where: { $0.id == project.id }) {
@@ -302,6 +328,20 @@ struct QuickEntryView: View {
     }
 
     private func refreshInput() {
-        inputText = selectedChapter?.entryForDate(DataStore.today).map { "\($0.totalCount)" } ?? ""
+        inputText = selectedChapter?.entryForDate(targetDate).map { "\($0.totalCount)" } ?? ""
+    }
+
+    @ViewBuilder
+    private func quickEntryDateChip(_ label: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 10, weight: selected ? .semibold : .regular))
+                .foregroundColor(selected ? .white : .labelMuted)
+                .padding(.horizontal, 9).padding(.vertical, 4)
+                .background(selected ? Color.accent.opacity(0.85) : Color.white.opacity(0.05))
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(selected ? Color.accent : Color.white.opacity(0.08), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
     }
 }

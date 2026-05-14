@@ -1371,6 +1371,7 @@ struct ChapterSidebarRow: View {
                 .stroke(isActive ? Color.accent.opacity(0.25) : Color.cardBorder, lineWidth: 1))
         }
         .buttonStyle(.plain)
+        .help(rowTooltip)
         // Clic droit — menu contextuel
         .contextMenu {
             Button("Modifier") { onEdit() }
@@ -1480,6 +1481,32 @@ struct ChapterSidebarRow: View {
         if days == 1 { return "hier" }
         if days < 30 { return "il y a \(days) j" }
         return DataStore.formatMonthYear(date)
+    }
+
+    /// Tooltip riche au survol du chapitre : statut, progression, dernière modif, deadline.
+    private var rowTooltip: String {
+        var lines: [String] = [chapter.name]
+        if let st = chapter.status, !chapter.isCompleted {
+            lines.append("Statut : \(st.label)")
+        } else if chapter.isCompleted {
+            lines.append("Statut : Terminé")
+        }
+        if goal > 0 {
+            lines.append("Progression : \(store.formatCount(latest)) / \(store.formatCount(goal)) (\(percentage) %)")
+        } else if latest > 0 {
+            lines.append("Total : \(store.formatCount(latest))")
+        }
+        if let lastDate = chapter.entries.map(\.date).max(),
+           let parsed = DataStore.parseDate(lastDate) {
+            lines.append("Dernière saisie : \(relativeDate(parsed))")
+        }
+        if !chapter.isCompleted, let deadline = chapter.deadline, let date = DataStore.parseDate(deadline) {
+            lines.append("Échéance : \(DataStore.formatDate(date))")
+        }
+        if chapter.priority == .high && !chapter.isCompleted {
+            lines.append("Priorité haute")
+        }
+        return lines.joined(separator: "\n")
     }
 
     private func projectionLabel(_ date: Date) -> String {
