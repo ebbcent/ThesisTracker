@@ -96,6 +96,9 @@ struct MenuBarEntryView: View {
                     if store.data.dailyGoal > 0 {
                         progressBar
                     }
+
+                    // Mini-sparkline 7 derniers jours
+                    sevenDaySparkline
                 }
                 .padding(.horizontal, 14).padding(.vertical, 12)
             }
@@ -108,9 +111,21 @@ struct MenuBarEntryView: View {
             Divider()
 
             // Footer
-            HStack {
+            HStack(spacing: 10) {
                 Button("Ouvrir l'app") { openMainWindow() }
                     .font(.system(size: 11)).foregroundColor(.accent).buttonStyle(.plain)
+                Button {
+                    QuickEntryPanelManager.shared.show(store: store)
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "bolt.fill").font(.system(size: 9))
+                        Text("Saisie rapide")
+                    }
+                    .font(.system(size: 11))
+                    .foregroundColor(.accentWarm)
+                }
+                .buttonStyle(.plain)
+                .help("Ouvrir le panneau de saisie rapide (⌘⇧Espace)")
                 Spacer()
                 if todayProgress > 0 {
                     Text("+\(store.formatCountShort(todayProgress)) aujourd'hui")
@@ -294,6 +309,48 @@ struct MenuBarEntryView: View {
                 .overlay(Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Sparkline 7 jours
+
+    private var sevenDaySparkline: some View {
+        let totals = store.lastSevenDaysTotals
+        let maxVal = max(1, totals.max() ?? 1)
+        let avg = store.sevenDayAverage
+        return VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("7 derniers jours")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.labelMuted)
+                Spacer()
+                Text("Moy. \(store.formatCountShort(avg))/j")
+                    .font(.system(size: 10))
+                    .foregroundColor(.labelMuted.opacity(0.75))
+            }
+            HStack(alignment: .bottom, spacing: 3) {
+                ForEach(Array(totals.enumerated()), id: \.offset) { idx, value in
+                    let h = max(2, CGFloat(value) / CGFloat(maxVal) * 22)
+                    let isToday = idx == totals.count - 1
+                    RoundedRectangle(cornerRadius: 1.5)
+                        .fill(value == 0 ? Color.labelMuted.opacity(0.2)
+                              : isToday ? Color.accent
+                              : Color.accent.opacity(0.55))
+                        .frame(height: h)
+                        .help(sparklineTooltip(daysAgo: totals.count - 1 - idx, value: value))
+                }
+            }
+            .frame(height: 24)
+        }
+    }
+
+    private func sparklineTooltip(daysAgo: Int, value: Int) -> String {
+        let label: String
+        switch daysAgo {
+        case 0: label = "Aujourd'hui"
+        case 1: label = "Hier"
+        default: label = "Il y a \(daysAgo) jours"
+        }
+        return "\(label) · \(store.formatCount(value))"
     }
 
     // MARK: - Progress

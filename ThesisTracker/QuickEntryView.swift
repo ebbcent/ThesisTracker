@@ -21,10 +21,10 @@ final class QuickEntryPanelManager {
         }
 
         let hosting = NSHostingView(rootView: contentView)
-        hosting.frame = NSRect(x: 0, y: 0, width: 360, height: 230)
+        hosting.frame = NSRect(x: 0, y: 0, width: 360, height: 290)
 
         let p = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 230),
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 290),
             styleMask: [.titled, .closable, .fullSizeContentView, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -86,6 +86,27 @@ struct QuickEntryView: View {
 
     private var currentTotal: Int {
         selectedChapter?.entryForDate(DataStore.today)?.totalCount ?? 0
+    }
+
+    /// Différence entre l'input et le total actuel : combien sera ajouté/retiré au save.
+    private var pendingDelta: Int? {
+        guard let n = inputInt else { return nil }
+        let delta = n - currentTotal
+        return delta == 0 ? nil : delta
+    }
+
+    private func deltaLabel(_ delta: Int) -> String {
+        let sign = delta >= 0 ? "+" : "−"
+        return "\(sign)\(store.formatCountShort(abs(delta))) à ajouter"
+    }
+
+    private func goalContextLabel(total: Int, goal: Int) -> String {
+        if total >= goal {
+            return "Objectif atteint · +\(store.formatCountShort(total - goal)) au-delà"
+        }
+        let remaining = goal - total
+        let pct = Int(Double(total) / Double(goal) * 100)
+        return "\(pct)% · encore \(store.formatCountShort(remaining)) pour l'objectif"
     }
 
     var body: some View {
@@ -200,6 +221,11 @@ struct QuickEntryView: View {
                                 .font(.system(size: 10))
                                 .foregroundColor(.labelMuted.opacity(0.7))
                         }
+                        if let delta = pendingDelta {
+                            Text(deltaLabel(delta))
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(delta >= 0 ? .accentGreen : .accentWarm)
+                        }
                     }
 
                     Spacer()
@@ -220,16 +246,30 @@ struct QuickEntryView: View {
                     let total = store.dailyProgress
                     let ratio = min(1.0, Double(total) / Double(store.data.dailyGoal))
                     let color: Color = ratio >= 1 ? .accentGreen : .accent
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 3).fill(color.opacity(0.15)).frame(height: 4)
-                            RoundedRectangle(cornerRadius: 3).fill(color)
-                                .frame(width: geo.size.width * ratio, height: 4)
-                                .animation(.spring(response: 0.5, dampingFraction: 0.85), value: ratio)
+                    VStack(alignment: .leading, spacing: 3) {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 3).fill(color.opacity(0.15)).frame(height: 4)
+                                RoundedRectangle(cornerRadius: 3).fill(color)
+                                    .frame(width: geo.size.width * ratio, height: 4)
+                                    .animation(.spring(response: 0.5, dampingFraction: 0.85), value: ratio)
+                            }
                         }
+                        .frame(height: 4)
+                        Text(goalContextLabel(total: total, goal: store.data.dailyGoal))
+                            .font(.system(size: 9))
+                            .foregroundColor(.labelMuted.opacity(0.75))
                     }
-                    .frame(height: 4)
                 }
+
+                // Contexte : moyenne 7 jours
+                HStack(spacing: 4) {
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                        .font(.system(size: 9))
+                    Text("Moy. 7j : \(store.formatCountShort(store.sevenDayAverage)) / jour")
+                        .font(.system(size: 10))
+                }
+                .foregroundColor(.labelMuted.opacity(0.7))
             }
             .padding(18)
         }

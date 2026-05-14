@@ -732,6 +732,33 @@ class DataStore: ObservableObject {
         return range.count - day
     }
 
+    /// Moyenne quotidienne sur les 7 derniers jours (jour courant inclus).
+    /// Inclut les jours à zéro pour une moyenne réaliste.
+    var sevenDayAverage: Int {
+        let cal = DataStore.gregorianCal
+        let totals = dailyTotals()
+        var sum = 0
+        let now = Date()
+        for i in 0..<7 {
+            guard let date = cal.date(byAdding: .day, value: -i, to: now) else { continue }
+            sum += totals[DataStore.dateString(from: date)] ?? 0
+        }
+        return sum / 7
+    }
+
+    /// Totaux des 7 derniers jours (du plus ancien au plus récent), pour mini-sparkline.
+    var lastSevenDaysTotals: [Int] {
+        let cal = DataStore.gregorianCal
+        let totals = dailyTotals()
+        let now = Date()
+        var out: [Int] = []
+        for i in (0..<7).reversed() {
+            guard let date = cal.date(byAdding: .day, value: -i, to: now) else { continue }
+            out.append(totals[DataStore.dateString(from: date)] ?? 0)
+        }
+        return out
+    }
+
     // MARK: - Dashboard widget data (#9 / #10 / #11 / #15)
 
     struct WritingSpeedData {
