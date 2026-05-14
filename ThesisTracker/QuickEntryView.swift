@@ -104,8 +104,11 @@ struct QuickEntryView: View {
     }
 
     private func deltaLabel(_ delta: Int) -> String {
-        let sign = delta >= 0 ? "+" : "−"
-        return "\(sign)\(store.formatCountShort(abs(delta))) à ajouter"
+        if delta >= 0 {
+            return "+\(store.formatCountShort(delta)) à ajouter"
+        } else {
+            return "−\(store.formatCountShort(abs(delta))) à retirer"
+        }
     }
 
     private func goalContextLabel(total: Int, goal: Int) -> String {
@@ -154,7 +157,7 @@ struct QuickEntryView: View {
 
                 Divider()
 
-                // Toggle Aujourd'hui / Hier — pour rattraper une saisie oubliée
+                // Toggle Aujourd'hui / Hier — pour rattraper une saisie oubliée (⌘Y)
                 HStack(spacing: 6) {
                     quickEntryDateChip("Aujourd'hui", selected: !targetIsYesterday) {
                         targetIsYesterday = false
@@ -170,7 +173,16 @@ struct QuickEntryView: View {
                             .font(.system(size: 9, weight: .medium))
                             .foregroundColor(.orange)
                     }
+                    // Raccourci invisible ⌘Y → bascule la cible
+                    Button("") {
+                        targetIsYesterday.toggle()
+                        refreshInput()
+                    }
+                    .keyboardShortcut("y", modifiers: [.command])
+                    .opacity(0)
+                    .frame(width: 0, height: 0)
                 }
+                .help("⌘Y : bascule Aujourd'hui / Hier")
 
                 // Sélecteurs compacts
                 if store.data.projects.count > 1 {
