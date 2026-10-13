@@ -10,7 +10,8 @@
 - **Nom commercial :** Writing Process
 - **Plateforme :** macOS (app native)
 - **Stack :** Swift / SwiftUI, sans framework externe
-- **Persistance :** JSON local ou iCloud Drive (sync automatique)
+- **Persistance :** JSON dans iCloud Drive (deux Mac), copie de secours locale, snapshots
+- **Distribution :** compilée par GitHub Actions ; app téléchargeable dans Releases (voir README)
 
 ---
 
@@ -19,7 +20,8 @@
 | Fichier | Rôle |
 |---|---|
 | `DataStore.swift` | ObservableObject central — persistance JSON, undo/redo, calculs de progression, streaks |
-| `Models [conflicted].swift` | Structs de données : `AppData`, `Project`, `Chapter`, `DailyEntry`, `PinnedDate`, `ProjectFolder`, `ProjectTag` |
+| `DataSync.swift` | Décodage tolérant (`LossyArray`) et fusion à trois voies entre les deux Mac |
+| `Models.swift` | Structs de données : `AppData`, `Project`, `Chapter`, `DailyEntry`, `PinnedDate`, `ProjectFolder`, `ProjectTag` |
 | `MainView.swift` | Layout principal — sidebar redimensionnable + navigation centrale |
 
 ### Hiérarchie des données
@@ -66,15 +68,9 @@ Projets
 
 ---
 
-## 5. Fichiers conflictés (à surveiller)
+## 5. Fichiers conflictés
 
-Ces fichiers existent en double suite à un conflit iCloud — les versions `[conflicted]` sont les originales à conserver ou réconcilier :
-
-- `ContentView [conflicted].swift`
-- `MenuBarEntryView [conflicted].swift`
-- `Models [conflicted].swift`
-- `NotificationManager [conflicted].swift`
-- `ThesisTrackerApp [conflicted].swift`
+Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du projet doit rester **hors d'iCloud Drive** : Xcode compile tous les fichiers du dossier, y compris d'éventuelles copies « [conflicted] » créées par iCloud. `.gitignore` les exclut du dépôt.
 
 ---
 
@@ -96,6 +92,13 @@ Ces fichiers existent en double suite à un conflit iCloud — les versions `[co
 | 2026-03-20 | V3.4 — Stats enrichies + Export directeur | 6 nouvelles propriétés DataStore : `thesisRemainingChars`, `velocity14Days`, `thesisProjectedDays`, `last6MonthsStats`, `weekdayAverages`, `bestWeekStat`. Nouveau fichier `OverviewStatsSection.swift` : 3 cartes dans OverviewView (ThesisProjectionCard, MonthlyMiniChart, WeekdayChart). Nouveau fichier `ThesisReportSheet.swift` : rapport directeur texte structuré, copie presse-papier en un clic. Bouton "Rapport" (orange) ajouté dans le header OverviewView. |
 | 2026-03-20 | Fix : redéclaration `init(hex:)` | Conflit entre `init?(hex:)` failable (ContentView) et `init(hex:)` non-failable (CompactComponents). Suppression de la version failable de ContentView. Nettoyage des call sites `?? .accent` / `?.opacity()` dans SettingsView, SidebarView, PomodoroTodayView. |
 | 2026-03-20 | V3.3 — Boucle quotidienne structurée | Nouveau fichier `DailySessionCard.swift` (isolé). Carte "Session du jour" dans la colonne droite du Dashboard (entre miniChart et progressSection). Affiche : objectif intelligent du jour, barre + anneau animés, badge de rattrapage (50 % du manqué d'hier si veille vide), message contextuel adaptatif, toast de célébration unique par jour (`AppStorage v33_goalReachedDate`). Ajout de 3 propriétés dans DataStore : `yesterdayProgress`, `catchUpAmount`, `todaySmartGoal`. Logique : hebdo défini → `adaptedDailyGoal` / sinon → `dailyGoal + 50 % manqué`. |
+| 2026-10-13 | CI GitHub Actions | `.github/workflows/build.yml` : tests, compilation universelle, signature ad hoc, app zippée ; publication dans Releases depuis `main` ou un tag `v*`. |
+| 2026-10-13 | Données sûres (deux Mac) | Aucune écriture avant un chargement réussi ; file d'E/S série ; fusion à trois voies (`DataSync`) quand l'autre Mac a écrit ; copies en conflit iCloud fusionnées ; fichiers iCloud non téléchargés attendus ; écriture à la fermeture ; décodage tolérant élément par élément avec copie dans `Recovery/` ; snapshots 30 récents + 1/jour sur 60 jours. |
+| 2026-10-13 | Calculs | Défis sur semaine ISO ; heure de saisie seulement pour le jour même ; annuler jusqu'à 0 garde la note ; import Excel (dates d'abord, numéros de série sans décalage). |
+| 2026-10-13 | Raccourcis | Doublons supprimés (⌘⇧B, ⌘⇧E) ; Historique ⌘⇧H ; Mode panne ⌘⇧D ; Annuler/Rétablir par le menu Édition ; globaux via Carbon : ⌃⌥P Pomodoro, ⌃⌥N saisie rapide, ⌃⌥+lettre focus. |
+| 2026-10-13 | Export / import / apparence | CSV et XLSX robustes ; textutil hors thread principal ; mode clair et contraste élevé ; déclarations micro et dictée. |
+| 2026-10-13 | Pomodoro | Suppressions qui tiennent (marqueurs), durée active hors pauses et veille, notification de fin planifiée, un seul délégué de notifications, « Ne pas déranger » via l'app Raccourcis (remplace le script `killall cfprefsd`), Sanctuaire enregistré. |
+| 2026-10-13 | Tests | Cible `ThesisTrackerTests` (fusion, décodage tolérant, incréments). |
 
 ---
 
@@ -153,6 +156,8 @@ Ces fichiers existent en double suite à un conflit iCloud — les versions `[co
 - **V3.3** — Boucle quotidienne structurée (DailySessionCard, smart goal, rattrapage) ✅
 - **V3.4** — À définir (export académique / rapport directeur ?)
 - **V3.5** — À définir (command palette avancée ?)
+- **5.2** — Version de l'app au 2026-10-13 (avant fiabilisation)
+- **5.3** — Fiabilisation : données sûres sur deux Mac, CI, tests, raccourcis
 
 ---
 

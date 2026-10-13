@@ -75,6 +75,11 @@ final class PomodoroAppController: ObservableObject {
     @Published var editingSessionDraft: PomodoroSessionRecord?
     @Published private(set) var statusMessage = "Chargement des données..."
     @Published private(set) var storageLocationDescription = "Préparation du stockage..."
+    /// Problème de stockage à afficher (fichier iCloud indisponible, restauration…) — nil si tout va bien
+    @Published private(set) var storageWarning: String?
+
+    /// Une session de concentration externe (Sanctuaire) est en cours : démarrer un Pomodoro est bloqué
+    @Published private(set) var isExternalFocusActive = false
 
     // MARK: - Pending next phase
 
@@ -126,6 +131,12 @@ final class PomodoroAppController: ObservableObject {
     private var activeBlockSessionIDs: [UUID] = []
     private var activeBlockStartedAt: Date?
     private var cancellables = Set<AnyCancellable>()
+    /// `false` si le fichier n'a pas pu être lu au démarrage : aucune écriture (protection de l'autre Mac)
+    private var isStoreWritable = true
+    /// Des modifications attendent d'être écrites sur le disque
+    private var hasUnsavedChanges = false
+    /// La session a été mise en pause automatiquement à la mise en veille
+    private var sessionPausedBySleep = false
 
     // MARK: - Init
 
@@ -137,6 +148,7 @@ final class PomodoroAppController: ObservableObject {
         self.timerEngine.delegate = nil
         self.timerEngine.delegate = self
         setupCombine()
+        setupSystemObservers()
     }
 
     convenience init() {
@@ -156,14 +168,7 @@ final class PomodoroAppController: ObservableObject {
         $data
             .sink { [weak self] data in
                 guard let self else { return }
-                self.dashboardSummary = PomodoroStatisticsEngine.dashboardSummary(for: .now, data: data)
-                self.todayOperationalSnapshot = PomodoroStatisticsEngine.operationalSnapshot(for: .now, data: data)
-                self.goalProgress = PomodoroStatisticsEngine.goalProgress(for: data)
-                self.timeline = PomodoroStatisticsEngine.timeline(for: .now, data: data)
-                self.dailySummary = PomodoroStatisticsEngine.dailySummary(for: .now, data: data)
-                self.currentStreak = PomodoroStatisticsEngine.currentStreak(data: data)
-                self.prediction = PomodoroPredictiveAnalyzer.buildPrediction(from: data)
-                self.projectInsights = PomodoroStatisticsEngine.projectInsights(data: data)
+                self.recomputeTodayStats(data: data)
             }
             .store(in: &cancellables)
 
@@ -188,6 +193,80 @@ final class PomodoroAppController: ObservableObject {
         .debounce(for: .milliseconds(100), scheduler: RunLoop.main)
         .sink { [weak self] _ in self?.recomputeJournalStats() }
         .store(in: &cancellables)
+    }
+
+    /// Statistiques « aujourd'hui » (recalculées aussi au changement de jour et au réveil)
+    private func recomputeTodayStats(data: PomodoroAppData) {
+        dashboardSummary = PomodoroStatisticsEngine.dashboardSummary(for: .now, data: data)
+        todayOperationalSnapshot = PomodoroStatisticsEngine.operationalSnapshot(for: .now, data: data)
+        goalProgress = PomodoroStatisticsEngine.goalProgress(for: data)
+        timeline = PomodoroStatisticsEngine.timeline(for: .now, data: data)
+        dailySummary = PomodoroStatisticsEngine.dailySummary(for: .now, data: data)
+        currentStreak = PomodoroStatisticsEngine.currentStreak(data: data)
+        prediction = PomodoroPredictiveAnalyzer.buildPrediction(from: data)
+        projectInsights = PomodoroStatisticsEngine.projectInsights(data: data)
+    }
+
+    private func refreshDateDependentStats() {
+        recomputeTodayStats(data: data)
+        recomputeFilteredStats()
+        recomputeJournalStats()
+    }
+
+    // MARK: - System observers (minuit, veille, fermeture)
+
+    private func setupSystemObservers() {
+        // Passage à minuit : les stats « aujourd'hui » étaient figées sur la veille
+        NotificationCenter.default.publisher(for: .NSCalendarDayChanged)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.refreshDateDependentStats() }
+            .store(in: &cancellables)
+
+        // Notifications NSWorkspace / NSApplication postées sur le main thread : traitement synchrone
+        let workspaceCenter = NSWorkspace.shared.notificationCenter
+        workspaceCenter.publisher(for: NSWorkspace.willSleepNotification)
+            .sink { [weak self] _ in self?.handleWillSleep() }
+            .store(in: &cancellables)
+        workspaceCenter.publisher(for: NSWorkspace.didWakeNotification)
+            .sink { [weak self] _ in self?.handleDidWake() }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)
+            .sink { [weak self] _ in self?.handleWillTerminate() }
+            .store(in: &cancellables)
+    }
+
+    /// Veille = pause implicite (le temps de veille n'est pas compté comme temps de travail)
+    private func handleWillSleep() {
+        guard case .running = timerEngine.currentSnapshot.phase else { return }
+        timerEngine.pause()
+        notificationManager.cancelSessionEndNotification()
+        sessionPausedBySleep = true
+    }
+
+    private func handleDidWake() {
+        refreshDateDependentStats()
+        guard sessionPausedBySleep else { return }
+        sessionPausedBySleep = false
+        guard timerEngine.currentSnapshot.phase.isPaused else { return }
+        timerEngine.resume()
+        scheduleEndNotification()
+        statusMessage = "Minuteur repris après la veille"
+    }
+
+    private func handleWillTerminate() {
+        // L'état du minuteur est déjà dans UserDefaults (restauré au prochain lancement) :
+        // on retire la notification de fin pour ne pas annoncer une session qui ne se terminera pas.
+        notificationManager.cancelSessionEndNotification()
+        if data.settings.deepWorkEnabled, timerEngine.currentSnapshot.phase.activeMode == .focus {
+            runFocusShortcut(enabled: false)
+        }
+        // Écriture synchrone de la sauvegarde différée
+        pendingSaveTask?.cancel()
+        guard hasUnsavedChanges, isStoreWritable, let storeURL else { return }
+        data.globalStatistics = PomodoroStatisticsEngine.globalSnapshot(for: data)
+        PomodoroDataStore.saveSynchronously(data, to: storeURL)
+        hasUnsavedChanges = false
     }
 
     private func recomputeFilteredStats() {
@@ -249,13 +328,19 @@ final class PomodoroAppController: ObservableObject {
             let bootstrap = try await store.bootstrap(bundleIdentifier: bundleIdentifier)
             data = bootstrap.data
             storeURL = bootstrap.fileURL
+            isStoreWritable = bootstrap.isWritable
+            storageWarning = bootstrap.warning
             timerEngine.updateSettings(data.settings)
             await notificationManager.requestAuthorizationIfNeeded()
             notificationManager.onStartBreak = { [weak self] in self?.startRecommendedSession() }
             notificationManager.onStartSession = { [weak self] in self?.startRecommendedSession() }
-            statusMessage = "Données chargées"
+            notificationManager.onSkipBreak = { [weak self] in self?.skipPendingPhase() }
+            statusMessage = bootstrap.warning ?? "Données chargées"
             storageLocationDescription = bootstrap.locationDescription
             startMonitoring()
+            // Session en cours lors de la fermeture / du plantage précédent
+            timerEngine.restorePersistedState()
+            scheduleEndNotification()
         } catch {
             statusMessage = "Échec de l'initialisation : \(error.localizedDescription)"
         }
@@ -263,45 +348,79 @@ final class PomodoroAppController: ObservableObject {
 
     // MARK: - Timer
 
+    /// Un nouveau minuteur peut être lancé (aucune session en cours / en pause, pas de Sanctuaire)
+    var canStartSession: Bool {
+        !timerEngine.hasActiveSession && !isExternalFocusActive
+    }
+
     func startFocusSession() {
-        timerEngine.updateSettings(data.settings)
-        timerEngine.startFocusSession(categoryID: selectedCategoryID, projectID: selectedProjectID)
+        guard canStartSession else { return }
+        cancelPauseReminder()
+        // Démarrer directement une session au lieu de la grande pause proposée = grande pause sautée
+        if pendingNextMode == .longBreak {
+            timerEngine.resetCycle()
+        }
         pendingNextMode = nil
-        notificationManager.scheduleSessionStartedNotification(duration: data.settings.focusDuration)
-        NotificationCenter.default.post(name: .pomodoroFocusStarted, object: nil)
-        statusMessage = "Session de concentration démarrée"
-        if data.settings.deepWorkEnabled { setSystemDND(true) }
+        beginFocusSession()
     }
 
     func startRecommendedSession() {
-        guard let mode = pendingNextMode, case .idle = timerSnapshot.phase else { return }
+        guard let mode = pendingNextMode, canStartSession else { return }
         cancelPauseReminder()
         pendingNextMode = nil
         if mode == .focus {
-            timerEngine.updateSettings(data.settings)
-            timerEngine.startFocusSession(categoryID: selectedCategoryID, projectID: selectedProjectID)
-            notificationManager.scheduleSessionStartedNotification(duration: data.settings.focusDuration)
-            statusMessage = "Session de concentration démarrée"
+            beginFocusSession()
         } else {
-            timerEngine.startBreak(mode: mode)
+            guard timerEngine.startBreak(mode: mode) else { return }
+            scheduleEndNotification()
             statusMessage = "Pause démarrée"
         }
     }
 
+    /// Chemin unique de démarrage d'une session de concentration (bouton, menu, notification, raccourci).
+    private func beginFocusSession() {
+        timerEngine.updateSettings(data.settings)
+        guard timerEngine.startFocusSession(categoryID: selectedCategoryID, projectID: selectedProjectID) else { return }
+        sessionPausedBySleep = false
+        notificationManager.scheduleSessionStartedNotification(duration: data.settings.focusDuration)
+        scheduleEndNotification()
+        NotificationCenter.default.post(name: .pomodoroFocusStarted, object: nil)
+        statusMessage = "Session de concentration démarrée"
+        if data.settings.deepWorkEnabled { runFocusShortcut(enabled: true) }
+    }
+
     func pauseOrResume() {
+        sessionPausedBySleep = false
         if timerSnapshot.phase.isPaused {
             timerEngine.resume()
+            scheduleEndNotification()
             statusMessage = "Minuteur repris"
         } else {
             timerEngine.pause()
+            notificationManager.cancelSessionEndNotification()
             statusMessage = "Minuteur en pause"
         }
     }
 
     func skipPendingPhase() {
         cancelPauseReminder()
+        // Grande pause sautée : nouveau cycle
+        if pendingNextMode == .longBreak {
+            timerEngine.resetCycle()
+        }
         pendingNextMode = nil
         statusMessage = "Phase ignorée"
+    }
+
+    /// Planifie la notification de fin d'après l'état réel du moteur (démarrage, reprise, restauration).
+    private func scheduleEndNotification() {
+        let snapshot = timerEngine.currentSnapshot
+        guard case .running(let mode) = snapshot.phase, let endDate = snapshot.expectedEndDate else { return }
+        notificationManager.scheduleSessionEndNotification(
+            mode: mode,
+            plannedDuration: snapshot.totalDuration,
+            fireIn: endDate.timeIntervalSinceNow
+        )
     }
 
     private func schedulePauseReminder(for mode: ActiveTimerMode) {
@@ -324,33 +443,69 @@ final class PomodoroAppController: ObservableObject {
     }
 
     func stopTimer() {
+        let stoppedMode = timerEngine.currentSnapshot.phase.activeMode
+        sessionPausedBySleep = false
+        notificationManager.cancelSessionEndNotification()
+        cancelPauseReminder()
         timerEngine.stop()
         pendingNextMode = nil
         finalizeActiveBlockIfNeeded(endedAt: .now)
         statusMessage = "Minuteur arrêté"
-        if data.settings.deepWorkEnabled { setSystemDND(false) }
+        if data.settings.deepWorkEnabled, stoppedMode == .focus { runFocusShortcut(enabled: false) }
     }
 
-    // MARK: - Deep work / DND
+    // MARK: - External focus (Sanctuaire)
 
-    private func setSystemDND(_ enabled: Bool) {
-        // Distributed notification approach (macOS 10.15 – 13)
-        let center = DistributedNotificationCenter.default()
-        if enabled {
-            center.postNotificationName(
-                NSNotification.Name("com.apple.notificationcenterui.dndActivated"),
-                object: nil, userInfo: nil, deliverImmediately: true
-            )
+    /// Signale qu'une session de concentration externe (Sanctuaire) est en cours.
+    func setExternalFocusActive(_ active: Bool) {
+        guard isExternalFocusActive != active else { return }
+        isExternalFocusActive = active
+    }
+
+    /// Enregistre une session de concentration réalisée hors du minuteur Pomodoro (Sanctuaire).
+    func recordExternalFocusSession(
+        startedAt: Date,
+        endedAt: Date,
+        activeDuration: TimeInterval,
+        plannedDuration: TimeInterval,
+        note: String,
+        completed: Bool
+    ) {
+        guard activeDuration >= 60 else { return }
+        let session = appendSession(
+            mode: .focus,
+            startedAt: startedAt,
+            endedAt: max(startedAt, endedAt),
+            plannedDuration: plannedDuration,
+            actualDuration: activeDuration,
+            completionState: completed ? .completed : .interrupted,
+            categoryID: selectedCategoryID,
+            projectID: selectedProjectID
+        )
+        if let index = data.sessions.firstIndex(where: { $0.id == session.id }) {
+            data.sessions[index].note = note.trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        // Shell fallback for macOS 12–13 (non-sandboxed)
-        let boolStr = enabled ? "TRUE" : "FALSE"
-        let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/bin/bash")
-        task.arguments = ["-c",
-            "defaults -currentHost write ~/Library/Preferences/ByHost/com.apple.notificationcenterui doNotDisturb -bool \(boolStr); " +
-            "killall -u $USER cfprefsd 2>/dev/null; true"
-        ]
-        try? task.run()
+        statusMessage = completed ? "Session Sanctuaire enregistrée" : "Session Sanctuaire interrompue enregistrée"
+        scheduleSave()
+    }
+
+    // MARK: - Deep work (Concentration via l'app Raccourcis)
+
+    /// Lance le raccourci configuré (app Raccourcis) qui active / désactive la Concentration.
+    /// Aucun accès aux préférences système : sans raccourci configuré, ne fait rien.
+    private func runFocusShortcut(enabled: Bool) {
+        guard data.settings.deepWorkEnabled else { return }
+        let rawName = enabled ? data.settings.focusShortcutOnName : data.settings.focusShortcutOffName
+        let name = rawName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/shortcuts")
+        process.arguments = ["run", name]
+        do {
+            try process.run()
+        } catch {
+            statusMessage = "Raccourci « \(name) » impossible à lancer : \(error.localizedDescription)"
+        }
     }
 
     // MARK: - Settings
@@ -428,6 +583,7 @@ final class PomodoroAppController: ObservableObject {
 
     func deleteCategory(id: UUID) {
         data.categories.removeAll { $0.id == id }
+        recordTombstone(id)
         for index in data.sessions.indices where data.sessions[index].categoryID == id {
             data.sessions[index].categoryID = nil
             data.sessions[index].updatedAt = .now
@@ -473,6 +629,7 @@ final class PomodoroAppController: ObservableObject {
 
     func deleteProject(id: UUID) {
         data.projects.removeAll { $0.id == id }
+        recordTombstone(id)
         for index in data.sessions.indices where data.sessions[index].projectID == id {
             data.sessions[index].projectID = nil
             data.sessions[index].updatedAt = .now
@@ -536,6 +693,7 @@ final class PomodoroAppController: ObservableObject {
 
     func deleteGoal(id: UUID) {
         data.goals.removeAll { $0.id == id }
+        recordTombstone(id)
         scheduleSave()
     }
 
@@ -620,6 +778,7 @@ final class PomodoroAppController: ObservableObject {
 
     func deleteSession(id: UUID) {
         data.sessions.removeAll { $0.id == id }
+        recordTombstone(id)
         rebuildWorkBlocks()
         if editingSessionDraft?.id == id {
             editingSessionDraft = nil
@@ -684,11 +843,24 @@ final class PomodoroAppController: ObservableObject {
     private func reloadFromDisk() async {
         guard let storeURL else { return }
         do {
-            let merged = try await store.reloadMerging(with: data, from: storeURL)
+            let disk = try await store.readDisk(from: storeURL)
+            // Fusion APRÈS l'await, avec l'état mémoire courant : rien de ce qui a changé pendant la lecture n'est perdu
+            let merged = PomodoroDataStore.merge(local: data, remote: disk)
+            let becameWritable = !isStoreWritable
+            if becameWritable {
+                // Le fichier iCloud est enfin lisible : l'écriture redevient sûre (readDisk l'a réactivée côté store)
+                isStoreWritable = true
+                storageWarning = nil
+            }
             if merged != data {
                 data = merged
                 timerEngine.updateSettings(merged.settings)
                 statusMessage = "Données locales rechargées"
+            }
+            // Pas de sauvegarde systématique ici (sinon ping-pong entre les deux Mac) :
+            // seulement pour écrire ce qui avait été bloqué pendant l'indisponibilité du fichier.
+            if becameWritable && hasUnsavedChanges {
+                scheduleSave()
             }
         } catch {
             statusMessage = "Échec du rechargement : \(error.localizedDescription)"
@@ -699,6 +871,7 @@ final class PomodoroAppController: ObservableObject {
         pendingSaveTask?.cancel()
         data.globalStatistics = PomodoroStatisticsEngine.globalSnapshot(for: data)
         data.updatedAt = .now
+        hasUnsavedChanges = true
 
         pendingSaveTask = Task {
             try? await Task.sleep(for: .milliseconds(250))
@@ -709,12 +882,32 @@ final class PomodoroAppController: ObservableObject {
 
     private func persist() async {
         guard let storeURL else { return }
+        guard isStoreWritable else {
+            statusMessage = storageWarning ?? "Enregistrement désactivé : fichier Pomodoro indisponible"
+            return
+        }
+        let snapshot = data
+        monitor.ignoreOwnWrites()
         do {
-            data = try await store.save(data, to: storeURL)
+            let saved = try await store.save(snapshot, to: storeURL)
+            monitor.ignoreOwnWrites()
+            if data == snapshot {
+                if saved != data { data = saved }
+                hasUnsavedChanges = false
+            } else {
+                // `data` a changé pendant l'écriture : on fusionne au lieu d'écraser
+                // (ces changements ont replanifié une sauvegarde).
+                data = PomodoroDataStore.merge(local: data, remote: saved)
+            }
             statusMessage = "Données enregistrées"
         } catch {
             statusMessage = "Échec de l'enregistrement : \(error.localizedDescription)"
         }
+    }
+
+    /// Pierre tombale : la suppression est propagée à l'autre Mac au lieu d'être annulée par la fusion.
+    private func recordTombstone(_ id: UUID) {
+        data.deletedIDs[id.uuidString] = .now
     }
 
     private func appendSession(
@@ -759,10 +952,11 @@ final class PomodoroAppController: ObservableObject {
     }
 
     private func finalizeActiveBlockIfNeeded(endedAt: Date) {
-        guard let startedAt = activeBlockStartedAt, !activeBlockSessionIDs.isEmpty else { return }
+        guard let startedAt = activeBlockStartedAt, let firstSessionID = activeBlockSessionIDs.first else { return }
         let focusSessions = data.sessions.filter { activeBlockSessionIDs.contains($0.id) }
+        let blockID = PomodoroWorkBlockRecord.deterministicID(firstSessionID: firstSessionID)
         let block = PomodoroWorkBlockRecord(
-            id: UUID(),
+            id: blockID,
             sessionIDs: activeBlockSessionIDs,
             startedAt: startedAt,
             endedAt: endedAt,
@@ -771,6 +965,7 @@ final class PomodoroAppController: ObservableObject {
             createdAt: .now,
             updatedAt: .now
         )
+        data.workBlocks.removeAll { $0.id == blockID }
         data.workBlocks.append(block)
         activeBlockSessionIDs = []
         activeBlockStartedAt = nil
@@ -786,7 +981,8 @@ final class PomodoroAppController: ObservableObject {
             guard let first = buffer.first, let last = buffer.last else { return }
             rebuilt.append(
                 PomodoroWorkBlockRecord(
-                    id: UUID(),
+                    // ID déterministe : la même reconstruction sur l'autre Mac donne le même bloc
+                    id: PomodoroWorkBlockRecord.deterministicID(firstSessionID: first.id),
                     sessionIDs: buffer.map(\.id),
                     startedAt: first.startedAt,
                     endedAt: last.endedAt,
@@ -807,6 +1003,11 @@ final class PomodoroAppController: ObservableObject {
             buffer.append(session)
         }
         flushBuffer()
+        // La reconstruction locale fait foi : les anciens blocs disparus reçoivent une pierre tombale
+        let rebuiltIDs = Set(rebuilt.map(\.id))
+        for block in data.workBlocks where !rebuiltIDs.contains(block.id) {
+            recordTombstone(block.id)
+        }
         data.workBlocks = rebuilt
     }
 
@@ -825,9 +1026,11 @@ final class PomodoroAppController: ObservableObject {
 
 // MARK: - Timer delegate
 
+// Le moteur tourne sur le main thread et appelle son délégué de façon synchrone :
+// `assumeIsolated` évite le saut asynchrone (et l'état intermédiaire incohérent) de l'ancien `Task { @MainActor }`.
 extension PomodoroAppController: PomodoroTimerEngineDelegate {
     nonisolated func timerEngine(_ engine: PomodoroTimerEngine, didUpdate snapshot: PomodoroTimerSnapshot) {
-        Task { @MainActor in
+        MainActor.assumeIsolated {
             self.timerSnapshot = snapshot
         }
     }
@@ -843,7 +1046,7 @@ extension PomodoroAppController: PomodoroTimerEngineDelegate {
         categoryID: UUID?,
         projectID: UUID?
     ) {
-        Task { @MainActor in
+        MainActor.assumeIsolated {
             let session = self.appendSession(
                 mode: mode,
                 startedAt: startedAt,
@@ -863,15 +1066,15 @@ extension PomodoroAppController: PomodoroTimerEngineDelegate {
                     try? await Task.sleep(for: .milliseconds(900))
                     self.focusSessionJustCompleted = false
                 }
+                if self.data.settings.deepWorkEnabled { self.runFocusShortcut(enabled: false) }
             }
             self.pendingNextMode = nextMode
             if let nextMode, (nextMode == .shortBreak || nextMode == .longBreak) {
                 self.schedulePauseReminder(for: nextMode)
-                if self.data.settings.deepWorkEnabled { self.setSystemDND(false) }
             }
+            // Un seul son : celui de l'app (la notification de fin, planifiée à l'avance, est silencieuse)
             let sound = PomodoroSoundManager.sound(for: mode, settings: self.data.settings)
             self.soundManager.play(sound, volume: self.data.settings.soundVolume)
-            self.notificationManager.scheduleSessionFinishedNotification(mode: mode, nextMode: nextMode, plannedDuration: plannedDuration)
             self.scheduleSave()
         }
     }
@@ -886,7 +1089,7 @@ extension PomodoroAppController: PomodoroTimerEngineDelegate {
         categoryID: UUID?,
         projectID: UUID?
     ) {
-        Task { @MainActor in
+        MainActor.assumeIsolated {
             _ = self.appendSession(
                 mode: mode,
                 startedAt: startedAt,

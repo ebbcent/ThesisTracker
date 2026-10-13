@@ -68,6 +68,11 @@ struct PomodoroTodayView: View {
                 Text(controller.statusMessage)
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
+                if let warning = controller.storageWarning {
+                    Label(warning, systemImage: "exclamationmark.icloud")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.orange)
+                }
             }
             Spacer()
             HStack(spacing: 10) {
@@ -105,6 +110,7 @@ struct PomodoroTodayView: View {
                 HStack(spacing: 10) {
                     Button("Démarrer") { controller.startFocusSession() }
                         .buttonStyle(CockpitButtonStyle(prominent: true))
+                        .disabled(controller.timerSnapshot.phase != .idle || controller.isExternalFocusActive)
                     Button(controller.timerSnapshot.phase.isPaused ? "Reprendre" : "Pause") { controller.pauseOrResume() }
                         .buttonStyle(CockpitButtonStyle())
                         .disabled(controller.timerSnapshot.phase == .idle)

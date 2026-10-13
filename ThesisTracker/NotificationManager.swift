@@ -38,10 +38,35 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         set { UserDefaults.standard.set(Array(newValue), forKey: "ntfDays") }
     }
 
+    // MARK: - Délégué unique & catégories partagées
+
+    /// Préfixe des identifiants de notifications Pomodoro (gérées par PomodoroTimerNotificationManager).
+    static let pomodoroIdentifierPrefix = "pomodoro."
+
+    /// Préfixes des notifications planifiées par ce gestionnaire (seules celles-ci sont annulées par `cancelAll`).
+    private static let ownedIdentifierPrefixes = [
+        "wt-daily-", "deadline-", "pace-", "streak-", "daily-", "plateau-", "bravo-",
+        "milestone-", "weekly-", "double-goal", "empty-day-", "bg-goal-"
+    ]
+
+    /// Actions des notifications Pomodoro, transmises par le délégué unique (identifiant d'action).
+    var pomodoroResponseHandler: ((String) -> Void)?
+
+    /// `setNotificationCategories` remplace TOUTES les catégories : on les cumule ici.
+    private var registeredCategories: [String: UNNotificationCategory] = [:]
+
+    func registerCategories(_ categories: [UNNotificationCategory]) {
+        for category in categories {
+            registeredCategories[category.identifier] = category
+        }
+        center.setNotificationCategories(Set(registeredCategories.values))
+    }
+
     // MARK: - Init
 
     override init() {
         super.init()
+        // Seul délégué de UNUserNotificationCenter pour toute l'app
         center.delegate = self
     }
 
@@ -62,7 +87,8 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     // MARK: - Planification
 
     func scheduleNotifications() {
-        center.removeAllPendingNotificationRequests()
+        // Ne retirer que nos rappels quotidiens (pas les notifications Pomodoro / deadlines…)
+        center.removePendingNotificationRequests(withIdentifiers: (1...7).map { "wt-daily-\($0)" })
         guard isEnabled && !activeDays.isEmpty else { return }
 
         let content = UNMutableNotificationContent()
@@ -86,7 +112,13 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     }
 
     func cancelAll() {
-        center.removeAllPendingNotificationRequests()
+        let prefixes = Self.ownedIdentifierPrefixes
+        center.getPendingNotificationRequests { requests in
+            let ids = requests
+                .map { $0.identifier }
+                .filter { identifier in prefixes.contains { identifier.hasPrefix($0) } }
+            self.center.removePendingNotificationRequests(withIdentifiers: ids)
+        }
     }
 
     // MARK: - Deadline notifications
@@ -526,28 +558,41 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
 
     // MARK: - Delegate — afficher la bannière même si l'app est au premier plan
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler handler: @escaping (UNNotificationPresentationOptions) -> Void) {
         handler([.banner, .sound])
-        recordInAppCenter(notification)
+        let identifier = notification.request.identifier
+        let title = notification.request.content.title
+        let body = notification.request.content.body
+        Task { @MainActor in
+            self.recordInAppCenter(identifier: identifier, title: title, body: body)
+        }
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler handler: @escaping () -> Void) {
-        // Record notifications delivered while the app was in background
-        recordInAppCenter(response.notification)
+        let identifier = response.notification.request.identifier
+        let title = response.notification.request.content.title
+        let body = response.notification.request.content.body
+        let action = response.actionIdentifier
+        Task { @MainActor in
+            // Record notifications delivered while the app was in background
+            self.recordInAppCenter(identifier: identifier, title: title, body: body)
+            // Actions Pomodoro (démarrer la pause / la session…) transmises au minuteur
+            if identifier.hasPrefix(NotificationManager.pomodoroIdentifierPrefix) {
+                self.pomodoroResponseHandler?(action)
+            }
+        }
         handler()
     }
 
-    private func recordInAppCenter(_ notification: UNNotification) {
-        let id       = notification.request.identifier
-        let content  = notification.request.content
-        let category = AppNotificationCategory.from(identifier: id)
+    private func recordInAppCenter(identifier: String, title: String, body: String) {
+        let category = AppNotificationCategory.from(identifier: identifier)
         AppNotificationStore.shared.record(
-            title:    content.title,
-            body:     content.body,
+            title:    title,
+            body:     body,
             category: category
         )
     }

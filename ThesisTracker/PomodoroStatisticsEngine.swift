@@ -261,7 +261,7 @@ enum PomodoroStatisticsEngine {
     }
 
     static func timeline(for date: Date, data: PomodoroAppData) -> [PomodoroTimelineEntry] {
-        let categoriesByID = Dictionary(uniqueKeysWithValues: data.categories.map { ($0.id, $0) })
+        let categoriesByID = Dictionary(data.categories.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         return data.sessions
             .filter { Calendar.current.isDate($0.startedAt, inSameDayAs: date) }
             .sorted { $0.startedAt < $1.startedAt }
@@ -279,7 +279,7 @@ enum PomodoroStatisticsEngine {
     }
 
     static func dailyTimeline(for date: Date, data: PomodoroAppData) -> [PomodoroDailyTimelineSegment] {
-        let categoriesByID = Dictionary(uniqueKeysWithValues: data.categories.map { ($0.id, $0) })
+        let categoriesByID = Dictionary(data.categories.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         return data.sessions
             .filter { Calendar.current.isDate($0.startedAt, inSameDayAs: date) }
             .sorted { $0.startedAt < $1.startedAt }
@@ -364,7 +364,9 @@ enum PomodoroStatisticsEngine {
             .mapValues { Int($0.reduce(0) { $0 + $1.duration } / 60) }
         let maxMinutes = max(1, perDay.values.max() ?? 1)
 
-        return stride(from: 0, to: calendar.ordinality(of: .day, in: .year, for: end) ?? 365, by: 1).compactMap { offset in
+        // Nombre de jours de l'année (365/366) — `ordinality` du 1er janvier suivant valait 1.
+        let dayCount = calendar.dateComponents([.day], from: start, to: end).day ?? 365
+        return stride(from: 0, to: max(1, dayCount), by: 1).compactMap { offset in
             guard let date = calendar.date(byAdding: .day, value: offset, to: start), date < end else { return nil }
             let minutes = perDay[calendar.startOfDay(for: date)] ?? 0
             return PomodoroContributionCell(date: date, minutes: minutes, intensity: Double(minutes) / Double(maxMinutes))

@@ -5,19 +5,46 @@ import UserNotifications
 final class PomodoroTimerNotificationManager: NSObject {
     private let center = UNUserNotificationCenter.current()
 
+    /// Identifiant fixe de la notification de fin de session (planifiée à l'avance).
+    static let sessionEndIdentifier = "pomodoro.session.end"
+    static let pauseReminderIdentifier = "pomodoro.pause.reminder"
+    private static let focusFinishedCategory = "pomodoro.focus.finished"
+    private static let breakFinishedCategory = "pomodoro.break.finished"
+    private static let pauseReminderCategory = "pomodoro.pause.reminder"
+
     var onStartBreak: (() -> Void)?
     var onStartSession: (() -> Void)?
+    var onSkipBreak: (() -> Void)?
 
     override init() {
         super.init()
-        center.delegate = self
     }
 
     func requestAuthorizationIfNeeded() async {
+        // Pas de `center.delegate = self` : NotificationManager est l'unique délégué de l'app
+        // et nous transmet les actions des notifications Pomodoro (branché ici, une fois au lancement,
+        // pour qu'une instance d'aperçu ne détourne pas les actions).
+        NotificationManager.shared.pomodoroResponseHandler = { [weak self] action in
+            self?.handleAction(action)
+        }
+        // Catégories enregistrées à chaque lancement (pas seulement à la première autorisation)
+        registerCategories()
         let settings = await center.notificationSettings()
         guard settings.authorizationStatus == .notDetermined else { return }
         _ = try? await center.requestAuthorization(options: [.alert, .sound, .badge])
-        registerCategories()
+    }
+
+    private func handleAction(_ action: String) {
+        switch action {
+        case "start-break":
+            onStartBreak?()
+        case "start-session":
+            onStartSession?()
+        case "skip-break":
+            onSkipBreak?()
+        default:
+            break
+        }
     }
 
     private func registerCategories() {
@@ -32,7 +59,7 @@ final class PomodoroTimerNotificationManager: NSObject {
             options: [.destructive]
         )
         let focusCategory = UNNotificationCategory(
-            identifier: "pomodoro.focus.finished",
+            identifier: Self.focusFinishedCategory,
             actions: [startBreakAction, skipBreakAction],
             intentIdentifiers: [],
             options: []
@@ -49,46 +76,64 @@ final class PomodoroTimerNotificationManager: NSObject {
             options: []
         )
         let breakCategory = UNNotificationCategory(
-            identifier: "pomodoro.break.finished",
+            identifier: Self.breakFinishedCategory,
             actions: [startSessionAction, laterAction],
             intentIdentifiers: [],
             options: []
         )
 
-        center.setNotificationCategories([focusCategory, breakCategory])
+        // Rappel « pause non démarrée » : l'action démarre la pause (et non une session)
+        let reminderCategory = UNNotificationCategory(
+            identifier: Self.pauseReminderCategory,
+            actions: [startBreakAction, skipBreakAction],
+            intentIdentifiers: [],
+            options: []
+        )
+
+        // Fusion avec les catégories éventuelles des autres gestionnaires (setNotificationCategories remplace tout)
+        NotificationManager.shared.registerCategories([focusCategory, breakCategory, reminderCategory])
     }
 
-    func scheduleSessionFinishedNotification(mode: ActiveTimerMode, nextMode: ActiveTimerMode?, plannedDuration: TimeInterval = 25 * 60) {
-        let identifier = notificationIdentifier(for: mode)
+    /// Planifie à l'avance la notification de fin de session (au démarrage / à la reprise).
+    /// Le son est joué par l'app (PomodoroSoundManager) : la notification est silencieuse pour éviter un double son.
+    func scheduleSessionEndNotification(mode: ActiveTimerMode, plannedDuration: TimeInterval, fireIn interval: TimeInterval) {
+        let identifier = Self.sessionEndIdentifier
         center.removePendingNotificationRequests(withIdentifiers: [identifier])
         center.removeDeliveredNotifications(withIdentifiers: [identifier])
 
         let content = UNMutableNotificationContent()
         content.title = notificationTitle(for: mode)
-        content.body = notificationBody(for: mode, nextMode: nextMode, plannedDuration: plannedDuration)
-        content.sound = .default
+        content.body = notificationBody(for: mode, plannedDuration: plannedDuration)
+        content.sound = nil
 
         switch mode {
         case .focus:
-            content.categoryIdentifier = "pomodoro.focus.finished"
+            content.categoryIdentifier = Self.focusFinishedCategory
         case .shortBreak, .longBreak:
-            content.categoryIdentifier = "pomodoro.break.finished"
+            content.categoryIdentifier = Self.breakFinishedCategory
         }
 
-        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
+        // UNTimeIntervalNotificationTrigger exige un intervalle > 0
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, interval), repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         center.add(request)
     }
 
+    /// Annule la notification de fin planifiée (pause, arrêt, veille…).
+    func cancelSessionEndNotification() {
+        center.removePendingNotificationRequests(withIdentifiers: [Self.sessionEndIdentifier])
+    }
+
     func schedulePauseReminderNotification(mode: ActiveTimerMode) {
-        center.removeDeliveredNotifications(withIdentifiers: ["pomodoro.pause.reminder"])
+        center.removeDeliveredNotifications(withIdentifiers: [Self.pauseReminderIdentifier])
         let content = UNMutableNotificationContent()
         content.title = "Pause non démarrée ⏳"
         content.body = mode == .longBreak
             ? "La grande pause n'a pas encore commencé. Prends une vraie pause !"
             : "La pause n'a pas encore commencé. Pense à te reposer."
         content.sound = .default
-        content.categoryIdentifier = "pomodoro.break.finished"
-        let request = UNNotificationRequest(identifier: "pomodoro.pause.reminder", content: content, trigger: nil)
+        content.categoryIdentifier = Self.pauseReminderCategory
+        let request = UNNotificationRequest(identifier: Self.pauseReminderIdentifier, content: content, trigger: nil)
         center.add(request)
     }
 
@@ -106,14 +151,6 @@ final class PomodoroTimerNotificationManager: NSObject {
         center.add(request)
     }
 
-    private func notificationIdentifier(for mode: ActiveTimerMode) -> String {
-        switch mode {
-        case .focus: "pomodoro.focus.finished"
-        case .shortBreak: "pomodoro.short-break.finished"
-        case .longBreak: "pomodoro.long-break.finished"
-        }
-    }
-
     private func notificationTitle(for mode: ActiveTimerMode) -> String {
         switch mode {
         case .focus: "Session terminée ✓"
@@ -122,7 +159,7 @@ final class PomodoroTimerNotificationManager: NSObject {
         }
     }
 
-    private func notificationBody(for mode: ActiveTimerMode, nextMode: ActiveTimerMode?, plannedDuration: TimeInterval) -> String {
+    private func notificationBody(for mode: ActiveTimerMode, plannedDuration: TimeInterval) -> String {
         switch mode {
         case .focus:
             let minutes = Int(plannedDuration / 60)
@@ -132,36 +169,5 @@ final class PomodoroTimerNotificationManager: NSObject {
         case .longBreak:
             return "Reposé ? Lance la prochaine session."
         }
-    }
-}
-
-// MARK: - UNUserNotificationCenterDelegate
-
-extension PomodoroTimerNotificationManager: UNUserNotificationCenterDelegate {
-    nonisolated func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-        let action = response.actionIdentifier
-        Task { @MainActor in
-            switch action {
-            case "start-break":
-                self.onStartBreak?()
-            case "start-session":
-                self.onStartSession?()
-            default:
-                break
-            }
-        }
-        completionHandler()
-    }
-
-    nonisolated func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        completionHandler([.banner, .sound])
     }
 }

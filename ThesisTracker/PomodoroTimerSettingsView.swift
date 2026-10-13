@@ -60,11 +60,18 @@ struct PomodoroTimerSettingsView: View {
                     }
                     Toggle(isOn: $controller.data.settings.deepWorkEnabled) {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Mode deep work")
+                            Text("Mode deep work (Concentration via Raccourcis)")
                                 .font(.system(size: 13, weight: .medium))
-                            Text("Active Ne pas déranger au démarrage d'une session")
+                            Text("Crée dans l'app Raccourcis deux raccourcis qui activent/désactivent ta Concentration, puis indique leurs noms ci-dessous. Ils seront lancés au début et à la fin de chaque session.")
                                 .font(.system(size: 11)).foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
+                    }
+                    if controller.data.settings.deepWorkEnabled {
+                        TextField("Raccourci d'activation (ex. « Concentration ON »)", text: $controller.data.settings.focusShortcutOnName)
+                            .textFieldStyle(.roundedBorder)
+                        TextField("Raccourci de désactivation (ex. « Concentration OFF »)", text: $controller.data.settings.focusShortcutOffName)
+                            .textFieldStyle(.roundedBorder)
                     }
                     Button("Enregistrer") {
                         controller.saveSettings()

@@ -18,6 +18,8 @@ struct WritingSprintView: View {
     @State private var phase: SprintPhase = .setup
     @State private var secondsRemaining: Int = 0
     @State private var timerRef: Timer? = nil
+    /// Fin prévue du sprint : le temps restant est recalculé à partir de cette date (pas de dérive)
+    @State private var endDate: Date? = nil
 
     // ── Snapshot écriture ─────────────────────────────────────────
     @State private var startCount: Int = 0
@@ -116,6 +118,7 @@ struct WritingSprintView: View {
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { targetFocused = true }
         }
+        .onDisappear { stopTimer() }
     }
 
     // ── Vue de configuration ──────────────────────────────────────
@@ -395,30 +398,56 @@ struct WritingSprintView: View {
     private func startSprint() {
         startCount = currentTotal
         secondsRemaining = durationMinutes * 60
+        endDate = Date().addingTimeInterval(TimeInterval(secondsRemaining))
         phase = .running
         fireTimer()
     }
 
     private func fireTimer() {
         timerRef?.invalidate()
-        timerRef = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if secondsRemaining > 1 {
-                secondsRemaining -= 1
-                // Légère pulsation toutes les 5 minutes
-                if secondsRemaining % 300 == 0 {
-                    pulseAmount = 1.04
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { pulseAmount = 1.0 }
-                }
-            } else {
-                secondsRemaining = 0
-                endSprint()
+        // Mode .common : le décompte continue pendant le suivi d'un menu / d'un défilement
+        let timer = Timer(timeInterval: 0.5, repeats: true) { _ in
+            MainActor.assumeIsolated {
+                updateRemaining()
             }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        timerRef = timer
+    }
+
+    /// Recalcule le temps restant depuis la date de fin (robuste aux retards du timer et à la veille)
+    private func updateRemaining() {
+        guard phase == .running, let endDate else { return }
+        let remaining = max(0, Int(endDate.timeIntervalSinceNow.rounded(.up)))
+        if remaining != secondsRemaining {
+            secondsRemaining = remaining
+            // Légère pulsation toutes les 5 minutes
+            if remaining > 0 && remaining % 300 == 0 {
+                pulseAmount = 1.04
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { pulseAmount = 1.0 }
+            }
+        }
+        if remaining <= 0 {
+            secondsRemaining = 0
+            endSprint()
         }
     }
 
-    private func pauseTimer()      { timerRef?.invalidate(); timerRef = nil; phase = .paused }
-    private func resumeTimer()     { phase = .running; fireTimer() }
+    private func pauseTimer() {
+        if let endDate {
+            secondsRemaining = max(0, Int(endDate.timeIntervalSinceNow.rounded(.up)))
+        }
+        endDate = nil
+        timerRef?.invalidate()
+        timerRef = nil
+        phase = .paused
+    }
+    private func resumeTimer() {
+        endDate = Date().addingTimeInterval(TimeInterval(secondsRemaining))
+        phase = .running
+        fireTimer()
+    }
     private func stopTimer()       { timerRef?.invalidate(); timerRef = nil }
-    private func endSprint()       { stopTimer(); withAnimation { phase = .finished } }
-    private func resetForNewSprint() { phase = .setup; secondsRemaining = 0; startCount = 0 }
+    private func endSprint()       { stopTimer(); endDate = nil; withAnimation { phase = .finished } }
+    private func resetForNewSprint() { phase = .setup; secondsRemaining = 0; startCount = 0; endDate = nil }
 }

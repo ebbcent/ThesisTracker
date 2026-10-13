@@ -143,7 +143,7 @@ struct MenuBarEntryView: View {
                     .foregroundColor(.accentWarm)
                 }
                 .buttonStyle(.plain)
-                .help("Ouvrir le panneau de saisie rapide (⌘⇧Espace)")
+                .help("Ouvrir le panneau de saisie rapide (⌃⌥N)")
                 Spacer()
                 if todayProgress > 0 {
                     Text("+\(store.formatCountShort(todayProgress)) aujourd'hui")
@@ -199,17 +199,21 @@ struct MenuBarEntryView: View {
                     .foregroundColor(.labelMuted)
                     .buttonStyle(.plain)
                 } else {
-                    Button("Démarrer") {
-                        pomodoroController.startFocusSession()
+                    // « Démarrer » uniquement quand le minuteur est inactif (sinon la session en cours serait perdue)
+                    if pomodoroController.timerSnapshot.phase == .idle {
+                        Button("Démarrer") {
+                            pomodoroController.startFocusSession()
+                        }
+                        .font(.system(size: 11, weight: .semibold))
+                        .lineLimit(1)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.accentWarm.opacity(0.85))
+                        .clipShape(Capsule())
+                        .buttonStyle(.plain)
+                        .disabled(pomodoroController.isExternalFocusActive)
                     }
-                    .font(.system(size: 11, weight: .semibold))
-                    .lineLimit(1)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(Color.accentWarm.opacity(0.85))
-                    .clipShape(Capsule())
-                    .buttonStyle(.plain)
 
                     if pomodoroController.timerSnapshot.phase != .idle {
                         Button(pomodoroController.timerSnapshot.phase.isPaused ? "Reprendre" : "Pause") {
@@ -234,7 +238,7 @@ struct MenuBarEntryView: View {
 
                 if pomodoroController.timerSnapshot.completedFocusCountInCycle > 0 {
                     HStack(spacing: 2) {
-                        ForEach(0..<pomodoroController.data.settings.sessionsBeforeLongBreak, id: \.self) { i in
+                        ForEach(0..<max(1, pomodoroController.data.settings.sessionsBeforeLongBreak), id: \.self) { i in
                             Circle()
                                 .fill(i < pomodoroController.timerSnapshot.completedFocusCountInCycle
                                       ? Color.accentWarm : Color.glassBorder)

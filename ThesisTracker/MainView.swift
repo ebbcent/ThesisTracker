@@ -196,7 +196,12 @@ struct MainView: View {
         pomodoroController.sessionWritingDelta = delta > 0 ? delta : nil
         // Cooldown automatique si la session a duré ≥ 45 min
         if let started = focusSessionStartedAt {
-            let duration = Date().timeIntervalSince(started)
+            // Durée active (pauses et veille exclues) de la session enregistrée ;
+            // à défaut, durée écoulée depuis le démarrage.
+            let recorded = pomodoroController.data.sessions
+                .filter { $0.kind == .focus && $0.endedAt >= started }
+                .max { $0.endedAt < $1.endedAt }
+            let duration = recorded?.duration ?? Date().timeIntervalSince(started)
             if duration >= 45 * 60 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                     withAnimation(.easeOut(duration: 0.15)) { showCooldown = true }

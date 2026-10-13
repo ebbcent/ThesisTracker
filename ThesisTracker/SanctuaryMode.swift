@@ -8,24 +8,35 @@ import Combine
 /// un seul chapitre accessible. Durée 60-240 min, sortie par esc (avec confirmation).
 struct SanctuaryModeView: View {
     @ObservedObject var store: DataStore
+    @EnvironmentObject private var pomodoroController: PomodoroAppController
     let onDismiss: () -> Void
+
+    /// Publisher créé une seule fois (et non à chaque évaluation de `body`)
+    let ticker = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
     @State private var totalSeconds: Int = 90 * 60
     @State private var startedAt: Date? = nil
     @State private var now: Date = Date()
     @State private var showExitConfirm: Bool = false
     @State private var noteText: String = ""
+    /// Session déjà enregistrée (journal + Pomodoro) : évite les doublons
+    @State private var didRecordSession: Bool = false
 
     private var chapter: Chapter? { store.activeChapter }
     private var project: Project? { store.activeProject }
 
     private var isRunning: Bool { startedAt != nil }
+    /// Fin prévue : le temps restant est calculé depuis cette date (pas de décrément)
+    private var endDate: Date? {
+        startedAt?.addingTimeInterval(TimeInterval(totalSeconds))
+    }
     private var elapsed: TimeInterval {
         guard let s = startedAt else { return 0 }
-        return now.timeIntervalSince(s)
+        return max(0, now.timeIntervalSince(s))
     }
     private var remaining: TimeInterval {
-        max(0, Double(totalSeconds) - elapsed)
+        guard let endDate else { return Double(totalSeconds) }
+        return max(0, endDate.timeIntervalSince(now))
     }
     private var ratio: Double {
         guard totalSeconds > 0 else { return 0 }
@@ -40,14 +51,21 @@ struct SanctuaryModeView: View {
             content
         }
         .onAppear { hideMenuBar() }
-        .onDisappear { restoreMenuBar() }
-        .onReceive(Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()) { _ in
+        .onDisappear {
+            restoreMenuBar()
+            // Fermeture par un autre chemin : la session n'est pas perdue (enregistrée une seule fois)
+            if isRunning { recordSessionIfNeeded(early: !isFinished) }
+            pomodoroController.setExternalFocusActive(false)
+        }
+        .onReceive(ticker) { _ in
             now = Date()
+            // Fin atteinte : enregistrer tout de suite (même si l'utilisateur ne clique pas « Sortir »)
+            if isFinished { recordSessionIfNeeded(early: false) }
         }
         .alert("Sortir du sanctuaire ?", isPresented: $showExitConfirm) {
             Button("Continuer", role: .cancel) { showExitConfirm = false }
             Button("Sortir", role: .destructive) {
-                if isRunning { saveSessionNote(early: true) }
+                if isRunning { recordSessionIfNeeded(early: !isFinished) }
                 onDismiss()
             }
         } message: {
@@ -115,7 +133,12 @@ struct SanctuaryModeView: View {
                 }
             }
             Button {
-                startedAt = Date()
+                let start = Date()
+                startedAt = start
+                now = start
+                didRecordSession = false
+                // Empêche de lancer un Pomodoro pendant le sanctuaire
+                pomodoroController.setExternalFocusActive(true)
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "play.fill")
@@ -238,7 +261,7 @@ struct SanctuaryModeView: View {
                 .font(.system(size: 13))
                 .foregroundColor(.white.opacity(0.6))
             Button {
-                saveSessionNote(early: false)
+                recordSessionIfNeeded(early: false)
                 onDismiss()
             } label: {
                 Text("Sortir")
@@ -259,8 +282,28 @@ struct SanctuaryModeView: View {
         if isRunning && !isFinished {
             showExitConfirm = true
         } else {
+            // Session terminée : même enregistrement que le bouton « Sortir »
+            if isFinished { recordSessionIfNeeded(early: false) }
             onDismiss()
         }
+    }
+
+    /// Enregistre la session une seule fois : note de journal + session de concentration Pomodoro.
+    private func recordSessionIfNeeded(early: Bool) {
+        guard let start = startedAt, !didRecordSession else { return }
+        didRecordSession = true
+        let end = Date()
+        let active = min(max(0, end.timeIntervalSince(start)), TimeInterval(totalSeconds))
+        saveSessionNote(early: early, activeDuration: active)
+        pomodoroController.recordExternalFocusSession(
+            startedAt: start,
+            endedAt: early ? end : start.addingTimeInterval(TimeInterval(totalSeconds)),
+            activeDuration: active,
+            plannedDuration: TimeInterval(totalSeconds),
+            note: "Sanctuaire — \(chapter?.name ?? "—")",
+            completed: !early
+        )
+        pomodoroController.setExternalFocusActive(false)
     }
 
     private func formatTime(_ t: TimeInterval) -> String {
@@ -274,8 +317,8 @@ struct SanctuaryModeView: View {
         return String(format: "%02d:%02d", m, s)
     }
 
-    private func saveSessionNote(early: Bool) {
-        let duration = Int(elapsed / 60)
+    private func saveSessionNote(early: Bool, activeDuration: TimeInterval) {
+        let duration = Int(activeDuration / 60)
         let chapterName = chapter?.name ?? "—"
         let prefix = early ? "[Sanctuaire interrompu]" : "[Sanctuaire]"
         _ = store.addJournalEntry(
