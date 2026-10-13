@@ -48,12 +48,28 @@ struct MenuBarEntryView: View {
 
             if store.data.projects.isEmpty {
                 VStack(spacing: 10) {
-                    Image(systemName: "folder").font(.system(size: 28)).foregroundColor(.labelMuted)
-                    Text("Aucun projet").font(.system(size: 12)).foregroundColor(.labelMuted)
+                    Image(systemName: "books.vertical")
+                        .font(.system(size: 32, weight: .light))
+                        .foregroundColor(.labelMuted.opacity(0.7))
+                    Text("Aucun projet")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.labelMuted)
+                    Text("Crée ton premier projet dans la fenêtre principale pour commencer à suivre ton écriture.")
+                        .font(.system(size: 10.5))
+                        .foregroundColor(.labelMuted.opacity(0.75))
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 24)
                     Button("Ouvrir Writing Process") { openMainWindow() }
-                        .font(.system(size: 11, weight: .semibold)).foregroundColor(.accent).buttonStyle(.plain)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 6)
+                        .background(Color.accent)
+                        .clipShape(Capsule())
+                        .buttonStyle(.plain)
                 }
-                .frame(maxWidth: .infinity).padding(.vertical, 20)
+                .frame(maxWidth: .infinity).padding(.vertical, 24)
+                .accessibilityElement(children: .contain)
             } else {
                 VStack(alignment: .leading, spacing: 10) {
                     // Sélecteurs
@@ -77,6 +93,7 @@ struct MenuBarEntryView: View {
                         .foregroundColor(.primary)
                         .onSubmit { saveEntry() }
                         .onAppear { refreshInput() }
+                        .accessibilityLabel(store.data.useWordCount ? "Total de mots pour \(activeChapter?.name ?? "ce chapitre")" : "Total de caractères pour \(activeChapter?.name ?? "ce chapitre")")
 
                         Text(store.data.useWordCount ? "mots" : "car.")
                             .font(.system(size: 12)).foregroundColor(.labelMuted)
@@ -90,6 +107,7 @@ struct MenuBarEntryView: View {
                         }
                         .buttonStyle(.plain)
                         .disabled(inputInt == nil)
+                        .accessibilityLabel(savedConfirmation ? "Saisie enregistrée" : "Enregistrer la saisie")
                     }
 
                     // Progress aujourd'hui
@@ -309,6 +327,8 @@ struct MenuBarEntryView: View {
                 .overlay(Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Cible : \(label)")
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 
     // MARK: - Sparkline 7 jours
@@ -344,6 +364,9 @@ struct MenuBarEntryView: View {
                 }
             }
             .frame(height: 24)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Activité des 7 derniers jours")
+            .accessibilityValue("Moyenne \(store.formatCount(avg)) par jour, meilleur jour \(store.formatCount(bestValue))")
             if bestValue > 0, bestIdx >= 0 {
                 HStack(spacing: 3) {
                     Circle().fill(Color.accentGreen).frame(width: 5, height: 5)

@@ -86,6 +86,12 @@ struct JournalSheet: View {
     @State private var editingText: String = ""
     @State private var showCopyToast = false
     @State private var showSavePanel = false
+    @State private var exportFeedback: ExportFeedback? = nil
+
+    private enum ExportFeedback: Equatable {
+        case success(String)
+        case failure(String)
+    }
 
     private var entries: [JournalEntry] { store.journalEntriesSorted(matching: query) }
 
@@ -104,8 +110,32 @@ struct JournalSheet: View {
             if showCopyToast {
                 copyToastBanner
             }
+            if let feedback = exportFeedback {
+                exportFeedbackBanner(feedback)
+            }
         }
         .frame(width: 640, height: 640)
+    }
+
+    @ViewBuilder
+    private func exportFeedbackBanner(_ feedback: ExportFeedback) -> some View {
+        let (icon, color, text): (String, Color, String) = {
+            switch feedback {
+            case .success(let msg): return ("checkmark.circle.fill", .accentGreen, msg)
+            case .failure(let msg): return ("exclamationmark.triangle.fill", .red, msg)
+            }
+        }()
+        HStack(spacing: 6) {
+            Image(systemName: icon).foregroundColor(color)
+            Text(text)
+                .font(.system(size: 11, weight: .medium))
+                .lineLimit(2)
+            Spacer()
+        }
+        .padding(.horizontal, 12).padding(.vertical, 8)
+        .background(color.opacity(0.1))
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .accessibilityElement(children: .combine)
     }
 
     private var header: some View {
@@ -190,16 +220,25 @@ struct JournalSheet: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 10) {
-            Image(systemName: "book.closed")
-                .font(.system(size: 32))
-                .foregroundColor(.labelMuted.opacity(0.5))
-            Text(query.isEmpty ? "Pas encore d'entrée." : "Aucun résultat")
-                .font(.system(size: 13))
+        VStack(spacing: 12) {
+            Image(systemName: query.isEmpty ? "book.closed" : "magnifyingglass")
+                .font(.system(size: 36, weight: .light))
+                .foregroundColor(.labelMuted.opacity(0.55))
+            Text(query.isEmpty ? "Pas encore d'entrée" : "Aucun résultat")
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.labelMuted)
+            Text(query.isEmpty
+                 ? "Note tes blocages, déclics et idées du jour. Le champ du haut sauvegarde immédiatement."
+                 : "Aucune entrée ne correspond à « \(query) ».")
+                .font(.system(size: 11))
+                .foregroundColor(.labelMuted.opacity(0.75))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 40)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(30)
+        .accessibilityElement(children: .combine)
     }
 
     private var listView: some View {
@@ -309,7 +348,15 @@ struct JournalSheet: View {
             guard response == .OK, let url = panel.url else { return }
             let blocks = JournalExport.docxBlocks(entries: entries)
             let data = DOCXWriter.make(title: "Journal de bord", blocks: blocks)
-            try? data.write(to: url)
+            do {
+                try data.write(to: url)
+                withAnimation { exportFeedback = .success("Journal exporté : \(url.lastPathComponent)") }
+            } catch {
+                withAnimation { exportFeedback = .failure("Export impossible : \(error.localizedDescription)") }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                withAnimation { exportFeedback = nil }
+            }
         }
     }
 

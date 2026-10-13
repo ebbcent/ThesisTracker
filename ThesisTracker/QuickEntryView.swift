@@ -153,6 +153,7 @@ struct QuickEntryView: View {
                     }
                     .buttonStyle(.plain)
                     .keyboardShortcut(.escape, modifiers: [])
+                    .accessibilityLabel("Fermer la saisie rapide")
                 }
 
                 Divider()
@@ -207,35 +208,47 @@ struct QuickEntryView: View {
                     }
                 }
 
-                if let project = selectedProject, project.chapters.count > 1 {
-                    HStack(spacing: 8) {
-                        Image(systemName: "book.closed.fill")
-                            .font(.system(size: 10))
-                            .foregroundColor(.accentWarm.opacity(0.8))
-                        Picker("", selection: Binding(
-                            get: { selectedChapterId ?? project.activeChapterId ?? project.chapters.first?.id },
-                            set: { newId in
-                                selectedChapterId = newId
-                                refreshInput()
+                Group {
+                    if let project = selectedProject, project.chapters.count > 1 {
+                        HStack(spacing: 8) {
+                            Image(systemName: "book.closed.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(.accentWarm.opacity(0.8))
+                            Picker("", selection: Binding(
+                                get: { selectedChapterId ?? project.activeChapterId ?? project.chapters.first?.id },
+                                set: { newId in
+                                    selectedChapterId = newId
+                                    refreshInput()
+                                }
+                            )) {
+                                ForEach(project.chapters) { chapter in
+                                    Text(chapter.name).tag(Optional(chapter.id))
+                                }
                             }
-                        )) {
-                            ForEach(project.chapters) { chapter in
-                                Text(chapter.name).tag(Optional(chapter.id))
-                            }
+                            .labelsHidden()
+                            .font(.system(size: 12))
                         }
-                        .labelsHidden()
-                        .font(.system(size: 12))
+                    } else if let chapter = selectedChapter {
+                        HStack(spacing: 6) {
+                            Image(systemName: "book.closed.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(.accentWarm.opacity(0.8))
+                            Text(chapter.name)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
                     }
-                } else if let chapter = selectedChapter {
-                    HStack(spacing: 6) {
-                        Image(systemName: "book.closed.fill")
-                            .font(.system(size: 10))
-                            .foregroundColor(.accentWarm.opacity(0.8))
-                        Text(chapter.name)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
+                }
+                // Drop d'un chapitre depuis la sidebar → pré-sélection
+                .dropDestination(for: String.self) { items, _ in
+                    guard let raw = items.first, raw.hasPrefix("ch:"),
+                          let id = UUID(uuidString: String(raw.dropFirst(3))),
+                          let projId = store.projectId(containingChapter: id) else { return false }
+                    store.data.activeProjectId = projId
+                    selectedChapterId = id
+                    refreshInput()
+                    return true
                 }
 
                 // Champ de saisie principal
@@ -249,6 +262,8 @@ struct QuickEntryView: View {
                     .foregroundColor(.primary)
                     .focused($inputFocused)
                     .onSubmit { saveEntry() }
+                    .accessibilityLabel(store.data.useWordCount ? "Total de mots pour \(selectedChapter?.name ?? "ce chapitre")" : "Total de caractères pour \(selectedChapter?.name ?? "ce chapitre")")
+                    .accessibilityValue("Actuel \(currentTotal)")
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(store.data.useWordCount ? "mots" : "car.")
@@ -276,6 +291,8 @@ struct QuickEntryView: View {
                     .buttonStyle(.plain)
                     .disabled(inputInt == nil)
                     .help("Enregistrer (↩)")
+                    .accessibilityLabel(savedConfirmation ? "Saisie enregistrée" : "Enregistrer la saisie")
+                    .accessibilityHint("Appuyez pour enregistrer la nouvelle valeur du chapitre")
                 }
                 .padding(.vertical, 4)
 
@@ -355,5 +372,7 @@ struct QuickEntryView: View {
                 .overlay(Capsule().stroke(selected ? Color.accent : Color.white.opacity(0.08), lineWidth: 1))
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Cible : \(label)")
+        .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
 }

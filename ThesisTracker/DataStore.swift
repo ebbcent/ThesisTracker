@@ -20,6 +20,10 @@ class DataStore: ObservableObject {
     @Published var showSaveIndicator: Bool = false
     @Published var iCloudSyncActive: Bool = false   // #42 — spinner discret
     @Published var loadErrorMessage: String? = nil
+    /// Last unrecoverable save error surfaced to the user. Cleared on next successful save.
+    /// Non-nil here means the in-memory state is ahead of disk — the user MUST see it
+    /// before they trust today's writing as persisted.
+    @Published var saveErrorMessage: String? = nil
 
     // Undo / Redo
     private(set) var undoStack: [UndoEntry] = []
@@ -231,6 +235,54 @@ class DataStore: ObservableObject {
         )
     }
 
+    /// Preview-only init: in-memory, no disk I/O, no file watcher, no notification
+    /// observers, no Spotlight indexing. Lets Xcode Previews render any view that
+    /// depends on a DataStore without triggering the full launch flow.
+    private init(previewData: AppData) {
+        self.data = previewData
+        self.isUsingICloud = false
+        self.dataVersion = 1
+    }
+
+    /// Shared in-memory store with seeded sample data for SwiftUI previews.
+    /// Lazily built once per process; safe to pass to any view that expects a DataStore.
+    static let preview: DataStore = {
+        var sample = AppData()
+        sample.dailyGoal = 1500
+        sample.useWordCount = false
+
+        let cal = Calendar(identifier: .gregorian)
+        let fmt = DateFormatter()
+        fmt.calendar = cal
+        fmt.locale = Locale(identifier: "en_US_POSIX")
+        fmt.dateFormat = "yyyy-MM-dd"
+
+        var intro = Chapter(name: "Introduction", goal: 30_000)
+        var litReview = Chapter(name: "État de l'art", goal: 60_000)
+        var methodo = Chapter(name: "Méthodologie", goal: 45_000)
+        for offset in (0..<14).reversed() {
+            let date = cal.date(byAdding: .day, value: -offset, to: Date()) ?? Date()
+            let dStr = fmt.string(from: date)
+            let base = max(0, 12_000 - offset * 600)
+            intro.entries.append(DailyEntry(date: dStr, totalCount: base, note: nil))
+            if offset < 10 {
+                litReview.entries.append(DailyEntry(date: dStr, totalCount: max(0, 18_000 - offset * 900), note: nil))
+            }
+            if offset < 5 {
+                methodo.entries.append(DailyEntry(date: dStr, totalCount: max(0, 4_000 - offset * 500), note: nil))
+            }
+        }
+
+        var thesis = Project(name: "Ma thèse — démo")
+        thesis.chapters = [intro, litReview, methodo]
+        thesis.activeChapterId = intro.id
+
+        sample.projects = [thesis]
+        sample.activeProjectId = thesis.id
+
+        return DataStore(previewData: sample)
+    }()
+
     // MARK: - Migration locale → iCloud Drive
 
     private func migrateToICloudIfNeeded() {
@@ -346,12 +398,29 @@ class DataStore: ObservableObject {
         let todayStr   = DataStore.today
         let task = DispatchWorkItem { [weak self] in
             // ── Background: JSON encode + disk I/O ──────────────────────────
-            guard let encoded = try? DataStore.sharedEncoder.encode(snapshot) else { return }
+            let encoded: Data
+            do {
+                encoded = try DataStore.sharedEncoder.encode(snapshot)
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.saveDebounceAnchor = nil
+                    self?.saveErrorMessage = "Encodage impossible : \(error.localizedDescription)"
+                }
+                return
+            }
             // Mark BEFORE the write so the directory watcher's event handler
             // (which fires async on a background queue) sees the timestamp.
             self?.lastSelfWriteAt = Date()
             DispatchQueue.main.async { [weak self] in self?.saveDebounceAnchor = nil }
-            try? encoded.write(to: fileURL, options: .atomic)
+            do {
+                try encoded.write(to: fileURL, options: .atomic)
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.saveErrorMessage = "Sauvegarde impossible : \(error.localizedDescription)"
+                }
+                return
+            }
+            DispatchQueue.main.async { [weak self] in self?.saveErrorMessage = nil }
             self?.saveSnapshotIfNeeded(for: encoded)
             // Spotlight re-index
             SpotlightIndexer.shared.reindex(snapshot)
@@ -1176,23 +1245,43 @@ class DataStore: ObservableObject {
 
     // MARK: - Folder mutations
 
-    func addFolder(name: String) {
-        let folder = ProjectFolder(name: name)
+    func addFolder(name: String, parentId: UUID? = nil) {
+        var folder = ProjectFolder(name: name)
+        // Valide que le parent existe encore (sinon : créé à la racine)
+        if let pid = parentId, data.folders.contains(where: { $0.id == pid }) {
+            folder.parentId = pid
+        }
         data.folders.append(folder)
         save()
     }
 
+    /// À la suppression d'un dossier : promeut ses enfants directs (sous-dossiers + projets)
+    /// au niveau du parent du dossier supprimé (ou racine si pas de parent).
     func deleteFolder(id: UUID, keepProjects: Bool = true) {
+        guard let folder = data.folders.first(where: { $0.id == id }) else { return }
+        let promotedParentId = folder.parentId
+
+        // 1) Sous-dossiers directs → promus au parent du dossier supprimé
+        for i in data.folders.indices where data.folders[i].parentId == id {
+            data.folders[i].parentId = promotedParentId
+        }
+
+        // 2) Projets : si on garde les projets, ils sont rattachés au parent (ou à la racine)
         if keepProjects {
-            // Move projects back to ungrouped
-            if let folder = data.folders.first(where: { $0.id == id }) {
-                for projId in folder.projectIds {
-                    if let idx = data.projects.firstIndex(where: { $0.id == projId }) {
-                        data.projects[idx].folderId = nil
-                    }
+            for projId in folder.projectIds {
+                if let idx = data.projects.firstIndex(where: { $0.id == projId }) {
+                    data.projects[idx].folderId = promotedParentId
+                }
+            }
+            if let parentIdx = promotedParentId.flatMap({ pid in
+                data.folders.firstIndex(where: { $0.id == pid })
+            }) {
+                for projId in folder.projectIds where !data.folders[parentIdx].projectIds.contains(projId) {
+                    data.folders[parentIdx].projectIds.append(projId)
                 }
             }
         }
+
         data.folders.removeAll { $0.id == id }
         save()
     }
@@ -1200,6 +1289,247 @@ class DataStore: ObservableObject {
     func updateFolder(_ folder: ProjectFolder) {
         guard let idx = data.folders.firstIndex(where: { $0.id == folder.id }) else { return }
         data.folders[idx] = folder
+        save()
+    }
+
+    /// Déplace un dossier de projets dans un dossier parent (ou nil = racine).
+    /// Refuse les cycles : on ne peut pas mettre un dossier dans son propre descendant.
+    func moveProjectFolder(_ folderId: UUID, toParent parentId: UUID?) {
+        guard let idx = data.folders.firstIndex(where: { $0.id == folderId }),
+              folderId != parentId else { return }
+        if let pid = parentId, isDescendantProjectFolder(pid, of: folderId) { return }
+        // Valide le parent
+        if let pid = parentId, !data.folders.contains(where: { $0.id == pid }) { return }
+        data.folders[idx].parentId = parentId
+        save()
+    }
+
+    /// Vrai si `candidateId` est un descendant (direct ou indirect) de `ancestorId`.
+    private func isDescendantProjectFolder(_ candidateId: UUID, of ancestorId: UUID) -> Bool {
+        var current: UUID? = candidateId
+        while let c = current {
+            if c == ancestorId { return true }
+            current = data.folders.first(where: { $0.id == c })?.parentId
+        }
+        return false
+    }
+
+    /// Sous-dossiers directs (parentId == parent) d'un dossier de projets, ou racines si parent == nil.
+    func childProjectFolders(of parentId: UUID?) -> [ProjectFolder] {
+        data.folders.filter { $0.parentId == parentId }
+    }
+
+    /// Déplace un dossier de projets juste avant un autre dossier (et aligne son parentId
+    /// sur celui de la cible, pour rester cohérent avec l'imbrication).
+    func moveProjectFolderById(_ sourceId: UUID, before targetId: UUID) {
+        guard sourceId != targetId,
+              let fromIdx = data.folders.firstIndex(where: { $0.id == sourceId }) else { return }
+        if isDescendantProjectFolder(targetId, of: sourceId) { return }
+        let targetParent = data.folders.first(where: { $0.id == targetId })?.parentId
+        var folder = data.folders.remove(at: fromIdx)
+        folder.parentId = targetParent
+        let insertIdx = data.folders.firstIndex(where: { $0.id == targetId }) ?? data.folders.count
+        data.folders.insert(folder, at: insertIdx)
+        save()
+    }
+
+    /// Déplace un dossier de projets en queue de liste (racine).
+    func moveProjectFolderToEnd(_ sourceId: UUID) {
+        guard let fromIdx = data.folders.firstIndex(where: { $0.id == sourceId }) else { return }
+        var folder = data.folders.remove(at: fromIdx)
+        folder.parentId = nil
+        data.folders.append(folder)
+        save()
+    }
+
+    /// Renommage rapide d'un projet (utilisé par l'inline rename)
+    func renameProject(_ projectId: UUID, newName: String) {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              let idx = data.projects.firstIndex(where: { $0.id == projectId }) else { return }
+        data.projects[idx].name = trimmed
+        save()
+    }
+
+    /// Renommage rapide d'un chapitre
+    func renameChapter(_ chapterId: UUID, in projectId: UUID, newName: String) {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              let pIdx = data.projects.firstIndex(where: { $0.id == projectId }),
+              let cIdx = data.projects[pIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
+        data.projects[pIdx].chapters[cIdx].name = trimmed
+        save()
+    }
+
+    // MARK: - Export / import sous-arbre
+
+    enum SubtreeExportError: Error { case projectNotFound, chapterNotFound, decode, invalidPayload }
+
+    /// Wrapper unifié pour exporter un projet, un dossier (avec ses chapitres) ou un chapitre seul.
+    struct SubtreeExportPayload: Codable {
+        let kind: String   // "project" | "chapterFolder" | "chapter"
+        let exportedAt: String
+        let version: Int
+        let project: Project?
+        let chapterFolder: ChapterFolder?
+        let chapters: [Chapter]?
+        let chapter: Chapter?
+    }
+
+    func exportProjectPayload(_ projectId: UUID) throws -> Data {
+        guard let proj = data.projects.first(where: { $0.id == projectId }) else { throw SubtreeExportError.projectNotFound }
+        let payload = SubtreeExportPayload(kind: "project", exportedAt: DataStore.dateString(from: Date()),
+                                           version: 1, project: proj, chapterFolder: nil, chapters: nil, chapter: nil)
+        return try JSONEncoder().encode(payload)
+    }
+
+    func exportChapterFolderPayload(_ folderId: UUID, in projectId: UUID) throws -> Data {
+        guard let proj = data.projects.first(where: { $0.id == projectId }),
+              let folder = proj.chapterFolders.first(where: { $0.id == folderId }) else { throw SubtreeExportError.projectNotFound }
+        let chapters = proj.chapters.filter { $0.chapterFolderId == folderId }
+        let payload = SubtreeExportPayload(kind: "chapterFolder", exportedAt: DataStore.dateString(from: Date()),
+                                           version: 1, project: nil, chapterFolder: folder, chapters: chapters, chapter: nil)
+        return try JSONEncoder().encode(payload)
+    }
+
+    func exportChapterPayload(_ chapterId: UUID, in projectId: UUID) throws -> Data {
+        guard let proj = data.projects.first(where: { $0.id == projectId }),
+              let chap = proj.chapters.first(where: { $0.id == chapterId }) else { throw SubtreeExportError.chapterNotFound }
+        let payload = SubtreeExportPayload(kind: "chapter", exportedAt: DataStore.dateString(from: Date()),
+                                           version: 1, project: nil, chapterFolder: nil, chapters: nil, chapter: chap)
+        return try JSONEncoder().encode(payload)
+    }
+
+    /// Importe un payload exporté. `intoProjectId` est utilisé pour les payloads chapitre/dossier
+    /// (ils ont besoin d'un projet cible). Pour un projet, il est ajouté avec un nouvel UUID.
+    @discardableResult
+    func importSubtreePayload(_ data: Data, intoProjectId: UUID?) throws -> String {
+        let payload = try JSONDecoder().decode(SubtreeExportPayload.self, from: data)
+        switch payload.kind {
+        case "project":
+            guard var p = payload.project else { throw SubtreeExportError.invalidPayload }
+            p = renumberProject(p)
+            self.data.projects.append(p)
+            save()
+            return "Projet « \(p.name) » importé."
+        case "chapterFolder":
+            guard let folder = payload.chapterFolder, let chapters = payload.chapters,
+                  let pid = intoProjectId,
+                  let pIdx = self.data.projects.firstIndex(where: { $0.id == pid })
+            else { throw SubtreeExportError.invalidPayload }
+            var newFolder = folder
+            newFolder.id = UUID()
+            // Le parent vient d'un autre arbre : on rattache à la racine.
+            newFolder.parentId = nil
+            self.data.projects[pIdx].chapterFolders.append(newFolder)
+            for c in chapters {
+                var nc = c
+                nc.id = UUID()
+                nc.chapterFolderId = newFolder.id
+                self.data.projects[pIdx].chapters.append(nc)
+            }
+            save()
+            return "Dossier « \(newFolder.name) » + \(chapters.count) chapitres importés."
+        case "chapter":
+            guard let c = payload.chapter,
+                  let pid = intoProjectId,
+                  let pIdx = self.data.projects.firstIndex(where: { $0.id == pid })
+            else { throw SubtreeExportError.invalidPayload }
+            var nc = c
+            nc.id = UUID()
+            nc.chapterFolderId = nil
+            self.data.projects[pIdx].chapters.append(nc)
+            save()
+            return "Chapitre « \(nc.name) » importé."
+        default:
+            throw SubtreeExportError.invalidPayload
+        }
+    }
+
+    /// Re-numérote un projet importé : nouvel UUID projet, nouveaux UUIDs chapitres / folders,
+    /// remap des chapterFolderId et parentId des dossiers vers les nouveaux ids.
+    private func renumberProject(_ project: Project) -> Project {
+        var p = project
+        p.id = UUID()
+        var folderMap: [UUID: UUID] = [:]
+        // Étape 1 : régénérer les ids ; on remappera les parentId en étape 2 (l'ordre du tableau peut placer un parent après son enfant).
+        p.chapterFolders = p.chapterFolders.map { f in
+            var nf = f; nf.id = UUID(); folderMap[f.id] = nf.id; return nf
+        }
+        p.chapterFolders = p.chapterFolders.map { f in
+            var nf = f
+            if let old = f.parentId { nf.parentId = folderMap[old] }
+            return nf
+        }
+        p.chapters = p.chapters.map { c in
+            var nc = c; nc.id = UUID()
+            if let old = c.chapterFolderId { nc.chapterFolderId = folderMap[old] }
+            return nc
+        }
+        p.activeChapterId = nil
+        return p
+    }
+
+    /// Renommage rapide d'un dossier de projets
+    func renameProjectFolder(_ folderId: UUID, newName: String) {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              let idx = data.folders.firstIndex(where: { $0.id == folderId }) else { return }
+        data.folders[idx].name = trimmed
+        save()
+    }
+
+    /// Archive (ou désarchive) un chapitre. Préserve toutes ses entrées.
+    func setChapterArchived(_ archived: Bool, chapterId: UUID, in projectId: UUID) {
+        guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
+              let chapIdx = data.projects[projIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
+        data.projects[projIdx].chapters[chapIdx].isArchived = archived
+        if archived, data.projects[projIdx].activeChapterId == chapterId {
+            // Sélectionner un autre chapitre actif si on archive le courant
+            data.projects[projIdx].activeChapterId = data.projects[projIdx].chapters
+                .first(where: { !$0.isArchived && $0.id != chapterId })?.id
+        }
+        save()
+    }
+
+    /// Renvoie l'ensemble des chapitres archivés du projet (utilisé par la section Archives).
+    func archivedChapters(in projectId: UUID) -> [Chapter] {
+        data.projects.first(where: { $0.id == projectId })?.chapters.filter { $0.isArchived } ?? []
+    }
+
+    /// Bascule l'épinglage d'un projet
+    func toggleProjectPinned(_ projectId: UUID) {
+        guard let idx = data.projects.firstIndex(where: { $0.id == projectId }) else { return }
+        data.projects[idx].isPinned.toggle()
+        save()
+    }
+
+    /// Bascule l'épinglage d'un chapitre
+    func toggleChapterPinned(_ chapterId: UUID, in projectId: UUID) {
+        guard let pIdx = data.projects.firstIndex(where: { $0.id == projectId }),
+              let cIdx = data.projects[pIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
+        data.projects[pIdx].chapters[cIdx].isPinned.toggle()
+        save()
+    }
+
+    /// Tous les chapitres épinglés (avec leur projet) à travers tous les projets
+    func allPinnedChapters() -> [(project: Project, chapter: Chapter)] {
+        data.projects.flatMap { proj in
+            proj.chapters.filter { $0.isPinned && !$0.isArchived }.map { (proj, $0) }
+        }
+    }
+
+    /// Tous les projets épinglés (non-archivés)
+    func allPinnedProjects() -> [Project] {
+        data.projects.filter { $0.isPinned && !$0.isArchived }
+    }
+
+    /// Plie/déplie tous les dossiers de chapitres d'un projet (V — utilisateur)
+    func setAllChapterFoldersExpanded(_ expanded: Bool, in projectId: UUID) {
+        guard let idx = data.projects.firstIndex(where: { $0.id == projectId }) else { return }
+        for i in data.projects[idx].chapterFolders.indices {
+            data.projects[idx].chapterFolders[i].isExpanded = expanded
+        }
         save()
     }
 
@@ -1226,21 +1556,65 @@ class DataStore: ObservableObject {
 
     // MARK: - Chapter folder mutations
 
-    func addChapterFolder(name: String, to projectId: UUID) {
+    func addChapterFolder(name: String, to projectId: UUID, parentId: UUID? = nil) {
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }) else { return }
-        data.projects[projIdx].chapterFolders.append(ChapterFolder(name: name))
+        var folder = ChapterFolder(name: name)
+        if let pid = parentId, data.projects[projIdx].chapterFolders.contains(where: { $0.id == pid }) {
+            folder.parentId = pid
+        }
+        data.projects[projIdx].chapterFolders.append(folder)
         save()
     }
 
+    /// À la suppression : promeut sous-dossiers et chapitres au parent du dossier supprimé.
     func deleteChapterFolder(id folderId: UUID, in projectId: UUID) {
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }) else { return }
+        let promotedParentId = data.projects[projIdx].chapterFolders
+            .first(where: { $0.id == folderId })?.parentId
+
+        // 1) Sous-dossiers directs → parent du dossier supprimé
+        for i in data.projects[projIdx].chapterFolders.indices
+            where data.projects[projIdx].chapterFolders[i].parentId == folderId {
+            data.projects[projIdx].chapterFolders[i].parentId = promotedParentId
+        }
+        // 2) Chapitres rattachés à ce dossier → parent (peut être nil = racine du projet)
         for chapIdx in data.projects[projIdx].chapters.indices {
             if data.projects[projIdx].chapters[chapIdx].chapterFolderId == folderId {
-                data.projects[projIdx].chapters[chapIdx].chapterFolderId = nil
+                data.projects[projIdx].chapters[chapIdx].chapterFolderId = promotedParentId
             }
         }
         data.projects[projIdx].chapterFolders.removeAll { $0.id == folderId }
         save()
+    }
+
+    /// Déplace un dossier de chapitres dans un dossier parent (ou nil = racine du projet).
+    /// Refuse les cycles.
+    func moveChapterFolder(_ folderId: UUID, toParent parentId: UUID?, in projectId: UUID) {
+        guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
+              let idx = data.projects[projIdx].chapterFolders.firstIndex(where: { $0.id == folderId }),
+              folderId != parentId else { return }
+        if let pid = parentId,
+           isDescendantChapterFolder(pid, of: folderId, in: projectId) { return }
+        if let pid = parentId,
+           !data.projects[projIdx].chapterFolders.contains(where: { $0.id == pid }) { return }
+        data.projects[projIdx].chapterFolders[idx].parentId = parentId
+        save()
+    }
+
+    private func isDescendantChapterFolder(_ candidateId: UUID, of ancestorId: UUID, in projectId: UUID) -> Bool {
+        guard let proj = data.projects.first(where: { $0.id == projectId }) else { return false }
+        var current: UUID? = candidateId
+        while let c = current {
+            if c == ancestorId { return true }
+            current = proj.chapterFolders.first(where: { $0.id == c })?.parentId
+        }
+        return false
+    }
+
+    /// Sous-dossiers de chapitres ayant ce parent (ou racine si parent == nil) dans un projet.
+    func childChapterFolders(of parentId: UUID?, in projectId: UUID) -> [ChapterFolder] {
+        guard let proj = data.projects.first(where: { $0.id == projectId }) else { return [] }
+        return proj.chapterFolders.filter { $0.parentId == parentId }
     }
 
     func renameChapterFolder(_ folderId: UUID, newName: String, in projectId: UUID) {
@@ -1254,6 +1628,32 @@ class DataStore: ObservableObject {
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
               let folderIdx = data.projects[projIdx].chapterFolders.firstIndex(where: { $0.id == folderId }) else { return }
         data.projects[projIdx].chapterFolders[folderIdx].isExpanded.toggle()
+        save()
+    }
+
+    /// Déplace un dossier juste avant un autre dossier dans le même projet
+    /// (et aligne son parentId sur celui de la cible).
+    func moveChapterFolderById(_ sourceId: UUID, before targetId: UUID, in projectId: UUID) {
+        guard sourceId != targetId,
+              let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
+              let fromIdx = data.projects[projIdx].chapterFolders.firstIndex(where: { $0.id == sourceId }) else { return }
+        if isDescendantChapterFolder(targetId, of: sourceId, in: projectId) { return }
+        let targetParent = data.projects[projIdx].chapterFolders.first(where: { $0.id == targetId })?.parentId
+        var folder = data.projects[projIdx].chapterFolders.remove(at: fromIdx)
+        folder.parentId = targetParent
+        let insertIdx = data.projects[projIdx].chapterFolders.firstIndex(where: { $0.id == targetId })
+                        ?? data.projects[projIdx].chapterFolders.count
+        data.projects[projIdx].chapterFolders.insert(folder, at: insertIdx)
+        save()
+    }
+
+    /// Déplace un dossier à la fin de la liste (racine du projet).
+    func moveChapterFolderToEnd(_ sourceId: UUID, in projectId: UUID) {
+        guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
+              let fromIdx = data.projects[projIdx].chapterFolders.firstIndex(where: { $0.id == sourceId }) else { return }
+        var folder = data.projects[projIdx].chapterFolders.remove(at: fromIdx)
+        folder.parentId = nil
+        data.projects[projIdx].chapterFolders.append(folder)
         save()
     }
 
@@ -1340,6 +1740,55 @@ class DataStore: ObservableObject {
         let chapter = data.projects[projIdx].chapters.remove(at: fromIdx)
         data.projects[projIdx].chapters.append(chapter)
         save()
+    }
+
+    /// Renvoie l'id du projet qui contient le chapitre donné, ou nil.
+    func projectId(containingChapter chapterId: UUID) -> UUID? {
+        for project in data.projects {
+            if project.chapters.contains(where: { $0.id == chapterId }) { return project.id }
+        }
+        return nil
+    }
+
+    /// Déplace un chapitre (et toutes ses entrées / progression) vers un autre projet.
+    /// Si `folderId` est fourni et existe dans la cible, le chapitre y est placé,
+    /// sinon il est placé à la racine du projet. Insertion à la fin par défaut.
+    @discardableResult
+    func moveChapterToProject(_ chapterId: UUID,
+                              from sourceProjectId: UUID,
+                              to targetProjectId: UUID,
+                              folderId: UUID? = nil,
+                              beforeChapterId: UUID? = nil) -> Bool {
+        if sourceProjectId == targetProjectId {
+            // Même projet : éventuel changement de groupe + réordonnancement
+            moveChapterToFolder(chapterId, folderId: folderId, in: sourceProjectId)
+            if let target = beforeChapterId {
+                moveChapterById(chapterId, before: target, in: sourceProjectId)
+            }
+            return true
+        }
+        guard let srcIdx = data.projects.firstIndex(where: { $0.id == sourceProjectId }),
+              let chapIdx = data.projects[srcIdx].chapters.firstIndex(where: { $0.id == chapterId }),
+              let dstIdx = data.projects.firstIndex(where: { $0.id == targetProjectId }) else { return false }
+        var chapter = data.projects[srcIdx].chapters.remove(at: chapIdx)
+        if let fid = folderId,
+           data.projects[dstIdx].chapterFolders.contains(where: { $0.id == fid }) {
+            chapter.chapterFolderId = fid
+        } else {
+            chapter.chapterFolderId = nil
+        }
+        // Si c'était le chapitre actif du projet source, nettoyer
+        if data.projects[srcIdx].activeChapterId == chapterId {
+            data.projects[srcIdx].activeChapterId = data.projects[srcIdx].chapters.first?.id
+        }
+        if let target = beforeChapterId,
+           let insertIdx = data.projects[dstIdx].chapters.firstIndex(where: { $0.id == target }) {
+            data.projects[dstIdx].chapters.insert(chapter, at: insertIdx)
+        } else {
+            data.projects[dstIdx].chapters.append(chapter)
+        }
+        save()
+        return true
     }
 
     /// Déplace un projet juste avant targetId

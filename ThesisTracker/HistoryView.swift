@@ -49,11 +49,19 @@ struct HistoryView: View {
                     Spacer()
                     VStack(spacing: 12) {
                         Image(systemName: "tray")
-                            .font(.system(size: 36))
-                            .foregroundColor(.labelMuted)
+                            .font(.system(size: 40, weight: .light))
+                            .foregroundColor(.labelMuted.opacity(0.6))
                         Text("Aucune entrée pour ce chapitre")
+                            .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.labelMuted)
+                        Text("Les saisies quotidiennes apparaîtront ici dès que tu en enregistreras une.")
+                            .font(.system(size: 11))
+                            .foregroundColor(.labelMuted.opacity(0.75))
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.horizontal, 40)
                     }
+                    .accessibilityElement(children: .combine)
                     Spacer()
                 } else {
                     ScrollView {

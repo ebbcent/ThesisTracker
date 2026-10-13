@@ -169,16 +169,25 @@ struct FragmentsSheet: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             Image(systemName: "scribble.variable")
-                .font(.system(size: 32))
-                .foregroundColor(.labelMuted.opacity(0.5))
-            Text(showArchived ? "Aucun fragment archivé" : "Aucun fragment.")
-                .font(.system(size: 13))
+                .font(.system(size: 36, weight: .light))
+                .foregroundColor(.labelMuted.opacity(0.55))
+            Text(showArchived ? "Aucun fragment archivé" : "Aucun fragment")
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.labelMuted)
+            Text(showArchived
+                 ? "Les fragments que tu marqueras comme « utilisé » apparaîtront ici."
+                 : "Capture une idée, une citation, une phrase à recycler — sans casser ton flux d'écriture.")
+                .font(.system(size: 11))
+                .foregroundColor(.labelMuted.opacity(0.75))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 40)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(30)
+        .accessibilityElement(children: .combine)
     }
 
     private var listView: some View {

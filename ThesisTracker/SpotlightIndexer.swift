@@ -2,6 +2,7 @@ import Foundation
 import AppKit
 import CoreSpotlight
 import UniformTypeIdentifiers
+import os
 
 // MARK: - Feature #51 : Intégration Spotlight
 // Indexe tous les projets et chapitres dans CoreSpotlight so they appear
@@ -14,6 +15,7 @@ final class SpotlightIndexer {
 
     private let index = CSSearchableIndex.default()
     private let domainId = "com.thesistracker"
+    private let log = Logger(subsystem: "com.writingprocess.app", category: "Spotlight")
 
     // Unique identifier prefixes
     static let projectPrefix = "com.thesistracker.project."
@@ -71,9 +73,9 @@ final class SpotlightIndexer {
         }
         index.deleteSearchableItems(withDomainIdentifiers: [domainId]) { [weak self] _ in
             guard let self else { return }
-            self.index.indexSearchableItems(items) { error in
+            self.index.indexSearchableItems(items) { [weak self] error in
                 if let error {
-                    print("[Spotlight] Indexing error: \(error.localizedDescription)")
+                    self?.log.error("Indexing error: \(error.localizedDescription, privacy: .public)")
                 }
             }
         }

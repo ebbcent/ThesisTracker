@@ -308,6 +308,8 @@ struct ProjectFolder: Codable, Identifiable {
     var name: String
     var projectIds: [UUID] = []
     var isExpanded: Bool = true
+    /// nil = dossier racine. Sinon : id du dossier parent (imbrication).
+    var parentId: UUID? = nil
 }
 
 // MARK: - Groupe de chapitres (dans un projet)
@@ -316,6 +318,8 @@ struct ChapterFolder: Codable, Identifiable {
     var id: UUID = UUID()
     var name: String
     var isExpanded: Bool = true
+    /// nil = dossier racine (attaché directement au projet). Sinon : id du dossier parent.
+    var parentId: UUID? = nil
 }
 
 // MARK: - Entrée d'historique de chapitre (V5 — amélioration #9)
@@ -458,6 +462,8 @@ struct Chapter: Codable, Identifiable {
     var defenseNotes: [DefenseNote] = []            // #2 — préparation de soutenance
     var selfReviews: [SelfReview] = []              // self-évaluations qualité
     var hiddenWidgets: [String] = []                // widgets masqués sur le tableau de bord de ce chapitre
+    var isArchived: Bool = false                    // chapitre mis à l'écart (toujours dans le projet, masqué par défaut)
+    var isPinned: Bool = false                      // épinglé en haut de la sidebar
 
     // Initializer de commodité (remplace le memberwise init supprimé par le custom decoder)
     init(name: String, goal: Int, deadline: String? = nil, notes: String? = nil,
@@ -498,6 +504,8 @@ struct Chapter: Codable, Identifiable {
         defenseNotes    = (try? c.decodeIfPresent([DefenseNote].self,        forKey: .defenseNotes)) ?? []
         selfReviews     = (try? c.decodeIfPresent([SelfReview].self,         forKey: .selfReviews)) ?? []
         hiddenWidgets   = (try? c.decodeIfPresent([String].self,             forKey: .hiddenWidgets)) ?? []
+        isArchived      = (try? c.decodeIfPresent(Bool.self,                 forKey: .isArchived))   ?? false
+        isPinned        = (try? c.decodeIfPresent(Bool.self,                 forKey: .isPinned))     ?? false
     }
 
     /// La relecture en cours (la plus récente).
@@ -563,13 +571,14 @@ struct Project: Codable, Identifiable {
     var activeChapterId: UUID? = nil
     var chapters: [Chapter] = []
     var tag: ProjectTag? = nil
-    var folderId: UUID? = nil        // nil = sans dossier
+    var folderId: UUID? = nil        // nil = projet à la racine
     var chapterFolders: [ChapterFolder] = []
     var projectType: ProjectType? = nil  // V5 — type de document
     var supervisor: String? = nil        // V5 — directeur / co-auteur
     var milestones: [Milestone] = []     // V5 — jalons intermédiaires
     var notes: String? = nil             // #16 — notes libres de projet
     var isArchived: Bool = false         // #17 — projet archivé
+    var isPinned: Bool = false           // épinglé en haut de la sidebar
 
     // Initializer de commodité (remplace le memberwise init supprimé par le custom decoder)
     init(name: String, tag: ProjectTag? = nil, projectType: ProjectType? = nil,
@@ -595,6 +604,7 @@ struct Project: Codable, Identifiable {
         milestones      = (try? c.decodeIfPresent([Milestone].self,      forKey: .milestones))      ?? []
         notes           = try? c.decodeIfPresent(String.self,            forKey: .notes)
         isArchived      = (try? c.decodeIfPresent(Bool.self,             forKey: .isArchived))      ?? false
+        isPinned        = (try? c.decodeIfPresent(Bool.self,             forKey: .isPinned))        ?? false
     }
 }
 
