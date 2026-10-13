@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Writing Process — Design v2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:        #0a0908;
+  --sidebar:   #0f0e0d;
+  --card:      #161513;
+  --card2:     #1c1a18;
+  --border:    #252220;
+  --border2:   #2e2b28;
+  --text:      #f2ede8;
+  --text2:     #9a9590;
+  --text3:     #4e4a46;
+  --amber:     #f59e0b;
+  --orange:    #ea580c;
+  --green:     #22c55e;
+  --blue:      #60a5fa;
+  --purple:    #c084fc;
+  --r:         9px;
+  --rs:        6px;
+}
+
+html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;font-size:13px;-webkit-font-smoothing:antialiased}
+
+/* ── Layout ── */
+.app{display:flex;height:100vh;width:100vw}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:252px;min-width:252px;
+  background:var(--sidebar);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;user-select:none;
+}
+
+.tl-bar{display:flex;gap:6px;padding:14px 16px 0;flex-shrink:0}
+.tl{width:11px;height:11px;border-radius:50%}
+.tl.r{background:#ff5f57}.tl.y{background:#febc2e}.tl.g{background:#28c840}
+
+.sb-header{
+  padding:10px 14px 12px;
+  display:flex;align-items:center;gap:9px;flex-shrink:0;
+}
+.app-icon{
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--amber) 0%,var(--orange) 100%);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  box-shadow:0 2px 8px rgba(245,158,11,0.3);
+}
+.app-name{font-size:13px;font-weight:600;color:var(--text);flex:1;letter-spacing:-0.1px}
+.streak-chip{
+  display:flex;align-items:center;gap:3px;
+  background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.18);
+  border-radius:20px;padding:3px 8px;
+  font-size:10.5px;font-weight:700;color:var(--amber);
+}
+
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 0 8px}
+.sb-scroll::-webkit-scrollbar{width:3px}
+.sb-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* nav */
+.ng{margin-bottom:0}
+.ng-label{
+  padding:10px 16px 3px;
+  font-size:9px;font-weight:700;letter-spacing:1.1px;
+  color:var(--text3);text-transform:uppercase;
+}
+.ni{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 10px 6px 13px;
+  margin:1px 7px;border-radius:var(--rs);
+  cursor:pointer;position:relative;
+  color:var(--text2);font-size:12.5px;font-weight:400;
+  transition:all 0.1s;
+}
+.ni:hover{background:rgba(255,255,255,0.035);color:var(--text)}
+.ni.active{
+  background:rgba(245,158,11,0.08);color:var(--text);font-weight:500;
+}
+.ni.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:14px;
+  background:linear-gradient(to bottom,var(--amber),var(--orange));
+  border-radius:0 2px 2px 0;
+}
+.ni-icon{
+  width:16px;height:16px;display:flex;align-items:center;justify-content:center;
+  font-size:11.5px;flex-shrink:0;color:var(--text3);
+}
+.ni.active .ni-icon{color:var(--amber)}
+.ni:hover .ni-icon{color:var(--text2)}
+.ni-kbd{
+  margin-left:auto;font-size:9.5px;color:var(--text3);
+  background:var(--card2);border:1px solid var(--border);
+  padding:1px 5px;border-radius:3px;
+  font-family:monospace;
+  opacity:0;transition:opacity 0.1s;
+}
+.ni:hover .ni-kbd{opacity:1}
+
+.nd{height:1px;background:var(--border);margin:5px 14px}
+
+/* projects */
+.ps{padding:0 7px}
+.ps-hdr{display:flex;align-items:center;gap:5px;padding:9px 9px 5px;color:var(--text3)}
+.ps-hdr-lbl{font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;flex:1}
+.ibtn{width:19px;height:19px;border-radius:4px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:var(--text3);transition:all 0.1s}
+.ibtn:hover{background:rgba(255,255,255,0.06);color:var(--text2)}
+.ibtn.a{color:var(--amber);background:rgba(245,158,11,0.1)}
+.ibtn.a:hover{background:rgba(245,158,11,0.17)}
+
+.proj{border-radius:var(--rs);overflow:hidden;margin-bottom:3px}
+.proj-hdr{display:flex;align-items:center;gap:7px;padding:6px 9px;cursor:pointer;border-radius:var(--rs);transition:background 0.1s}
+.proj-hdr:hover{background:rgba(255,255,255,0.03)}
+.proj-hdr.active{background:rgba(245,158,11,0.05)}
+.chev{font-size:8px;color:var(--text3);transition:transform 0.18s;flex-shrink:0}
+.chev.open{transform:rotate(90deg)}
+.pdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.pname{flex:1;font-size:12.5px;font-weight:500;color:var(--text)}
+/* mini ring instead of sparkline */
+.mini-ring{position:relative;width:20px;height:20px;flex-shrink:0}
+.mini-ring svg{transform:rotate(-90deg)}
+.mini-ring .lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:var(--amber)}
+
+.ch-list{padding:2px 0 4px 14px}
+.ch-row{padding:5px 9px;border-radius:var(--rs);margin-bottom:1px;cursor:pointer;transition:background 0.1s}
+.ch-row:hover{background:rgba(255,255,255,0.025)}
+.ch-row.active{background:rgba(245,158,11,0.06)}
+.ch-top{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.ch-sdot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.ch-name{font-size:11.5px;font-weight:400;color:var(--text);flex:1}
+.ch-row.active .ch-name{font-weight:500}
+.ch-pct{font-size:10.5px;color:var(--text2)}
+.ch-row.active .ch-pct{color:var(--amber)}
+.ch-track{height:2px;background:rgba(255,255,255,0.05);border-radius:1px;overflow:hidden}
+.ch-fill{height:100%;border-radius:1px}
+
+/* progress bar */
+.sb-prog{padding:8px 13px 6px;border-top:1px solid var(--border)}
+.sb-prog-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sb-prog-top span:first-child{font-size:9.5px;color:var(--text3)}
+.sb-prog-top span:last-child{font-size:9.5px;font-weight:700;color:var(--amber)}
+.sb-prog-track{height:2.5px;background:var(--border2);border-radius:2px;overflow:hidden}
+.sb-prog-fill{height:100%;background:linear-gradient(to right,var(--amber),var(--orange));border-radius:2px}
+
+/* footer */
+.sb-footer{padding:8px 9px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.sb-badges{display:flex;align-items:center;gap:5px;padding:0 3px;margin-bottom:7px}
+.bdot{width:6px;height:6px;border-radius:50%}
+.sb-actions{display:flex;gap:5px}
+.sb-btn{flex:1;height:28px;background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--text3);transition:all 0.1s}
+.sb-btn:hover{background:rgba(255,255,255,0.065);color:var(--text2)}
+.sb-btn.p{color:var(--amber);border-color:rgba(245,158,11,0.18);background:rgba(245,158,11,0.07)}
+.sb-btn.p:hover{background:rgba(245,158,11,0.13)}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.main-scroll{flex:1;overflow-y:auto;overflow-x:hidden}
+.main-scroll::-webkit-scrollbar{width:5px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── Status bar ── */
+.status-bar{
+  display:flex;align-items:center;gap:0;
+  padding:0 24px;
+  height:40px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  background:var(--sidebar);
+}
+.sb-item{
+  display:flex;align-items:center;gap:6px;
+  padding:0 14px;border-right:1px solid var(--border);
+  height:100%;font-size:11px;color:var(--text2);
+}
+.sb-item:first-child{padding-left:0}
+.sb-item:last-child{border-right:none}
+.sb-item strong{color:var(--text);font-weight:600}
+.sb-item .dot-ind{width:5px;height:5px;border-radius:50%}
+
+/* ── Page ── */
+.page{padding:20px 24px;max-width:920px}
+
+.ph{display:flex;align-items:center;gap:11px;margin-bottom:20px}
+.ph-toggle{
+  width:30px;height:30px;border-radius:7px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:12px;color:var(--text3);transition:all 0.1s;flex-shrink:0;
+}
+.ph-toggle:hover{background:rgba(255,255,255,0.07);color:var(--text2)}
+.ph-title{font-size:19px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+.ph-sub{font-size:11px;color:var(--text3);margin-top:1px;display:flex;align-items:center;gap:5px}
+.ph-sub .sdot{color:var(--border2)}
+.ph-crumb{display:inline-flex;align-items:center;gap:4px;color:var(--text2)}
+.ph-crumb .cdot{width:5px;height:5px;border-radius:50%;background:var(--amber)}
+.ph-actions{margin-left:auto;display:flex;gap:7px;align-items:center}
+
+/* grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+
+/* cards */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 15px;
+}
+.card-title{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.8px;color:var(--text3);margin-bottom:11px;
+  display:flex;align-items:center;gap:5px;
+}
+.ct-icon{font-size:10.5px}
+
+/* selector */
+.sel-row{display:flex;align-items:center;gap:9px}
+.sel-lbl{font-size:10px;color:var(--text3);width:55px;flex-shrink:0}
+.sel-pill{
+  display:flex;align-items:center;gap:6px;
+  background:var(--card2);border:1px solid var(--border2);
+  border-radius:var(--rs);padding:5px 10px;
+  cursor:pointer;transition:all 0.1s;flex:1;
+}
+.sel-pill:hover{border-color:var(--border);background:#202018}
+.sel-pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sel-pname{font-size:12px;font-weight:500;color:var(--text);flex:1}
+.sel-chev{font-size:9.5px;color:var(--text3)}
+.sel-div{height:1px;background:var(--border);margin:9px 0}
+
+/* entry hero */
+.entry-hero{
+  text-align:center;padding:16px 0 12px;
+  border-bottom:1px solid var(--border);margin-bottom:14px;
+}
+.hero-count{
+  font-size:48px;font-weight:800;letter-spacing:-2px;line-height:1;
+  background:linear-gradient(135deg,#f2ede8 30%,#9a9590 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-count.has-data{
+  background:linear-gradient(135deg,#f2ede8 50%,rgba(245,158,11,0.7) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-unit{font-size:14px;font-weight:400;color:var(--text3);margin-left:3px;vertical-align:middle}
+.hero-delta{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;color:var(--green);margin-top:5px;
+}
+.hero-empty{font-size:11px;color:var(--text3);margin-top:6px}
+
+/* goal bar */
+.goal-bar{margin-bottom:13px}
+.gb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.gb-top span:first-child{font-size:10px;color:var(--text3)}
+.gb-pct{font-size:10px;font-weight:700;color:var(--amber)}
+.gb-track{height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
+.gb-fill{height:100%;border-radius:2px;background:linear-gradient(to right,var(--amber),var(--orange))}
+
+/* date row */
+.date-row{display:flex;align-items:center;gap:7px;margin-bottom:13px}
+.dnav{
+  width:24px;height:24px;border-radius:5px;
+  background:var(--card2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:10px;color:var(--text3);transition:all 0.1s;
+}
+.dnav:hover{background:#222;color:var(--text2)}
+.dlbl{flex:1;font-size:11.5px;font-weight:500;color:var(--text2);text-align:center}
+.today-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--amber);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:2px 6px;border-radius:3px}
+
+/* input row */
+.inp-row{display:flex;gap:7px}
+.inp{
+  flex:1;background:var(--card2);border:1px solid var(--border2);
+  border-radius:var(--rs);padding:8px 11px;
+  font-size:13px;color:var(--text);font-family:inherit;
+  outline:none;transition:all 0.15s;
+}
+.inp::placeholder{color:var(--text3)}
+.inp:focus{border-color:rgba(245,158,11,0.35);background:#1a1815}
+.save-btn{
+  padding:8px 14px;border-radius:var(--rs);
+  background:linear-gradient(135deg,var(--amber),var(--orange));
+  border:none;cursor:pointer;
+  font-size:11.5px;font-weight:700;color:#000;
+  letter-spacing:0.1px;transition:all 0.12s;font-family:inherit;
+  box-shadow:0 2px 10px rgba(245,158,11,0.2);
+}
+.save-btn:hover{opacity:0.88;transform:translateY(-0.5px)}
+.note-row{display:flex;align-items:center;gap:7px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.note-icon{font-size:10.5px;color:var(--text3)}
+.note-inp{flex:1;background:transparent;border:none;outline:none;font-size:11.5px;color:var(--text2);font-family:inherit}
+.note-inp::placeholder{color:var(--text3)}
+
+/* week cal */
+.week-grid{display:flex;gap:5px}
+.wday{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 3px;border-radius:7px;cursor:default}
+.wday.today{background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.18)}
+.wday-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.3px;font-weight:600}
+.wday-num{font-size:11px;font-weight:500;color:var(--text2)}
+.wday.today .wday-num{color:var(--amber);font-weight:700}
+.wday-dot{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.wday-dot.e{background:rgba(255,255,255,0.04);border:1px solid var(--border)}
+.wday-dot.l{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.15)}
+.wday-dot.m{background:rgba(245,158,11,0.25);border:1px solid rgba(245,158,11,0.28)}
+.wday-dot.h{background:rgba(245,158,11,0.45);border:1px solid rgba(245,158,11,0.4)}
+.wday-dot.t{background:linear-gradient(135deg,var(--amber),var(--orange));border:none;box-shadow:0 2px 8px rgba(245,158,11,0.25)}
+.wday-dotval{font-size:7.5px;font-weight:700;color:rgba(255,255,255,0.7)}
+.wday-dot.t .wday-dotval{color:rgba(0,0,0,0.6)}
+.wday-dot.e .wday-dotval{display:none}
+.wday-bar{width:100%;height:2px;border-radius:1px;background:rgba(255,255,255,0.05);overflow:hidden;margin-top:1px}
+.wday-barfill{height:100%;border-radius:1px}
+.week-total{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid var(--border)}
+.week-total-lbl{font-size:9.5px;color:var(--text3)}
+.week-total-val{font-size:11px;font-weight:700;color:var(--amber)}
+
+/* stat grid 2x2 */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-card{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:7px;padding:11px 12px;
+}
+.stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:7px}
+.stat-icon-wrap{
+  width:28px;height:28px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+}
+.stat-trend{font-size:9px;font-weight:600;padding:2px 5px;border-radius:3px}
+.stat-trend.up{background:rgba(34,197,94,0.1);color:var(--green)}
+.stat-trend.neutral{background:rgba(245,158,11,0.1);color:var(--amber)}
+.stat-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1}
+.stat-lbl{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* chart */
+.chart-bars{height:52px;display:flex;align-items:flex-end;gap:3px}
+.cb-wrap{flex:1;position:relative;display:flex;flex-direction:column;align-items:center}
+.cb-wrap:hover .cb-tip{display:block}
+.cb-tip{display:none;position:absolute;bottom:100%;margin-bottom:4px;background:#1c1a18;border:1px solid var(--border2);border-radius:4px;padding:3px 7px;font-size:9.5px;color:var(--text);white-space:nowrap;pointer-events:none;z-index:10}
+.cb{width:100%;border-radius:2px 2px 0 0;background:rgba(245,158,11,0.14);cursor:default;transition:background 0.1s}
+.cb:hover{background:rgba(245,158,11,0.28)}
+.cb.today{background:linear-gradient(to top,var(--amber),var(--orange));opacity:0.8}
+.chart-labels{display:flex;gap:3px;margin-top:4px}
+.chart-lbl{flex:1;text-align:center;font-size:8px;color:var(--text3)}
+
+/* chapter progress */
+.ch-prog-list{display:flex;flex-direction:column;gap:9px}
+.ch-prog-item{}
+.ch-prog-hdr{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.ch-prog-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ch-prog-name{font-size:11.5px;color:var(--text2);flex:1}
+.ch-prog-right{display:flex;align-items:center;gap:6px}
+.ch-prog-pct{font-size:11px;font-weight:700}
+.ch-prog-status{font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px}
+.ch-prog-track{height:2.5px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden}
+.ch-prog-fill{height:100%;border-radius:2px}
+
+/* projection */
+.proj-rows{display:flex;flex-direction:column}
+.proj-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 0;border-bottom:1px solid var(--border);
+}
+.proj-row:last-child{border-bottom:none;padding-bottom:0}
+.proj-row:first-child{padding-top:0}
+.proj-key{font-size:11.5px;color:var(--text3)}
+.proj-val{font-size:11.5px;font-weight:600;color:var(--text)}
+.proj-badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px}
+.pb-amber{background:rgba(245,158,11,0.1);color:var(--amber)}
+.pb-blue{background:rgba(96,165,250,0.1);color:var(--blue)}
+.pb-green{background:rgba(34,197,94,0.1);color:var(--green)}
+
+/* streak */
+.streak-inner{display:flex;align-items:center;gap:14px;padding:2px 0}
+.streak-fire{font-size:34px;line-height:1}
+.streak-num{font-size:44px;font-weight:900;color:var(--amber);line-height:1;letter-spacing:-1px}
+.streak-lbl{font-size:10px;color:var(--text3);margin-top:2px}
+.streak-right{margin-left:auto;text-align:right}
+.streak-rec-val{font-size:18px;font-weight:800;color:var(--text)}
+.streak-rec-lbl{font-size:9px;color:var(--text3);margin-top:1px}
+.streak-milestones{display:flex;gap:5px;margin-top:8px}
+.sm{width:7px;height:7px;border-radius:50%}
+
+/* pill tags */
+.pill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.pill-amber{background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.18)}
+.pill-green{background:rgba(34,197,94,0.08);color:var(--green);border:1px solid rgba(34,197,94,0.15)}
+
+/* settings btn */
+.ph-btn{
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:7px;padding:5px 10px;color:var(--text2);
+  cursor:pointer;font-size:11px;font-family:inherit;transition:all 0.1s;
+}
+.ph-btn:hover{background:rgba(255,255,255,0.07)}
+
+/* Placeholder pages */
+.placeholder{padding:48px;text-align:center;color:var(--text3)}
+.ph-icon{font-size:36px;margin-bottom:12px;opacity:0.25}
+.ph-ptitle{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:5px}
+.ph-psub{font-size:12px}
+
+.hidden{display:none!important}
+.fade{animation:fi 0.13s ease}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="tl-bar">
+    <div class="tl r"></div><div class="tl y"></div><div class="tl g"></div>
+  </div>
+
+  <div class="sb-header">
+    <div class="app-icon">✍️</div>
+    <span class="app-name">Writing Process</span>
+    <div class="streak-chip">🔥 14</div>
+  </div>
+
+  <div class="sb-scroll">
+
+    <!-- Écriture -->
+    <div class="ng">
+      <div class="ng-label">Écriture</div>
+      <div class="ni active" onclick="setNav(this,'dashboard')">
+        <span class="ni-icon">⌂</span><span>Tableau de bord</span><span class="ni-kbd">⌘2</span>
+      </div>
+      <div class="ni" onclick="setNav(this,'overview')">
+        <span class="ni-icon">⊞</span><span>Vue d'ensemble</span><span class="ni-kbd">⌘1</span>
+      </div>
+      <div class="ni" onclick="setNav(this,'deadlines')">
+        <span class="ni-icon">📅</span><span>Échéances</span><span class="ni-kbd">⌘3</span>
+      </div>
+      <div class="ni" onclick="setNav(this,'kanban')">
+        <span class="ni-icon">▦</span><span>Kanban</span>
+      </div>
+    </div>
+
+    <div class="nd"></div>
+
+    <!-- Analyse -->
+    <div class="ng">
+      <div class="ng-label">Analyse</div>
+      <div class="ni" onclick="setNav(this,'charts')">
+        <span class="ni-icon">↗</span><span>Graphiques</span><span class="ni-kbd">⌘5</span>
+      </div>
+      <div class="ni" onclick="setNav(this,'activity')">
+        <span class="ni-icon">⊟</span><span>Activité</span><span class="ni-kbd">⌘6</span>
+      </div>
+      <div class="ni" onclick="setNav(this,'calendar')">
+        <span class="ni-icon">🗓</span><span>Calendrier</span><span class="ni-kbd">⌘8</span>
+      </div>
+      <div class="ni" onclick="setNav(this,'history')">
+        <span class="ni-icon">↺</span><span>Historique</span><span class="ni-kbd">⌘7</span>
+      </div>
+    </div>
+
+    <div class="nd"></div>
+
+    <!-- Outils -->
+    <div class="ng">
+      <div class="ng-label">Outils</div>
+      <div class="ni" onclick="setNav(this,'timer')">
+        <span class="ni-icon">⏱</span><span>Minuteur</span><span class="ni-kbd">⌘9</span>
+      </div>
+      <div class="ni" onclick="setNav(this,'search')">
+        <span class="ni-icon">⌕</span><span>Recherche</span><span class="ni-kbd">⌘4</span>
+      </div>
+      <div class="ni" onclick="setNav(this,'achievements')">
+        <span class="ni-icon">🏅</span><span>Accomplissements</span>
+      </div>
+    </div>
+
+    <div class="nd"></div>
+
+    <!-- Projects -->
+    <div class="ps">
+      <div class="ps-hdr">
+        <span class="ps-hdr-lbl">Projets</span>
+        <button class="ibtn" title="Nouveau dossier">📁</button>
+        <button class="ibtn a" title="Nouveau projet">+</button>
+      </div>
+
+      <!-- Ma Thèse -->
+      <div class="proj">
+        <div class="proj-hdr active" onclick="toggleProj('thesis')">
+          <span class="chev open" id="tc">▶</span>
+          <span class="pdot" style="background:#f59e0b"></span>
+          <span class="pname">Ma Thèse</span>
+          <!-- mini ring 47% -->
+          <div class="mini-ring">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(245,158,11,0.15)" stroke-width="2.5"/>
+              <circle cx="10" cy="10" r="7" fill="none" stroke="#f59e0b" stroke-width="2.5"
+                stroke-dasharray="43.98" stroke-dashoffset="23.3" stroke-linecap="round"/>
+            </svg>
+            <div class="lbl">47%</div>
+          </div>
+        </div>
+        <div class="ch-list" id="thesis-chapters">
+          <div class="ch-row active">
+            <div class="ch-top">
+              <div class="ch-sdot" style="background:#f59e0b"></div>
+              <span class="ch-name">Introduction</span>
+              <span class="ch-pct">78%</span>
+            </div>
+            <div class="ch-track"><div class="ch-fill" style="width:78%;background:linear-gradient(to right,#f59e0b,#ea580c)"></div></div>
+          </div>
+          <div class="ch-row">
+            <div class="ch-top">
+              <div class="ch-sdot" style="background:#60a5fa"></div>
+              <span class="ch-name">Chapitre 1</span>
+              <span class="ch-pct">45%</span>
+            </div>
+            <div class="ch-track"><div class="ch-fill" style="width:45%;background:#60a5fa"></div></div>
+          </div>
+          <div class="ch-row">
+            <div class="ch-top">
+              <div class="ch-sdot" style="background:#4e4a46"></div>
+              <span class="ch-name">Chapitre 2</span>
+              <span class="ch-pct">12%</span>
+            </div>
+            <div class="ch-track"><div class="ch-fill" style="width:12%;background:#4e4a46"></div></div>
+          </div>
+          <div class="ch-row">
+            <div class="ch-top">
+              <div class="ch-sdot" style="background:#22c55e"></div>
+              <span class="ch-name">Conclusion</span>
+              <span class="ch-pct">100%</span>
+            </div>
+            <div class="ch-track"><div class="ch-fill" style="width:100%;background:#22c55e"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article -->
+      <div class="proj">
+        <div class="proj-hdr" onclick="toggleProj('article')">
+          <span class="chev" id="ac">▶</span>
+          <span class="pdot" style="background:#60a5fa"></span>
+          <span class="pname">Article EPFL</span>
+          <div class="mini-ring">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(96,165,250,0.15)" stroke-width="2.5"/>
+              <circle cx="10" cy="10" r="7" fill="none" stroke="#60a5fa" stroke-width="2.5"
+                stroke-dasharray="43.98" stroke-dashoffset="13.2" stroke-linecap="round"/>
+            </svg>
+            <div class="lbl" style="color:#60a5fa">70%</div>
+          </div>
+        </div>
+        <div class="ch-list hidden" id="article-chapters">
+          <div class="ch-row">
+            <div class="ch-top">
+              <div class="ch-sdot" style="background:#60a5fa"></div>
+              <span class="ch-name">Abstract</span>
+              <span class="ch-pct">90%</span>
+            </div>
+            <div class="ch-track"><div class="ch-fill" style="width:90%;background:#60a5fa"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project progress -->
+  <div class="sb-prog">
+    <div class="sb-prog-top"><span>Ma Thèse · global</span><span>47%</span></div>
+    <div class="sb-prog-track"><div class="sb-prog-fill" style="width:47%"></div></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="sb-footer">
+    <div class="sb-badges">
+      <span style="font-size:8.5px;color:var(--text3)">🔥</span>
+      <div class="bdot" style="background:#f59e0b"></div>
+      <div class="bdot" style="background:#f97316"></div>
+      <div class="bdot" style="background:#ea580c"></div>
+      <div class="bdot" style="background:#2e2b28"></div>
+      <div class="bdot" style="background:#2e2b28"></div>
+      <div class="bdot" style="background:#2e2b28"></div>
+      <span style="font-size:9px;font-weight:700;color:var(--amber);margin-left:auto">14 j</span>
+    </div>
+    <div class="sb-actions">
+      <button class="sb-btn" title="Importer">↓</button>
+      <button class="sb-btn" title="Exporter">↑</button>
+      <button class="sb-btn p" title="Nouveau projet">＋</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="sb-item">
+      <div class="dot-ind" style="background:#22c55e;box-shadow:0 0 5px #22c55e"></div>
+      <strong>Série active</strong> &nbsp;14 jours
+    </div>
+    <div class="sb-item">⚡ Vitesse &nbsp;<strong>1 240 car/j</strong></div>
+    <div class="sb-item">🎯 Objectif hebdo &nbsp;<strong>67%</strong></div>
+    <div class="sb-item">📖 Introduction &nbsp;<strong>78%</strong></div>
+    <div class="sb-item" style="margin-left:auto;border-right:none;border-left:1px solid var(--border)">
+      <span style="font-size:10px;color:var(--text3)">Fin estimée ·</span> &nbsp;<strong>25 juin 2026</strong>
+    </div>
+  </div>
+
+  <div class="main-scroll">
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page fade">
+
+      <div class="ph">
+        <button class="ph-toggle" onclick="toggleSidebar()">☰</button>
+        <div>
+          <div class="ph-title">Tableau de bord</div>
+          <div class="ph-sub">
+            <span>Mercredi 23 avril 2026</span>
+            <span class="sdot">·</span>
+            <span class="ph-crumb"><span class="cdot"></span> Ma Thèse › Introduction</span>
+          </div>
+        </div>
+        <div class="ph-actions">
+          <span class="pill pill-amber">🔥 Série active</span>
+          <button class="ph-btn">⚙ Paramètres</button>
+        </div>
+      </div>
+
+      <div class="grid">
+
+        <!-- ─ LEFT ─ -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- Selector -->
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">📂</span> Projet actif</div>
+            <div class="sel-row">
+              <span class="sel-lbl">Projet</span>
+              <div class="sel-pill">
+                <div class="sel-pdot" style="background:#f59e0b"></div>
+                <span class="sel-pname">Ma Thèse</span>
+                <span class="sel-chev">⌄</span>
+              </div>
+            </div>
+            <div class="sel-div"></div>
+            <div class="sel-row">
+              <span class="sel-lbl">Chapitre</span>
+              <div class="sel-pill">
+                <div class="sel-pdot" style="background:#f59e0b"></div>
+                <span class="sel-pname">Introduction</span>
+                <span class="sel-chev">⌄</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Entry card -->
+          <div class="card">
+            <!-- Date nav -->
+            <div class="date-row">
+              <button class="dnav">‹</button>
+              <span class="dlbl">Aujourd'hui</span>
+              <span class="today-tag">Auj.</span>
+              <button class="dnav">›</button>
+            </div>
+
+            <!-- Hero count -->
+            <div class="entry-hero">
+              <div>
+                <span class="hero-count has-data">12 450</span><span class="hero-unit">car.</span>
+              </div>
+              <div class="hero-delta">↑ +1 240 depuis hier</div>
+            </div>
+
+            <!-- Goal bar -->
+            <div class="goal-bar">
+              <div class="gb-top">
+                <span>Objectif quotidien — 1 500 car.</span>
+                <span class="gb-pct">83%</span>
+              </div>
+              <div class="gb-track"><div class="gb-fill" style="width:83%"></div></div>
+            </div>
+
+            <!-- Input -->
+            <div class="inp-row">
+              <input class="inp" type="number" placeholder="Nouveau total…" />
+              <button class="save-btn" onclick="flashSave(this)">Enregistrer</button>
+            </div>
+
+            <!-- Note -->
+            <div class="note-row">
+              <span class="note-icon">✏</span>
+              <input class="note-inp" type="text" placeholder="Note du jour…" />
+            </div>
+          </div>
+
+          <!-- Week calendar -->
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">📆</span> Cette semaine</div>
+            <div class="week-grid">
+              <div class="wday">
+                <span class="wday-lbl">Lun</span>
+                <span class="wday-num">21</span>
+                <div class="wday-dot m"><span class="wday-dotval">73%</span></div>
+                <div class="wday-bar"><div class="wday-barfill" style="width:73%;background:#f59e0b"></div></div>
+              </div>
+              <div class="wday">
+                <span class="wday-lbl">Mar</span>
+                <span class="wday-num">22</span>
+                <div class="wday-dot h"><span class="wday-dotval">✓</span></div>
+                <div class="wday-bar"><div class="wday-barfill" style="width:100%;background:#22c55e"></div></div>
+              </div>
+              <div class="wday">
+                <span class="wday-lbl">Mer</span>
+                <span class="wday-num">23</span>
+                <div class="wday-dot l"><span class="wday-dotval">45%</span></div>
+                <div class="wday-bar"><div class="wday-barfill" style="width:45%;background:#f59e0b"></div></div>
+              </div>
+              <div class="wday">
+                <span class="wday-lbl">Jeu</span>
+                <span class="wday-num">24</span>
+                <div class="wday-dot e"><span class="wday-dotval"></span></div>
+                <div class="wday-bar"></div>
+              </div>
+              <div class="wday">
+                <span class="wday-lbl">Ven</span>
+                <span class="wday-num">25</span>
+                <div class="wday-dot e"></div>
+                <div class="wday-bar"></div>
+              </div>
+              <div class="wday">
+                <span class="wday-lbl">Sam</span>
+                <span class="wday-num">26</span>
+                <div class="wday-dot e"></div>
+                <div class="wday-bar"></div>
+              </div>
+              <div class="wday today">
+                <span class="wday-lbl">Dim</span>
+                <span class="wday-num">27</span>
+                <div class="wday-dot t"><span class="wday-dotval">83%</span></div>
+                <div class="wday-bar"><div class="wday-barfill" style="width:83%;background:linear-gradient(to right,#f59e0b,#ea580c)"></div></div>
+              </div>
+            </div>
+            <div class="week-total">
+              <span class="week-total-lbl">Total semaine · objectif 10 500</span>
+              <span class="week-total-val">8 640 car. · 82%</span>
+            </div>
+          </div>
+
+        </div><!-- /left -->
+
+        <!-- ─ RIGHT ─ -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- Streak -->
+          <div class="card">
+            <div class="streak-inner">
+              <div class="streak-fire">🔥</div>
+              <div>
+                <div class="streak-num">14</div>
+                <div class="streak-lbl">jours consécutifs</div>
+                <div class="streak-milestones">
+                  <div class="sm" style="background:#f59e0b" title="Étincelle 3j"></div>
+                  <div class="sm" style="background:#f97316" title="Régulier 7j"></div>
+                  <div class="sm" style="background:#ea580c" title="Persévérant 14j"></div>
+                  <div class="sm" style="background:#252220"></div>
+                  <div class="sm" style="background:#252220"></div>
+                  <div class="sm" style="background:#252220"></div>
+                </div>
+              </div>
+              <div class="streak-right">
+                <div style="font-size:10px;color:var(--text3)">Record</div>
+                <div class="streak-rec-val">21</div>
+                <div class="streak-rec-lbl">jours</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 stats -->
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-top">
+                <div class="stat-icon-wrap" style="background:rgba(245,158,11,0.1)">⚡</div>
+                <span class="stat-trend up">↑ 8%</span>
+              </div>
+              <div class="stat-val">1 240</div>
+              <div class="stat-lbl">car/jour · 14j</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <div class="stat-icon-wrap" style="background:rgba(96,165,250,0.1)">🎯</div>
+                <span class="stat-trend neutral">sem.</span>
+              </div>
+              <div class="stat-val">67%</div>
+              <div class="stat-lbl">objectif hebdo</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <div class="stat-icon-wrap" style="background:rgba(34,197,94,0.1)">📈</div>
+                <span class="stat-trend up">+12%</span>
+              </div>
+              <div class="stat-val">8 640</div>
+              <div class="stat-lbl">cette semaine</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <div class="stat-icon-wrap" style="background:rgba(192,132,252,0.1)">🏁</div>
+                <span class="stat-trend neutral">proj.</span>
+              </div>
+              <div class="stat-val">63 j</div>
+              <div class="stat-lbl">avant la fin</div>
+            </div>
+          </div>
+
+          <!-- Bar chart -->
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">📊</span> 7 derniers jours</div>
+            <div class="chart-bars">
+              <div class="cb-wrap"><div class="cb-tip">Lun · 1 100</div><div class="cb" style="height:40%"></div></div>
+              <div class="cb-wrap"><div class="cb-tip">Mar · 2 400</div><div class="cb" style="height:100%"></div></div>
+              <div class="cb-wrap"><div class="cb-tip">Mer · 680</div><div class="cb" style="height:28%"></div></div>
+              <div class="cb-wrap"><div class="cb-tip">Jeu · 1 300</div><div class="cb" style="height:54%"></div></div>
+              <div class="cb-wrap"><div class="cb-tip">Ven · 2 100</div><div class="cb" style="height:87%"></div></div>
+              <div class="cb-wrap"><div class="cb-tip">Sam · 0</div><div class="cb" style="height:3%"></div></div>
+              <div class="cb-wrap"><div class="cb-tip">Dim · 1 240</div><div class="cb today" style="height:52%"></div></div>
+            </div>
+            <div class="chart-labels">
+              <span class="chart-lbl">L</span><span class="chart-lbl">M</span><span class="chart-lbl">M</span>
+              <span class="chart-lbl">J</span><span class="chart-lbl">V</span><span class="chart-lbl">S</span>
+              <span class="chart-lbl" style="color:var(--amber)">D</span>
+            </div>
+          </div>
+
+          <!-- Chapter progress -->
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">📖</span> Chapitres</div>
+            <div class="ch-prog-list">
+              <div class="ch-prog-item">
+                <div class="ch-prog-hdr">
+                  <div class="ch-prog-dot" style="background:#f59e0b"></div>
+                  <span class="ch-prog-name">Introduction</span>
+                  <div class="ch-prog-right">
+                    <span class="ch-prog-status" style="background:rgba(245,158,11,0.1);color:#f59e0b">Rédaction</span>
+                    <span class="ch-prog-pct" style="color:#f59e0b">78%</span>
+                  </div>
+                </div>
+                <div class="ch-prog-track"><div class="ch-prog-fill" style="width:78%;background:linear-gradient(to right,#f59e0b,#ea580c)"></div></div>
+              </div>
+              <div class="ch-prog-item">
+                <div class="ch-prog-hdr">
+                  <div class="ch-prog-dot" style="background:#60a5fa"></div>
+                  <span class="ch-prog-name">Chapitre 1</span>
+                  <div class="ch-prog-right">
+                    <span class="ch-prog-status" style="background:rgba(96,165,250,0.1);color:#60a5fa">Révision</span>
+                    <span class="ch-prog-pct" style="color:#60a5fa">45%</span>
+                  </div>
+                </div>
+                <div class="ch-prog-track"><div class="ch-prog-fill" style="width:45%;background:#60a5fa"></div></div>
+              </div>
+              <div class="ch-prog-item">
+                <div class="ch-prog-hdr">
+                  <div class="ch-prog-dot" style="background:#4e4a46"></div>
+                  <span class="ch-prog-name">Chapitre 2</span>
+                  <div class="ch-prog-right">
+                    <span class="ch-prog-status" style="background:rgba(78,74,70,0.15);color:#6e6a66">Plan</span>
+                    <span class="ch-prog-pct" style="color:#6e6a66">12%</span>
+                  </div>
+                </div>
+                <div class="ch-prog-track"><div class="ch-prog-fill" style="width:12%;background:#4e4a46"></div></div>
+              </div>
+              <div class="ch-prog-item">
+                <div class="ch-prog-hdr">
+                  <div class="ch-prog-dot" style="background:#22c55e"></div>
+                  <span class="ch-prog-name">Conclusion</span>
+                  <div class="ch-prog-right">
+                    <span class="ch-prog-status" style="background:rgba(34,197,94,0.1);color:#22c55e">✓ Terminé</span>
+                    <span class="ch-prog-pct" style="color:#22c55e">100%</span>
+                  </div>
+                </div>
+                <div class="ch-prog-track"><div class="ch-prog-fill" style="width:100%;background:#22c55e"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Projection -->
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">🗺</span> Projection</div>
+            <div class="proj-rows">
+              <div class="proj-row">
+                <span class="proj-key">Vitesse actuelle</span>
+                <span class="proj-val">1 240 car/j</span>
+              </div>
+              <div class="proj-row">
+                <span class="proj-key">Restant sur la thèse</span>
+                <span class="proj-val">78 240 car.</span>
+              </div>
+              <div class="proj-row">
+                <span class="proj-key">Date estimée</span>
+                <span class="proj-badge pb-amber">25 juin 2026</span>
+              </div>
+              <div class="proj-row">
+                <span class="proj-key">Objectif adaptatif</span>
+                <span class="proj-badge pb-blue">1 500 car/j</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /right -->
+      </div><!-- /grid -->
+    </div><!-- /dashboard -->
+
+    <!-- Placeholder pages -->
+    <div id="page-overview" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Vue d'ensemble</div></div></div>
+      <div class="placeholder"><div class="ph-icon">⊞</div><div class="ph-ptitle">Vue d'ensemble</div><div class="ph-psub">Cockpit · pipeline chapitres · rapport directeur</div></div>
+    </div>
+    <div id="page-deadlines" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Échéances</div></div></div>
+      <div class="placeholder"><div class="ph-icon">📅</div><div class="ph-ptitle">Kanban des échéances</div><div class="ph-psub">Plan → Rédaction → Révision → Terminé</div></div>
+    </div>
+    <div id="page-kanban" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Kanban</div></div></div>
+      <div class="placeholder"><div class="ph-icon">▦</div><div class="ph-ptitle">Organisation Kanban</div></div>
+    </div>
+    <div id="page-charts" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Graphiques</div></div></div>
+      <div class="placeholder"><div class="ph-icon">↗</div><div class="ph-ptitle">Graphiques</div><div class="ph-psub">Courbes · histogrammes · tendances</div></div>
+    </div>
+    <div id="page-activity" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Activité</div></div></div>
+      <div class="placeholder"><div class="ph-icon">⊟</div><div class="ph-ptitle">Carte de chaleur</div></div>
+    </div>
+    <div id="page-calendar" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Calendrier</div></div></div>
+      <div class="placeholder"><div class="ph-icon">🗓</div><div class="ph-ptitle">Calendrier mensuel</div></div>
+    </div>
+    <div id="page-history" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Historique</div></div></div>
+      <div class="placeholder"><div class="ph-icon">↺</div><div class="ph-ptitle">Historique complet</div></div>
+    </div>
+    <div id="page-timer" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Minuteur Pomodoro</div></div></div>
+      <div class="placeholder"><div class="ph-icon">⏱</div><div class="ph-ptitle">Minuteur Pomodoro</div><div class="ph-psub">Focus · Pause courte · Pause longue</div></div>
+    </div>
+    <div id="page-search" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Recherche</div></div></div>
+      <div class="placeholder"><div class="ph-icon">⌕</div><div class="ph-ptitle">Recherche plein texte</div></div>
+    </div>
+    <div id="page-achievements" class="page hidden">
+      <div class="ph"><button class="ph-toggle" onclick="toggleSidebar()">☰</button><div><div class="ph-title">Accomplissements</div></div></div>
+      <div class="placeholder"><div class="ph-icon">🏅</div><div class="ph-ptitle">Badges &amp; Accomplissements</div></div>
+    </div>
+
+  </div><!-- /main-scroll -->
+</main>
+
+</div><!-- /app -->
+
+<script>
+function setNav(el,page){
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[id^="page-"]').forEach(p=>{p.classList.add('hidden');p.classList.remove('fade')});
+  const t=document.getElementById('page-'+page);
+  if(t){t.classList.remove('hidden');requestAnimationFrame(()=>t.classList.add('fade'))}
+}
+function toggleSidebar(){
+  const s=document.getElementById('sidebar');
+  s.style.display=s.style.display==='none'?'flex':'none';
+}
+function toggleProj(id){
+  const c=document.getElementById(id+'-chapters');
+  const v=document.getElementById(id.charAt(0)+'c');
+  c.classList.toggle('hidden');
+  v.classList.toggle('open');
+}
+function flashSave(btn){
+  const orig=btn.textContent;
+  btn.textContent='✓ Enregistré';
+  btn.style.background='#22c55e';
+  btn.style.color='#000';
+  setTimeout(()=>{btn.textContent=orig;btn.style.background='';btn.style.color=''},1800);
+}
+</script>
+</body>
+</html>

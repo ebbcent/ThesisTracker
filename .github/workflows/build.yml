@@ -1,0 +1,101 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publier:
+        description: "Publier cette version dans Releases"
+        type: boolean
+        default: false
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sélection de Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          echo "Xcode utilisé : $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+
+      - name: Tests unitaires
+        if: hashFiles('ThesisTrackerTests/**') != ''
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project ThesisTracker.xcodeproj \
+            -scheme ThesisTracker \
+            -destination 'platform=macOS' \
+            -derivedDataPath build/DerivedData \
+            -resultBundlePath build/tests.xcresult \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
+            | xcbeautify --renderer github-actions || exit 1
+
+      - name: Résumé des tests
+        if: always() && hashFiles('ThesisTrackerTests/**') != ''
+        run: |
+          xcrun xcresulttool get test-results summary --path build/tests.xcresult --compact \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); print("TESTS:", d.get("result"), "réussis", d.get("passedTests"), "échoués", d.get("failedTests"), "ignorés", d.get("skippedTests"), "total", d.get("totalTestCount"))' \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Compilation (Release, Apple Silicon + Intel)
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project ThesisTracker.xcodeproj \
+            -target ThesisTracker \
+            -configuration Release \
+            ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO \
+            SYMROOT="$PWD/build" \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
+            | xcbeautify --renderer github-actions
+
+      - name: Signature ad hoc et archive
+        id: package
+        run: |
+          APP="build/Release/Writing Process.app"
+          codesign --force --deep --sign - "$APP"
+          codesign --verify --verbose "$APP"
+          VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$APP/Contents/Info.plist")
+          NAME="Writing-Process-${VERSION}-build${GITHUB_RUN_NUMBER}"
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "dist/${NAME}.zip"
+          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.name }}
+          path: dist/*.zip
+          retention-days: 30
+
+      - name: Publication (main, tag ou déclenchement manuel)
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))) || (github.event_name == 'workflow_dispatch' && inputs.publier)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG="v${{ steps.package.outputs.version }}-build${GITHUB_RUN_NUMBER}"
+          fi
+          gh release create "$TAG" dist/*.zip \
+            --target "$GITHUB_SHA" \
+            --title "Writing Process ${{ steps.package.outputs.version }} (build ${GITHUB_RUN_NUMBER})" \
+            --notes "Compilé automatiquement depuis ${GITHUB_SHA::7}. Installation : voir README." \
+            --latest
