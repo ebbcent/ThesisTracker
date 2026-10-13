@@ -99,6 +99,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 | 2026-10-13 | Export / import / apparence | CSV et XLSX robustes ; textutil hors thread principal ; mode clair et contraste élevé ; déclarations micro et dictée. |
 | 2026-10-13 | Pomodoro | Suppressions qui tiennent (marqueurs), durée active hors pauses et veille, notification de fin planifiée, un seul délégué de notifications, « Ne pas déranger » via l'app Raccourcis (remplace le script `killall cfprefsd`), Sanctuaire enregistré. |
 | 2026-10-13 | Tests | Cible `ThesisTrackerTests` (fusion, décodage tolérant, incréments). |
+| 2026-10-13 | V5.4 — Refonte sobre (navigation + Aujourd'hui) | Nouvel écran `TodayView` (saisie du jour en premier, série, semaine ISO, fin estimée, ligne Pomodoro ; thème Papier en mode VD). Barre latérale en 5 sections (`SidebarSection`) : Aujourd'hui, Thèse, Analyses, Minuteur, Accomplissements ; les 15 vues restent accessibles en onglets (`SectionTabBar`). ⌘1…⌘5 ouvrent les sections. Aucune vue supprimée ; l'ancien tableau de bord est l'onglet « Tableau de bord complet ». |
 
 ---
 
@@ -158,6 +159,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **V3.5** — À définir (command palette avancée ?)
 - **5.2** — Version de l'app au 2026-10-13 (avant fiabilisation)
 - **5.3** — Fiabilisation : données sûres sur deux Mac, CI, tests, raccourcis
+- **5.4** — Refonte sobre : écran Aujourd'hui, navigation en 5 sections
 
 ---
 
