@@ -996,31 +996,49 @@ private struct SidebarSectionRow: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 10) {
-                Image(systemName: section.icon)
-                    .font(.system(size: 13, weight: .medium))
-                    .frame(width: 18)
-                    .foregroundStyle(isSelected ? Color.primary : Color.secondary)
-                Text(section.rawValue)
-                    .font(.system(size: 13.5, weight: isSelected ? .semibold : .regular))
-                    .foregroundStyle(Color.primary)
-                Spacer()
-                Text(section.shortcutLabel)
-                    .font(.system(size: 11))
-                    .foregroundStyle(Color.secondary)
-                    .opacity(isHovering || isSelected ? 1 : 0)
+            HStack(spacing: 0) {
+                // Barre d'accent à gauche (style d'origine)
+                RoundedRectangle(cornerRadius: 1.5)
+                    .fill(isSelected
+                          ? LinearGradient(colors: [.accentWarm, .accentGold], startPoint: .top, endPoint: .bottom)
+                          : LinearGradient(colors: [Color.clear], startPoint: .top, endPoint: .bottom))
+                    .frame(width: 3, height: 16)
+                    .padding(.leading, 2)
+                    .animation(.easeInOut(duration: 0.12), value: isSelected)
+
+                HStack(spacing: 8) {
+                    Image(systemName: section.icon)
+                        .font(.system(size: 12, weight: .medium))
+                        .frame(width: 16)
+                        .foregroundColor(isSelected ? .accentWarm : (isHovering ? .primary.opacity(0.7) : .labelMuted.opacity(0.7)))
+                    Text(section.rawValue)
+                        .font(.system(size: 12.5, weight: isSelected ? .semibold : .regular))
+                        .foregroundColor(isSelected ? .primary : (isHovering ? .primary.opacity(0.85) : .secondary.opacity(0.75)))
+                    Spacer()
+                    if isHovering {
+                        Text(section.shortcutLabel)
+                            .font(.system(size: 9.5, weight: .medium, design: .monospaced))
+                            .foregroundColor(.labelMuted.opacity(0.7))
+                            .padding(.horizontal, 5).padding(.vertical, 2)
+                            .background(Color.fieldBg)
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                            .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .trailing)))
+                    }
+                }
+                .padding(.horizontal, 9).padding(.vertical, 7)
+                .background(
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .fill(isSelected ? Color.accentWarm.opacity(0.08)
+                                         : (isHovering ? Color.glassFill : Color.clear))
+                )
             }
-            .padding(.horizontal, 10)
-            .frame(height: 32)
-            .background(
-                RoundedRectangle(cornerRadius: 7, style: .continuous)
-                    .fill(isSelected ? Color.primary.opacity(0.09)
-                                     : (isHovering ? Color.primary.opacity(0.05) : Color.clear))
-            )
+            .padding(.horizontal, 6)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .onHover { hovering in isHovering = hovering }
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.08)) { isHovering = hovering }
+        }
         .accessibilityLabel(section.rawValue)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
