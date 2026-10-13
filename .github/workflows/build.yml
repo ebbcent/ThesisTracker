@@ -37,8 +37,16 @@ jobs:
             -scheme ThesisTracker \
             -destination 'platform=macOS' \
             -derivedDataPath build/DerivedData \
+            -resultBundlePath build/tests.xcresult \
             CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
             | xcbeautify --renderer github-actions || exit 1
+
+      - name: Résumé des tests
+        if: always() && hashFiles('ThesisTrackerTests/**') != ''
+        run: |
+          xcrun xcresulttool get test-results summary --path build/tests.xcresult --compact \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); print("TESTS:", d.get("result"), "réussis", d.get("passedTests"), "échoués", d.get("failedTests"), "ignorés", d.get("skippedTests"), "total", d.get("totalTestCount"))' \
+            | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Compilation (Release, Apple Silicon + Intel)
         run: |
