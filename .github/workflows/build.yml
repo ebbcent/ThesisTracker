@@ -6,6 +6,11 @@ on:
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
+    inputs:
+      publier:
+        description: "Publier cette version dans Releases"
+        type: boolean
+        default: false
 
 concurrency:
   group: build-${{ github.ref }}
@@ -79,8 +84,8 @@ jobs:
           path: dist/*.zip
           retention-days: 30
 
-      - name: Publication (branche main ou tag)
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+      - name: Publication (main, tag ou déclenchement manuel)
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))) || (github.event_name == 'workflow_dispatch' && inputs.publier)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
