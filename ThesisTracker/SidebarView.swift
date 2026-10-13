@@ -242,27 +242,19 @@ struct SidebarView: View {
 
     // MARK: - Navigation
 
+    // Refonte 5.4 : 5 sections ; les vues d'une section sont des onglets.
     private var navSection: some View {
-        VStack(spacing: 0) {
-            navGroup(
-                label: "Écriture",
-                items: [.dashboard, .overview, .deadlines, .kanban],
-                collapsed: $navEcritureCollapsed
-            )
-            navGroupDivider
-            navGroup(
-                label: "Analyse",
-                items: [.charts, .activity, .calendar, .history, .widgets],
-                collapsed: $navAnalyseCollapsed
-            )
-            navGroupDivider
-            navGroup(
-                label: "Outils",
-                items: [.timer, .search, .achievements],
-                collapsed: $navOutilsCollapsed
-            )
+        VStack(spacing: 1) {
+            ForEach(SidebarSection.allCases) { section in
+                SidebarSectionRow(section: section, isSelected: selectedNav.section == section) {
+                    withAnimation(.easeInOut(duration: 0.12)) {
+                        if selectedNav.section != section { selectedNav = section.items[0] }
+                    }
+                }
+            }
         }
         .padding(.horizontal, 8)
+        .padding(.top, 6)
         .frame(maxWidth: .infinity)
     }
 
@@ -991,6 +983,46 @@ struct SidebarView: View {
         .buttonStyle(.plain)
         .help(help)
         .accessibilityLabel(help)
+    }
+}
+
+// MARK: - Section row (refonte 5.4)
+
+private struct SidebarSectionRow: View {
+    let section: SidebarSection
+    let isSelected: Bool
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: section.icon)
+                    .font(.system(size: 13, weight: .medium))
+                    .frame(width: 18)
+                    .foregroundStyle(isSelected ? Color.primary : Color.secondary)
+                Text(section.rawValue)
+                    .font(.system(size: 13.5, weight: isSelected ? .semibold : .regular))
+                    .foregroundStyle(Color.primary)
+                Spacer()
+                Text(section.shortcutLabel)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.secondary)
+                    .opacity(isHovering || isSelected ? 1 : 0)
+            }
+            .padding(.horizontal, 10)
+            .frame(height: 32)
+            .background(
+                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    .fill(isSelected ? Color.primary.opacity(0.09)
+                                     : (isHovering ? Color.primary.opacity(0.05) : Color.clear))
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in isHovering = hovering }
+        .accessibilityLabel(section.rawValue)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
