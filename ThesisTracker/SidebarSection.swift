@@ -64,25 +64,61 @@ extension NavItem {
     }
 }
 
-/// Barre d'onglets en haut d'une section qui contient plusieurs vues.
+/// Barre d'onglets en haut d'une section qui contient plusieurs vues
+/// (style de l'app : pastilles, accent ambre).
 struct SectionTabBar: View {
     let section: SidebarSection
     @Binding var selectedNav: NavItem
 
     var body: some View {
-        HStack {
-            Picker(section.rawValue, selection: $selectedNav) {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 4) {
                 ForEach(section.items) { item in
-                    Text(item.tabTitle).tag(item)
+                    SectionTab(item: item, isSelected: selectedNav == item) {
+                        withAnimation(.easeInOut(duration: 0.12)) { selectedNav = item }
+                    }
                 }
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
-            .accessibilityLabel("Vues de la section \(section.rawValue)")
-            Spacer()
+            .padding(3)
+            .background(RoundedRectangle(cornerRadius: 9).fill(Color.fieldBg))
+            .overlay(RoundedRectangle(cornerRadius: 9).stroke(Color.cardBorder, lineWidth: 1))
+            .padding(.horizontal, 20)
+            .padding(.vertical, 8)
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 10)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Vues de la section \(section.rawValue)")
+    }
+}
+
+private struct SectionTab: View {
+    let item: NavItem
+    let isSelected: Bool
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: item.icon)
+                    .font(.system(size: 10, weight: .medium))
+                Text(item.tabTitle)
+                    .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
+            }
+            .foregroundColor(isSelected ? .accentWarm : (isHovering ? .primary : .labelMuted))
+            .padding(.horizontal, 12).padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    .fill(isSelected ? Color.accentWarm.opacity(0.12) : (isHovering ? Color.glassFill : Color.clear))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    .stroke(isSelected ? Color.accentWarm.opacity(0.30) : Color.clear, lineWidth: 1)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
+        .accessibilityLabel(item.tabTitle)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

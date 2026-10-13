@@ -1,40 +1,36 @@
 import SwiftUI
 import AppKit
 
-// MARK: - Aujourd'hui (refonte 5.4)
+// MARK: - Aujourd'hui (refonte 5.4, style d'origine conservé)
 //
-// Écran d'accueil sobre : l'action du jour (saisir le total du chapitre) en
-// premier, puis trois repères (série, semaine, fin estimée) et une ligne
-// Pomodoro. Tout le reste (widgets, insights…) reste dans l'onglet
-// « Tableau de bord ». Suit l'apparence de macOS ; en « Version Papier »
-// (interfaceMode == "VD"), le même écran prend le thème Papier.
+// Écran d'accueil : l'action du jour (saisir le total du chapitre) en premier,
+// puis trois repères (série, semaine, fin estimée) et une ligne Pomodoro.
+// Reprend les composants et couleurs de l'app (champ de saisie du tableau de
+// bord avec dictée, bouton ambre, cartes, en-têtes de section). En « Version
+// Papier » (interfaceMode == "VD"), le même écran prend le thème Papier.
 
 private struct TodayPalette {
     let background: Color
     let card: Color
     let border: Color
+    let field: Color
     let track: Color
-    let text: Color
     let secondary: Color
-    let progress: Color
-    let progressText: Color
+    let accent: Color
+    let accentFill: LinearGradient
     let barMuted: Color
     let numberDesign: Font.Design
 
-    static let system = TodayPalette(
-        background: Color(nsColor: .windowBackgroundColor),
-        card: Color(nsColor: .controlBackgroundColor),
-        border: Color(nsColor: .separatorColor),
+    static let app = TodayPalette(
+        background: .appBg,
+        card: .cardBg,
+        border: .cardBorder,
+        field: .fieldBg,
         track: Color.primary.opacity(0.08),
-        text: Color.primary,
-        secondary: Color.secondary,
-        progress: Color.orange,
-        progressText: Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-                ? NSColor(srgbRed: 1.0, green: 0.70, blue: 0.25, alpha: 1)
-                : NSColor(srgbRed: 0.71, green: 0.33, blue: 0.04, alpha: 1)
-        }),
-        barMuted: Color.primary.opacity(0.18),
+        secondary: .labelMuted,
+        accent: .accentWarm,
+        accentFill: LinearGradient(colors: [.accent, .accentWarm], startPoint: .leading, endPoint: .trailing),
+        barMuted: Color.accentWarm.opacity(0.35),
         numberDesign: .default
     )
 
@@ -42,11 +38,13 @@ private struct TodayPalette {
         background: Color(red: 0.984, green: 0.973, blue: 0.949),
         card: Color(red: 1.0, green: 0.992, blue: 0.973),
         border: Color(red: 0.886, green: 0.851, blue: 0.784),
+        field: Color(red: 0.965, green: 0.945, blue: 0.906),
         track: Color(red: 0.918, green: 0.886, blue: 0.827),
-        text: Color(red: 0.169, green: 0.165, blue: 0.153),
         secondary: Color(red: 0.420, green: 0.396, blue: 0.357),
-        progress: Color(red: 0.722, green: 0.341, blue: 0.165),
-        progressText: Color(red: 0.604, green: 0.204, blue: 0.071),
+        accent: Color(red: 0.604, green: 0.204, blue: 0.071),
+        accentFill: LinearGradient(colors: [Color(red: 0.722, green: 0.341, blue: 0.165),
+                                            Color(red: 0.604, green: 0.204, blue: 0.071)],
+                                   startPoint: .leading, endPoint: .trailing),
         barMuted: Color(red: 0.847, green: 0.812, blue: 0.741),
         numberDesign: .serif
     )
@@ -59,74 +57,106 @@ struct TodayView: View {
     @EnvironmentObject private var pomodoroController: PomodoroAppController
     @AppStorage("interfaceMode") private var interfaceMode: String = "VA"
 
-    @State private var totalText: String = ""
     @State private var noteText: String = ""
-    @State private var savedFlash: Bool = false
-    @FocusState private var totalFocused: Bool
+    @State private var savedConfirmation: Bool = false
+    @State private var isDictating: Bool = false
+    @State private var clusterToken = UUID()
+    @FocusState private var inputFocused: Bool
 
-    private var palette: TodayPalette { interfaceMode == "VD" ? .paper : .system }
+    private var palette: TodayPalette { interfaceMode == "VD" ? .paper : .app }
     private var today: String { DataStore.today }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 22) {
                 header
+                SectionHeader("Session du jour")
                 if store.activeChapter != nil {
                     entryCard
                 } else {
                     noChapterCard
                 }
+                SectionHeader("Repères")
                 indicators
                 pomodoroLine
             }
-            .padding(.horizontal, 40)
-            .padding(.vertical, 28)
-            .frame(maxWidth: 980, alignment: .leading)
+            .padding(.horizontal, 36)
+            .padding(.vertical, 26)
+            .frame(maxWidth: 1000, alignment: .leading)
             .frame(maxWidth: .infinity)
         }
         .background(palette.background)
-        .foregroundStyle(palette.text)
         .onAppear(perform: refreshFields)
         .onChange(of: store.activeChapter?.id) { _, _ in refreshFields() }
         .onChange(of: store.dataVersion) { _, _ in
-            if !totalFocused { refreshFields() }
+            if !inputFocused { refreshFields() }
         }
-        // Raccourcis existants de saisie (⌘S enregistrer, ⌘N aller au champ)
-        .onReceive(NotificationCenter.default.publisher(for: .dashboardSave)) { _ in save() }
-        .onReceive(NotificationCenter.default.publisher(for: .dashboardFocusInput)) { _ in totalFocused = true }
+        // ⌘N : aller au champ de saisie (⌘S est géré par le champ lui-même)
+        .onReceive(NotificationCenter.default.publisher(for: .dashboardFocusInput)) { _ in inputFocused = true }
     }
 
     // MARK: En-tête
 
     private var header: some View {
-        HStack(alignment: .bottom, spacing: 16) {
+        HStack(alignment: .center, spacing: 14) {
             if !showSidebar {
                 Button {
                     withAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
                 } label: {
                     Image(systemName: "sidebar.left")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.labelMuted)
+                        .frame(width: 26, height: 26)
+                        .background(Color.glassFill)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.plain)
                 .help("Afficher la barre latérale")
                 .accessibilityLabel("Afficher la barre latérale")
             }
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text("Aujourd'hui")
-                    .font(.system(.largeTitle, design: palette.numberDesign).weight(.bold))
+                    .font(.system(size: 22, weight: .bold, design: palette.numberDesign))
                 Text(Self.longDate.string(from: Date()).capitalizedFirst)
-                    .font(.subheadline)
-                    .foregroundStyle(palette.secondary)
+                    .font(.system(size: 12))
+                    .foregroundColor(palette.secondary)
             }
             Spacer()
-            if let project = store.activeProject, !project.chapters.isEmpty {
-                Picker("Chapitre", selection: chapterBinding(project)) {
-                    ForEach(project.chapters.filter { !$0.isArchived }) { chapter in
-                        Text(chapter.name).tag(Optional(chapter.id))
-                    }
+            chapterMenu
+        }
+    }
+
+    @ViewBuilder
+    private var chapterMenu: some View {
+        if let project = store.activeProject, !project.chapters.isEmpty {
+            Menu {
+                ForEach(project.chapters.filter { !$0.isArchived }) { chapter in
+                    Button(chapter.name) { selectChapter(chapter.id, in: project) }
                 }
-                .pickerStyle(.menu)
-                .frame(maxWidth: 260)
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "book.closed.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(palette.accent)
+                    Text(store.activeChapter?.name ?? "Choisir un chapitre")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundColor(.labelMuted)
+                }
+                .padding(.horizontal, 12).padding(.vertical, 8)
+                .frame(minWidth: 200, alignment: .leading)
+                .background(RoundedRectangle(cornerRadius: 9).fill(palette.field))
+                .overlay(RoundedRectangle(cornerRadius: 9).stroke(palette.border, lineWidth: 1))
             }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .help("Chapitre actif")
+            .accessibilityLabel("Chapitre actif : \(store.activeChapter?.name ?? "aucun")")
         }
     }
 
@@ -137,33 +167,36 @@ struct TodayView: View {
         let goal = dailyGoal
         let ratio = goal > 0 ? min(1, Double(written) / Double(goal)) : 0
 
-        return VStack(alignment: .leading, spacing: 20) {
+        return VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Écrit aujourd'hui")
-                        .font(.callout)
-                        .foregroundStyle(palette.secondary)
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("ÉCRIT AUJOURD'HUI")
+                        .font(.system(size: 10, weight: .semibold))
+                        .kerning(1.0)
+                        .foregroundColor(palette.secondary)
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text(DataStore.formatNumber(displayed(written)))
-                            .font(.system(size: 60, weight: .bold, design: palette.numberDesign))
+                            .font(.system(size: 52, weight: .bold, design: palette.numberDesign))
                             .monospacedDigit()
-                        Text(unitName)
-                            .font(.title3)
-                            .foregroundStyle(palette.secondary)
+                        Text(unitShort)
+                            .font(.system(size: 15))
+                            .foregroundColor(palette.secondary)
                     }
                 }
                 Spacer()
                 if goal > 0 {
-                    VStack(alignment: .trailing, spacing: 6) {
-                        Text("Objectif du jour")
-                            .font(.callout)
-                            .foregroundStyle(palette.secondary)
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("OBJECTIF DU JOUR")
+                            .font(.system(size: 10, weight: .semibold))
+                            .kerning(1.0)
+                            .foregroundColor(palette.secondary)
                         HStack(spacing: 6) {
                             Text(DataStore.formatNumber(displayed(goal)))
-                            Text("·").foregroundStyle(palette.secondary)
-                            Text("\(Int(ratio * 100)) %").foregroundStyle(palette.progressText)
+                                .foregroundColor(.primary)
+                            Text("·").foregroundColor(palette.secondary)
+                            Text("\(Int(ratio * 100)) %").foregroundColor(palette.accent)
                         }
-                        .font(.title2.weight(.semibold))
+                        .font(.system(size: 18, weight: .semibold))
                         .monospacedDigit()
                     }
                 }
@@ -171,86 +204,88 @@ struct TodayView: View {
             .accessibilityElement(children: .combine)
 
             if goal > 0 {
-                ProgressView(value: ratio)
-                    .progressViewStyle(TodayBarStyle(fill: palette.progress, track: palette.track, height: 8))
-                    .accessibilityLabel("Progression de l'objectif du jour")
-                    .accessibilityValue("\(Int(ratio * 100)) pour cent")
+                GeometryReader { proxy in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(palette.track)
+                        Capsule().fill(palette.accentFill)
+                            .frame(width: proxy.size.width * CGFloat(ratio))
+                    }
+                }
+                .frame(height: 6)
+                .accessibilityLabel("Progression de l'objectif du jour")
+                .accessibilityValue("\(Int(ratio * 100)) pour cent")
             }
 
-            HStack(alignment: .bottom, spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Nouveau total du chapitre")
-                        .font(.callout)
-                        .foregroundStyle(palette.secondary)
-                    TextField("Total en caractères", text: $totalText)
-                        .textFieldStyle(.roundedBorder)
-                        .font(.title3.monospacedDigit())
-                        .focused($totalFocused)
-                        .onSubmit(save)
-                        .accessibilityLabel("Nouveau total du chapitre")
-                }
-                Button(action: save) {
-                    Text(savedFlash ? "Enregistré ✓" : "Enregistrer")
-                        .frame(minWidth: 110)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .keyboardShortcut(.defaultAction)
-                .disabled(parsedTotal == nil)
-            }
+            // Champ de saisie d'origine (dictée, historique, ⌘S, « Sauvegarder »)
+            WritingEntryInputCluster(
+                useWordCount: store.data.useWordCount,
+                initialText: initialTotalText,
+                entryForHistory: store.activeChapter?.entryForDate(today),
+                savedConfirmation: savedConfirmation,
+                focused: $inputFocused,
+                isDictating: $isDictating,
+                onSave: { count in save(count) }
+            )
+            .id(clusterToken)
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Note du jour (facultatif)")
-                    .font(.callout)
-                    .foregroundStyle(palette.secondary)
-                TextField("Ce qui a avancé, ce qui bloque…", text: $noteText)
-                    .textFieldStyle(.roundedBorder)
-                    .onSubmit(save)
+            Divider().padding(.top, 4)
+            HStack(spacing: 8) {
+                Image(systemName: "note.text")
+                    .foregroundColor(.labelMuted)
+                    .font(.system(size: 11))
+                    .accessibilityHidden(true)
+                TextField("Note du jour (optionnel)…", text: $noteText)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 12))
+                    .onSubmit(saveNote)
                     .accessibilityLabel("Note du jour")
             }
         }
-        .padding(28)
-        .background(palette.card, in: RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(palette.border, lineWidth: 1))
+        .padding(18)
+        .background(palette.card)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(palette.border, lineWidth: 1))
     }
 
     private var noChapterCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             Text("Aucun chapitre actif")
-                .font(.title3.weight(.semibold))
+                .font(.system(size: 14, weight: .semibold))
             Text("Choisis ou crée un chapitre dans la barre latérale pour saisir ton total du jour.")
-                .foregroundStyle(palette.secondary)
+                .font(.system(size: 12))
+                .foregroundColor(palette.secondary)
         }
-        .padding(28)
+        .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(palette.card, in: RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(palette.border, lineWidth: 1))
+        .background(palette.card)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(palette.border, lineWidth: 1))
     }
 
     // MARK: Repères
 
     private var indicators: some View {
-        HStack(alignment: .top, spacing: 16) {
-            tile(title: "Série") {
+        HStack(alignment: .top, spacing: 12) {
+            tile(icon: "flame.fill", title: "Série") {
                 Text("\(store.currentStreak) jour\(store.currentStreak > 1 ? "s" : "")")
-                    .font(.title.weight(.bold)).monospacedDigit()
+                    .font(.system(size: 22, weight: .bold)).monospacedDigit()
                 Text("Record : \(store.longestStreak) jours")
-                    .font(.caption).foregroundStyle(palette.secondary)
+                    .font(.system(size: 11)).foregroundColor(palette.secondary)
             }
-            tile(title: weekTitle) {
+            tile(icon: "calendar", title: weekTitle) {
                 weekBars
             }
-            tile(title: "Fin estimée de la thèse") {
+            tile(icon: "flag.checkered", title: "Fin estimée de la thèse") {
                 if let project = store.activeProject,
                    let date = store.estimatedCompletionDate(for: project.id) {
                     Text(DataStore.formatDate(date))
-                        .font(.title.weight(.bold))
+                        .font(.system(size: 22, weight: .bold))
                     Text("Au rythme de \(DataStore.formatNumber(displayed(store.velocity14Days))) \(unitShort)/jour")
-                        .font(.caption).foregroundStyle(palette.secondary)
+                        .font(.system(size: 11)).foregroundColor(palette.secondary)
                 } else {
-                    Text("—").font(.title.weight(.bold))
+                    Text("—").font(.system(size: 22, weight: .bold))
                     Text("Pas assez de données récentes")
-                        .font(.caption).foregroundStyle(palette.secondary)
+                        .font(.system(size: 11)).foregroundColor(palette.secondary)
                 }
             }
         }
@@ -260,28 +295,29 @@ struct TodayView: View {
         let goal = store.data.weeklyGoal
         let done = displayed(weekDays.reduce(0) { $0 + $1.value })
         return goal > 0
-            ? "Cette semaine · \(DataStore.formatNumber(done)) / \(DataStore.formatNumber(displayed(goal)))"
-            : "Cette semaine · \(DataStore.formatNumber(done))"
+            ? "Semaine · \(DataStore.formatNumber(done)) / \(DataStore.formatNumber(displayed(goal)))"
+            : "Semaine · \(DataStore.formatNumber(done))"
     }
 
     private var weekBars: some View {
         let days = weekDays
         let maxValue = max(1, days.map(\.value).max() ?? 1)
         return VStack(spacing: 4) {
-            HStack(alignment: .bottom, spacing: 8) {
+            HStack(alignment: .bottom, spacing: 6) {
                 ForEach(days) { day in
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(day.isToday ? palette.progress : (day.value > 0 ? palette.barMuted : palette.track))
-                        .frame(height: max(3, CGFloat(day.value) / CGFloat(maxValue) * 40))
+                        .fill(day.isToday ? AnyShapeStyle(palette.accentFill)
+                                          : AnyShapeStyle(day.value > 0 ? palette.barMuted : palette.track))
+                        .frame(height: max(3, CGFloat(day.value) / CGFloat(maxValue) * 36))
                         .frame(maxWidth: .infinity)
                 }
             }
-            .frame(height: 40, alignment: .bottom)
-            HStack(spacing: 8) {
+            .frame(height: 36, alignment: .bottom)
+            HStack(spacing: 6) {
                 ForEach(days) { day in
                     Text(day.letter)
-                        .font(.caption2)
-                        .foregroundStyle(palette.secondary)
+                        .font(.system(size: 9, weight: day.isToday ? .bold : .regular))
+                        .foregroundColor(day.isToday ? palette.accent : palette.secondary)
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -292,43 +328,68 @@ struct TodayView: View {
     }
 
     @ViewBuilder
-    private func tile<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+    private func tile<Content: View>(icon: String, title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(.callout)
-                .foregroundStyle(palette.secondary)
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 11))
+                    .foregroundColor(palette.accent)
+                    .accessibilityHidden(true)
+                Text(title)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(palette.secondary)
+            }
             content()
         }
-        .padding(18)
-        .frame(maxWidth: .infinity, minHeight: 110, alignment: .topLeading)
-        .background(palette.card, in: RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(palette.border, lineWidth: 1))
+        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
+        .background(palette.card)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(palette.border, lineWidth: 1))
     }
 
     // MARK: Pomodoro
 
     private var pomodoroLine: some View {
         let summary = pomodoroController.dashboardSummary
-        return HStack(spacing: 12) {
+        return HStack(spacing: 10) {
             Image(systemName: "timer")
-                .foregroundStyle(palette.secondary)
+                .font(.system(size: 12))
+                .foregroundColor(palette.accent)
                 .accessibilityHidden(true)
             Text("Pomodoro : **\(summary.completedFocusSessions) session\(summary.completedFocusSessions > 1 ? "s" : "")** · \(Self.formatMinutes(summary.focusMinutes)) de focus aujourd'hui")
+                .font(.system(size: 12))
             Spacer()
-            Button("Voir les analyses") {
+            Button {
                 withAnimation(.easeInOut(duration: 0.15)) { selectedNav = .charts }
+            } label: {
+                Text("Voir les analyses")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(palette.accent)
             }
-            .buttonStyle(.link)
-            Button("Démarrer un focus") {
+            .buttonStyle(.plain)
+            Button {
                 pomodoroController.startFocusSession()
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "play.fill").font(.system(size: 10))
+                    Text("Démarrer un focus").font(.system(size: 12, weight: .semibold))
+                }
+                .foregroundColor(palette.accent)
+                .padding(.horizontal, 12).padding(.vertical, 7)
+                .background(RoundedRectangle(cornerRadius: 8).fill(palette.accent.opacity(0.10)))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(palette.accent.opacity(0.35), lineWidth: 1))
             }
+            .buttonStyle(.plain)
             .disabled(!pomodoroController.canStartSession)
+            .opacity(pomodoroController.canStartSession ? 1 : 0.5)
             .help("Raccourci global : ⌃⌥P")
         }
-        .font(.callout)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(palette.border, lineWidth: 1))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(palette.card)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(palette.border, lineWidth: 1))
     }
 
     // MARK: Données
@@ -359,7 +420,6 @@ struct TodayView: View {
         return smart > 0 ? smart : store.effectiveDailyGoal
     }
 
-    private var unitName: String { store.data.useWordCount ? "mots" : "caractères" }
     private var unitShort: String { store.data.useWordCount ? "mots" : "car." }
 
     /// Les compteurs sont stockés en caractères ; en mode mots, on divise par 5.
@@ -367,51 +427,47 @@ struct TodayView: View {
         store.data.useWordCount ? value / 5 : value
     }
 
-    private var parsedTotal: Int? {
-        let digits = totalText.filter(\.isNumber)
-        guard !digits.isEmpty, let value = Int(digits), value >= 0 else { return nil }
-        return value
+    /// Total du jour s'il existe, sinon champ vide (comme le tableau de bord).
+    private var initialTotalText: String {
+        guard let entry = store.activeChapter?.entryForDate(today) else { return "" }
+        return "\(entry.totalCount)"
     }
 
-    private func chapterBinding(_ project: Project) -> Binding<UUID?> {
-        Binding(
-            get: { store.activeProject?.activeChapterId },
-            set: { newID in
-                guard let idx = store.data.projects.firstIndex(where: { $0.id == project.id }) else { return }
-                store.data.projects[idx].activeChapterId = newID
-                store.save()
-            }
-        )
+    private func selectChapter(_ id: UUID, in project: Project) {
+        guard let idx = store.data.projects.firstIndex(where: { $0.id == project.id }) else { return }
+        store.data.activeProjectId = project.id
+        store.data.projects[idx].activeChapterId = id
+        store.save()
     }
 
     private func refreshFields() {
-        guard let chapter = store.activeChapter else {
-            totalText = ""; noteText = ""
-            return
-        }
-        let entry = chapter.entryForDate(today)
-        let total = entry?.totalCount ?? chapter.previousTotal(before: today)
-        totalText = total > 0 ? DataStore.formatNumber(total) : ""
-        noteText = entry?.note ?? ""
+        noteText = store.activeChapter?.entryForDate(today)?.note ?? ""
+        clusterToken = UUID()
     }
 
-    private func save() {
-        guard let value = parsedTotal,
-              let project = store.activeProject,
-              let chapter = store.activeChapter else { return }
-        store.setTotalForDate(value, for: chapter.id, in: project.id, date: today)
-        store.setNoteForDate(noteText, for: chapter.id, in: project.id, date: today)
-        totalFocused = false
-        withAnimation(.easeOut(duration: 0.15)) { savedFlash = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-            withAnimation(.easeOut(duration: 0.15)) { savedFlash = false }
+    private func save(_ count: Int) {
+        guard let project = store.activeProject, let chapter = store.activeChapter else { return }
+        withAnimation { store.setTotalForDate(count, for: chapter.id, in: project.id, date: today) }
+        if !noteText.isEmpty {
+            store.setNoteForDate(noteText, for: chapter.id, in: project.id, date: today)
         }
+        inputFocused = false
+        withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = false }
+        }
+    }
+
+    private func saveNote() {
+        guard let project = store.activeProject, let chapter = store.activeChapter,
+              chapter.entryForDate(today) != nil else { return }
+        store.setNoteForDate(noteText, for: chapter.id, in: project.id, date: today)
     }
 
     private static let longDate: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "fr_FR")
-        f.dateFormat = "EEEE d MMMM"
+        f.dateFormat = "EEEE d MMMM yyyy"
         return f
     }()
 
@@ -419,24 +475,6 @@ struct TodayView: View {
         if minutes < 60 { return "\(minutes) min" }
         let h = minutes / 60, m = minutes % 60
         return m == 0 ? "\(h) h" : "\(h) h \(m)"
-    }
-}
-
-/// Barre de progression plate aux couleurs du thème.
-private struct TodayBarStyle: ProgressViewStyle {
-    let fill: Color
-    let track: Color
-    let height: CGFloat
-
-    func makeBody(configuration: Configuration) -> some View {
-        GeometryReader { proxy in
-            ZStack(alignment: .leading) {
-                Capsule().fill(track)
-                Capsule().fill(fill)
-                    .frame(width: proxy.size.width * CGFloat(configuration.fractionCompleted ?? 0))
-            }
-        }
-        .frame(height: height)
     }
 }
 

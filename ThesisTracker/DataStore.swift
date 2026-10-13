@@ -4489,7 +4489,9 @@ class DataStore: ObservableObject {
                 // Chapter-specific daily avg over last 30 days
                 var chIncrements: [Int] = []
                 let sortedEntries = ch.entries.sorted { $0.date < $1.date }
-                for i in 1..<sortedEntries.count {
+                // indices.dropFirst() : sûr même pour un chapitre sans entrée
+                // (1..<0 faisait planter l'onglet Statistiques).
+                for i in sortedEntries.indices.dropFirst() {
                     let delta = max(0, sortedEntries[i].totalCount - sortedEntries[i-1].totalCount)
                     if delta > 0 { chIncrements.append(delta) }
                 }
