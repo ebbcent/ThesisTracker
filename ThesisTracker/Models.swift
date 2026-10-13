@@ -394,7 +394,7 @@ struct DailyEntry: Codable, Identifiable {
         totalCount  =  try  c.decode(Int.self,              forKey: .totalCount)
         note        = try? c.decodeIfPresent(String.self,  forKey: .note)
         savedAtHour = try? c.decodeIfPresent(Int.self,     forKey: .savedAtHour)
-        editHistory = (try? c.decodeIfPresent([EntryEditRecord].self, forKey: .editHistory)) ?? []
+        editHistory = (try? c.decodeIfPresent(LossyArray<EntryEditRecord>.self, forKey: .editHistory))?.elements ?? []
         energyLevel = try? c.decodeIfPresent(Int.self,     forKey: .energyLevel)
     }
 }
@@ -483,7 +483,7 @@ struct Chapter: Codable, Identifiable {
         id             = (try? c.decodeIfPresent(UUID.self,           forKey: .id))             ?? UUID()
         name           = try  c.decode(String.self,                    forKey: .name)
         goal           = try  c.decode(Int.self,                       forKey: .goal)
-        entries        = (try? c.decodeIfPresent([DailyEntry].self,   forKey: .entries))        ?? []
+        entries        = (try? c.decodeIfPresent(LossyArray<DailyEntry>.self,   forKey: .entries))?.elements        ?? []
         tag            = try? c.decodeIfPresent(ProjectTag.self,      forKey: .tag)
         isCompleted    = (try? c.decodeIfPresent(Bool.self,           forKey: .isCompleted))    ?? false
         deadline       = try? c.decodeIfPresent(String.self,          forKey: .deadline)
@@ -495,15 +495,15 @@ struct Chapter: Codable, Identifiable {
         chapterFolderId = try? c.decodeIfPresent(UUID.self,            forKey: .chapterFolderId)
         status          = try? c.decodeIfPresent(ChapterStatus.self,   forKey: .status)
         draftVersion    = (try? c.decodeIfPresent(Int.self,            forKey: .draftVersion))   ?? 1
-        logEntries      = (try? c.decodeIfPresent([ChapterLogEntry].self, forKey: .logEntries))  ?? []
+        logEntries      = (try? c.decodeIfPresent(LossyArray<ChapterLogEntry>.self, forKey: .logEntries))?.elements  ?? []
         priority        = (try? c.decodeIfPresent(ChapterPriority.self,   forKey: .priority))    ?? .normal
-        customTags      = (try? c.decodeIfPresent([String].self,          forKey: .customTags))  ?? []
-        subchapters     = (try? c.decodeIfPresent([Chapter].self,         forKey: .subchapters)) ?? []
-        supervisorReviews = (try? c.decodeIfPresent([SupervisorReview].self, forKey: .supervisorReviews)) ?? []
-        checkpoints     = (try? c.decodeIfPresent([ChapterCheckpoint].self,  forKey: .checkpoints)) ?? []
-        defenseNotes    = (try? c.decodeIfPresent([DefenseNote].self,        forKey: .defenseNotes)) ?? []
-        selfReviews     = (try? c.decodeIfPresent([SelfReview].self,         forKey: .selfReviews)) ?? []
-        hiddenWidgets   = (try? c.decodeIfPresent([String].self,             forKey: .hiddenWidgets)) ?? []
+        customTags      = (try? c.decodeIfPresent(LossyArray<String>.self,          forKey: .customTags))?.elements  ?? []
+        subchapters     = (try? c.decodeIfPresent(LossyArray<Chapter>.self,         forKey: .subchapters))?.elements ?? []
+        supervisorReviews = (try? c.decodeIfPresent(LossyArray<SupervisorReview>.self, forKey: .supervisorReviews))?.elements ?? []
+        checkpoints     = (try? c.decodeIfPresent(LossyArray<ChapterCheckpoint>.self,  forKey: .checkpoints))?.elements ?? []
+        defenseNotes    = (try? c.decodeIfPresent(LossyArray<DefenseNote>.self,        forKey: .defenseNotes))?.elements ?? []
+        selfReviews     = (try? c.decodeIfPresent(LossyArray<SelfReview>.self,         forKey: .selfReviews))?.elements ?? []
+        hiddenWidgets   = (try? c.decodeIfPresent(LossyArray<String>.self,             forKey: .hiddenWidgets))?.elements ?? []
         isArchived      = (try? c.decodeIfPresent(Bool.self,                 forKey: .isArchived))   ?? false
         isPinned        = (try? c.decodeIfPresent(Bool.self,                 forKey: .isPinned))     ?? false
     }
@@ -595,13 +595,13 @@ struct Project: Codable, Identifiable {
         id              = (try? c.decodeIfPresent(UUID.self,             forKey: .id))              ?? UUID()
         name            = try  c.decode(String.self,                      forKey: .name)
         activeChapterId = try? c.decodeIfPresent(UUID.self,              forKey: .activeChapterId)
-        chapters        = (try? c.decodeIfPresent([Chapter].self,        forKey: .chapters))        ?? []
+        chapters        = (try? c.decodeIfPresent(LossyArray<Chapter>.self,        forKey: .chapters))?.elements        ?? []
         tag             = try? c.decodeIfPresent(ProjectTag.self,        forKey: .tag)
         folderId        = try? c.decodeIfPresent(UUID.self,              forKey: .folderId)
-        chapterFolders  = (try? c.decodeIfPresent([ChapterFolder].self,  forKey: .chapterFolders))  ?? []
+        chapterFolders  = (try? c.decodeIfPresent(LossyArray<ChapterFolder>.self,  forKey: .chapterFolders))?.elements  ?? []
         projectType     = try? c.decodeIfPresent(ProjectType.self,       forKey: .projectType)
         supervisor      = try? c.decodeIfPresent(String.self,            forKey: .supervisor)
-        milestones      = (try? c.decodeIfPresent([Milestone].self,      forKey: .milestones))      ?? []
+        milestones      = (try? c.decodeIfPresent(LossyArray<Milestone>.self,      forKey: .milestones))?.elements      ?? []
         notes           = try? c.decodeIfPresent(String.self,            forKey: .notes)
         isArchived      = (try? c.decodeIfPresent(Bool.self,             forKey: .isArchived))      ?? false
         isPinned        = (try? c.decodeIfPresent(Bool.self,             forKey: .isPinned))        ?? false
@@ -698,7 +698,7 @@ struct JournalEntry: Codable, Identifiable {
         date      =  try  c.decode(String.self,           forKey: .date)
         content   =  try  c.decode(String.self,           forKey: .content)
         mood      = try? c.decodeIfPresent(Int.self,      forKey: .mood)
-        tags      = (try? c.decodeIfPresent([String].self,forKey: .tags))      ?? []
+        tags      = (try? c.decodeIfPresent(LossyArray<String>.self,forKey: .tags))?.elements      ?? []
         createdAt = (try? c.decodeIfPresent(String.self,  forKey: .createdAt)) ?? date
         updatedAt = (try? c.decodeIfPresent(String.self,  forKey: .updatedAt)) ?? createdAt
     }
@@ -732,7 +732,7 @@ struct Fragment: Codable, Identifiable {
         id               = (try? c.decodeIfPresent(UUID.self,    forKey: .id))            ?? UUID()
         content          =  try  c.decode(String.self,           forKey: .content)
         createdAt        =  try  c.decode(String.self,           forKey: .createdAt)
-        tags             = (try? c.decodeIfPresent([String].self, forKey: .tags))         ?? []
+        tags             = (try? c.decodeIfPresent(LossyArray<String>.self, forKey: .tags))?.elements         ?? []
         archivedAt       = try? c.decodeIfPresent(String.self,    forKey: .archivedAt)
         movedToChapterId = try? c.decodeIfPresent(UUID.self,      forKey: .movedToChapterId)
         movedAt          = try? c.decodeIfPresent(String.self,    forKey: .movedAt)
@@ -1010,23 +1010,23 @@ extension AppData {
         dailyGoal                  = (try? c.decodeIfPresent(Int.self,                  forKey: .dailyGoal))                  ?? 500
         weeklyGoal                 = (try? c.decodeIfPresent(Int.self,                  forKey: .weeklyGoal))                 ?? 3000
         monthlyGoal                = (try? c.decodeIfPresent(Int.self,                  forKey: .monthlyGoal))                ?? 15000
-        projects                   = (try? c.decodeIfPresent([Project].self,            forKey: .projects))                   ?? []
+        projects                   = (try? c.decodeIfPresent(LossyArray<Project>.self,            forKey: .projects))?.elements                   ?? []
         activeProjectId            = try? c.decodeIfPresent(UUID.self,                  forKey: .activeProjectId)
-        folders                    = (try? c.decodeIfPresent([ProjectFolder].self,      forKey: .folders))                    ?? []
+        folders                    = (try? c.decodeIfPresent(LossyArray<ProjectFolder>.self,      forKey: .folders))?.elements                    ?? []
         sortProjectsAlphabetically = (try? c.decodeIfPresent(Bool.self,                forKey: .sortProjectsAlphabetically)) ?? false
         sortChaptersAlphabetically = (try? c.decodeIfPresent(Bool.self,                forKey: .sortChaptersAlphabetically)) ?? false
         useWordCount               = (try? c.decodeIfPresent(Bool.self,                forKey: .useWordCount))               ?? false
-        pinnedDates                = (try? c.decodeIfPresent([PinnedDate].self,         forKey: .pinnedDates))                ?? []
-        weeklyChallenges           = (try? c.decodeIfPresent([WeeklyChallenge].self,    forKey: .weeklyChallenges))           ?? []
-        researchEntries            = (try? c.decodeIfPresent([ResearchEntry].self,      forKey: .researchEntries))            ?? []
-        weeklyPlans                = (try? c.decodeIfPresent([WeeklyPlan].self,          forKey: .weeklyPlans))                ?? []
-        restDays                   = (try? c.decodeIfPresent([String].self,              forKey: .restDays))                   ?? []
+        pinnedDates                = (try? c.decodeIfPresent(LossyArray<PinnedDate>.self,         forKey: .pinnedDates))?.elements                ?? []
+        weeklyChallenges           = (try? c.decodeIfPresent(LossyArray<WeeklyChallenge>.self,    forKey: .weeklyChallenges))?.elements           ?? []
+        researchEntries            = (try? c.decodeIfPresent(LossyArray<ResearchEntry>.self,      forKey: .researchEntries))?.elements            ?? []
+        weeklyPlans                = (try? c.decodeIfPresent(LossyArray<WeeklyPlan>.self,          forKey: .weeklyPlans))?.elements                ?? []
+        restDays                   = (try? c.decodeIfPresent(LossyArray<String>.self,              forKey: .restDays))?.elements                   ?? []
         targetDefenseDate          = try? c.decodeIfPresent(String.self,                 forKey: .targetDefenseDate)
-        journalEntries             = (try? c.decodeIfPresent([JournalEntry].self,        forKey: .journalEntries))             ?? []
-        fragments                  = (try? c.decodeIfPresent([Fragment].self,            forKey: .fragments))                  ?? []
-        monthlyReports             = (try? c.decodeIfPresent([MonthlyReport].self,       forKey: .monthlyReports))             ?? []
-        adminTasks                 = (try? c.decodeIfPresent([AdminTask].self,           forKey: .adminTasks))                 ?? []
-        legacyChapters             = try? c.decodeIfPresent([Chapter].self,             forKey: .legacyChapters)
+        journalEntries             = (try? c.decodeIfPresent(LossyArray<JournalEntry>.self,        forKey: .journalEntries))?.elements             ?? []
+        fragments                  = (try? c.decodeIfPresent(LossyArray<Fragment>.self,            forKey: .fragments))?.elements                  ?? []
+        monthlyReports             = (try? c.decodeIfPresent(LossyArray<MonthlyReport>.self,       forKey: .monthlyReports))?.elements             ?? []
+        adminTasks                 = (try? c.decodeIfPresent(LossyArray<AdminTask>.self,           forKey: .adminTasks))?.elements                 ?? []
+        legacyChapters             = (try? c.decodeIfPresent(LossyArray<Chapter>.self,             forKey: .legacyChapters))?.elements
         legacyActiveChapterId      = try? c.decodeIfPresent(UUID.self,                  forKey: .legacyActiveChapterId)
     }
 }

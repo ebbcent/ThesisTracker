@@ -161,6 +161,22 @@ class DataStore: ObservableObject {
     private var saveDebounceAnchor: Date?
     private let saveMaxWait: TimeInterval = 2.0
 
+    // MARK: Persistence state
+    /// File série : toutes les lectures/écritures de data.json passent par
+    /// elle, dans l'ordre. Une ancienne sauvegarde ne peut plus terminer après
+    /// une plus récente, et une lecture ne croise jamais une écriture.
+    private let ioQueue = DispatchQueue(label: "com.writingprocess.datastore.io", qos: .userInitiated)
+    /// Contenu du fichier tel qu'on l'a lu ou écrit la dernière fois (ioQueue
+    /// uniquement) : ancêtre commun pour fusionner les modifications de l'autre Mac.
+    private var ioBaseData: Data?
+    /// Faux tant que le fichier n'a pas été lu correctement : aucune écriture
+    /// n'est alors autorisée, pour ne jamais écraser des données non chargées.
+    @Published private(set) var isLoaded: Bool = false
+    /// Modifications locales demandées / effectivement écrites (thread principal).
+    private var localChangeCount = 0
+    private var persistedChangeCount = 0
+    private var hasPendingLocalChanges: Bool { localChangeCount != persistedChangeCount }
+
     // MARK: - File URLs
 
     /// Chemin vers le fichier iCloud Drive.
@@ -233,6 +249,10 @@ class DataStore: ObservableObject {
             self, selector: #selector(appDidBecomeActive),
             name: NSApplication.didBecomeActiveNotification, object: nil
         )
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(flushPendingSaveOnTerminate),
+            name: NSApplication.willTerminateNotification, object: nil
+        )
     }
 
     /// Preview-only init: in-memory, no disk I/O, no file watcher, no notification
@@ -285,81 +305,199 @@ class DataStore: ObservableObject {
 
     // MARK: - Migration locale → iCloud Drive
 
+    /// Copie l'ancien fichier local vers iCloud Drive UNIQUEMENT si iCloud ne
+    /// contient encore rien (ni fichier, ni fichier « .icloud » en attente de
+    /// téléchargement). Un fichier iCloud existant n'est jamais remplacé : il
+    /// peut venir de l'autre Mac, ou être illisible le temps qu'iCloud finisse
+    /// de le télécharger.
     private func migrateToICloudIfNeeded() {
         guard let iCloudFile = iCloudDriveFileURL else { return }
         let fm = FileManager.default
-        let placeholder = iCloudFile.deletingLastPathComponent()
-            .appendingPathComponent("." + iCloudFile.lastPathComponent + ".icloud")
-
-        // Vérifier si le fichier iCloud existe ET a des données réelles
-        let iCloudEmpty: Bool = {
-            guard fm.fileExists(atPath: iCloudFile.path),
-                  let d = try? Data(contentsOf: iCloudFile),
-                  let decoded = try? DataStore.sharedDecoder.decode(AppData.self, from: d) else { return true }
-            return decoded.projects.isEmpty && (decoded.legacyChapters ?? []).isEmpty
-        }()
-
-        // Ne migrer que si iCloud est vide/absent ET qu'un fichier local a des données
-        guard iCloudEmpty, !fm.fileExists(atPath: placeholder.path) else { return }
+        guard !fm.fileExists(atPath: iCloudFile.path),
+              !fm.fileExists(atPath: DataStore.placeholderURL(for: iCloudFile).path) else { return }
         let candidates = [localFileURL] + legacyICloudFileURLs + legacyLocalFileURLs
         guard let source = candidates.first(where: { fm.fileExists(atPath: $0.path) }) else { return }
         try? fm.createDirectory(at: iCloudFile.deletingLastPathComponent(), withIntermediateDirectories: true)
-        // removeItem d'abord si le fichier existe déjà (copyItem échoue si la destination existe)
-        try? fm.removeItem(at: iCloudFile)
         try? fm.copyItem(at: source, to: iCloudFile)
+    }
+
+    // MARK: - Disk access (ioQueue)
+
+    private enum DiskReadResult {
+        case data(Data)
+        case missing          // aucun fichier : premier lancement
+        case notDownloaded    // iCloud ne l'a pas encore téléchargé sur ce Mac
+        case failure(Error)
+    }
+
+    /// Fichier « .data.json.icloud » laissé par iCloud quand le vrai fichier
+    /// n'est pas (encore) présent sur ce Mac.
+    static func placeholderURL(for url: URL) -> URL {
+        url.deletingLastPathComponent().appendingPathComponent("." + url.lastPathComponent + ".icloud")
+    }
+
+    /// Lecture coordonnée avec iCloud. Si le fichier n'existe que sous forme de
+    /// « .icloud », on demande son téléchargement et on attend (au plus
+    /// `waitForDownload` secondes). À appeler hors du thread principal.
+    private static func readDisk(_ url: URL, waitForDownload: TimeInterval) -> DiskReadResult {
+        let fm = FileManager.default
+        if !fm.fileExists(atPath: url.path) {
+            guard fm.fileExists(atPath: placeholderURL(for: url).path) else { return .missing }
+            try? fm.startDownloadingUbiquitousItem(at: url)
+            let deadline = Date().addingTimeInterval(waitForDownload)
+            while !fm.fileExists(atPath: url.path) && Date() < deadline {
+                Thread.sleep(forTimeInterval: 0.25)
+            }
+            guard fm.fileExists(atPath: url.path) else { return .notDownloaded }
+        }
+        var result: DiskReadResult = .missing
+        var coordinationError: NSError?
+        // La lecture coordonnée attend aussi la fin d'un téléchargement iCloud
+        // en cours (fichiers « sans données » de macOS 14+).
+        NSFileCoordinator(filePresenter: nil).coordinate(readingItemAt: url, options: [], error: &coordinationError) { readURL in
+            do { result = .data(try Data(contentsOf: readURL)) } catch { result = .failure(error) }
+        }
+        if let coordinationError { return .failure(coordinationError) }
+        return result
+    }
+
+    /// Décode en ignorant individuellement les éléments abîmés.
+    static func decodeAppData(_ bytes: Data) throws -> (data: AppData, dropped: Int) {
+        let report = LossyDecodingReport()
+        let decoder = JSONDecoder()
+        decoder.userInfo[.lossyReport] = report
+        let decoded = try decoder.decode(AppData.self, from: bytes)
+        return (decoded, report.droppedCount)
+    }
+
+    private var recoveryDirectoryURL: URL {
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let dir = appSupport.appendingPathComponent(appStorageName).appendingPathComponent("Recovery")
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
+    /// Met de côté une copie brute d'un fichier problématique avant tout autre traitement.
+    private static func writeRecoveryCopy(_ bytes: Data, reason: String, in dir: URL) -> URL? {
+        let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
+        let url = dir.appendingPathComponent("data-\(reason)-\(stamp).json")
+        do { try bytes.write(to: url, options: .atomic); return url } catch { return nil }
+    }
+
+    /// Fusionne dans le fichier principal les copies en conflit créées par
+    /// iCloud quand les deux Mac ont écrit en même temps, puis les supprime.
+    private func resolveICloudConflictVersions(at url: URL) {
+        guard FileManager.default.fileExists(atPath: url.path),
+              let conflicts = NSFileVersion.unresolvedConflictVersionsOfItem(at: url),
+              !conflicts.isEmpty else { return }
+        let recoveryDir = recoveryDirectoryURL
+        guard var merged = try? Data(contentsOf: url) else { return }
+        for version in conflicts {
+            guard let theirs = try? Data(contentsOf: version.url) else { continue }
+            _ = DataStore.writeRecoveryCopy(theirs, reason: "conflit-icloud", in: recoveryDir)
+            if let result = DataSync.merge(base: nil, mine: merged, theirs: theirs),
+               var decoded = try? DataStore.decodeAppData(result).data {
+                DataSync.normalize(&decoded)
+                if let encoded = try? DataStore.sharedEncoder.encode(decoded) { merged = encoded }
+            }
+        }
+        var coordinationError: NSError?
+        NSFileCoordinator(filePresenter: nil).coordinate(writingItemAt: url, options: .forReplacing, error: &coordinationError) { writeURL in
+            lastSelfWriteAt = Date()
+            try? merged.write(to: writeURL, options: .atomic)
+        }
+        for version in conflicts { version.isResolved = true }
+        try? NSFileVersion.removeOtherVersionsOfItem(at: url)
     }
 
     // MARK: - Load
 
+    /// Autorise les écritures : appelé une fois le fichier lu correctement,
+    /// quand il n'existe pas encore, ou quand l'utilisateur restaure un snapshot.
+    func markLoaded() {
+        if !isLoaded { isLoaded = true }
+        if saveErrorMessage != nil && !hasPendingLocalChanges { saveErrorMessage = nil }
+    }
+
     func load() {
         let url = activeFileURL
-        let localURL = localFileURL
-        // File read + JSON decode off main thread (called from init, file
-        // watcher, and appDidBecomeActive — used to block first frame and
-        // every app re-activation for users with large data).
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        let recoveryDir = recoveryDirectoryURL
+        // Lecture + décodage hors du thread principal, sur la même file série
+        // que les écritures : une lecture ne croise jamais une écriture.
+        ioQueue.async { [weak self] in
             guard let self else { return }
-            do {
-                let jsonData = try Data(contentsOf: url)
-                var decoded = try DataStore.sharedDecoder.decode(AppData.self, from: jsonData)
-                self.applyLegacyMigration(&decoded)
-
-                // If the iCloud file is empty (0 projects) but the local file
-                // has data, use the local one and copy it to iCloud.
-                if decoded.projects.isEmpty && url != localURL {
-                    if let localData = try? Data(contentsOf: localURL),
-                       var localDecoded = try? DataStore.sharedDecoder.decode(AppData.self, from: localData),
-                       !localDecoded.projects.isEmpty {
-                        self.applyLegacyMigration(&localDecoded)
-                        try? localData.write(to: url, options: .atomic)
-                        DispatchQueue.main.async {
-                            self.loadErrorMessage = nil
-                            self.data = localDecoded
-                            self.dataVersion += 1
-                        }
-                        return
-                    }
-                }
-
+            self.resolveICloudConflictVersions(at: url)
+            switch DataStore.readDisk(url, waitForDownload: 20) {
+            case .missing:
+                // Aucun fichier (premier lancement) : on peut écrire, y compris
+                // ce qui a été saisi avant la fin de cette vérification.
                 DispatchQueue.main.async {
                     self.loadErrorMessage = nil
-                    self.data = decoded
-                    self.dataVersion += 1
+                    let wasLoaded = self.isLoaded
+                    self.markLoaded()
+                    if !wasLoaded && self.hasPendingLocalChanges { self.save() }
                 }
-            } catch {
-                if let localData = try? Data(contentsOf: localURL),
-                   var localDecoded = try? DataStore.sharedDecoder.decode(AppData.self, from: localData) {
-                    self.applyLegacyMigration(&localDecoded)
-                    DispatchQueue.main.async {
-                        self.loadErrorMessage = nil
-                        self.data = localDecoded
-                        self.dataVersion += 1
+            case .notDownloaded:
+                DispatchQueue.main.async {
+                    self.loadErrorMessage = "Le fichier iCloud n'est pas encore téléchargé sur ce Mac. Nouvel essai automatique…"
+                    if !self.isLoaded {
+                        self.saveErrorMessage = "Données pas encore arrivées d'iCloud : rien n'est enregistré pour l'instant."
                     }
-                } else {
-                    DispatchQueue.main.async { self.loadErrorMessage = "\(error)" }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in self?.load() }
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.loadErrorMessage = "Lecture impossible : \(error.localizedDescription)"
+                    if !self.isLoaded {
+                        self.saveErrorMessage = "Données non chargées : écriture bloquée pour protéger le fichier."
+                    }
+                }
+            case .data(let bytes):
+                // Rien de nouveau depuis notre dernière lecture/écriture.
+                if bytes == self.ioBaseData { return }
+                do {
+                    let result = try DataStore.decodeAppData(bytes)
+                    var decoded = result.data
+                    let dropped = result.dropped
+                    self.applyLegacyMigration(&decoded)
+                    var warning: String? = nil
+                    if dropped > 0 {
+                        let copy = DataStore.writeRecoveryCopy(bytes, reason: "elements-illisibles", in: recoveryDir)
+                        warning = "\(dropped) élément(s) illisible(s) ignoré(s) au chargement. Copie du fichier d'origine : Recovery/\(copy?.lastPathComponent ?? "échec de la copie")."
+                    }
+                    DispatchQueue.main.async {
+                        self.adoptLoaded(decoded, diskBytes: bytes, warning: warning)
+                    }
+                } catch {
+                    let copy = DataStore.writeRecoveryCopy(bytes, reason: "illisible", in: recoveryDir)
+                    DispatchQueue.main.async {
+                        self.loadErrorMessage = "Fichier de données illisible (\(error.localizedDescription)). Copie mise de côté : Recovery/\(copy?.lastPathComponent ?? "—"). Restaure un snapshot depuis les Réglages."
+                        if !self.isLoaded {
+                            self.saveErrorMessage = "Données illisibles : écriture bloquée pour protéger le fichier. Restaure un snapshot."
+                        }
+                    }
                 }
             }
         }
+    }
+
+    /// Thread principal. N'écrase jamais des modifications locales pas encore
+    /// écrites : dans ce cas, la prochaine sauvegarde fusionne avec le disque.
+    private func adoptLoaded(_ decoded: AppData, diskBytes: Data, warning: String?) {
+        loadErrorMessage = warning
+        if isLoaded && hasPendingLocalChanges {
+            save()
+            return
+        }
+        ioQueue.async { [weak self] in self?.ioBaseData = diskBytes }
+        if !isLoaded {
+            // Premier chargement : ce qui a été modifié sur l'état vide d'avant
+            // chargement n'a jamais été écrit et est remplacé par le fichier.
+            persistedChangeCount = localChangeCount
+        }
+        markLoaded()
+        data = decoded
+        dataVersion += 1
     }
 
     private func applyLegacyMigration(_ decoded: inout AppData) {
@@ -375,96 +513,184 @@ class DataStore: ObservableObject {
     // MARK: - Save
 
     func save() {
-        // Debounce EVERYTHING heavy: cache invalidation, disk I/O, Spotlight, dock badge,
-        // notification scheduling. During a typing burst, `data` mutations already publish
-        // objectWillChange — observers re-render and read CACHED stats (cheap). Once the
-        // user pauses 0.35s, we invalidate caches and recompute once.
-        // Max-wait : if save() is called continuously for more than `saveMaxWait`
-        // seconds (e.g. user typing in notes), we stop pushing the debounce and
-        // let the existing scheduled task fire. Otherwise data could sit
-        // unsaved indefinitely during a long typing session.
+        localChangeCount += 1
+        guard isLoaded else {
+            // Jamais d'écriture tant que le fichier n'a pas été lu : on
+            // risquerait d'écraser les vraies données avec un état vide.
+            saveErrorMessage = "Données pas encore chargées : cette modification n'est pas enregistrée."
+            return
+        }
+        // Debounce : pendant une rafale de frappe, on n'écrit qu'après 0,35 s
+        // de pause. Max-wait : au-delà de `saveMaxWait` secondes de rafale
+        // continue, on laisse partir la tâche déjà planifiée. L'état est lu au
+        // moment où la tâche part, donc la dernière frappe est toujours incluse.
         let now = Date()
         if saveDebounceAnchor == nil { saveDebounceAnchor = now }
         let elapsed = now.timeIntervalSince(saveDebounceAnchor ?? now)
-        if elapsed >= saveMaxWait {
-            // Let the previously scheduled task fire on time; reset anchor.
-            saveDebounceAnchor = now
+        if elapsed >= saveMaxWait, saveDebounceTask != nil {
             return
         }
         saveDebounceTask?.cancel()
-        let snapshot   = data
-        let fileURL    = activeFileURL
-        let usingICloud = isUsingICloud
-        let todayStr   = DataStore.today
         let task = DispatchWorkItem { [weak self] in
-            // ── Background: JSON encode + disk I/O ──────────────────────────
-            let encoded: Data
-            do {
-                encoded = try DataStore.sharedEncoder.encode(snapshot)
-            } catch {
-                DispatchQueue.main.async { [weak self] in
-                    self?.saveDebounceAnchor = nil
-                    self?.saveErrorMessage = "Encodage impossible : \(error.localizedDescription)"
-                }
-                return
-            }
-            // Mark BEFORE the write so the directory watcher's event handler
-            // (which fires async on a background queue) sees the timestamp.
-            self?.lastSelfWriteAt = Date()
-            DispatchQueue.main.async { [weak self] in self?.saveDebounceAnchor = nil }
-            do {
-                try encoded.write(to: fileURL, options: .atomic)
-            } catch {
-                DispatchQueue.main.async { [weak self] in
-                    self?.saveErrorMessage = "Sauvegarde impossible : \(error.localizedDescription)"
-                }
-                return
-            }
-            DispatchQueue.main.async { [weak self] in self?.saveErrorMessage = nil }
-            self?.saveSnapshotIfNeeded(for: encoded)
-            // Spotlight re-index
-            SpotlightIndexer.shared.reindex(snapshot)
-            // ── Main thread: cache invalidation + UI indicators + notifications ──
-            DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                // Invalidate dataVersion-keyed caches and trigger one re-render so
-                // stats catch up after the burst. objectWillChange is needed because
-                // dataVersion itself is not @Published.
-                self.dataVersion += 1
-                self.objectWillChange.send()
-
-                let todayTotal = self.dailyProgress
-                let goal       = max(1, self.data.dailyGoal)
-                NSApp.mainWindow?.title = todayTotal > 0
-                    ? "ThesisTracker — +\(self.formatCount(todayTotal)) aujourd'hui"
-                    : "ThesisTracker"
-                if todayTotal <= 0 {
-                    NSApp.dockTile.badgeLabel = nil
-                } else if todayTotal >= goal {
-                    NSApp.dockTile.badgeLabel = "✓"
-                } else {
-                    NSApp.dockTile.badgeLabel = "\(min(99, Int(Double(todayTotal) / Double(goal) * 100)))%"
-                }
-
-                self.showSaveIndicator = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-                    self?.showSaveIndicator = false
-                }
-                if usingICloud {
-                    self.iCloudSyncActive = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) { [weak self] in
-                        self?.iCloudSyncActive = false
-                    }
-                }
-                self.scheduleSaveNotifications(todayTotal: todayTotal, todayStr: todayStr)
-                self.checkAndShowDailySummary()
-                self.checkAndShowWeeklySummary()
-                self.checkWeeklyReportIfNeeded()
-                self.checkNewBadgeUnlocks()
-            }
+            guard let self else { return }
+            self.saveDebounceTask = nil
+            self.saveDebounceAnchor = nil
+            self.enqueueWrite()
         }
         saveDebounceTask = task
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.35, execute: task)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: task)
+    }
+
+    /// Thread principal : capture l'état courant et l'envoie à la file d'écriture.
+    private func enqueueWrite() {
+        let snapshot    = data
+        let changeCount = localChangeCount
+        let fileURL     = activeFileURL
+        let mirrorURL   = isUsingICloud ? localFileURL : nil
+        let usingICloud = isUsingICloud
+        let todayStr    = DataStore.today
+        ioQueue.async { [weak self] in
+            self?.performWrite(snapshot, changeCount: changeCount, fileURL: fileURL, mirrorURL: mirrorURL,
+                               usingICloud: usingICloud, todayStr: todayStr, waitForDownload: 20, notify: true)
+        }
+    }
+
+    /// ioQueue uniquement. Fusionne avec le fichier si l'autre Mac l'a modifié
+    /// depuis notre dernière lecture/écriture, puis écrit de façon coordonnée.
+    private func performWrite(_ snapshot: AppData, changeCount: Int, fileURL: URL, mirrorURL: URL?,
+                              usingICloud: Bool, todayStr: String, waitForDownload: TimeInterval, notify: Bool) {
+        let mine: Data
+        do {
+            mine = try DataStore.sharedEncoder.encode(snapshot)
+        } catch {
+            DispatchQueue.main.async { [weak self] in
+                self?.saveErrorMessage = "Encodage impossible : \(error.localizedDescription)"
+            }
+            return
+        }
+
+        var toWrite = mine
+        var merged: AppData? = nil
+        switch DataStore.readDisk(fileURL, waitForDownload: waitForDownload) {
+        case .data(let disk):
+            if let base = ioBaseData, disk != base, disk != mine {
+                // L'autre Mac a écrit entre-temps : on garde une copie de sa
+                // version, puis on fusionne au lieu d'écraser.
+                saveSnapshotIfNeeded(for: disk)
+                if let mergedBytes = DataSync.merge(base: base, mine: mine, theirs: disk),
+                   var decoded = try? DataStore.decodeAppData(mergedBytes).data {
+                    DataSync.normalize(&decoded)
+                    if let encoded = try? DataStore.sharedEncoder.encode(decoded) {
+                        toWrite = encoded
+                        merged = decoded
+                    }
+                }
+            }
+        case .notDownloaded:
+            // Ne jamais écrire par-dessus un fichier qu'iCloud n'a pas encore livré.
+            if notify {
+                DispatchQueue.main.async { [weak self] in
+                    self?.saveErrorMessage = "iCloud n'a pas encore téléchargé data.json : nouvel essai dans 10 s."
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in self?.save() }
+                }
+            }
+            return
+        case .missing, .failure:
+            break
+        }
+
+        // Marquer AVANT l'écriture : le watcher du dossier ignore nos propres écritures.
+        lastSelfWriteAt = Date()
+        var writeError: Error?
+        var coordinationError: NSError?
+        NSFileCoordinator(filePresenter: nil).coordinate(writingItemAt: fileURL, options: .forReplacing, error: &coordinationError) { writeURL in
+            do { try toWrite.write(to: writeURL, options: .atomic) } catch { writeError = error }
+        }
+        if let error = writeError ?? coordinationError {
+            DispatchQueue.main.async { [weak self] in
+                self?.saveErrorMessage = "Sauvegarde impossible : \(error.localizedDescription)"
+            }
+            return
+        }
+        lastSelfWriteAt = Date()
+        ioBaseData = toWrite
+        // Copie de secours locale (hors iCloud) du dernier état écrit.
+        if let mirrorURL { try? toWrite.write(to: mirrorURL, options: .atomic) }
+        saveSnapshotIfNeeded(for: toWrite)
+        guard notify else { return }
+        SpotlightIndexer.shared.reindex(merged ?? snapshot)
+
+        // ── Main thread: cache invalidation + UI indicators + notifications ──
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.persistedChangeCount = max(self.persistedChangeCount, changeCount)
+            self.saveErrorMessage = nil
+            if let merged { self.integrateMerged(merged, mergedBytes: toWrite, mineBytes: mine) }
+            // Invalidate dataVersion-keyed caches and trigger one re-render so
+            // stats catch up after the burst. objectWillChange is needed because
+            // dataVersion itself is not @Published.
+            self.dataVersion += 1
+            self.objectWillChange.send()
+
+            let todayTotal = self.dailyProgress
+            let goal       = max(1, self.data.dailyGoal)
+            NSApp.mainWindow?.title = todayTotal > 0
+                ? "Writing Process — +\(self.formatCount(todayTotal)) aujourd'hui"
+                : "Writing Process"
+            if todayTotal <= 0 {
+                NSApp.dockTile.badgeLabel = nil
+            } else if todayTotal >= goal {
+                NSApp.dockTile.badgeLabel = "✓"
+            } else {
+                NSApp.dockTile.badgeLabel = "\(min(99, Int(Double(todayTotal) / Double(goal) * 100)))%"
+            }
+
+            self.showSaveIndicator = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                self?.showSaveIndicator = false
+            }
+            if usingICloud {
+                self.iCloudSyncActive = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) { [weak self] in
+                    self?.iCloudSyncActive = false
+                }
+            }
+            self.scheduleSaveNotifications(todayTotal: todayTotal, todayStr: todayStr)
+            self.checkAndShowDailySummary()
+            self.checkAndShowWeeklySummary()
+            self.checkWeeklyReportIfNeeded()
+            self.checkNewBadgeUnlocks()
+        }
+    }
+
+    /// Thread principal : intègre le résultat d'une fusion sans perdre ce qui
+    /// a été saisi pendant l'écriture.
+    private func integrateMerged(_ merged: AppData, mergedBytes: Data, mineBytes: Data) {
+        guard let current = try? DataStore.sharedEncoder.encode(data) else { return }
+        if current == mineBytes {
+            data = merged
+        } else if let rebased = DataSync.merge(base: mineBytes, mine: current, theirs: mergedBytes),
+                  var decoded = try? DataStore.decodeAppData(rebased).data {
+            DataSync.normalize(&decoded)
+            data = decoded
+            save()
+        }
+    }
+
+    /// Écrit immédiatement ce qui est en attente (fermeture de l'app).
+    @objc private func flushPendingSaveOnTerminate() {
+        guard isLoaded, hasPendingLocalChanges else { return }
+        saveDebounceTask?.cancel()
+        saveDebounceTask = nil
+        let snapshot  = data
+        let count     = localChangeCount
+        let fileURL   = activeFileURL
+        let mirrorURL = isUsingICloud ? localFileURL : nil
+        let usingICloud = isUsingICloud
+        ioQueue.sync {
+            performWrite(snapshot, changeCount: count, fileURL: fileURL, mirrorURL: mirrorURL,
+                         usingICloud: usingICloud, todayStr: DataStore.today, waitForDownload: 2, notify: false)
+        }
     }
 
     /// All notification scheduling, called once per debounce cycle — main thread.
@@ -492,32 +718,42 @@ class DataStore: ObservableObject {
         }
     }
 
+    /// ioQueue. Garde les 30 snapshots les plus récents ET le dernier de chacun
+    /// des 60 derniers jours : une grosse séance ou un import ne fait plus
+    /// disparaître l'historique de la veille.
     private func saveSnapshotIfNeeded(for encoded: Data) {
-        let signature = "\(encoded.count)-\(encoded.hashValue)"
+        var hasher = Hasher()
+        encoded.withUnsafeBytes { hasher.combine(bytes: $0) }
+        let signature = "\(encoded.count)-\(hasher.finalize())"
         guard signature != lastSnapshotSignature else { return }
         lastSnapshotSignature = signature
         let snapshotsDir = snapshotsDirectoryURL
 
-        DispatchQueue.global(qos: .utility).async {
-            let formatter = ISO8601DateFormatter()
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            let timestamp = formatter.string(from: Date()).replacingOccurrences(of: ":", with: "-")
-            let url = snapshotsDir.appendingPathComponent("snapshot-\(timestamp).json")
-            try? encoded.write(to: url, options: .atomic)
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let timestamp = formatter.string(from: Date()).replacingOccurrences(of: ":", with: "-")
+        let url = snapshotsDir.appendingPathComponent("snapshot-\(timestamp).json")
+        try? encoded.write(to: url, options: .atomic)
 
-            let urls = (try? FileManager.default.contentsOfDirectory(
-                at: snapshotsDir,
-                includingPropertiesForKeys: [.contentModificationDateKey],
-                options: [.skipsHiddenFiles]
-            )) ?? []
-            let sorted = urls.sorted { lhs, rhs in
-                let lhsDate = (try? lhs.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                let rhsDate = (try? rhs.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                return lhsDate > rhsDate
-            }
-            for oldURL in sorted.dropFirst(30) {
-                try? FileManager.default.removeItem(at: oldURL)
-            }
+        let urls = (try? FileManager.default.contentsOfDirectory(
+            at: snapshotsDir,
+            includingPropertiesForKeys: [.contentModificationDateKey],
+            options: [.skipsHiddenFiles]
+        )) ?? []
+        let dated: [(url: URL, date: Date)] = urls.map { u in
+            (u, (try? u.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast)
+        }.sorted { $0.date > $1.date }
+
+        var keep = Set(dated.prefix(30).map(\.url))
+        let cal = DataStore.gregorianCal
+        let horizon = cal.date(byAdding: .day, value: -60, to: Date()) ?? .distantPast
+        var seenDays = Set<DateComponents>()
+        for item in dated where item.date >= horizon {
+            let day = cal.dateComponents([.year, .month, .day], from: item.date)
+            if seenDays.insert(day).inserted { keep.insert(item.url) }
+        }
+        for item in dated where !keep.contains(item.url) {
+            try? FileManager.default.removeItem(at: item.url)
         }
     }
 
@@ -561,7 +797,6 @@ class DataStore: ObservableObject {
         checkAndShowDailySummary()
         checkAndShowWeeklySummary()
         checkWeeklyReportIfNeeded()
-        checkForConflict()
         // Recalcule les rappels à l'activation (l'utilisateur peut avoir écrit ou non)
         let todayStr = DataStore.today
         let hasWrittenToday = !data.projects.flatMap { $0.chapters }.allSatisfy { $0.increment(for: todayStr) == 0 }
@@ -943,7 +1178,9 @@ class DataStore: ObservableObject {
         let oldValue = existingEntry?.totalCount ?? 0
         // Early return when nothing changed: avoids @Published re-render, undo bloat,
         // and a wasted save() debounce on every keystroke that re-types the same value.
-        if let existingEntry, existingEntry.totalCount == count, existingEntry.savedAtHour != nil {
+        let isToday = date == DataStore.today
+        if let existingEntry, existingEntry.totalCount == count,
+           existingEntry.savedAtHour != nil || !isToday {
             return
         }
         if count != oldValue {
@@ -966,12 +1203,14 @@ class DataStore: ObservableObject {
                 }
             }
             data.projects[projIdx].chapters[chapIdx].entries[entryIdx].totalCount = count
-            if data.projects[projIdx].chapters[chapIdx].entries[entryIdx].savedAtHour == nil {
+            // L'heure de saisie n'a de sens que pour une saisie du jour même
+            // (pas pour une date passée ni pour un import).
+            if isToday, data.projects[projIdx].chapters[chapIdx].entries[entryIdx].savedAtHour == nil {
                 data.projects[projIdx].chapters[chapIdx].entries[entryIdx].savedAtHour = currentHour
             }
         } else {
             var entry = DailyEntry(date: date, totalCount: count)
-            entry.savedAtHour = currentHour
+            if isToday { entry.savedAtHour = currentHour }
             data.projects[projIdx].chapters[chapIdx].entries.append(entry)
         }
         // V5 — log automatique si le compteur a changé
@@ -2893,8 +3132,18 @@ class DataStore: ObservableObject {
     private func applyEntryValue(_ value: Int, chapterId: UUID, projectId: UUID, date: String) {
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
               let chapIdx = data.projects[projIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
-        if value == 0 {
-            data.projects[projIdx].chapters[chapIdx].entries.removeAll { $0.date == date }
+        if value == 0, let entryIdx = data.projects[projIdx].chapters[chapIdx].entries.firstIndex(where: { $0.date == date }) {
+            let entry = data.projects[projIdx].chapters[chapIdx].entries[entryIdx]
+            let hasOtherContent = !(entry.note ?? "").isEmpty || entry.energyLevel != nil
+            if hasOtherContent {
+                // Ne pas perdre la note : on garde l'entrée avec un incrément nul.
+                data.projects[projIdx].chapters[chapIdx].entries[entryIdx].totalCount =
+                    data.projects[projIdx].chapters[chapIdx].previousTotal(before: date)
+            } else {
+                data.projects[projIdx].chapters[chapIdx].entries.remove(at: entryIdx)
+            }
+        } else if value == 0 {
+            // Rien à annuler : l'entrée n'existe déjà plus.
         } else if let entryIdx = data.projects[projIdx].chapters[chapIdx].entries.firstIndex(where: { $0.date == date }) {
             data.projects[projIdx].chapters[chapIdx].entries[entryIdx].totalCount = value
         } else {
@@ -3228,7 +3477,8 @@ class DataStore: ObservableObject {
     }
 
     func challengeProgress(_ challenge: WeeklyChallenge) -> Int {
-        let cal = DataStore.gregorianCal
+        // Semaine ISO (lundi → dimanche), comme `currentWeekKey`.
+        let cal = DataStore.iso8601Cal
         let now = Date()
         guard let weekStart = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) else { return 0 }
         switch challenge.kind {
@@ -3376,14 +3626,8 @@ class DataStore: ObservableObject {
         // Marquer comme complété en mémoire
         data.weeklyChallenges[idx].completedAt = DataStore.today
 
-        // Persister immédiatement pour éviter la re-notification au prochain lancement
-        let snapData = data
-        let snapURL = activeFileURL
-        DispatchQueue.global(qos: .utility).async {
-            if let encoded = try? DataStore.sharedEncoder.encode(snapData) {
-                try? encoded.write(to: snapURL, options: .atomic)
-            }
-        }
+        // Persister via le circuit normal (fusion iCloud, snapshots, file série)
+        save()
 
         // Guard UserDefaults : n'afficher la notification qu'une seule fois
         let udKey = "notifiedChallengeWeeks"
@@ -3775,10 +4019,13 @@ class DataStore: ObservableObject {
 
     func restoreSnapshot(from url: URL) throws {
         let jsonData = try Data(contentsOf: url)
-        var decoded = try DataStore.sharedDecoder.decode(AppData.self, from: jsonData)
+        var decoded = try DataStore.decodeAppData(jsonData).data
         applyLegacyMigration(&decoded)
         data = decoded
         dataVersion += 1
+        // Restauration volontaire : autorise de nouveau l'écriture.
+        markLoaded()
+        loadErrorMessage = nil
         save()
     }
 
