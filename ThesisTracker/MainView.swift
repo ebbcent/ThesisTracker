@@ -249,6 +249,8 @@ struct MainView: View {
                         .padding(5).background(Color.cardBg).clipShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .help("Fermer l’alerte de conflit")
+                .accessibilityLabel("Fermer l’alerte de conflit")
             }
 
             HStack(spacing: 10) {
@@ -813,6 +815,7 @@ struct StatusBarView: View {
             }
             .buttonStyle(.plain)
             .help("Centre de notifications")
+            .accessibilityLabel("Centre de notifications")
             .overlay(alignment: .leading) {
                 Rectangle().fill(Color.cardBorder).frame(width: 1)
             }
@@ -960,6 +963,8 @@ struct WeeklySummaryOverlay: View {
                                 .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                         }
                         .buttonStyle(.plain)
+                        .help("Fermer le résumé hebdomadaire")
+                        .accessibilityLabel("Fermer le résumé hebdomadaire")
                     }
 
                     Divider()
@@ -1100,6 +1105,8 @@ struct DailySummaryOverlay: View {
                                 .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                         }
                         .buttonStyle(.plain)
+                        .help("Fermer le résumé du jour")
+                        .accessibilityLabel("Fermer le résumé du jour")
                     }
 
                     Divider()
@@ -1313,6 +1320,8 @@ struct MilestoneToastView: View {
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 14)
@@ -1384,6 +1393,8 @@ struct PostSessionPromptView: View {
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 14)
@@ -1447,6 +1458,8 @@ struct WeeklyReportPromptBanner: View {
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 18).padding(.vertical, 14)
         .frame(maxWidth: 440)

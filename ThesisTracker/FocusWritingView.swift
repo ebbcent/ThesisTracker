@@ -343,6 +343,8 @@ struct FocusWritingView: View {
                                         .foregroundColor(.white.opacity(0.3))
                                 }
                                 .buttonStyle(.plain)
+                                .help("Fermer la zone d’idées")
+                                .accessibilityLabel("Fermer la zone d’idées")
                             }
                             .padding(.horizontal, 14).padding(.vertical, 9)
                             .background(Color.yellow.opacity(0.06))
@@ -409,6 +411,8 @@ struct FocusWritingView: View {
                     .buttonStyle(.plain)
                     .padding(20)
                     .keyboardShortcut(.escape, modifiers: [])
+                    .help("Fermer")
+                    .accessibilityLabel("Fermer")
                 }
                 Spacer()
             }

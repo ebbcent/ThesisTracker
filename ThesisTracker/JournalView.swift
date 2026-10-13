@@ -169,6 +169,8 @@ struct JournalSheet: View {
                     .foregroundColor(.labelMuted)
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 20).padding(.vertical, 16)
     }
@@ -277,6 +279,7 @@ struct JournalSheet: View {
                 }
                 .buttonStyle(.plain)
                 .help(editingId == entry.id ? "Terminer" : "Modifier")
+                .accessibilityLabel(editingId == entry.id ? "Terminer" : "Modifier")
                 Button {
                     store.deleteJournalEntry(entry.id)
                 } label: {
@@ -286,6 +289,7 @@ struct JournalSheet: View {
                 }
                 .buttonStyle(.plain)
                 .help("Supprimer")
+                .accessibilityLabel("Supprimer")
             }
             if editingId == entry.id {
                 TextEditor(text: $editingText)

@@ -55,6 +55,8 @@ struct OverviewView: View {
                     )
             }
             .buttonStyle(.plain)
+            .help("Afficher ou masquer la barre latérale")
+            .accessibilityLabel("Afficher ou masquer la barre latérale")
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Vue d'ensemble")
@@ -445,6 +447,8 @@ struct OverviewView: View {
                             .foregroundColor(.labelMuted)
                     }
                     .buttonStyle(.plain)
+                    .help("Aller au projet")
+                    .accessibilityLabel("Aller au projet")
                 }
 
                 // Barre de progression globale

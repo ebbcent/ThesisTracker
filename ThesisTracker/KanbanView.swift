@@ -62,6 +62,8 @@ struct KanbanView: View {
                         Image(systemName: "sidebar.left").font(.system(size: 14)).foregroundColor(.labelMuted)
                     }
                     .buttonStyle(.plain)
+                    .help("Afficher la barre latérale")
+                    .accessibilityLabel("Afficher la barre latérale")
                 }
                 Text("Kanban")
                     .font(.system(size: 22, weight: .bold, design: .rounded))
@@ -227,6 +229,7 @@ private struct KanbanColumn: View {
                     .buttonStyle(.plain)
                     .help("Nouveau chapitre dans « \(status.rawValue) » (ou double-clic)")
                     .transition(.scale.combined(with: .opacity))
+                    .accessibilityLabel("Nouveau chapitre dans « \(status.rawValue) » (ou double-clic)")
                 }
                 Text("\(items.count)")
                     .font(.system(size: 10, weight: .semibold))
@@ -301,6 +304,8 @@ private struct KanbanCard: View {
                         .font(.system(size: 9)).foregroundColor(.labelMuted)
                 }
                 .buttonStyle(.plain)
+                .help("Modifier le chapitre")
+                .accessibilityLabel("Modifier le chapitre")
             }
 
             Text(project.name)

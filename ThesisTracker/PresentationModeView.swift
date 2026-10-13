@@ -48,6 +48,7 @@ struct PresentationModeView: View {
             .buttonStyle(.plain)
             .keyboardShortcut(.escape, modifiers: [])
             .help("Quitter la présentation (Échap)")
+            .accessibilityLabel("Quitter la présentation (Échap)")
         }
         .frame(minWidth: 900, minHeight: 600)
     }
@@ -66,6 +67,8 @@ struct PresentationModeView: View {
             .buttonStyle(.plain)
             .disabled(currentSlide == 0)
             .keyboardShortcut(.leftArrow, modifiers: [])
+            .help("Diapositive précédente")
+            .accessibilityLabel("Diapositive précédente")
 
             HStack(spacing: 8) {
                 ForEach(slides.indices, id: \.self) { idx in
@@ -86,6 +89,8 @@ struct PresentationModeView: View {
             .buttonStyle(.plain)
             .disabled(currentSlide == slides.count - 1)
             .keyboardShortcut(.rightArrow, modifiers: [])
+            .help("Diapositive suivante")
+            .accessibilityLabel("Diapositive suivante")
         }
         .padding(.vertical, 18)
         .frame(maxWidth: .infinity)

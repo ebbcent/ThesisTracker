@@ -181,6 +181,8 @@ struct CompactDatePicker: View {
             }
             .buttonStyle(.plain)
             .disabled(!canGoPrev)
+            .help("Jour précédent")
+            .accessibilityLabel("Jour précédent")
 
             Divider().frame(height: 16)
 
@@ -211,6 +213,8 @@ struct CompactDatePicker: View {
             }
             .buttonStyle(.plain)
             .disabled(!canGoNext)
+            .help("Jour suivant")
+            .accessibilityLabel("Jour suivant")
         }
         .background(Color.glassFill)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -245,6 +249,8 @@ struct CompactDatePicker: View {
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 .buttonStyle(.plain)
+                .help("Mois précédent")
+                .accessibilityLabel("Mois précédent")
 
                 Spacer()
                 Text(monthLabel)
@@ -262,6 +268,8 @@ struct CompactDatePicker: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!canGoNextMonth)
+                .help("Mois suivant")
+                .accessibilityLabel("Mois suivant")
             }
 
             // En-têtes jours
@@ -308,6 +316,8 @@ struct CompactDatePicker: View {
                             .foregroundColor(.accent)
                     }
                     .buttonStyle(.plain)
+                    .help("Valider la date saisie")
+                    .accessibilityLabel("Valider la date saisie")
                 }
             }
         }

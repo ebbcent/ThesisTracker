@@ -149,6 +149,8 @@ struct WeeklyPlanSheet: View {
                     .foregroundColor(.labelMuted)
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 20).padding(.vertical, 16)
     }
@@ -181,6 +183,8 @@ struct WeeklyPlanSheet: View {
                     .foregroundColor(item.isDone ? .accentGreen : .labelMuted.opacity(0.5))
             }
             .buttonStyle(.plain)
+            .help(item.isDone ? "Marquer comme non fait" : "Marquer comme fait")
+            .accessibilityLabel(item.isDone ? "Marquer comme non fait" : "Marquer comme fait")
 
             if editingId == item.id {
                 TextField("Action", text: $editingText, onCommit: {
@@ -212,6 +216,7 @@ struct WeeklyPlanSheet: View {
             }
             .buttonStyle(.plain)
             .help("Supprimer")
+            .accessibilityLabel("Supprimer")
         }
         .padding(.horizontal, 18).padding(.vertical, 10)
     }

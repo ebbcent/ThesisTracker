@@ -38,6 +38,8 @@ struct SnapshotBrowserView: View {
                         .foregroundColor(.labelMuted)
                 }
                 .buttonStyle(.plain)
+                .help("Fermer")
+                .accessibilityLabel("Fermer")
             }
             .padding(.horizontal, 20)
             .padding(.top, 18)

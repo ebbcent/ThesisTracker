@@ -41,6 +41,7 @@ struct ResearchTimeCard: View {
                     }
                     .buttonStyle(.plain)
                     .help("Ajouter une session")
+                    .accessibilityLabel("Ajouter une session")
                 }
 
                 if todayEntries.isEmpty {
@@ -132,6 +133,8 @@ struct ResearchTimeCard: View {
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
             .buttonStyle(.plain)
+            .help("Supprimer la session")
+            .accessibilityLabel("Supprimer la session")
         }
         .padding(.vertical, 3)
     }
@@ -178,6 +181,8 @@ struct ResearchLogSheet: View {
                         .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
+                .help("Fermer")
+                .accessibilityLabel("Fermer")
             }
             .padding(20)
 

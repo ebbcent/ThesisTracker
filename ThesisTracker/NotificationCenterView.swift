@@ -88,6 +88,7 @@ struct NotificationCenterView: View {
                     }
                     .buttonStyle(.plain)
                     .help("Tout effacer")
+                    .accessibilityLabel("Tout effacer")
                 }
             }
         }
@@ -267,6 +268,7 @@ struct NotificationRow: View {
             }
             .buttonStyle(.plain)
             .help(notif.isRead ? "Marquer comme non lu" : "Marquer comme lu")
+            .accessibilityLabel(notif.isRead ? "Marquer comme non lu" : "Marquer comme lu")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 11)

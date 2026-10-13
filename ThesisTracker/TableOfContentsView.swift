@@ -29,6 +29,8 @@ struct TableOfContentsView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .help("Afficher ou masquer la barre latérale")
+                    .accessibilityLabel("Afficher ou masquer la barre latérale")
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Table des matières")
@@ -271,6 +273,8 @@ private struct ExportTextSheet: View {
                     Image(systemName: "xmark").font(.system(size: 12, weight: .semibold)).foregroundColor(.labelMuted)
                         .padding(8).background(Color.cardBg).clipShape(Circle())
                 }.buttonStyle(.plain)
+                .help("Fermer")
+                .accessibilityLabel("Fermer")
             }
             .padding(16)
             Divider()

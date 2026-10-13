@@ -70,5 +70,6 @@ struct UnifiedActivityView: View {
         .buttonStyle(.plain)
         .help(tooltip)
         .animation(.easeInOut(duration: 0.15), value: selected)
+        .accessibilityLabel(tooltip)
     }
 }

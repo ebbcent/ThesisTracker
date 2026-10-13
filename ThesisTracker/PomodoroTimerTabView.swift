@@ -25,6 +25,8 @@ struct PomodoroTimerTabView: View {
                 }
                 .buttonStyle(.plain)
                 .padding(.leading, 16)
+                .help("Afficher ou masquer la barre latérale")
+                .accessibilityLabel("Afficher ou masquer la barre latérale")
 
                 Spacer()
 

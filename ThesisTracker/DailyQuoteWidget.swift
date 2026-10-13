@@ -66,6 +66,7 @@ struct DailyQuoteWidget: View {
                     }
                     .buttonStyle(.plain)
                     .help("Citer une autre")
+                    .accessibilityLabel("Citer une autre")
                 }
 
                 HStack(alignment: .top, spacing: 8) {

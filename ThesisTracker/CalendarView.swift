@@ -159,6 +159,8 @@ struct CalendarView: View {
                             .stroke(showSidebar ? Color.accent.opacity(0.4) : Color.glassBorder, lineWidth: 1)))
             }
             .buttonStyle(.plain)
+            .help("Afficher ou masquer la barre latérale")
+            .accessibilityLabel("Afficher ou masquer la barre latérale")
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Calendrier")
@@ -179,6 +181,8 @@ struct CalendarView: View {
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.glassBorder, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
+                .help("Mois précédent")
+                .accessibilityLabel("Mois précédent")
 
                 Button("Aujourd'hui") {
                     withAnimation { goToCurrentMonth() }
@@ -195,6 +199,8 @@ struct CalendarView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!canGoForward)
+                .help("Mois suivant")
+                .accessibilityLabel("Mois suivant")
             }
         }
     }

@@ -126,6 +126,7 @@ struct PresentationView: View {
             }
             .buttonStyle(.plain)
             .help("Quitter le mode présentation (⎋)")
+            .accessibilityLabel("Quitter le mode présentation (⎋)")
 
             Spacer()
 
@@ -397,6 +398,8 @@ struct PresentationView: View {
             }
             .buttonStyle(.plain)
             .disabled(currentSlide == 0)
+            .help("Diapositive précédente")
+            .accessibilityLabel("Diapositive précédente")
 
             Spacer()
 
@@ -421,6 +424,8 @@ struct PresentationView: View {
             }
             .buttonStyle(.plain)
             .disabled(currentSlide == slides.count - 1)
+            .help("Diapositive suivante")
+            .accessibilityLabel("Diapositive suivante")
         }
         .padding(.horizontal, 60).padding(.vertical, 18)
         .background(Color.white.opacity(0.04))

@@ -46,6 +46,8 @@ struct FragmentsWidget: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(quickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .help("Ajouter le fragment")
+                    .accessibilityLabel("Ajouter le fragment")
                 }
 
                 if !active.isEmpty {
@@ -138,6 +140,8 @@ struct FragmentsSheet: View {
                     .foregroundColor(.labelMuted)
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 20).padding(.vertical, 16)
     }
@@ -234,6 +238,7 @@ struct FragmentsSheet: View {
                     }
                     .buttonStyle(.plain)
                     .help("Archiver")
+                    .accessibilityLabel("Archiver")
                 } else {
                     Button { store.unarchiveFragment(fragment.id) } label: {
                         Image(systemName: "tray.and.arrow.up")
@@ -242,6 +247,7 @@ struct FragmentsSheet: View {
                     }
                     .buttonStyle(.plain)
                     .help("Restaurer")
+                    .accessibilityLabel("Restaurer")
                 }
                 Button { store.deleteFragment(fragment.id) } label: {
                     Image(systemName: "trash")
@@ -250,6 +256,7 @@ struct FragmentsSheet: View {
                 }
                 .buttonStyle(.plain)
                 .help("Supprimer")
+                .accessibilityLabel("Supprimer")
             }
             Text(fragment.content)
                 .font(.system(size: 12))

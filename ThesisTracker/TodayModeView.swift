@@ -62,6 +62,7 @@ struct TodayModeView: View {
             }
             .buttonStyle(.plain)
             .help("Fermer (Esc)")
+            .accessibilityLabel("Fermer (Esc)")
         }
     }
 

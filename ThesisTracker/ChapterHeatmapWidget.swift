@@ -32,6 +32,7 @@ struct ChapterHeatmapWidget: View {
                     }
                     .buttonStyle(.plain)
                     .help("Voir en grand")
+                    .accessibilityLabel("Voir en grand")
                 }
 
                 if let project, !project.chapters.isEmpty {
@@ -176,6 +177,8 @@ struct ChapterHeatmapSheet: View {
                     .foregroundColor(.labelMuted)
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 20).padding(.vertical, 16)
     }

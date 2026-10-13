@@ -42,6 +42,8 @@ struct AchievementsView: View {
                                 .foregroundColor(.labelMuted)
                         }
                         .buttonStyle(.plain)
+                        .help("Afficher la barre latérale")
+                        .accessibilityLabel("Afficher la barre latérale")
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Accomplissements")

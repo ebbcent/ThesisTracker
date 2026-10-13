@@ -133,6 +133,8 @@ struct ExportView: View {
                             .font(.system(size: 18)).foregroundColor(.labelMuted)
                     }
                     .buttonStyle(.plain)
+                    .help("Fermer")
+                    .accessibilityLabel("Fermer")
                 }
                 .sheet(isPresented: $showPresentation) {
                     PresentationView(store: store, isPresented: $showPresentation)

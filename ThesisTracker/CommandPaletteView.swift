@@ -120,6 +120,8 @@ struct CommandPaletteView: View {
                                 .foregroundColor(.labelMuted)
                         }
                         .buttonStyle(.plain)
+                        .help("Effacer la recherche")
+                        .accessibilityLabel("Effacer la recherche")
                     }
                 }
                 .padding(.horizontal, 16)

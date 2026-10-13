@@ -25,10 +25,14 @@ struct PomodoroStatisticsView: View {
                             Image(systemName: "chevron.left")
                         }
                         .buttonStyle(CockpitButtonStyle())
+                        .help("Période précédente")
+                        .accessibilityLabel("Période précédente")
                         Button { controller.shiftStatisticsAnchor(by: 1) } label: {
                             Image(systemName: "chevron.right")
                         }
                         .buttonStyle(CockpitButtonStyle())
+                        .help("Période suivante")
+                        .accessibilityLabel("Période suivante")
                         Picker("Période", selection: $controller.selectedRange) {
                             ForEach(PomodoroStatisticsRange.allCases) { range in
                                 Text(range.frenchLabel).tag(range)

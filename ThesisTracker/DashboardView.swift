@@ -750,6 +750,8 @@ struct DashboardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .help("Afficher ou masquer la barre latérale")
+            .accessibilityLabel("Afficher ou masquer la barre latérale")
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("Tableau de bord")
@@ -885,6 +887,7 @@ struct DashboardView: View {
             }
             .buttonStyle(.plain)
             .help(dashboardCompact ? "Mode normal" : "Mode compact")
+            .accessibilityLabel(dashboardCompact ? "Mode normal" : "Mode compact")
 
             Button { showSettings = true } label: {
                 Image(systemName: "gearshape.fill")
@@ -898,6 +901,8 @@ struct DashboardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .help("Réglages")
+            .accessibilityLabel("Réglages")
         }
     }
 
@@ -986,6 +991,7 @@ struct DashboardView: View {
                                 .buttonStyle(.plain)
                                 .disabled(idx <= 0)
                                 .help("Monter le chapitre")
+                                .accessibilityLabel("Monter le chapitre")
 
                                 Button {
                                     store.moveChapter(chapter.id, direction: 1, in: project.id)
@@ -1001,6 +1007,7 @@ struct DashboardView: View {
                                 .buttonStyle(.plain)
                                 .disabled(idx >= chapters.count - 1)
                                 .help("Descendre le chapitre")
+                                .accessibilityLabel("Descendre le chapitre")
                             }
                         }
 
@@ -1020,6 +1027,7 @@ struct DashboardView: View {
                             }
                             .buttonStyle(.plain)
                             .help("Note de chapitre")
+                            .accessibilityLabel("Note de chapitre")
                         }
                     }
 
@@ -1063,6 +1071,7 @@ struct DashboardView: View {
                                     }
                                     .buttonStyle(.plain)
                                     .help("Marquer comme fait")
+                                    .accessibilityLabel("Marquer comme fait")
                                 }
                             }
                         }
@@ -1234,6 +1243,8 @@ struct DashboardView: View {
                         }
                         .buttonStyle(.plain)
                         .transition(.scale.combined(with: .opacity))
+                        .help("Supprimer la saisie")
+                        .accessibilityLabel("Supprimer la saisie")
                     }
                 }
                 .animation(.easeOut(duration: 0.15), value: hasExistingEntry)
@@ -2469,6 +2480,7 @@ private struct WritingEntryInputCluster: View {
                 .popover(isPresented: $showEntryHistory, arrowEdge: .bottom) {
                     EntryEditHistoryPopover(entry: entry, useWords: useWordCount)
                 }
+                .accessibilityLabel("Historique des modifications")
             }
         }
         .padding(.horizontal, 12).padding(.vertical, 10)
@@ -2773,6 +2785,8 @@ struct DashboardCustomizeSheet: View {
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
+                    .help("Fermer")
+                    .accessibilityLabel("Fermer")
                 }
                 .padding(20)
 
@@ -2911,6 +2925,7 @@ struct DashboardCustomizeSheet: View {
             }
             .buttonStyle(.plain)
             .help("Retirer du tableau de bord")
+            .accessibilityLabel("Retirer du tableau de bord")
             Image(systemName: "line.3.horizontal")
                 .font(.system(size: 11))
                 .foregroundColor(.labelMuted.opacity(0.35))

@@ -225,6 +225,8 @@ struct PomodoroTimerSettingsView: View {
                 }
                 .buttonStyle(CockpitButtonStyle())
                 .disabled(sound.wrappedValue == .none)
+                .help("Écouter le son")
+                .accessibilityLabel("Écouter le son")
             }
         }
     }

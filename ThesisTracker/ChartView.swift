@@ -396,6 +396,8 @@ struct ChartView: View {
                     )
             }
             .buttonStyle(.plain)
+            .help("Afficher ou masquer la barre latérale")
+            .accessibilityLabel("Afficher ou masquer la barre latérale")
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Graphiques")

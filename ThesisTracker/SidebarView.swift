@@ -413,6 +413,7 @@ struct SidebarView: View {
                     }
                     .buttonStyle(.plain)
                     .help("Effacer le filtre")
+                    .accessibilityLabel("Effacer le filtre")
                 }
             }
             .padding(.horizontal, 10).padding(.vertical, 6)
@@ -650,6 +651,7 @@ struct SidebarView: View {
                                     .foregroundColor(.labelMuted.opacity(0.6))
                             }
                             .buttonStyle(.plain).help("Désépingler")
+                            .accessibilityLabel("Désépingler")
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(RoundedRectangle(cornerRadius: 6).fill(Color.accentWarm.opacity(0.06)))
@@ -682,6 +684,7 @@ struct SidebarView: View {
                                     .foregroundColor(.labelMuted.opacity(0.6))
                             }
                             .buttonStyle(.plain).help("Désépingler")
+                            .accessibilityLabel("Désépingler")
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(RoundedRectangle(cornerRadius: 6).fill(Color.accentWarm.opacity(0.04)))
@@ -1383,6 +1386,8 @@ struct FolderSidebarRow: View {
                         .fill(Color.primary.opacity(0.07)))
             }
             .menuStyle(.borderlessButton).fixedSize()
+            .help("Options du dossier")
+            .accessibilityLabel("Options du dossier")
         }
         .padding(.horizontal, 8).padding(.vertical, 7)
         .background(
@@ -1868,6 +1873,8 @@ struct ProjectSidebarRow: View {
                                 .fill(Color.primary.opacity(0.07)))
                     }
                     .menuStyle(.borderlessButton).fixedSize()
+                    .help("Options du projet")
+                    .accessibilityLabel("Options du projet")
                 }
             }
             .padding(.horizontal, 8).padding(.vertical, 7)
@@ -2212,6 +2219,8 @@ private struct ChapterFolderSidebarRow: View {
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
                     .buttonStyle(.plain)
+                    .help("Nouveau chapitre")
+                    .accessibilityLabel("Nouveau chapitre")
 
                     Menu {
                         Button("Renommer") { renameDraft = folder.name }
@@ -2250,6 +2259,8 @@ private struct ChapterFolderSidebarRow: View {
                             .background(RoundedRectangle(cornerRadius: 4).fill(Color.primary.opacity(0.07)))
                     }
                     .menuStyle(.borderlessButton).fixedSize()
+                    .help("Options du dossier")
+                    .accessibilityLabel("Options du dossier")
                 }
                 .padding(.horizontal, 8).padding(.vertical, 6)
                 .background(
@@ -2624,6 +2635,8 @@ struct ChapterSidebarRow: View {
                                     .fill(Color.primary.opacity(0.07)))
                         }
                         .menuStyle(.borderlessButton).fixedSize()
+                        .help("Options du chapitre")
+                        .accessibilityLabel("Options du chapitre")
                     }
                     .confirmationDialog(
                         "Supprimer « \(chapter.name) » ?",

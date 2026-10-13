@@ -70,6 +70,8 @@ struct ChapterHistoryView: View {
                                 .clipShape(Circle())
                         }
                         .buttonStyle(.plain)
+                        .help("Ajouter la note")
+                        .accessibilityLabel("Ajouter la note")
                     }
                 }
                 .padding(.horizontal, 24)

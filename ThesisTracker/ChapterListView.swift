@@ -372,6 +372,8 @@ struct ChapterFormView: View {
                                 .foregroundColor(draftVersion > 1 ? .accent : .labelMuted.opacity(0.3))
                         }
                         .buttonStyle(.plain)
+                        .help("Diminuer le numéro de version")
+                        .accessibilityLabel("Diminuer le numéro de version")
                         Text("v\(draftVersion)")
                             .font(.system(size: 15, weight: .bold, design: .monospaced))
                             .foregroundColor(.primary)
@@ -384,6 +386,8 @@ struct ChapterFormView: View {
                                 .foregroundColor(.accent)
                         }
                         .buttonStyle(.plain)
+                        .help("Augmenter le numéro de version")
+                        .accessibilityLabel("Augmenter le numéro de version")
                     }
                 }
                 .padding(.vertical, 4)

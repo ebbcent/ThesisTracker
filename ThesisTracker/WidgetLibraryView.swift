@@ -67,6 +67,8 @@ struct WidgetLibraryView: View {
                         .foregroundColor(.labelMuted)
                 }
                 .buttonStyle(.plain)
+                .help("Afficher la barre latérale")
+                .accessibilityLabel("Afficher la barre latérale")
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text("Statistiques complètes")
@@ -224,6 +226,7 @@ struct WidgetLibraryView: View {
                 .buttonStyle(.plain)
                 .padding(10)
                 .help(isHidden ? "Réafficher ce widget" : "Masquer ce widget pour ce chapitre")
+                .accessibilityLabel(isHidden ? "Réafficher ce widget" : "Masquer ce widget pour ce chapitre")
             }
         }
     }

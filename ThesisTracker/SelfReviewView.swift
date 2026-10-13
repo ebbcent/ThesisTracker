@@ -86,6 +86,8 @@ struct SelfReviewSheet: View {
                     .foregroundColor(.labelMuted)
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 20).padding(.vertical, 16)
     }

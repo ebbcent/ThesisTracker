@@ -110,6 +110,8 @@ struct WritingSprintView: View {
                     .buttonStyle(.plain)
                     .padding(20)
                     .keyboardShortcut(.escape, modifiers: [])
+                    .help("Fermer")
+                    .accessibilityLabel("Fermer")
                 }
                 Spacer()
             }

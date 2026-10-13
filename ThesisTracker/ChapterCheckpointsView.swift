@@ -108,6 +108,8 @@ struct ChapterCheckpointsSheet: View {
                     .foregroundColor(.labelMuted)
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 20).padding(.vertical, 16)
     }
@@ -207,6 +209,7 @@ struct ChapterCheckpointsSheet: View {
                 }
                 .buttonStyle(.plain)
                 .help("Restaurer ce point")
+                .accessibilityLabel("Restaurer ce point")
                 Button { pendingDeleteId = checkpoint.id } label: {
                     Image(systemName: "trash")
                         .font(.system(size: 11))
@@ -216,6 +219,7 @@ struct ChapterCheckpointsSheet: View {
                 }
                 .buttonStyle(.plain)
                 .help("Supprimer")
+                .accessibilityLabel("Supprimer")
             }
         }
         .padding(.horizontal, 18).padding(.vertical, 12)

@@ -175,6 +175,8 @@ struct AdminChecklistSheet: View {
                     .foregroundColor(.labelMuted)
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 20).padding(.vertical, 14)
     }
@@ -213,6 +215,8 @@ struct AdminChecklistSheet: View {
                     .foregroundColor(task.isCompleted ? .accentGreen : .labelMuted.opacity(0.5))
             }
             .buttonStyle(.plain)
+            .help(task.isCompleted ? "Marquer comme non fait" : "Marquer comme fait")
+            .accessibilityLabel(task.isCompleted ? "Marquer comme non fait" : "Marquer comme fait")
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 5) {
                     Image(systemName: task.kind.icon)
@@ -251,6 +255,8 @@ struct AdminChecklistSheet: View {
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
             .buttonStyle(.plain)
+            .help("Supprimer la tâche")
+            .accessibilityLabel("Supprimer la tâche")
         }
         .padding(.horizontal, 18).padding(.vertical, 10)
     }

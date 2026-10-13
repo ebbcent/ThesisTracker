@@ -141,6 +141,8 @@ struct DefenseNotesSheet: View {
                     .foregroundColor(.labelMuted)
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 20).padding(.vertical, 16)
     }
@@ -253,6 +255,7 @@ struct DefenseNotesSheet: View {
             }
             .buttonStyle(.plain)
             .help("Supprimer")
+            .accessibilityLabel("Supprimer")
         }
     }
 

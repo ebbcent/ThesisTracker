@@ -105,6 +105,8 @@ struct ProjectTemplatePickerSheet: View {
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
+                    .help("Fermer")
+                    .accessibilityLabel("Fermer")
                 }
                 .padding(20)
                 Divider()

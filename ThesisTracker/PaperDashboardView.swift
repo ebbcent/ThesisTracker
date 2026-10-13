@@ -104,6 +104,8 @@ struct PaperDashboardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .help("Afficher ou masquer la barre latérale")
+            .accessibilityLabel("Afficher ou masquer la barre latérale")
 
             Spacer()
 
@@ -135,6 +137,8 @@ struct PaperDashboardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .help("Réglages")
+            .accessibilityLabel("Réglages")
         }
     }
 

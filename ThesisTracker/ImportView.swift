@@ -59,6 +59,8 @@ struct ImportView: View {
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
+                    .help("Fermer")
+                    .accessibilityLabel("Fermer")
                 }
 
                 // Zone de saisie
@@ -80,6 +82,8 @@ struct ImportView: View {
                                     .font(.system(size: 12))
                             }
                             .buttonStyle(.plain)
+                            .help("Effacer le texte collé")
+                            .accessibilityLabel("Effacer le texte collé")
                         }
                     }
 
@@ -324,7 +328,7 @@ struct ImportView: View {
     /// 2) à défaut, numéro de série Excel — seulement si la cellule est un entier
     /// plausible (20000...80000) ET qu'une autre cellule numérique fournit le nombre,
     /// 3) le nombre = première cellule entière restante.
-    private static func parseRow(_ cells: [String]) -> ImportEntry? {
+    static func parseRow(_ cells: [String]) -> ImportEntry? {
         var date: String? = nil
         var dateIndex: Int? = nil
         for (idx, cell) in cells.enumerated() {

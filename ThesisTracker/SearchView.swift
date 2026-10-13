@@ -233,6 +233,8 @@ struct SearchView: View {
                     )
             }
             .buttonStyle(.plain)
+            .help("Afficher ou masquer la barre latérale")
+            .accessibilityLabel("Afficher ou masquer la barre latérale")
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Recherche")
@@ -267,6 +269,8 @@ struct SearchView: View {
                             .font(.system(size: 14))
                     }
                     .buttonStyle(.plain)
+                    .help("Effacer la recherche")
+                    .accessibilityLabel("Effacer la recherche")
                 }
             }
         }

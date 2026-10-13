@@ -44,6 +44,8 @@ struct ChapterStatusPickerView: View {
                         .foregroundColor(.secondary)
                 }
                 .buttonStyle(.plain)
+                .help("Fermer")
+                .accessibilityLabel("Fermer")
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)

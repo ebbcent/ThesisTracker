@@ -38,6 +38,7 @@ struct VoiceDictationButton: View {
         } message: {
             Text(errorMessage ?? "")
         }
+        .accessibilityLabel(isDictating ? "Arrêter la dictée" : "Dicter un nombre (ex: « quinze mille »)")
     }
 
     private func startDictation() {

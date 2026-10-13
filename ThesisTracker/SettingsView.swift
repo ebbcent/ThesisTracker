@@ -110,6 +110,8 @@ struct SettingsView: View {
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
+                    .help("Fermer")
+                    .accessibilityLabel("Fermer")
                 }
                 .padding(.horizontal, 24)
                 .padding(.vertical, 16)

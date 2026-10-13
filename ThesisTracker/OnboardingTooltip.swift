@@ -101,6 +101,8 @@ struct OnboardingTooltipBubble: View {
                     .background(Circle().fill(Color.cardBorder.opacity(0.5)))
             }
             .buttonStyle(.plain)
+            .help("Fermer")
+            .accessibilityLabel("Fermer")
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
         .background(

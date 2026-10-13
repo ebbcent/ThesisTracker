@@ -59,6 +59,8 @@ struct StatsAnalyticsView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .help("Afficher ou masquer la barre latérale")
+                    .accessibilityLabel("Afficher ou masquer la barre latérale")
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Statistiques & Analyse")
@@ -1266,6 +1268,7 @@ struct StatsAnalyticsView: View {
         }
         .buttonStyle(.plain)
         .help("Agrandir ce graphique")
+        .accessibilityLabel("Agrandir ce graphique")
     }
 
     /// Full-screen sheet content for zoomed chart.
@@ -1287,6 +1290,8 @@ struct StatsAnalyticsView: View {
                         }
                         .buttonStyle(.plain)
                         .keyboardShortcut(.escape, modifiers: [])
+                        .help("Fermer")
+                        .accessibilityLabel("Fermer")
                     }
                     .padding(.horizontal, 20).padding(.top, 20)
 

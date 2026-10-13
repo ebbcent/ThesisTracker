@@ -78,6 +78,8 @@ struct DeadlineBoardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .help("Afficher ou masquer la barre latérale")
+            .accessibilityLabel("Afficher ou masquer la barre latérale")
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Échéances")
@@ -419,6 +421,8 @@ struct DeadlineBoardView: View {
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 1)
+                .help("Modifier le jalon")
+                .accessibilityLabel("Modifier le jalon")
 
                 // Delete
                 Button {
@@ -433,6 +437,8 @@ struct DeadlineBoardView: View {
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 1)
+                .help("Supprimer le jalon")
+                .accessibilityLabel("Supprimer le jalon")
             }
         }
     }
@@ -571,6 +577,8 @@ struct DeadlineBoardView: View {
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 1)
+                .help("Modifier le jalon")
+                .accessibilityLabel("Modifier le jalon")
             }
         }
     }
@@ -1133,6 +1141,8 @@ struct MilestoneFormView: View {
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
+                    .help("Fermer")
+                    .accessibilityLabel("Fermer")
                 }
 
                 // Champs
