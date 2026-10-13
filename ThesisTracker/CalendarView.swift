@@ -88,8 +88,7 @@ struct CalendarView: View {
     private var monthTotalChars: Int {
         let monthStart = cal.date(from: cal.dateComponents([.year, .month], from: displayedMonth))!
         return charsByDate.filter { dateStr, _ in
-            let fmt = DateFormatter(); fmt.dateFormat = "yyyy-MM-dd"
-            guard let d = fmt.date(from: dateStr) else { return false }
+            guard let d = AppFormatters.isoDay.date(from: dateStr) else { return false }
             return cal.isDate(d, equalTo: monthStart, toGranularity: .month)
         }.values.reduce(0, +)
     }
@@ -98,8 +97,7 @@ struct CalendarView: View {
         let monthStart = cal.date(from: cal.dateComponents([.year, .month], from: displayedMonth))!
         return charsByDate.filter { dateStr, val in
             guard val > 0 else { return false }
-            let fmt = DateFormatter(); fmt.dateFormat = "yyyy-MM-dd"
-            guard let d = fmt.date(from: dateStr) else { return false }
+            guard let d = AppFormatters.isoDay.date(from: dateStr) else { return false }
             return cal.isDate(d, equalTo: monthStart, toGranularity: .month)
         }.count
     }
@@ -110,8 +108,7 @@ struct CalendarView: View {
         let monthStart = cal.date(from: cal.dateComponents([.year, .month], from: displayedMonth))!
         return charsByDate.filter { dateStr, val in
             guard val >= goal else { return false }
-            let fmt = DateFormatter(); fmt.dateFormat = "yyyy-MM-dd"
-            guard let d = fmt.date(from: dateStr) else { return false }
+            guard let d = AppFormatters.isoDay.date(from: dateStr) else { return false }
             return cal.isDate(d, equalTo: monthStart, toGranularity: .month)
         }.count
     }

@@ -20,46 +20,46 @@ extension Color {
 
     // Fonds adaptatifs — palette warm-dark premium v3
     static let appBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
             ? NSColor(red: 0.047, green: 0.043, blue: 0.039, alpha: 1)   // #0c0b0a
             : NSColor(red: 0.973, green: 0.969, blue: 0.961, alpha: 1)   // #F8F7F5
     }))
 
     static let sidebarBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
             ? NSColor(red: 0.039, green: 0.035, blue: 0.031, alpha: 1)   // #0a0908
             : NSColor(red: 0.949, green: 0.945, blue: 0.937, alpha: 1)   // #F2F1EF
     }))
 
     static let cardBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
             ? NSColor(red: 0.078, green: 0.071, blue: 0.063, alpha: 1)   // #141210
             : NSColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1)   // #FFFFFF
     }))
 
     static let cardBorder = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
             ? NSColor(red: 0.153, green: 0.137, blue: 0.125, alpha: 1)   // #272320
             : NSColor(red: 0.910, green: 0.898, blue: 0.886, alpha: 1)   // #E8E4E2
     }))
 
     static let fieldBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
             ? NSColor(red: 0.102, green: 0.094, blue: 0.082, alpha: 1)   // #1a1815
             : NSColor(white: 0, alpha: 0.04)
     }))
 
     static let labelMuted = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
             ? NSColor(red: 0.627, green: 0.596, blue: 0.565, alpha: 1)   // #a09890
             : NSColor(red: 0.420, green: 0.400, blue: 0.380, alpha: 1)   // #6B6660
     }))
 
     static let glassFill = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua ? NSColor(white: 1, alpha: 0.05) : NSColor(white: 0, alpha: 0.04)
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? NSColor(white: 1, alpha: 0.05) : NSColor(white: 0, alpha: 0.04)
     }))
     static let glassBorder = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua ? NSColor(white: 1, alpha: 0.08) : NSColor(white: 0, alpha: 0.09)
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? NSColor(white: 1, alpha: 0.08) : NSColor(white: 0, alpha: 0.09)
     }))
 
     // Accents — identiques en mode clair et sombre.

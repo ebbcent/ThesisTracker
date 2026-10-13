@@ -140,16 +140,11 @@ struct MainView: View {
                 }
             }
             .keyboardShortcut("f", modifiers: [.command, .shift])
-            Button("") { store.undo() }
-                .keyboardShortcut("z", modifiers: .command)
-                .disabled(!store.canUndo)
-            Button("") { store.redo() }
-                .keyboardShortcut("z", modifiers: [.command, .shift])
-                .disabled(!store.canRedo)
+            // ⌘Z / ⌘⇧Z : gérés par le menu Édition (CommandGroup .undoRedo dans
+            // ThesisTrackerApp) pour ne pas court-circuiter l'annulation des champs texte.
             Button("") { showCommandPalette = true }
                 .keyboardShortcut("k", modifiers: .command)
-            Button("") { showExport = true }
-                .keyboardShortcut("e", modifiers: [.command, .shift])
+            // ⌘⇧E : géré par la commande de menu « Exporter les données… ».
             Button("") { NotificationCenter.default.post(name: .dashboardSave, object: nil) }
                 .keyboardShortcut("s", modifiers: .command)
             Button("") { NotificationCenter.default.post(name: .dashboardFocusInput, object: nil) }
@@ -164,8 +159,9 @@ struct MainView: View {
                 .keyboardShortcut("p", modifiers: [.option, .command])
             Button("") { withAnimation(.easeOut(duration: 0.15)) { showTodayMode = true } }
                 .keyboardShortcut("j", modifiers: [.command, .shift])
+            // Mode panne : ⌘⇧D (⌘⇧B est réservé à « Accomplissements »)
             Button("") { withAnimation(.easeOut(duration: 0.15)) { showBlockedSession = true } }
-                .keyboardShortcut("b", modifiers: [.command, .shift])
+                .keyboardShortcut("d", modifiers: [.command, .shift])
             Button("") { withAnimation(.easeOut(duration: 0.15)) { showSanctuary = true } }
                 .keyboardShortcut("k", modifiers: [.command, .shift, .option])
         }

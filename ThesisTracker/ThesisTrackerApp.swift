@@ -110,8 +110,8 @@ struct ThesisTrackerApp: App {
     @StateObject private var store = DataStore()
     @StateObject private var pomodoroController = PomodoroAppController()
     @AppStorage("interfaceMode") private var interfaceMode: String = "VA"
-    // #48 — hotkey globale configurable pour le mode focus
-    @AppStorage("globalFocusKey") private var globalFocusKey: String = "f"
+    // #48 — hotkey globale configurable pour le mode focus : lue directement
+    // dans UserDefaults ("globalFocusKey") par GlobalHotKeys.
 
     init() {
         _ = NotificationManager.shared
@@ -133,7 +133,7 @@ struct ThesisTrackerApp: App {
                         let current = chapter.entryForDate(today)?.totalCount ?? 0
                         store.setTotalForDate(current + wordCount, for: chapter.id, in: project.id, date: today)
                     }
-                    setupGlobalHotkey(store: store)
+                    setupGlobalHotkey(store: store, pomodoroController: pomodoroController)
                 }
                 // #51 — Spotlight deep-link navigation
                 .onContinueUserActivity(CSSearchableItemActionType) { activity in
@@ -154,7 +154,29 @@ struct ThesisTrackerApp: App {
                 }
                 .keyboardShortcut(",", modifiers: .command)
             }
-            CommandMenu("Fichier") {
+            // Menu Édition : annuler/rétablir. Si un champ texte a le focus, on
+            // laisse l'UndoManager du champ agir ; sinon on utilise l'historique du store.
+            CommandGroup(replacing: .undoRedo) {
+                Button("Annuler") {
+                    if NSApp.keyWindow?.firstResponder is NSText {
+                        NSApp.sendAction(Selector(("undo:")), to: nil, from: nil)
+                    } else {
+                        store.undo()
+                    }
+                }
+                .keyboardShortcut("z", modifiers: .command)
+
+                Button("Rétablir") {
+                    if NSApp.keyWindow?.firstResponder is NSText {
+                        NSApp.sendAction(Selector(("redo:")), to: nil, from: nil)
+                    } else {
+                        store.redo()
+                    }
+                }
+                .keyboardShortcut("z", modifiers: [.command, .shift])
+            }
+            // Intégré au menu Fichier système (évite un second menu « Fichier »)
+            CommandGroup(replacing: .importExport) {
                 Button("Exporter les données…") {
                     NotificationCenter.default.post(name: .showExport, object: nil)
                 }
@@ -164,7 +186,8 @@ struct ThesisTrackerApp: App {
                 Button("Afficher l'historique") {
                     NotificationCenter.default.post(name: .navigateToHistory, object: nil)
                 }
-                .keyboardShortcut("h", modifiers: [.command, .option])
+                // ⌘⇧H (⌘⌥H = « Masquer les autres » de macOS)
+                .keyboardShortcut("h", modifiers: [.command, .shift])
             }
             CommandMenu("Accomplissements") {
                 Button("Afficher les accomplissements") {
@@ -237,7 +260,7 @@ struct ThesisTrackerApp: App {
                         .font(.system(size: 11, weight: .bold, design: .monospaced))
                 }
             }
-            .help(store.currentStreak > 0 ? "Streak : \(store.currentStreak) jours · Record : \(store.longestStreak) jours · ⌘⇧Espace pour saisie rapide" : "Writing Process · ⌘⇧Espace pour saisie rapide")
+            .help(store.currentStreak > 0 ? "Streak : \(store.currentStreak) jours · Record : \(store.longestStreak) jours · ⌃⌥N pour saisie rapide" : "Writing Process · ⌃⌥N pour saisie rapide")
         }
         .menuBarExtraStyle(.window)
     }
@@ -276,52 +299,33 @@ struct ThesisTrackerApp: App {
 
     // MARK: - Global hotkeys
 
-    private func setupGlobalHotkey(store: DataStore) {
-        // #48 — capture de la clé configurable au moment de l'enregistrement
-        let capturedFocusKey = globalFocusKey
-        NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak pomodoroController, weak store] event in
-            guard let pomodoroController else { return }
-            let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-            let cmdOpt: NSEvent.ModifierFlags   = [.command, .option]
-            let cmdShift: NSEvent.ModifierFlags = [.command, .shift]
-
-            // ⌘⌥Space → Pomodoro start/pause
-            if flags == cmdOpt && event.keyCode == 49 {
-                Task { @MainActor in
-                    if case .idle = pomodoroController.timerSnapshot.phase {
-                        if pomodoroController.pendingNextMode != nil {
-                            pomodoroController.startRecommendedSession()
-                        } else {
-                            pomodoroController.startFocusSession()
-                        }
+    /// Hotkeys globales Carbon (voir GlobalHotKeys.swift) — installées une seule fois,
+    /// sans autorisation Accessibilité, événement consommé.
+    private func setupGlobalHotkey(store: DataStore, pomodoroController: PomodoroAppController) {
+        GlobalHotKeys.shared.install(
+            // ⌃⌥P → Pomodoro start/pause
+            onPomodoro: { [weak pomodoroController] in
+                guard let pomodoroController else { return }
+                if case .idle = pomodoroController.timerSnapshot.phase {
+                    if pomodoroController.pendingNextMode != nil {
+                        pomodoroController.startRecommendedSession()
                     } else {
-                        pomodoroController.pauseOrResume()
+                        pomodoroController.startFocusSession()
                     }
+                } else {
+                    pomodoroController.pauseOrResume()
                 }
-                return
-            }
-
-            // ⌘⇧Space ou ⌥⌘W → Quick Entry (#2)
-            let isQuickEntry = (flags == cmdShift && event.keyCode == 49)
-                             || (flags == cmdOpt  && event.keyCode == 13) // W = 13
-            if isQuickEntry {
+            },
+            // ⌃⌥N → Quick Entry (#2)
+            onQuickEntry: { [weak store] in
                 guard let store else { return }
-                Task { @MainActor in
-                    QuickEntryPanelManager.shared.show(store: store)
-                }
-                return
+                QuickEntryPanelManager.shared.show(store: store)
+            },
+            // #48 — ⌃⌥ + lettre configurable → ouvrir mode focus (ramène l'app au premier plan)
+            onFocus: {
+                NSApp.activate(ignoringOtherApps: true)
+                NotificationCenter.default.post(name: .showFocusWriting, object: nil)
             }
-
-            // #48 — ⌘⌥ + lettre configurable → ouvrir mode focus (ramène l'app au premier plan)
-            if flags == cmdOpt,
-               let char = event.characters?.lowercased(),
-               !char.isEmpty, char == capturedFocusKey {
-                Task { @MainActor in
-                    NSApp.activate(ignoringOtherApps: true)
-                    NotificationCenter.default.post(name: .showFocusWriting, object: nil)
-                }
-                return
-            }
-        }
+        )
     }
 }

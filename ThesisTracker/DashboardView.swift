@@ -2255,38 +2255,7 @@ struct DashboardView: View {
             UTType(filenameExtension: "docx") ?? .data,
         ]
         guard panel.runModal() == .OK, let url = panel.url else { return }
-
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/textutil")
-        process.arguments = ["-convert", "txt", "-stdout", url.path]
-        let outPipe = Pipe()
-        process.standardOutput = outPipe
-        process.standardError  = Pipe()
-
-        do {
-            try process.run()
-            process.waitUntilExit()
-        } catch {
-            DispatchQueue.main.async { self.importError = "textutil indisponible" }
-            return
-        }
-
-        let raw  = outPipe.fileHandleForReading.readDataToEndOfFile()
-        let text = String(data: raw, encoding: .utf8) ?? ""
-
-        let count: Int
-        if store.data.useWordCount {
-            count = text.components(separatedBy: .whitespacesAndNewlines)
-                        .filter { !$0.isEmpty }.count
-        } else {
-            count = text.filter { !$0.isWhitespace }.count
-        }
-
-        DispatchQueue.main.async {
-            self.inputText = "\(count)"
-            self.inputClusterToken = UUID()
-            self.importedFileName = url.lastPathComponent
-        }
+        importDocument(at: url)
     }
 
     // #57 — Drop texte brut (sans fichier)
@@ -2306,28 +2275,56 @@ struct DashboardView: View {
 
     // #3 — Drop fichier : extraction depuis une URL
     private func importFromURL(_ url: URL) {
+        importDocument(at: url)
+    }
+
+    /// Extraction + comptage hors du main thread, résultat appliqué sur le main actor.
+    private func importDocument(at url: URL) {
+        let useWordCount = store.data.useWordCount
+        Task {
+            let result = await Task.detached(priority: .userInitiated) {
+                Self.extractCount(from: url, useWordCount: useWordCount)
+            }.value
+            guard let count = result else {
+                importError = "textutil indisponible"
+                return
+            }
+            inputText = "\(count)"
+            inputClusterToken = UUID()
+            importedFileName = url.lastPathComponent
+        }
+    }
+
+    /// Convertit le document en texte via textutil puis compte mots/caractères.
+    /// La sortie est écrite dans un fichier temporaire (-output) plutôt qu'un
+    /// pipe : pas de blocage quand le texte dépasse la taille du tampon (64 Ko).
+    nonisolated private static func extractCount(from url: URL, useWordCount: Bool) -> Int? {
+        let fm = FileManager.default
+        let tmpURL = fm.temporaryDirectory
+            .appendingPathComponent("textutil-\(UUID().uuidString)")
+            .appendingPathExtension("txt")
+        defer { try? fm.removeItem(at: tmpURL) }
+
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/textutil")
-        process.arguments = ["-convert", "txt", "-stdout", url.path]
-        let outPipe = Pipe()
-        process.standardOutput = outPipe
-        process.standardError  = Pipe()
+        process.arguments = ["-convert", "txt", "-encoding", "UTF-8", "-output", tmpURL.path, url.path]
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError  = FileHandle.nullDevice
         do {
-            try process.run(); process.waitUntilExit()
+            try process.run()
+            process.waitUntilExit()
         } catch {
-            importError = "textutil indisponible"; return
+            return nil
         }
-        let raw  = outPipe.fileHandleForReading.readDataToEndOfFile()
+        guard process.terminationStatus == 0,
+              let raw = try? Data(contentsOf: tmpURL) else { return nil }
         let text = String(data: raw, encoding: .utf8) ?? ""
-        let count: Int
-        if store.data.useWordCount {
-            count = text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.count
+
+        if useWordCount {
+            return text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.count
         } else {
-            count = text.filter { !$0.isWhitespace }.count
+            return text.filter { !$0.isWhitespace }.count
         }
-        inputText = "\(count)"
-        inputClusterToken = UUID()
-        importedFileName = url.lastPathComponent
     }
 
     private func saveNote() {

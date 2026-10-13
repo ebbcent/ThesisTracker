@@ -628,7 +628,7 @@ struct PaperDashboardView: View {
 
 extension Color {
     static let paperBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.name == .darkAqua
+        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
             ? NSColor(red: 0.110, green: 0.108, blue: 0.103, alpha: 1)   // #1c1b1a warm dark
             : NSColor(red: 0.980, green: 0.976, blue: 0.965, alpha: 1)   // #faf9f6 warm cream
     }))

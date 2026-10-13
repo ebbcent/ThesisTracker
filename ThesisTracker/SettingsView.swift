@@ -588,9 +588,10 @@ struct SettingsView: View {
                                 // #48 — Hotkey globale focus
                                 shortcutRow(
                                     icon: "keyboard.badge.eye",
-                                    label: "Ouvrir mode focus (hotkey globale ⌘⌥)",
+                                    label: "Ouvrir mode focus (hotkey globale ⌃⌥)",
                                     keyBinding: $globalFocusKeySettings,
-                                    placeholder: "f"
+                                    placeholder: "f",
+                                    prefix: "⌃⌥"
                                 )
 
                                 Divider().padding(.leading, 48)
@@ -1054,7 +1055,7 @@ struct SettingsView: View {
     }
 
     // #40 — Ligne de raccourci configurable
-    private func shortcutRow(icon: String, label: String, keyBinding: Binding<String>, placeholder: String) -> some View {
+    private func shortcutRow(icon: String, label: String, keyBinding: Binding<String>, placeholder: String, prefix: String = "⌘⇧") -> some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
                 .font(.system(size: 13))
@@ -1065,7 +1066,7 @@ struct SettingsView: View {
                 .foregroundColor(.primary)
             Spacer()
             HStack(spacing: 3) {
-                Text("⌘⇧")
+                Text(prefix)
                     .font(.system(size: 11, weight: .medium))
                     .foregroundColor(.labelMuted)
                 TextField(placeholder, text: keyBinding)

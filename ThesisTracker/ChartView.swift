@@ -496,7 +496,7 @@ struct ChartView: View {
 
                 // Custom date pickers
                 if period == .custom {
-                    Divider().overlay(Color.white.opacity(0.07))
+                    Divider().overlay(Color.primary.opacity(0.07))
                     HStack(spacing: 12) {
                         VStack(alignment: .leading, spacing: 5) {
                             Text("DU")
@@ -529,7 +529,7 @@ struct ChartView: View {
                     }
                 }
 
-                Divider().overlay(Color.white.opacity(0.07))
+                Divider().overlay(Color.primary.opacity(0.07))
 
                 // Project scope chips
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -544,7 +544,7 @@ struct ChartView: View {
 
                 // Chapter filter
                 if let project = selectedProject, !project.chapters.isEmpty {
-                    Divider().overlay(Color.white.opacity(0.07))
+                    Divider().overlay(Color.primary.opacity(0.07))
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 6) {
                             chapterChip(id: nil, name: "Tous les chapitres")
@@ -557,7 +557,7 @@ struct ChartView: View {
                 }
 
                 // Chart type toggle
-                Divider().overlay(Color.white.opacity(0.07))
+                Divider().overlay(Color.primary.opacity(0.07))
                 HStack(spacing: 6) {
                     // "Barres" uniquement si un projet est sélectionné
                     let visibleTypes: [ChartType] = selectedProjectId != nil
@@ -578,10 +578,10 @@ struct ChartView: View {
                             }
                             .foregroundColor(chartType == type ? .white : .labelMuted)
                             .padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(chartType == type ? Color.accent.opacity(0.85) : Color.white.opacity(0.06))
+                            .background(chartType == type ? Color.accent.opacity(0.85) : Color.primary.opacity(0.06))
                             .clipShape(Capsule())
                             .overlay(Capsule().stroke(
-                                chartType == type ? Color.accent : Color.white.opacity(0.1),
+                                chartType == type ? Color.accent : Color.primary.opacity(0.1),
                                 lineWidth: 1))
                             .contentShape(Capsule())
                         }
@@ -592,7 +592,7 @@ struct ChartView: View {
 
                 // Toggle projection (seulement en mode Cumulé + deadline disponible)
                 if chartType == .cumulative && hasProjectionData {
-                    Divider().overlay(Color.white.opacity(0.07))
+                    Divider().overlay(Color.primary.opacity(0.07))
                     HStack(spacing: 6) {
                         Button {
                             withAnimation(.easeInOut(duration: 0.2)) { showProjection.toggle() }
@@ -605,9 +605,9 @@ struct ChartView: View {
                             }
                             .foregroundColor(showProjection ? .white : .labelMuted)
                             .padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(showProjection ? Color.accentGreen.opacity(0.85) : Color.white.opacity(0.06))
+                            .background(showProjection ? Color.accentGreen.opacity(0.85) : Color.primary.opacity(0.06))
                             .clipShape(Capsule())
-                            .overlay(Capsule().stroke(showProjection ? Color.accentGreen : Color.white.opacity(0.1), lineWidth: 1))
+                            .overlay(Capsule().stroke(showProjection ? Color.accentGreen : Color.primary.opacity(0.1), lineWidth: 1))
                             .contentShape(Capsule())
                         }
                         .buttonStyle(.plain)
@@ -618,7 +618,7 @@ struct ChartView: View {
 
                 // Comparaison période précédente
                 if isComparisonAvailable {
-                    Divider().overlay(Color.white.opacity(0.07))
+                    Divider().overlay(Color.primary.opacity(0.07))
                     HStack(spacing: 8) {
                         Button {
                             withAnimation(.easeInOut(duration: 0.2)) { showComparison.toggle() }
@@ -632,9 +632,9 @@ struct ChartView: View {
                             }
                             .foregroundColor(showComparison ? .white : .labelMuted)
                             .padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(showComparison ? Color.accentWarm.opacity(0.85) : Color.white.opacity(0.06))
+                            .background(showComparison ? Color.accentWarm.opacity(0.85) : Color.primary.opacity(0.06))
                             .clipShape(Capsule())
-                            .overlay(Capsule().stroke(showComparison ? Color.accentWarm : Color.white.opacity(0.1), lineWidth: 1))
+                            .overlay(Capsule().stroke(showComparison ? Color.accentWarm : Color.primary.opacity(0.1), lineWidth: 1))
                             .contentShape(Capsule())
                         }
                         .buttonStyle(.plain)
@@ -643,7 +643,7 @@ struct ChartView: View {
                 }
 
                 // Extra views toggles
-                Divider().overlay(Color.white.opacity(0.07))
+                Divider().overlay(Color.primary.opacity(0.07))
                 HStack(spacing: 8) {
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) { showMonthlyView.toggle() }
@@ -657,9 +657,9 @@ struct ChartView: View {
                         }
                         .foregroundColor(showMonthlyView ? .white : .labelMuted)
                         .padding(.horizontal, 12).padding(.vertical, 6)
-                        .background(showMonthlyView ? Color.accent.opacity(0.85) : Color.white.opacity(0.06))
+                        .background(showMonthlyView ? Color.accent.opacity(0.85) : Color.primary.opacity(0.06))
                         .clipShape(Capsule())
-                        .overlay(Capsule().stroke(showMonthlyView ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
+                        .overlay(Capsule().stroke(showMonthlyView ? Color.accent : Color.primary.opacity(0.1), lineWidth: 1))
                         .contentShape(Capsule())
                     }
                     .buttonStyle(.plain)
@@ -676,9 +676,9 @@ struct ChartView: View {
                         }
                         .foregroundColor(showChapterComparison ? .white : .labelMuted)
                         .padding(.horizontal, 12).padding(.vertical, 6)
-                        .background(showChapterComparison ? Color.accentGreen.opacity(0.85) : Color.white.opacity(0.06))
+                        .background(showChapterComparison ? Color.accentGreen.opacity(0.85) : Color.primary.opacity(0.06))
                         .clipShape(Capsule())
-                        .overlay(Capsule().stroke(showChapterComparison ? Color.accentGreen : Color.white.opacity(0.1), lineWidth: 1))
+                        .overlay(Capsule().stroke(showChapterComparison ? Color.accentGreen : Color.primary.opacity(0.1), lineWidth: 1))
                         .contentShape(Capsule())
                     }
                     .buttonStyle(.plain)
@@ -704,9 +704,9 @@ struct ChartView: View {
             }
             .foregroundColor(isSelected ? .white : .labelMuted)
             .padding(.horizontal, 12).padding(.vertical, 6)
-            .background(isSelected ? Color.accent.opacity(0.85) : Color.white.opacity(0.06))
+            .background(isSelected ? Color.accent.opacity(0.85) : Color.primary.opacity(0.06))
             .clipShape(Capsule())
-            .overlay(Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
+            .overlay(Capsule().stroke(isSelected ? Color.accent : Color.primary.opacity(0.1), lineWidth: 1))
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -722,9 +722,9 @@ struct ChartView: View {
                 .lineLimit(1)
                 .foregroundColor(isSelected ? .white : .labelMuted)
                 .padding(.horizontal, 12).padding(.vertical, 6)
-                .background(isSelected ? Color.accentWarm.opacity(0.85) : Color.white.opacity(0.06))
+                .background(isSelected ? Color.accentWarm.opacity(0.85) : Color.primary.opacity(0.06))
                 .clipShape(Capsule())
-                .overlay(Capsule().stroke(isSelected ? Color.accentWarm : Color.white.opacity(0.1), lineWidth: 1))
+                .overlay(Capsule().stroke(isSelected ? Color.accentWarm : Color.primary.opacity(0.1), lineWidth: 1))
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -832,7 +832,7 @@ struct ChartView: View {
         .chartXAxis {
             AxisMarks(values: .stride(by: xStride)) { value in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                    .foregroundStyle(Color.white.opacity(0.06))
+                    .foregroundStyle(Color.primary.opacity(0.06))
                 AxisValueLabel {
                     if let date = value.as(Date.self) {
                         Text(xAxisLabel(date))
@@ -845,7 +845,7 @@ struct ChartView: View {
         .chartYAxis {
             AxisMarks { value in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                    .foregroundStyle(Color.white.opacity(0.06))
+                    .foregroundStyle(Color.primary.opacity(0.06))
                 AxisValueLabel {
                     if let n = value.as(Int.self) {
                         Text(formatNumber(n))
@@ -875,7 +875,7 @@ struct ChartView: View {
         .chartXAxis {
             AxisMarks(values: .stride(by: xStride)) { value in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                    .foregroundStyle(Color.white.opacity(0.06))
+                    .foregroundStyle(Color.primary.opacity(0.06))
                 AxisValueLabel {
                     if let date = value.as(Date.self) {
                         Text(xAxisLabel(date))
@@ -888,7 +888,7 @@ struct ChartView: View {
         .chartYAxis {
             AxisMarks { value in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                    .foregroundStyle(Color.white.opacity(0.06))
+                    .foregroundStyle(Color.primary.opacity(0.06))
                 AxisValueLabel {
                     if let n = value.as(Int.self) {
                         Text(formatNumber(n))
@@ -959,7 +959,7 @@ struct ChartView: View {
                     .chartXAxis {
                         AxisMarks(values: .stride(by: .month)) { value in
                             AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                                .foregroundStyle(Color.white.opacity(0.06))
+                                .foregroundStyle(Color.primary.opacity(0.06))
                             AxisValueLabel {
                                 if let date = value.as(Date.self) {
                                     Text(monthAxisLabel(date))
@@ -972,7 +972,7 @@ struct ChartView: View {
                     .chartYAxis {
                         AxisMarks { value in
                             AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                                .foregroundStyle(Color.white.opacity(0.06))
+                                .foregroundStyle(Color.primary.opacity(0.06))
                             AxisValueLabel {
                                 if let n = value.as(Int.self) {
                                     Text(formatNumber(n))
@@ -1132,7 +1132,7 @@ struct ChartView: View {
                     .chartXAxis {
                         AxisMarks(values: .stride(by: xStride)) { value in
                             AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                                .foregroundStyle(Color.white.opacity(0.06))
+                                .foregroundStyle(Color.primary.opacity(0.06))
                             AxisValueLabel {
                                 if let date = value.as(Date.self) {
                                     Text(xAxisLabel(date)).font(.system(size: 10))
@@ -1144,7 +1144,7 @@ struct ChartView: View {
                     .chartYAxis {
                         AxisMarks { value in
                             AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                                .foregroundStyle(Color.white.opacity(0.06))
+                                .foregroundStyle(Color.primary.opacity(0.06))
                             AxisValueLabel {
                                 if let n = value.as(Int.self) {
                                     Text(formatNumber(n)).font(.system(size: 10))
@@ -1233,7 +1233,7 @@ struct ChartView: View {
                                     x: .value("Date", pt.date, unit: .day),
                                     y: .value("Idéal", pt.ideal)
                                 )
-                                .foregroundStyle(Color.white.opacity(0.25))
+                                .foregroundStyle(Color.primary.opacity(0.25))
                                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                                 .interpolationMethod(.linear)
                             }
@@ -1282,7 +1282,7 @@ struct ChartView: View {
                     .chartXAxis {
                         AxisMarks(values: .automatic(desiredCount: 6)) { value in
                             AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                                .foregroundStyle(Color.white.opacity(0.06))
+                                .foregroundStyle(Color.primary.opacity(0.06))
                             AxisValueLabel {
                                 if let date = value.as(Date.self) {
                                     Text(cumulativeAxisLabel(date)).font(.system(size: 10))
@@ -1294,7 +1294,7 @@ struct ChartView: View {
                     .chartYAxis {
                         AxisMarks { value in
                             AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                                .foregroundStyle(Color.white.opacity(0.06))
+                                .foregroundStyle(Color.primary.opacity(0.06))
                             AxisValueLabel {
                                 if let n = value.as(Int.self) {
                                     Text(formatNumber(n)).font(.system(size: 10))
@@ -1326,7 +1326,7 @@ struct ChartView: View {
                             HStack(spacing: 5) {
                                 HStack(spacing: 2) {
                                     ForEach(0..<3, id: \.self) { _ in
-                                        RoundedRectangle(cornerRadius: 1).fill(Color.white.opacity(0.25))
+                                        RoundedRectangle(cornerRadius: 1).fill(Color.primary.opacity(0.25))
                                             .frame(width: 4, height: 2)
                                         Color.clear.frame(width: 2, height: 2)
                                     }

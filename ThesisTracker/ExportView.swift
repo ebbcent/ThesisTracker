@@ -560,9 +560,14 @@ Cordialement,
         var lines = ["Date;Projet;Chapitre;Total caractères;Caractères du jour;Note"]
         for row in exportRows {
             let note = row.note ?? ""
-            let csvRow = [row.date, row.project, row.chapter, "\(row.total)", "\(row.increment)", note]
+            let textFields = [row.date, row.project, row.chapter].map { Self.csvTextField($0) }
+            let numberFields = ["\(row.total)", "\(row.increment)"]   // colonnes numériques : pas de neutralisation
+            let csvRow = (textFields + numberFields + [Self.csvTextField(note)])
                 .map { field -> String in
-                    let needsQuote = field.contains(";") || field.contains("\"") || field.contains("\n")
+                    // Scalaires (et non Character) : "\r\n" forme un seul Character
+                    let needsQuote = field.unicodeScalars.contains {
+                        $0 == ";" || $0 == "\"" || $0 == "\n" || $0 == "\r"
+                    }
                     let escaped = field.replacingOccurrences(of: "\"", with: "\"\"")
                     return needsQuote ? "\"\(escaped)\"" : field
                 }
@@ -570,6 +575,15 @@ Cordialement,
             lines.append(csvRow)
         }
         return lines.joined(separator: "\r\n")
+    }
+
+    /// Neutralise l'injection de formules (CSV injection) : un champ texte
+    /// commençant par =, +, -, @ (ou tabulation / retour chariot) est préfixé
+    /// d'une apostrophe pour qu'Excel / Numbers l'affichent comme du texte.
+    private static func csvTextField(_ field: String) -> String {
+        guard let first = field.unicodeScalars.first else { return field }
+        let dangerous: Set<Unicode.Scalar> = ["=", "+", "-", "@", "\t", "\r"]
+        return dangerous.contains(first) ? "'" + field : field
     }
 
     private func exportXLSX() {

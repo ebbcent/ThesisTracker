@@ -2,28 +2,43 @@ import SwiftUI
 import AppKit
 
 // MARK: - DarkPopoverModifier
-// Force l'apparence .darkAqua sur le NSPanel du popover macOS,
-// car les popovers créent leur propre NSPanel qui n'hérite pas
-// du color scheme de la fenêtre parente.
+// Les popovers macOS créent leur propre NSPanel, qui n'hérite pas du
+// `.preferredColorScheme(.dark)` appliqué à la fenêtre principale quand
+// « Forcer le mode sombre » est activé. On aligne donc l'apparence du panel
+// sur celle de l'app : .darkAqua uniquement si le mode sombre est forcé,
+// sinon `nil` (hérite de l'apparence système / de l'app, clair ou sombre).
 
-private struct PopoverDarkAppearance: NSViewRepresentable {
+private struct PopoverAppearanceSync: NSViewRepresentable {
+    let forceDark: Bool
+
     func makeNSView(context: Context) -> NSView {
         let v = NSView()
-        Task { @MainActor in
-            v.window?.appearance = NSAppearance(named: .darkAqua)
-        }
+        apply(to: v)
         return v
     }
     func updateNSView(_ v: NSView, context: Context) {
+        apply(to: v)
+    }
+    private func apply(to v: NSView) {
+        let dark = forceDark
         Task { @MainActor in
-            v.window?.appearance = NSAppearance(named: .darkAqua)
+            v.window?.appearance = dark ? NSAppearance(named: .darkAqua) : nil
         }
     }
 }
 
+private struct PopoverAppearanceModifier: ViewModifier {
+    @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
+
+    func body(content: Content) -> some View {
+        content.background(PopoverAppearanceSync(forceDark: forceDarkMode))
+    }
+}
+
 extension View {
+    /// Aligne l'apparence du popover sur celle de l'app (nom historique conservé).
     func darkPopoverAppearance() -> some View {
-        self.background(PopoverDarkAppearance())
+        self.modifier(PopoverAppearanceModifier())
     }
 }
 

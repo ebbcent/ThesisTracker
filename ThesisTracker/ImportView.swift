@@ -302,26 +302,8 @@ struct ImportView: View {
                 parts = line.components(separatedBy: ",")
             }
             let cleaned = parts.map { $0.trimmingCharacters(in: .whitespaces) }
-
-            var date: String? = nil
-            var count: Int? = nil
-
-            for part in cleaned {
-                let digits = part
-                    .replacingOccurrences(of: "\u{202F}", with: "")
-                    .replacingOccurrences(of: "\u{00A0}", with: "")
-                    .replacingOccurrences(of: " ", with: "")
-                    .replacingOccurrences(of: ".", with: "")
-
-                if let n = Int(digits), n > 0, n < 10_000_000 {
-                    if count == nil { count = n }
-                } else if let d = parseDate(part) {
-                    if date == nil { date = d }
-                }
-            }
-
-            if let d = date, let c = count {
-                results.append(ImportEntry(date: d, count: c))
+            if let entry = Self.parseRow(cleaned) {
+                results.append(entry)
             }
         }
 
@@ -338,46 +320,147 @@ struct ImportView: View {
             .sorted { $0.date < $1.date }
     }
 
-    private func parseDate(_ raw: String) -> String? {
-        let s = raw.trimmingCharacters(in: .whitespaces)
-        guard !s.isEmpty else { return nil }
-
-        if let serial = Int(s), serial > 40000, serial < 55000 {
-            let ref = Date(timeIntervalSince1970: -2209161600)
-            let date = ref.addingTimeInterval(Double(serial - 1) * 86400)
-            let fmt = DateFormatter(); fmt.dateFormat = "yyyy-MM-dd"
-            return fmt.string(from: date)
+    /// Analyse une ligne : 1) date explicite (texte) dans n'importe quelle cellule,
+    /// 2) à défaut, numéro de série Excel — seulement si la cellule est un entier
+    /// plausible (20000...80000) ET qu'une autre cellule numérique fournit le nombre,
+    /// 3) le nombre = première cellule entière restante.
+    private static func parseRow(_ cells: [String]) -> ImportEntry? {
+        var date: String? = nil
+        var dateIndex: Int? = nil
+        for (idx, cell) in cells.enumerated() {
+            if let d = parseDate(cell) {
+                date = d
+                dateIndex = idx
+                break
+            }
         }
 
-        let outputFmt = DateFormatter()
-        outputFmt.dateFormat = "yyyy-MM-dd"
+        // Cellules entières candidates (hors cellule date)
+        var numbers: [(index: Int, value: Int)] = []
+        for (idx, cell) in cells.enumerated() where idx != dateIndex {
+            if let n = parseCount(cell) { numbers.append((index: idx, value: n)) }
+        }
 
+        if date == nil, numbers.count >= 2,
+           let serialPos = numbers.firstIndex(where: { candidate in
+               let trimmed = cells[candidate.index].trimmingCharacters(in: .whitespaces)
+               return Int(trimmed) != nil && (20_000...80_000).contains(candidate.value)
+           }),
+           let d = excelSerialToDay(numbers[serialPos].value) {
+            date = d
+            numbers.remove(at: serialPos)
+        }
+
+        guard let d = date, let count = numbers.first?.value else { return nil }
+        return ImportEntry(date: d, count: count)
+    }
+
+    /// Nombre de caractères : espaces, espaces insécables / fines et séparateurs
+    /// de milliers (« . » ou « , » suivis de groupes de 3 chiffres) sont acceptés.
+    private static func parseCount(_ raw: String) -> Int? {
+        var s = raw
+        for sep in [" ", "\u{00A0}", "\u{202F}", "\u{2009}", "\u{2007}"] {
+            s = s.replacingOccurrences(of: sep, with: "")
+        }
+        guard !s.isEmpty, s.allSatisfy({ $0.isASCII && ($0.isNumber || $0 == "." || $0 == ",") }) else { return nil }
+        let groups = s.split(separator: ".", omittingEmptySubsequences: false)
+            .flatMap { $0.split(separator: ",", omittingEmptySubsequences: false) }
+        if groups.count > 1 {
+            // Séparateurs de milliers uniquement : 1–3 chiffres puis groupes de 3
+            guard let first = groups.first, (1...3).contains(first.count),
+                  groups.dropFirst().allSatisfy({ $0.count == 3 }) else { return nil }
+        }
+        let digits = groups.joined()
+        guard let n = Int(digits), n > 0, n < 10_000_000 else { return nil }
+        return n
+    }
+
+    // MARK: Dates
+
+    private static let gregorian: Calendar = {
+        var c = Calendar(identifier: .gregorian)
+        c.timeZone = TimeZone.autoupdatingCurrent
+        return c
+    }()
+
+    /// Numéro de série Excel (système 1900) → "yyyy-MM-dd".
+    /// Base 1899-12-30 + serial jours (le jour fictif du 29/02/1900 est
+    /// ainsi compensé pour toutes les dates postérieures au 01/03/1900).
+    private static func excelSerialToDay(_ serial: Int) -> String? {
+        guard let base = gregorian.date(from: DateComponents(year: 1899, month: 12, day: 30, hour: 12)),
+              let date = gregorian.date(byAdding: .day, value: serial, to: base) else { return nil }
+        let c = gregorian.dateComponents([.year, .month, .day], from: date)
+        guard let y = c.year, let m = c.month, let d = c.day else { return nil }
+        return String(format: "%04d-%02d-%02d", y, m, d)
+    }
+
+    /// Date numérique (séparateurs - / .) : ISO (yyyy-MM-dd, yyyy/MM/dd) ou
+    /// ordre français jour/mois/année ; ordre américain mois/jour/année en
+    /// dernier recours (si le premier nombre > 12). Validation stricte.
+    private static func parseNumericDate(_ s: String) -> String? {
+        let separators: Set<Character> = ["-", "/", "."]
+        guard s.allSatisfy({ ($0.isASCII && $0.isNumber) || separators.contains($0) }) else { return nil }
+        let sepsUsed = Set(s.filter { separators.contains($0) })
+        guard sepsUsed.count == 1 else { return nil }
+        let groups = s.split(whereSeparator: { separators.contains($0) }).map(String.init)
+        guard groups.count == 3,
+              let a = Int(groups[0]), let b = Int(groups[1]), let c = Int(groups[2]) else { return nil }
+
+        let candidates: [(y: Int, m: Int, d: Int)]
+        if groups[0].count == 4, groups[1].count <= 2, groups[2].count <= 2 {
+            candidates = [(y: a, m: b, d: c)]                  // yyyy-MM-dd, yyyy/MM/dd
+        } else if groups[2].count == 4, groups[0].count <= 2, groups[1].count <= 2 {
+            candidates = [(y: c, m: b, d: a), (y: c, m: a, d: b)]         // dd/MM/yyyy puis MM/dd/yyyy
+        } else {
+            return nil
+        }
+
+        for cand in candidates {
+            guard (1900...2200).contains(cand.y), (1...12).contains(cand.m), (1...31).contains(cand.d) else { continue }
+            let comps = DateComponents(year: cand.y, month: cand.m, day: cand.d, hour: 12)
+            guard let date = gregorian.date(from: comps) else { continue }
+            let check = gregorian.dateComponents([.year, .month, .day], from: date)
+            // Rejette les dates « corrigées » (ex. 31/02 → 03/03)
+            guard check.year == cand.y, check.month == cand.m, check.day == cand.d else { continue }
+            return String(format: "%04d-%02d-%02d", cand.y, cand.m, cand.d)
+        }
+        return nil
+    }
+
+    /// Formats textuels (mois en lettres), créés une seule fois.
+    private static let textDateFormatters: [DateFormatter] = {
         let formats = [
-            ("fr_FR", "yyyy-MM-dd"),
-            ("fr_FR", "dd/MM/yyyy"),
-            ("fr_FR", "d/MM/yyyy"),
-            ("fr_FR", "dd/M/yyyy"),
-            ("fr_FR", "d/M/yyyy"),
-            ("fr_FR", "dd.MM.yyyy"),
-            ("fr_FR", "d.M.yyyy"),
-            ("fr_FR", "dd-MM-yyyy"),
             ("fr_FR", "d MMM yyyy"),
             ("fr_FR", "dd MMM yyyy"),
             ("fr_FR", "d MMMM yyyy"),
             ("fr_FR", "dd MMMM yyyy"),
             ("fr_FR", "EEEE d MMMM yyyy"),
-            ("en_US", "MM/dd/yyyy"),
-            ("en_US", "M/d/yyyy"),
-            ("en_US", "d MMM yyyy"),
-            ("en_US", "MMM d, yyyy"),
+            ("en_US_POSIX", "d MMM yyyy"),
+            ("en_US_POSIX", "MMM d, yyyy"),
         ]
-
-        for (locale, format) in formats {
+        return formats.map { locale, format in
             let fmt = DateFormatter()
             fmt.locale = Locale(identifier: locale)
+            fmt.calendar = Calendar(identifier: .gregorian)
+            fmt.timeZone = TimeZone.autoupdatingCurrent
+            fmt.isLenient = false
             fmt.dateFormat = format
+            return fmt
+        }
+    }()
+
+    /// Date explicite (hors numéro de série Excel) → "yyyy-MM-dd".
+    private static func parseDate(_ raw: String) -> String? {
+        let s = raw.trimmingCharacters(in: .whitespaces)
+        guard !s.isEmpty else { return nil }
+
+        if let numeric = parseNumericDate(s) { return numeric }
+
+        // Formats textuels : il faut au moins une lettre
+        guard s.contains(where: { $0.isLetter }) else { return nil }
+        for fmt in textDateFormatters {
             if let date = fmt.date(from: s) {
-                return outputFmt.string(from: date)
+                return AppFormatters.isoDay.string(from: date)
             }
         }
         return nil
@@ -398,18 +481,11 @@ struct ImportView: View {
     // MARK: - Helpers
 
     private func formattedDisplayDate(_ dateStr: String) -> String {
-        let fmt = DateFormatter(); fmt.dateFormat = "yyyy-MM-dd"
-        guard let date = fmt.date(from: dateStr) else { return dateStr }
-        let out = DateFormatter()
-        out.locale = Locale(identifier: "fr_FR")
-        out.dateFormat = "d MMM yyyy"
-        return out.string(from: date)
+        guard let date = AppFormatters.isoDay.date(from: dateStr) else { return dateStr }
+        return AppFormatters.frDayMonthYear.string(from: date)
     }
 
     private func formatNumber(_ n: Int) -> String {
-        let f = NumberFormatter()
-        f.numberStyle = .decimal
-        f.groupingSeparator = "\u{202F}"
-        return f.string(from: NSNumber(value: n)) ?? "\(n)"
+        AppFormatters.groupedInteger.string(from: NSNumber(value: n)) ?? "\(n)"
     }
 }

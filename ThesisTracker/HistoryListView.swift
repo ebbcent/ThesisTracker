@@ -204,7 +204,7 @@ struct HistoryListView: View {
                     Text("Aucune entrée pour ce chapitre")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.primary)
-                    Text("Saisie du tableau de bord ou via ⌘⇧Espace.")
+                    Text("Saisie du tableau de bord ou via ⌃⌥N.")
                         .font(.system(size: 12))
                         .foregroundColor(.labelMuted)
                 }

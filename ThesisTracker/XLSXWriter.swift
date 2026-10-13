@@ -1,6 +1,12 @@
 import Foundation
 
 enum XLSXWriter {
+    /// Valeur de cellule : texte (inlineStr) ou nombre (<v>).
+    private enum Cell {
+        case text(String)
+        case number(Int)
+    }
+
     static func workbookData(rows: [ExportRow]) -> Data {
         let contentTypes = """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -72,25 +78,29 @@ enum XLSXWriter {
         """
 
         let headers = ["Date", "Projet", "Chapitre", "Total caractères", "Caractères du jour", "Note", "Deadline"]
-        let allRows = [headers] + rows.map {
+        let allRows: [[Cell]] = [headers.map { Cell.text($0) }] + rows.map { row -> [Cell] in
             [
-                $0.date,
-                $0.project,
-                $0.chapter,
-                String($0.total),
-                String($0.increment),
-                $0.note ?? "",
-                $0.deadline ?? ""
+                .text(row.date),
+                .text(row.project),
+                .text(row.chapter),
+                .number(row.total),
+                .number(row.increment),
+                .text(row.note ?? ""),
+                .text(row.deadline ?? "")
             ]
         }
 
         var sheetRows: [String] = []
         for (rowIndex, row) in allRows.enumerated() {
-            let cells = row.enumerated().map { columnIndex, value in
+            let cells = row.enumerated().map { (columnIndex, value) -> String in
                 let ref = cellReference(column: columnIndex, row: rowIndex + 1)
-                return """
-                <c r="\(ref)" t="inlineStr"><is><t>\(escapeXML(value))</t></is></c>
-                """
+                switch value {
+                case .text(let text):
+                    return "<c r=\"\(ref)\" t=\"inlineStr\"><is><t xml:space=\"preserve\">\(escapeXML(text))</t></is></c>"
+                case .number(let number):
+                    // Cellule numérique : Excel peut trier / additionner directement
+                    return "<c r=\"\(ref)\"><v>\(number)</v></c>"
+                }
             }.joined()
             sheetRows.append("<row r=\"\(rowIndex + 1)\">\(cells)</row>")
         }
@@ -193,12 +203,27 @@ enum XLSXWriter {
     }
 
     private static func escapeXML(_ value: String) -> String {
-        value
+        stripInvalidXMLChars(value)
             .replacingOccurrences(of: "&", with: "&amp;")
             .replacingOccurrences(of: "<", with: "&lt;")
             .replacingOccurrences(of: ">", with: "&gt;")
             .replacingOccurrences(of: "\"", with: "&quot;")
             .replacingOccurrences(of: "'", with: "&apos;")
+    }
+
+    /// Supprime les caractères interdits en XML 1.0 (contrôles C0 sauf \t \n \r,
+    /// U+FFFE, U+FFFF) : sinon Excel refuse d'ouvrir le fichier.
+    private static func stripInvalidXMLChars(_ value: String) -> String {
+        var scalars = String.UnicodeScalarView()
+        for scalar in value.unicodeScalars {
+            let v = scalar.value
+            let valid = v == 0x9 || v == 0xA || v == 0xD
+                || (0x20...0xD7FF).contains(v)
+                || (0xE000...0xFFFD).contains(v)
+                || (0x10000...0x10FFFF).contains(v)
+            if valid { scalars.append(scalar) }
+        }
+        return String(scalars)
     }
 
     private static func crc32(_ data: Data) -> UInt32 {
