@@ -167,6 +167,8 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.6** — Retour à l'interface de la 5.3 (refonte abandonnée), toutes les corrections conservées
 - **5.7** — Mises à jour intégrées : l'app se met à jour seule depuis GitHub Releases, sans nouvelle alerte de sécurité
 
+Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
+
 ---
 
 ## 9. Axes d'évolution prioritaires (roadmap)
