@@ -242,19 +242,27 @@ struct SidebarView: View {
 
     // MARK: - Navigation
 
-    // Refonte 5.4 : 5 sections ; les vues d'une section sont des onglets.
     private var navSection: some View {
-        VStack(spacing: 1) {
-            ForEach(SidebarSection.allCases) { section in
-                SidebarSectionRow(section: section, isSelected: selectedNav.section == section) {
-                    withAnimation(.easeInOut(duration: 0.12)) {
-                        if selectedNav.section != section { selectedNav = section.items[0] }
-                    }
-                }
-            }
+        VStack(spacing: 0) {
+            navGroup(
+                label: "Écriture",
+                items: [.dashboard, .overview, .deadlines, .kanban],
+                collapsed: $navEcritureCollapsed
+            )
+            navGroupDivider
+            navGroup(
+                label: "Analyse",
+                items: [.charts, .activity, .calendar, .history, .widgets],
+                collapsed: $navAnalyseCollapsed
+            )
+            navGroupDivider
+            navGroup(
+                label: "Outils",
+                items: [.timer, .search, .achievements],
+                collapsed: $navOutilsCollapsed
+            )
         }
         .padding(.horizontal, 8)
-        .padding(.top, 6)
         .frame(maxWidth: .infinity)
     }
 
@@ -983,64 +991,6 @@ struct SidebarView: View {
         .buttonStyle(.plain)
         .help(help)
         .accessibilityLabel(help)
-    }
-}
-
-// MARK: - Section row (refonte 5.4)
-
-private struct SidebarSectionRow: View {
-    let section: SidebarSection
-    let isSelected: Bool
-    let action: () -> Void
-    @State private var isHovering = false
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 0) {
-                // Barre d'accent à gauche (style d'origine)
-                RoundedRectangle(cornerRadius: 1.5)
-                    .fill(isSelected
-                          ? LinearGradient(colors: [.accentWarm, .accentGold], startPoint: .top, endPoint: .bottom)
-                          : LinearGradient(colors: [Color.clear], startPoint: .top, endPoint: .bottom))
-                    .frame(width: 3, height: 16)
-                    .padding(.leading, 2)
-                    .animation(.easeInOut(duration: 0.12), value: isSelected)
-
-                HStack(spacing: 8) {
-                    Image(systemName: section.icon)
-                        .font(.system(size: 12, weight: .medium))
-                        .frame(width: 16)
-                        .foregroundColor(isSelected ? .accentWarm : (isHovering ? .primary.opacity(0.7) : .labelMuted.opacity(0.7)))
-                    Text(section.rawValue)
-                        .font(.system(size: 12.5, weight: isSelected ? .semibold : .regular))
-                        .foregroundColor(isSelected ? .primary : (isHovering ? .primary.opacity(0.85) : .secondary.opacity(0.75)))
-                    Spacer()
-                    if isHovering {
-                        Text(section.shortcutLabel)
-                            .font(.system(size: 9.5, weight: .medium, design: .monospaced))
-                            .foregroundColor(.labelMuted.opacity(0.7))
-                            .padding(.horizontal, 5).padding(.vertical, 2)
-                            .background(Color.fieldBg)
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
-                            .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .trailing)))
-                    }
-                }
-                .padding(.horizontal, 9).padding(.vertical, 7)
-                .background(
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .fill(isSelected ? Color.accentWarm.opacity(0.08)
-                                         : (isHovering ? Color.glassFill : Color.clear))
-                )
-            }
-            .padding(.horizontal, 6)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.08)) { isHovering = hovering }
-        }
-        .accessibilityLabel(section.rawValue)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

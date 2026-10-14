@@ -19,7 +19,6 @@ extension Notification.Name {
 }
 
 enum NavItem: String, CaseIterable, Identifiable {
-    case today          = "Aujourd'hui"
     case overview       = "Vue d'ensemble"
     case dashboard      = "Tableau de bord"
     case deadlines      = "Échéances"
@@ -39,7 +38,6 @@ enum NavItem: String, CaseIterable, Identifiable {
 
     var icon: String {
         switch self {
-        case .today:         return "sun.max.fill"
         case .overview:      return "square.grid.2x2.fill"
         case .dashboard:     return "house.fill"
         case .deadlines:     return "calendar.badge.exclamationmark"
@@ -58,8 +56,22 @@ enum NavItem: String, CaseIterable, Identifiable {
     }
 
     var shortcutHint: String? {
-        // ⌘1 … ⌘5 ouvrent les sections (première vue de chacune).
-        section.items.first == self ? section.shortcutLabel : nil
+        switch self {
+        case .overview:     return "⌘1"
+        case .dashboard:    return "⌘2"
+        case .deadlines:    return "⌘3"
+        case .search:       return "⌘4"
+        case .charts:       return "⌘5"
+        case .activity:     return "⌘6"
+        case .history:      return "⌘7"
+        case .calendar:     return "⌘8"
+        case .timer:        return "⌘9"
+        case .achievements: return nil
+        case .kanban:           return nil
+        case .analytics:        return nil
+        case .tableOfContents:  return nil
+        case .widgets:          return nil
+        }
     }
 }
 
@@ -67,7 +79,7 @@ struct MainView: View {
     @ObservedObject var store: DataStore
     @EnvironmentObject private var pomodoroController: PomodoroAppController
     @State private var showSidebar: Bool = true
-    @State private var selectedNav: NavItem = .today
+    @State private var selectedNav: NavItem = .dashboard
     @AppStorage("sidebarWidth") private var sidebarWidthStored: Double = 280
     @AppStorage("interfaceMode") private var interfaceMode: String = "VA"
     @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
@@ -115,9 +127,11 @@ struct MainView: View {
 
     @ViewBuilder private var hiddenShortcuts: some View {
         Group {
-            ForEach(SidebarSection.allCases) { section in
-                Button("") { withAnimation(.easeInOut(duration: 0.15)) { selectedNav = section.items[0] } }
-                    .keyboardShortcut(section.keyEquivalent, modifiers: .command)
+            ForEach(Array(NavItem.allCases.enumerated()), id: \.offset) { idx, item in
+                if idx < 9 {
+                    Button("") { withAnimation(.easeInOut(duration: 0.15)) { selectedNav = item } }
+                        .keyboardShortcut(KeyEquivalent(Character(UnicodeScalar(49 + idx)!)), modifiers: .command)
+                }
             }
             Button("") {
                 withAnimation(.easeOut(duration: 0.15)) {
@@ -313,19 +327,11 @@ struct MainView: View {
                 Divider()
                     .overlay(Color.cardBorder)
 
-                if selectedNav.section.items.count > 1 {
-                    SectionTabBar(section: selectedNav.section, selectedNav: $selectedNav)
-                    Divider()
-                        .overlay(Color.cardBorder)
-                }
-
                 ZStack {
                     Color.appBg.ignoresSafeArea()
 
                     Group {
                         switch selectedNav {
-                        case .today:
-                            TodayView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
                         case .overview:
                             OverviewView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
                         case .dashboard:
