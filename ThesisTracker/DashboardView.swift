@@ -2387,7 +2387,7 @@ struct DashboardView: View {
 // not the entire 2000+ line DashboardView.body. The parent passes `initialText`
 // once (and forces a remount via `.id(inputClusterToken)` whenever it needs
 // to push a new value — file import, date/chapter change, delete, etc.).
-struct WritingEntryInputCluster: View {
+private struct WritingEntryInputCluster: View {
     let useWordCount: Bool
     let initialText: String
     let entryForHistory: DailyEntry?
