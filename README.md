@@ -8,25 +8,25 @@ Le nom interne du projet Xcode est **ThesisTracker** ; l'application installée 
 
 ## Installer ou mettre à jour l'app (sur chaque Mac)
 
-L'app est compilée automatiquement par GitHub à chaque modification. Il n'y a rien à compiler soi-même.
+### Première installation (une seule fois par Mac)
 
-1. Ouvrir **[Releases](https://github.com/ebbcent/ThesisTracker/releases/latest)** et télécharger `Writing-Process-….zip`.
-2. Double-cliquer sur le zip, puis glisser **Writing Process.app** dans **Applications** (remplacer l'ancienne version si macOS le demande).
-3. **Premier lancement de chaque nouvelle version.** L'app n'est pas signée par un compte développeur Apple payant, donc macOS la bloque une première fois. Deux façons de l'autoriser :
-   - **Réglages Système → Confidentialité et sécurité** → en bas : « Writing Process a été bloquée » → **Ouvrir quand même** ;
-   - ou, dans le Terminal, une seule commande :
-     ```
-     xattr -dr com.apple.quarantine "/Applications/Writing Process.app"
-     ```
+1. Télécharger le dernier `Writing-Process-….zip` dans **[Releases](https://github.com/ebbcent/ThesisTracker/releases/latest)**, l'ouvrir, glisser **Writing Process.app** dans **Applications**.
+2. Autoriser une dernière fois l'app non notarisée : **Réglages Système → Confidentialité et sécurité → Ouvrir quand même** (ou `xattr -dr com.apple.quarantine "/Applications/Writing Process.app"` dans le Terminal).
+3. Dans l'app : **Réglages → Mises à jour**, coller une clé GitHub en lecture seule. Pour la créer : GitHub → Settings → Developer settings → Fine-grained tokens. Dépôt : `ThesisTracker` seulement. Permission : *Contents : Read-only*.
 
-Faire la même chose sur le second Mac. Les données ne sont pas dans l'app : remplacer l'app ne touche jamais aux données.
+### Ensuite : mises à jour sans alerte
 
-> Après une mise à jour, macOS peut redemander certaines autorisations (notifications, micro pour la dictée). C'est normal : chaque compilation a une nouvelle signature.
+À chaque lancement (au plus une fois par jour), l'app vérifie si une version plus récente a été publiée et propose de l'installer. Elle peut aussi le faire à la demande : menu **Writing Process → Rechercher les mises à jour…**.
 
-### Où trouver une version en cours de test
+L'app télécharge la nouvelle version elle-même, se remplace et redémarre. Ce téléchargement ne passe pas par le navigateur, donc macOS ne le met pas en quarantaine et **ne redemande plus d'autorisation**. Les données ne sont pas touchées.
 
-Chaque envoi sur une branche produit aussi l'app, sans la publier dans Releases :
-**Actions** → choisir l'exécution → section **Artifacts** en bas de page.
+L'app doit se trouver dans **Applications**. Lancée depuis le dossier Téléchargements ou depuis une image disque, elle ne peut pas se remplacer elle-même.
+
+> Un `.dmg` n'éviterait pas l'alerte : macOS met aussi en quarantaine les images disque téléchargées. Seule une signature « Developer ID » d'Apple, payante, ferait disparaître l'alerte de la première installation.
+
+### Version en cours de test
+
+Chaque envoi sur une branche produit aussi l'app, sans la publier : **Actions** → l'exécution → **Artifacts**.
 
 ---
 

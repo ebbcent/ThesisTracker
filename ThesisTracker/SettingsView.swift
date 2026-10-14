@@ -425,6 +425,9 @@ struct SettingsView: View {
                     // ╚══════════════════╝
                     VStack(alignment: .leading, spacing: 16) {
 
+                        // ── Mises à jour ───────────────────────────────
+                        UpdatesSettingsSection()
+
                         // ── Affichage ──────────────────────────────────
                         settingsSection("AFFICHAGE") {
                             VStack(spacing: 0) {
