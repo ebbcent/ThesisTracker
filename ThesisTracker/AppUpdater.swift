@@ -1,6 +1,8 @@
 import AppKit
+import Combine
 import Foundation
 import Security
+import SwiftUI
 
 // MARK: - Mises à jour depuis GitHub Releases
 //
