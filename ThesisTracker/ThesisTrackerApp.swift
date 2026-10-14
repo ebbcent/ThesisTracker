@@ -126,6 +126,7 @@ struct ThesisTrackerApp: App {
                 .background(WindowAccessor())
                 .task {
                     await pomodoroController.initializeIfNeeded()
+                    AppUpdater.shared.checkAutomaticallyIfDue()
                     pomodoroController.onSaveWordCount = { [weak store] wordCount in
                         guard let store else { return }
                         guard let project = store.activeProject, let chapter = store.activeChapter else { return }
@@ -148,6 +149,11 @@ struct ThesisTrackerApp: App {
         .windowToolbarStyle(.unified(showsTitle: false))
         .commands {
             CommandGroup(replacing: .newItem) { }
+            CommandGroup(after: .appInfo) {
+                Button("Rechercher les mises à jour…") {
+                    Task { await AppUpdater.shared.check(promptIfAvailable: true, announceResult: true) }
+                }
+            }
             CommandGroup(replacing: .appSettings) {
                 SettingsLink {
                     Text("Réglages…")
