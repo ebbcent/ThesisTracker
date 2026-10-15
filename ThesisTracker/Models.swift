@@ -380,6 +380,7 @@ struct DailyEntry: Codable, Identifiable {
     var savedAtHour: Int? = nil   // 0–23, recorded when the entry is saved
     var editHistory: [EntryEditRecord] = []  // #6 — historique éditions
     var energyLevel: Int? = nil   // #4 — niveau d'énergie 1-5, optionnel
+    var isCorrection: Bool = false  // jour de correction : le total peut baisser
 
     // Custom decoder for backwards compatibility
     init(date: String, totalCount: Int, note: String? = nil, savedAtHour: Int? = nil, energyLevel: Int? = nil) {
@@ -396,6 +397,7 @@ struct DailyEntry: Codable, Identifiable {
         savedAtHour = try? c.decodeIfPresent(Int.self,     forKey: .savedAtHour)
         editHistory = (try? c.decodeIfPresent(LossyArray<EntryEditRecord>.self, forKey: .editHistory))?.elements ?? []
         energyLevel = try? c.decodeIfPresent(Int.self,     forKey: .energyLevel)
+        isCorrection = (try? c.decodeIfPresent(Bool.self, forKey: .isCorrection)) ?? false
     }
 }
 
@@ -542,6 +544,12 @@ struct Chapter: Codable, Identifiable {
         guard let entry = entryForDate(date) else { return 0 }
         let prev = previousTotal(before: date)
         return max(0, entry.totalCount - prev)
+    }
+
+    /// Variation nette du jour, négative si du texte a été retiré.
+    func netChange(for date: String) -> Int {
+        guard let entry = entryForDate(date) else { return 0 }
+        return entry.totalCount - previousTotal(before: date)
     }
 }
 

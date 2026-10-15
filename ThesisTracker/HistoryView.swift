@@ -152,6 +152,20 @@ struct HistoryRow: View {
                                 .font(.system(size: 11, weight: .medium))
                         }
                         .foregroundColor(Color.accentGreen)
+                    } else if let chapter, chapter.netChange(for: entry.date) < 0 {
+                        HStack(spacing: 3) {
+                            Image(systemName: "arrow.down")
+                                .font(.system(size: 9))
+                            Text(formatNumber(chapter.netChange(for: entry.date)))
+                                .font(.system(size: 11, weight: .medium))
+                            if entry.isCorrection {
+                                Text("Correction")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .padding(.horizontal, 6).padding(.vertical, 1)
+                                    .background(Capsule().fill(Color.accentWarm.opacity(0.15)))
+                            }
+                        }
+                        .foregroundColor(Color.accentWarm)
                     }
                 }
 

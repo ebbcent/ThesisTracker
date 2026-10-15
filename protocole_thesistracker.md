@@ -103,6 +103,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 | 2026-10-13 | V5.5 — Style d'origine + correctif Statistiques | L'écran Aujourd'hui réutilise le champ de saisie du tableau de bord (`WritingEntryInputCluster` : dictée, historique, bouton ambre « Sauvegarder », ⌘S), les cartes, `SectionHeader` et la palette (`appBg`, `cardBg`, `accentWarm`). Onglets de section en pastilles ambre ; sections de la barre latérale avec la barre d'accent d'origine. Correctif : `chapterComparisonRows` plantait sur un chapitre sans entrée (`1..<0`) ; test de régression ajouté. |
 | 2026-10-14 | V5.6 — Retour à l'interface d'avant la refonte | Décision de Clément : on garde l'interface de la 5.3 (barre latérale en groupes Écriture / Analyse / Outils, tableau de bord comme écran d'accueil, raccourcis ⌘1…⌘9 sur les vues). `MainView`, `SidebarView` et `DashboardView` reviennent à leur version 5.3 ; `TodayView` et `SidebarSection` sont retirés. Conservé : toutes les corrections (données sur deux Mac, Pomodoro, import/export, raccourcis, accessibilité, macOS 14, tests) et le correctif du plantage Statistiques avec son test. |
 | 2026-10-14 | V5.7 — Mises à jour intégrées | `AppUpdater.swift` : vérifie la dernière version publiée (API GitHub, clé en lecture seule gardée dans le Trousseau), télécharge le zip, vérifie la signature, remplace l'app et relance. Un fichier téléchargé par l'app n'est pas mis en quarantaine : plus d'alerte Gatekeeper après la première autorisation. Section « Mises à jour » dans les Réglages (style d'origine), menu « Rechercher les mises à jour… », vérification automatique au lancement (une fois par jour). La CI inscrit le numéro d'exécution comme numéro de build (`CURRENT_PROJECT_VERSION`). |
+| 2026-10-15 | V5.8 — Jours de correction | Le total du jour peut baisser (texte retiré en relisant) : la baisse s'affiche en négatif sur le tableau de bord et dans l'historique. Une case « Correction » apparaît sous le champ quand le total saisi est inférieur au précédent ; un jour marqué « Correction » compte dans la série et pour les rappels. La marque (`DailyEntry.isCorrection`) est retirée d'elle-même si le total repasse au-dessus du précédent. Les objectifs et moyennes restent calculés sur le texte ajouté. Tests : `CorrectionDayTests`. |
 
 ---
 
@@ -166,6 +167,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.5** — Style d'origine rétabli sur Aujourd'hui, onglets et barre latérale ; correctif du plantage de l'onglet Statistiques
 - **5.6** — Retour à l'interface de la 5.3 (refonte abandonnée), toutes les corrections conservées
 - **5.7** — Mises à jour intégrées : l'app se met à jour seule depuis GitHub Releases, sans nouvelle alerte de sécurité
+- **5.8** — Jours de correction : total du jour négatif possible, case « Correction » qui préserve la série
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 

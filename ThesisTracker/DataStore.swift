@@ -695,8 +695,7 @@ class DataStore: ObservableObject {
 
     /// All notification scheduling, called once per debounce cycle — main thread.
     private func scheduleSaveNotifications(todayTotal: Int, todayStr: String) {
-        let hasWrittenToday = !data.projects.flatMap { $0.chapters }
-            .allSatisfy { $0.increment(for: todayStr) == 0 }
+        let hasWrittenToday = activeWritingDays.contains(todayStr)
         NotificationManager.shared.scheduleDeadlineNotifications(chaptersWithDeadlines: chaptersWithDeadlines)
         scheduleDeadlinePaceAlertsIfNeeded()
         scheduleMilestoneNotificationsIfNeeded()
@@ -799,7 +798,7 @@ class DataStore: ObservableObject {
         checkWeeklyReportIfNeeded()
         // Recalcule les rappels à l'activation (l'utilisateur peut avoir écrit ou non)
         let todayStr = DataStore.today
-        let hasWrittenToday = !data.projects.flatMap { $0.chapters }.allSatisfy { $0.increment(for: todayStr) == 0 }
+        let hasWrittenToday = activeWritingDays.contains(todayStr)
         NotificationManager.shared.scheduleEmptyDayReminderIfNeeded(hasWrittenToday: hasWrittenToday)
         NotificationManager.shared.scheduleStreakWarningIfNeeded(currentStreak: currentStreak, hasWrittenToday: hasWrittenToday)
     }
@@ -1171,15 +1170,20 @@ class DataStore: ObservableObject {
 
     // MARK: - Entry mutations
 
-    func setTotalForDate(_ count: Int, for chapterId: UUID, in projectId: UUID, date: String) {
+    /// `isCorrection` : nil garde la marque existante. La marque n'est conservée
+    /// que si le total du jour est inférieur au total précédent.
+    func setTotalForDate(_ count: Int, for chapterId: UUID, in projectId: UUID, date: String, isCorrection: Bool? = nil) {
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
               let chapIdx = data.projects[projIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
         let existingEntry = data.projects[projIdx].chapters[chapIdx].entries.first(where: { $0.date == date })
         let oldValue = existingEntry?.totalCount ?? 0
+        let correction = (isCorrection ?? existingEntry?.isCorrection ?? false)
+            && count < data.projects[projIdx].chapters[chapIdx].previousTotal(before: date)
         // Early return when nothing changed: avoids @Published re-render, undo bloat,
         // and a wasted save() debounce on every keystroke that re-types the same value.
         let isToday = date == DataStore.today
         if let existingEntry, existingEntry.totalCount == count,
+           existingEntry.isCorrection == correction,
            existingEntry.savedAtHour != nil || !isToday {
             return
         }
@@ -1203,6 +1207,7 @@ class DataStore: ObservableObject {
                 }
             }
             data.projects[projIdx].chapters[chapIdx].entries[entryIdx].totalCount = count
+            data.projects[projIdx].chapters[chapIdx].entries[entryIdx].isCorrection = correction
             // L'heure de saisie n'a de sens que pour une saisie du jour même
             // (pas pour une date passée ni pour un import).
             if isToday, data.projects[projIdx].chapters[chapIdx].entries[entryIdx].savedAtHour == nil {
@@ -1210,6 +1215,7 @@ class DataStore: ObservableObject {
             }
         } else {
             var entry = DailyEntry(date: date, totalCount: count)
+            entry.isCorrection = correction
             if isToday { entry.savedAtHour = currentHour }
             data.projects[projIdx].chapters[chapIdx].entries.append(entry)
         }
@@ -2970,19 +2976,27 @@ class DataStore: ObservableObject {
 
     // MARK: - Streaks
 
+    /// Jours qui comptent pour les séries : du texte ajouté, ou une correction
+    /// marquée comme telle (le total a baissé parce que du texte a été retiré).
+    private var activeWritingDays: Set<String> {
+        let totals = dailyTotals()
+        var days = Set(totals.keys.filter { (totals[$0] ?? 0) > 0 })
+        for chapter in allChapters {
+            for entry in chapter.entries where entry.isCorrection { days.insert(entry.date) }
+        }
+        return days
+    }
+
     /// Jours consécutifs d'écriture (en partant d'aujourd'hui, ou d'hier si aujourd'hui est vide)
     var currentStreak: Int {
         if let c = _currentStreakCache, c.version == dataVersion { return c.value }
         let cal = DataStore.gregorianCal
-        let totals = dailyTotals()
-        let todayStr = DataStore.today
-        let todayTotal = totals[todayStr] ?? 0
-        let startOffset = todayTotal > 0 ? 0 : 1
+        let active = activeWritingDays
+        let startOffset = active.contains(DataStore.today) ? 0 : 1
         var streak = 0; var offset = startOffset
         while offset < 730 {
             guard let date = cal.date(byAdding: .day, value: -offset, to: Date()) else { break }
-            let total = totals[DataStore.dateString(from: date)] ?? 0
-            if total > 0 { streak += 1; offset += 1 } else { break }
+            if active.contains(DataStore.dateString(from: date)) { streak += 1; offset += 1 } else { break }
         }
         _currentStreakCache = (dataVersion, streak)
         return streak
@@ -2991,8 +3005,7 @@ class DataStore: ObservableObject {
     /// Meilleure série de jours consécutifs de toute l'histoire
     var longestStreak: Int {
         if let c = _longestStreakCache, c.version == dataVersion { return c.value }
-        let totals = dailyTotals()
-        let sorted = totals.keys.filter { (totals[$0] ?? 0) > 0 }.sorted()
+        let sorted = activeWritingDays.sorted()
         guard !sorted.isEmpty else { _longestStreakCache = (dataVersion, 0); return 0 }
         let cal = DataStore.gregorianCal
         var longest = 1, current = 1
