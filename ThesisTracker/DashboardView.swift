@@ -1197,6 +1197,11 @@ struct DashboardView: View {
         return chapter.increment(for: selectedDateStr)
     }
 
+    // Variation nette du jour sélectionné (négative après une correction)
+    private var currentEntryNet: Int {
+        activeChapter?.netChange(for: selectedDateStr) ?? 0
+    }
+
     // V5 — #4 : Nouveau record personnel ?
     private var isNewPersonalRecord: Bool {
         guard isToday, currentEntryDelta > 0 else { return false }
@@ -1294,6 +1299,21 @@ struct DashboardView: View {
                             .background(Capsule().fill(Color.yellow.opacity(0.12)))
                             .transition(.scale(scale: 0.85).combined(with: .opacity))
                         }
+                    } else if currentEntryNet < 0 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.down")
+                                .font(.system(size: 9, weight: .bold))
+                            Text("\(store.formatCount(currentEntryNet)) \(isToday ? "aujourd'hui" : "ce jour-là")")
+                                .font(.system(size: 11))
+                            if activeChapter?.entryForDate(selectedDateStr)?.isCorrection == true {
+                                Text("Correction")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .padding(.horizontal, 6).padding(.vertical, 1)
+                                    .background(Capsule().fill(Color.accentWarm.opacity(0.15)))
+                            }
+                        }
+                        .foregroundColor(.accentWarm)
+                        .transition(.scale(scale: 0.85).combined(with: .opacity))
                     } else if currentEntryTotal == 0 {
                         Text(isToday ? "Aucune entrée pour aujourd'hui" : "Aucune entrée ce jour-là")
                             .font(.system(size: 11))
@@ -1382,10 +1402,11 @@ struct DashboardView: View {
                     useWordCount: store.data.useWordCount,
                     initialText: inputText,
                     entryForHistory: activeChapter?.entryForDate(selectedDateStr),
+                    previousTotal: activeChapter?.previousTotal(before: selectedDateStr) ?? 0,
                     savedConfirmation: savedConfirmation,
                     focused: $inputFieldFocused,
                     isDictating: $isDictating,
-                    onSave: { count in saveEntry(count) }
+                    onSave: { count, correction in saveEntry(count, isCorrection: correction) }
                 )
                 .id(inputClusterToken)
 
@@ -2207,11 +2228,11 @@ struct DashboardView: View {
         DataStore.formatDate(selectedDate)
     }
 
-    private func saveEntry(_ count: Int) {
+    private func saveEntry(_ count: Int, isCorrection: Bool) {
         guard let chapter = activeChapter,
               let project = activeProject else { return }
         inputText = "\(count)"
-        withAnimation { store.setTotalForDate(count, for: chapter.id, in: project.id, date: selectedDateStr) }
+        withAnimation { store.setTotalForDate(count, for: chapter.id, in: project.id, date: selectedDateStr, isCorrection: isCorrection) }
         withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = false }
@@ -2391,29 +2412,34 @@ private struct WritingEntryInputCluster: View {
     let useWordCount: Bool
     let initialText: String
     let entryForHistory: DailyEntry?
+    let previousTotal: Int
     let savedConfirmation: Bool
     @FocusState.Binding var focused: Bool
     @Binding var isDictating: Bool
-    let onSave: (Int) -> Void
+    let onSave: (Int, Bool) -> Void
 
     @State private var text: String
+    @State private var isCorrection: Bool
     @State private var showEntryHistory: Bool = false
 
     init(useWordCount: Bool,
          initialText: String,
          entryForHistory: DailyEntry?,
+         previousTotal: Int,
          savedConfirmation: Bool,
          focused: FocusState<Bool>.Binding,
          isDictating: Binding<Bool>,
-         onSave: @escaping (Int) -> Void) {
+         onSave: @escaping (Int, Bool) -> Void) {
         self.useWordCount = useWordCount
         self.initialText = initialText
         self.entryForHistory = entryForHistory
+        self.previousTotal = previousTotal
         self.savedConfirmation = savedConfirmation
         self._focused = focused
         self._isDictating = isDictating
         self.onSave = onSave
         self._text = State(initialValue: initialText)
+        self._isCorrection = State(initialValue: entryForHistory?.isCorrection ?? false)
     }
 
     private var inputInt: Int? {
@@ -2425,7 +2451,7 @@ private struct WritingEntryInputCluster: View {
 
     private func commit() {
         guard let n = inputInt else { return }
-        onSave(n)
+        onSave(n, isCorrection && n < previousTotal)
     }
 
     var body: some View {
@@ -2435,6 +2461,9 @@ private struct WritingEntryInputCluster: View {
             HStack(spacing: 10) {
                 inputRow
                 saveButton(hasValue: hasValue)
+            }
+            if let n, n < previousTotal {
+                correctionRow(delta: n - previousTotal)
             }
             if let n, n > 0 {
                 liveCounter(n: n)
@@ -2519,6 +2548,36 @@ private struct WritingEntryInputCluster: View {
         .disabled(!hasValue)
         .help("Sauvegarder · ⌘S")
         .animation(.easeInOut(duration: 0.2), value: savedConfirmation)
+    }
+
+    // Total en baisse : du texte a été retiré. La case marque le jour comme
+    // une correction, qui ne casse pas la série.
+    private func correctionRow(delta: Int) -> some View {
+        HStack(spacing: 8) {
+            Button {
+                isCorrection.toggle()
+                // Entrée déjà enregistrée avec ce total : la marque s'applique tout de suite.
+                if let entry = entryForHistory, entry.totalCount == inputInt { commit() }
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: isCorrection ? "checkmark.square.fill" : "square")
+                        .font(.system(size: 12))
+                        .foregroundColor(isCorrection ? .accentWarm : .labelMuted)
+                    Text("Correction")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(isCorrection ? .accentWarm : .primary)
+                }
+            }
+            .buttonStyle(.plain)
+            .help("Jour de correction : du texte a été retiré. Le jour compte dans la série.")
+            .accessibilityAddTraits(isCorrection ? .isSelected : [])
+            Text("\(DataStore.formatNumber(delta)) \(useWordCount ? "mots" : "car.") par rapport au total précédent")
+                .font(.system(size: 10))
+                .foregroundColor(.labelMuted)
+            Spacer()
+        }
+        .padding(.leading, 2)
+        .transition(.opacity.combined(with: .move(edge: .top)))
     }
 
     private func liveCounter(n: Int) -> some View {
