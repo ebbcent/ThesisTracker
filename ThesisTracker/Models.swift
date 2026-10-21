@@ -996,6 +996,7 @@ struct AppData: Codable {
     var fragments: [Fragment] = []              // Carnet de fragments
     var monthlyReports: [MonthlyReport] = []    // Bilans mensuels auto-générés
     var adminTasks: [AdminTask] = []            // Checklist administrative
+    var writingSchedule: WritingSchedule? = nil // 5.9 — calendrier d'écriture synchronisé
 
     // Legacy migration fields (old format had chapters at top level)
     var legacyChapters: [Chapter]?
@@ -1007,6 +1008,7 @@ struct AppData: Codable {
         case pinnedDates, weeklyChallenges, researchEntries
         case weeklyPlans, restDays, targetDefenseDate
         case journalEntries, fragments, monthlyReports, adminTasks
+        case writingSchedule
         case legacyChapters = "chapters"
         case legacyActiveChapterId = "activeChapterId"
     }
@@ -1034,6 +1036,7 @@ extension AppData {
         fragments                  = (try? c.decodeIfPresent(LossyArray<Fragment>.self,            forKey: .fragments))?.elements                  ?? []
         monthlyReports             = (try? c.decodeIfPresent(LossyArray<MonthlyReport>.self,       forKey: .monthlyReports))?.elements             ?? []
         adminTasks                 = (try? c.decodeIfPresent(LossyArray<AdminTask>.self,           forKey: .adminTasks))?.elements                 ?? []
+        writingSchedule            = try? c.decodeIfPresent(WritingSchedule.self,       forKey: .writingSchedule)
         legacyChapters             = (try? c.decodeIfPresent(LossyArray<Chapter>.self,             forKey: .legacyChapters))?.elements
         legacyActiveChapterId      = try? c.decodeIfPresent(UUID.self,                  forKey: .legacyActiveChapterId)
     }
