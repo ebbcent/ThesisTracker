@@ -90,6 +90,21 @@ extension DataStore {
         return Int(ceil(Double(remaining) / Double(days)))
     }
 
+    /// Aperçu pour une échéance : jours restants et quota par jour. Avec le
+    /// calendrier, jours d'écriture ; sans, jours jusqu'à la veille de l'échéance
+    /// (même calcul que `deadlineDailyGoal`).
+    func quotaPreview(remaining: Int, deadline: Date, from now: Date = Date()) -> (days: Int, perDay: Int) {
+        let days: Int
+        if usesWritingCalendar {
+            days = writingDaysRemaining(until: deadline, from: now)
+        } else {
+            let cal = DataStore.gregorianCal
+            days = max(0, cal.dateComponents([.day], from: cal.startOfDay(for: now), to: cal.startOfDay(for: deadline)).day ?? 0)
+        }
+        guard remaining > 0 else { return (days, 0) }
+        return (days, Int(ceil(Double(remaining) / Double(max(1, days)))))
+    }
+
     // MARK: Série selon le calendrier
 
     /// Jour qui ne casse ni n'allonge la série : non prévu, repos ou en pause.

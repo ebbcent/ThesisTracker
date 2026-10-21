@@ -40,6 +40,21 @@ struct WritingScheduleSettingsView: View {
                 .disabled(workdays.isEmpty)
             }
             Divider().padding(.leading, 48)
+            settingRow(icon: "doc.plaintext", color: .accent,
+                       title: "Équivalent en pages",
+                       subtitle: "Affiché à côté des totaux du chapitre et du reste à écrire") {
+                Picker("", selection: Binding(
+                    get: { schedule.charsPerPage ?? 0 },
+                    set: { value in store.updateWritingSchedule { $0.charsPerPage = value > 0 ? value : nil } }
+                )) {
+                    ForEach(DataStore.pagePresets, id: \.chars) { preset in
+                        Text(preset.label).tag(preset.chars)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: 210)
+            }
+            Divider().padding(.leading, 48)
             settingRow(icon: "flame.fill", color: .accentWarm,
                        title: "Série",
                        subtitle: rule == .scheduled

@@ -2951,7 +2951,7 @@ class DataStore: ObservableObject {
 
     func estimatedCompletionDate(for projectId: UUID, lookbackDays: Int = 14) -> Date? {
         guard let project = data.projects.first(where: { $0.id == projectId }) else { return nil }
-        let chapters = project.chapters.filter { !$0.isCompleted && $0.goal > 0 }
+        let chapters = project.chapters.filter { !$0.isCompleted && $0.goal > 0 && $0.countsInThesisTotal }
         guard !chapters.isEmpty else { return nil }
 
         let remaining = chapters.reduce(0) { total, chapter in
@@ -4426,7 +4426,7 @@ class DataStore: ObservableObject {
         let cal = DataStore.gregorianCal
         var totalGoal = 0; var totalWritten = 0
         for proj in data.projects where !proj.isArchived {
-            for ch in proj.chapters where !ch.isCompleted {
+            for ch in proj.chapters where !ch.isCompleted && ch.countsInThesisTotal {
                 totalGoal += ch.goal
                 if let latest = ch.entries.max(by: { $0.date < $1.date }) {
                     totalWritten += latest.totalCount

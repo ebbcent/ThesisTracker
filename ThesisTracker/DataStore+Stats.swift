@@ -12,7 +12,7 @@ extension DataStore {
     var thesisRemainingChars: Int {
         if let c = _thesisRemainingCharsCache, c.version == dataVersion { return c.value }
         let value = data.projects.flatMap { $0.chapters }.reduce(0) { sum, ch in
-            guard !ch.isCompleted, ch.goal > 0 else { return sum }
+            guard !ch.isCompleted, ch.goal > 0, ch.countsInThesisTotal else { return sum }
             let latest = ch.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
             return sum + max(0, ch.goal - latest)
         }

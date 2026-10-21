@@ -323,6 +323,8 @@ struct ChapterFormView: View {
     @State private var showHistory: Bool = false  // V5 — historique de contexte (#9)
     @State private var chapterPriority: ChapterPriority = .normal  // #35
     @State private var tagsText: String = ""                        // #36 — comma-separated
+    @State private var goalKind: ChapterGoalKind = .atLeast           // 5.10
+    @State private var excludedFromTotal: Bool = false                // 5.10
 
     var isEditing: Bool { chapter != nil }
 
@@ -337,6 +339,7 @@ struct ChapterFormView: View {
 
                 DarkFormField(label: "Nom du chapitre", placeholder: "ex: Chapitre 1 — Introduction", text: $name)
                 DarkFormField(label: "Objectif (en caractères, optionnel)", placeholder: "ex: 20000 — laisser vide si aucun", text: $goalText)
+                ChapterGoalOptionsView(goalKind: $goalKind, excludedFromTotal: $excludedFromTotal)
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Notes (optionnel)")
                         .font(.system(size: 12, weight: .medium))
@@ -438,6 +441,7 @@ struct ChapterFormView: View {
                                 minDate: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
                             )
                         }
+                        DeadlineSimulatorView(store: store, chapter: chapter, goalText: goalText, deadline: deadlineDate)
                     }
                 }
 
@@ -508,6 +512,8 @@ struct ChapterFormView: View {
                 draftVersion     = ch.draftVersion
                 chapterPriority  = ch.priority
                 tagsText         = ch.customTags.joined(separator: ", ")
+                goalKind         = ch.effectiveGoalKind
+                excludedFromTotal = !ch.countsInThesisTotal
                 if let deadline = ch.deadline, let parsed = DataStore.parseDate(deadline) {
                     hasDeadline  = true
                     deadlineDate = parsed
@@ -541,6 +547,8 @@ struct ChapterFormView: View {
             updated.draftVersion = draftVersion
             updated.priority     = chapterPriority
             updated.customTags   = parsedTags
+            updated.goalKind     = goalKind == .atLeast ? nil : goalKind
+            updated.excludedFromThesisTotal = excludedFromTotal ? true : nil
             store.updateChapter(updated, in: projectId)
         } else {
             store.addChapter(name: trimmed, goal: goal, deadline: deadline,
@@ -553,6 +561,13 @@ struct ChapterFormView: View {
                let chapIdx = store.data.projects[projIdx].chapters.indices.last {
                 store.data.projects[projIdx].chapters[chapIdx].priority = chapterPriority
                 store.data.projects[projIdx].chapters[chapIdx].customTags = parsedTags
+                store.save()
+            }
+            if goalKind != .atLeast || excludedFromTotal,
+               let projIdx = store.data.projects.firstIndex(where: { $0.id == projectId }),
+               let chapIdx = store.data.projects[projIdx].chapters.indices.last {
+                store.data.projects[projIdx].chapters[chapIdx].goalKind = goalKind == .atLeast ? nil : goalKind
+                store.data.projects[projIdx].chapters[chapIdx].excludedFromThesisTotal = excludedFromTotal ? true : nil
                 store.save()
             }
         }

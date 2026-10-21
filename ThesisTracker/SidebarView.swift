@@ -2510,6 +2510,12 @@ struct ChapterSidebarRow: View {
                             .background(Color.accent.opacity(0.1))
                             .clipShape(Capsule())
                     }
+                    if !chapter.countsInThesisTotal {
+                        Image(systemName: "tray.full")
+                            .font(.system(size: 9))
+                            .foregroundColor(.labelMuted.opacity(0.7))
+                            .help("Hors total de la thèse")
+                    }
                     if chapter.isCompleted {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 10)).foregroundColor(.accentGreen)

@@ -466,6 +466,8 @@ struct Chapter: Codable, Identifiable {
     var hiddenWidgets: [String] = []                // widgets masqués sur le tableau de bord de ce chapitre
     var isArchived: Bool = false                    // chapitre mis à l'écart (toujours dans le projet, masqué par défaut)
     var isPinned: Bool = false                      // épinglé en haut de la sidebar
+    var goalKind: ChapterGoalKind? = nil            // 5.10 — nil = « au moins » (plancher)
+    var excludedFromThesisTotal: Bool? = nil        // 5.10 — annexes, dictionnaire…
 
     // Initializer de commodité (remplace le memberwise init supprimé par le custom decoder)
     init(name: String, goal: Int, deadline: String? = nil, notes: String? = nil,
@@ -508,6 +510,8 @@ struct Chapter: Codable, Identifiable {
         hiddenWidgets   = (try? c.decodeIfPresent(LossyArray<String>.self,             forKey: .hiddenWidgets))?.elements ?? []
         isArchived      = (try? c.decodeIfPresent(Bool.self,                 forKey: .isArchived))   ?? false
         isPinned        = (try? c.decodeIfPresent(Bool.self,                 forKey: .isPinned))     ?? false
+        goalKind        = try? c.decodeIfPresent(ChapterGoalKind.self,      forKey: .goalKind)
+        excludedFromThesisTotal = try? c.decodeIfPresent(Bool.self,         forKey: .excludedFromThesisTotal)
     }
 
     /// La relecture en cours (la plus récente).
