@@ -53,6 +53,8 @@ struct PomodoroSessionNoteSheet: View {
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.primary.opacity(0.08), lineWidth: 1))
             }
 
+            FocusQualityPicker(quality: $controller.focusQualityDraft)
+
             HStack {
                 Spacer()
                 Button("Enregistrer") {

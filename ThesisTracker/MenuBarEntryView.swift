@@ -177,6 +177,15 @@ struct MenuBarEntryView: View {
                 }
             }
 
+            // 5.11 — intention de la session en cours
+            if pomodoroController.timerSnapshot.phase.activeMode == .focus,
+               let intention = pomodoroController.activeIntention {
+                Label(intention, systemImage: "scope")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
+
             HStack(spacing: 6) {
                 if case .idle = pomodoroController.timerSnapshot.phase, let next = pomodoroController.pendingNextMode {
                     Button(next == .focus ? "Démarrer la session" : "Démarrer la pause") {

@@ -220,6 +220,9 @@ struct PomodoroSessionRecord: Codable, Identifiable, Hashable {
     // Lien vers le chapitre DataStore (feature #6)
     var writingProjectId: UUID? = nil
     var writingChapterId: UUID? = nil
+    // 5.11 — intention de la session et bilan de concentration (1 distrait, 2 neutre, 3 concentré)
+    var intention: String? = nil
+    var focusQuality: Int? = nil
 }
 
 struct PomodoroWorkBlockRecord: Codable, Identifiable, Hashable {

@@ -1001,6 +1001,7 @@ struct AppData: Codable {
     var monthlyReports: [MonthlyReport] = []    // Bilans mensuels auto-générés
     var adminTasks: [AdminTask] = []            // Checklist administrative
     var writingSchedule: WritingSchedule? = nil // 5.9 — calendrier d'écriture synchronisé
+    var writingSlots: [WritingSlot]? = nil      // 5.11 — créneaux d'écriture récurrents
 
     // Legacy migration fields (old format had chapters at top level)
     var legacyChapters: [Chapter]?
@@ -1012,7 +1013,7 @@ struct AppData: Codable {
         case pinnedDates, weeklyChallenges, researchEntries
         case weeklyPlans, restDays, targetDefenseDate
         case journalEntries, fragments, monthlyReports, adminTasks
-        case writingSchedule
+        case writingSchedule, writingSlots
         case legacyChapters = "chapters"
         case legacyActiveChapterId = "activeChapterId"
     }
@@ -1041,6 +1042,7 @@ extension AppData {
         monthlyReports             = (try? c.decodeIfPresent(LossyArray<MonthlyReport>.self,       forKey: .monthlyReports))?.elements             ?? []
         adminTasks                 = (try? c.decodeIfPresent(LossyArray<AdminTask>.self,           forKey: .adminTasks))?.elements                 ?? []
         writingSchedule            = try? c.decodeIfPresent(WritingSchedule.self,       forKey: .writingSchedule)
+        writingSlots               = (try? c.decodeIfPresent(LossyArray<WritingSlot>.self,         forKey: .writingSlots))?.elements
         legacyChapters             = (try? c.decodeIfPresent(LossyArray<Chapter>.self,             forKey: .legacyChapters))?.elements
         legacyActiveChapterId      = try? c.decodeIfPresent(UUID.self,                  forKey: .legacyActiveChapterId)
     }

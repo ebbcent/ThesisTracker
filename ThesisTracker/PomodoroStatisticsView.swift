@@ -94,6 +94,8 @@ struct PomodoroStatisticsView: View {
                     contributionCard
                     distributionCard
                 }
+
+                FocusQualityCard()
             }
             .padding(28)
         }

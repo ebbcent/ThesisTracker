@@ -251,6 +251,11 @@ struct SettingsView: View {
                             WritingScheduleSettingsView(store: store)
                         }
 
+                        // ── Créneaux d'écriture (5.11) ─────────────────
+                        settingsSection("CRÉNEAUX D'ÉCRITURE") {
+                            WritingSlotsSettingsView(store: store)
+                        }
+
                         // ── Raccourcis clavier (#40) ──────────────��────
                         settingsSection("RACCOURCIS CLAVIER (⌘⇧ + …)") {
                             VStack(spacing: 0) {

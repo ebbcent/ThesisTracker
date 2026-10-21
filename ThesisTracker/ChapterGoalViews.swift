@@ -52,15 +52,15 @@ struct ChapterGoalStatusLine: View {
         switch (chapter.effectiveGoalKind, state) {
         case (.atLeast, .reached) where over > 0:
             let pct = Int((Double(total) / Double(chapter.goal) * 100).rounded())
-            return ("+\(store.formatCount(over)) au-delà de l'objectif (\(pct) %)", .accentGreen)
+            return ("+\(store.formatCount(over)) au-delà de l'objectif (\(pct) %)", Color.accentGreen)
         case (.atMost, .inProgress):
-            return ("Plafond : encore \(store.formatCount(chapter.goal - total))", .labelMuted)
+            return ("Plafond : encore \(store.formatCount(chapter.goal - total))", Color.labelMuted)
         case (.atMost, .overCeiling):
-            return ("Plafond dépassé de \(store.formatCount(over))", .accentWarm)
+            return ("Plafond dépassé de \(store.formatCount(over))", Color.accentWarm)
         case (.around, .reached):
-            return ("Dans la cible (±10 %)", .accentGreen)
+            return ("Dans la cible (±10 %)", Color.accentGreen)
         case (.around, .overCeiling):
-            return ("Au-dessus de la cible de \(store.formatCount(over))", .accentWarm)
+            return ("Au-dessus de la cible de \(store.formatCount(over))", Color.accentWarm)
         default:
             return nil
         }
