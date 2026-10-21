@@ -1,0 +1,627 @@
+fonction,domaine,ou_dans_l_app,fichiers,source,notes
+Vérifier les mises à jour à la demande (menu Writing Process > Rechercher les mises à jour…),reglages,Menu app > Rechercher les mises à jour…,ThesisTrackerApp.swift:153; AppUpdater.swift,code+protocole,Interroge l'API GitHub Releases
+"Ouvrir les Réglages (⌘,)",reglages,"Menu app > Réglages… / ⌘,",ThesisTrackerApp.swift:157; SettingsView.swift,code,
+Annuler / Rétablir la dernière modification de données (⌘Z / ⌘⇧Z),donnees-sync,Menu Édition / ⌘Z ⌘⇧Z,ThesisTrackerApp.swift:165; DataStore.swift,code+protocole,"Si un champ texte a le focus, l'annulation du champ est utilisée; sinon pile du store (50 états)"
+Exporter les données via le menu Fichier (⌘⇧E),export-import,Menu Fichier > Exporter les données… / ⌘⇧E,ThesisTrackerApp.swift:185; ExportView.swift,code,Ouvre la feuille ExportView
+"Afficher l'historique (menu Historique, ⌘⇧H)",interface-navigation,Menu Historique / ⌘⇧H,ThesisTrackerApp.swift:191; MainView.swift:425,code+protocole,
+"Afficher les accomplissements (menu Accomplissements, ⌘⇧B)",interface-navigation,Menu Accomplissements / ⌘⇧B,ThesisTrackerApp.swift:198,code,
+Choisir l'interface Version Actuelle (VA) ou Version Papier (VD) (⌥⌘1 / ⌥⌘2 / bascule ⌥⌘T),interface-navigation,Menu Affichage,ThesisTrackerApp.swift:204; MainView.swift:338; PaperDashboardView.swift,code,interfaceMode AppStorage; VD = tableau de bord PaperDashboardView
+"Icône barre des menus colorée selon l'avancement de l'objectif du jour, avec série et total du jour",interface-navigation,Barre des menus macOS,ThesisTrackerApp.swift:231,code,"Vert ≥100 %, jaune ≥50 %, orange >0; flamme si série ≥2; affiche minuteur Pomodoro restant pendant une session"
+"Fenêtre de la barre des menus : choisir projet/chapitre, saisir le total (Aujourd hui ou Hier), progression du jour",saisie,Barre des menus macOS,MenuBarEntryView.swift:3; ThesisTrackerApp.swift:231,code,
+Mémoriser taille et position de la fenêtre principale entre lancements,interface-navigation,Fenêtre principale,ThesisTrackerApp.swift:16,code,Fichier window-frame.txt écrit atomiquement; rejet si hors écran; taille mini 900×600
+Ouvrir un projet ou un chapitre depuis un résultat Spotlight (deep-link),donnees-sync,Spotlight macOS,ThesisTrackerApp.swift:140; SpotlightIndexer.swift,code,Active projet/chapitre puis va au tableau de bord
+Raccourci global ⌃⌥P : démarrer/mettre en pause le Pomodoro depuis n'importe quelle app,pomodoro,Raccourci global,ThesisTrackerApp.swift:310; GlobalHotKeys.swift,code+protocole,"Démarre la session recommandée si une est en attente, sinon focus"
+Raccourci global ⌃⌥N : saisie rapide flottante,saisie,Raccourci global,ThesisTrackerApp.swift:326; QuickEntryView.swift,code+protocole,
+Raccourci global ⌃⌥+lettre configurable : ouvrir le mode Focus d'écriture,concentration,Raccourci global,ThesisTrackerApp.swift:331; GlobalHotKeys.swift,code+protocole,Lettre réglable (globalFocusKey)
+Ajouter au chapitre actif les mots saisis à la fin d'une session Pomodoro,pomodoro,Minuteur (fin de session),ThesisTrackerApp.swift:130,code,onSaveWordCount : total du jour + mots de la session
+"Naviguer entre 14 vues (Vue d'ensemble, Tableau de bord, Échéances, Recherche, Graphiques, Activité, Historique, Calendrier, Minuteur, Accomplissements, Kanban, Statistiques, Table des matières, Bibliothèque de widgets)",interface-navigation,Barre latérale,MainView.swift:21,code+protocole,enum NavItem
+Raccourcis ⌘1 à ⌘9 vers les neuf premières vues,interface-navigation,Clavier,MainView.swift:130,code+protocole,Vue d'ensemble ⌘1 … Minuteur ⌘9
+"Mode focus de l'interface (masque la barre latérale, ⌘⇧F)",concentration,⌘⇧F,MainView.swift:136,code+protocole,Pastille « Mode focus — ⌘⇧F pour quitter »
+Palette de commandes (⌘K),interface-navigation,⌘K,MainView.swift:145; CommandPaletteView.swift,code+protocole,
+Enregistrer la saisie du tableau de bord (⌘S),saisie,⌘S,MainView.swift:148,code,
+Placer le curseur dans le champ de saisie (⌘N),saisie,⌘N,MainView.swift:150,code,
+"Mode Focus d'écriture immersif (⌘⇧I, lettre configurable)",concentration,⌘⇧I,MainView.swift:154; FocusWritingView.swift,code,shortcutFocusKey réglable
+"Sprint d'écriture (⌘⇧T, lettre configurable)",concentration,⌘⇧T,MainView.swift:156; WritingSprintView.swift,code,shortcutSprintKey réglable
+Mode présentation (⌥⌘P),directeur-soutenance,⌥⌘P,MainView.swift:158; PresentationModeView.swift,code,
+Mode « Aujourd'hui » plein écran (⌘⇧J),saisie,⌘⇧J,MainView.swift:160; TodayModeView.swift,code,
+Session bloquée / mode panne (⌘⇧D),concentration,⌘⇧D,MainView.swift:163; BlockedSessionSheet.swift,code+protocole,
+Mode Sanctuaire (⌥⌘⇧K),concentration,⌥⌘⇧K,MainView.swift:165; SanctuaryMode.swift,code,
+Titre de la fenêtre = nom du projet actif,interface-navigation,Fenêtre principale,MainView.swift:172,code,
+"Barre latérale redimensionnable par glisser (220–420 pt), largeur mémorisée",interface-navigation,Poignée entre barre latérale et contenu,MainView.swift:589,code+protocole,
+Masquer automatiquement la barre latérale au démarrage d'un focus Pomodoro depuis l'onglet Minuteur,pomodoro,Minuteur,MainView.swift:177,code,
+Comptage automatique des sessions Pomodoro de la semaine ISO pour les défis,series-motivation,Fond,MainView.swift:183,code,setWeeklyPomodoroSessionCount
+Cooldown proposé automatiquement après une session focus ≥ 45 min,concentration,Après session Pomodoro,MainView.swift:193; CooldownSheet.swift,code,Durée active hors pauses/veille
+Invite post-session « Tu as écrit combien de caractères ? » avec bouton Saisir (8 s),pomodoro,Bandeau bas après session focus,MainView.swift:1355,code,Ouvre la saisie rapide
+Mesure du delta écrit pendant une session focus Pomodoro,pomodoro,Fond,MainView.swift:195,code,sessionWritingDelta
+Bandeau de conflit iCloud : choisir la version Locale ou iCloud,donnees-sync,Bandeau bas,MainView.swift:224; DataStore.swift:4171; DataStore.swift:4200,code,"Montre nb d'entrées et date de chaque version. non branchée ? checkForConflict() n'est appelé nulle part, donc le bandeau ne s'affiche jamais (la fusion automatique l'a remplacé)"
+Écran d'accueil (onboarding) au premier lancement sans projet,interface-navigation,Feuille au lancement,MainView.swift:382; OnboardingView.swift,code,
+Génération automatique du bilan mensuel au lancement,statistiques,"Fond (2,5 s après lancement)",MainView.swift:388; DataStore.swift,code,checkAndGenerateMonthlyReport
+Thème sombre forcé (Slate),reglages,Réglages,MainView.swift:379,code,forceDarkMode
+Barre de statut : indicateur iCloud (synchro en cours / OK),donnees-sync,Barre de statut haute,MainView.swift:641,code,
+Barre de statut : série active en jours,series-motivation,Barre de statut haute,MainView.swift:669,code,
+Barre de statut : total du jour / objectif journalier effectif,objectifs,Barre de statut haute,MainView.swift:690,code,
+Barre de statut : vitesse moyenne sur 14 jours,statistiques,Barre de statut haute,MainView.swift:718,code,velocity14Days
+Barre de statut : progression hebdo (% objectif),objectifs,Barre de statut haute,MainView.swift:732,code,
+Barre de statut : % du chapitre actif,chapitres-structure,Barre de statut haute,MainView.swift:757,code,
+Barre de statut : date de fin estimée du projet et jours restants,echeances-pilotage,Barre de statut haute,MainView.swift:779,code,estimatedCompletionDate
+Centre de notifications in-app (cloche avec badge non lus),notifications,Barre de statut haute > cloche,MainView.swift:805; NotificationCenterView.swift; AppNotificationStore.swift,code,
+Copier le résumé du jour dans le presse-papiers,export-import,Barre de statut haute > icône copier,MainView.swift:854,code,Format « +N · chapitre · % »
+"Récap de la semaine passée (overlay) : écrits, jours actifs, record, top projet, Pomodoro, défi",statistiques,Overlay bas,MainView.swift:885,code,prevWeekStats
+"Bilan du jour (overlay) : écrits, % objectif, meilleur projet, série",statistiques,Overlay bas (à partir de 19h),MainView.swift:1067,code+protocole,
+"Toasts de jalons : badges de série (3, 7, 14, 30, 60, 100, 200, 365 jours)",series-motivation,Toast bas,MainView.swift:1198,code,"Étincelle, Régulier, Persévérant, Acharné, Légende, Immortel, Titan, Année pleine"
+"Toasts de caps de volume (100 000, 500 000, 1 M, 2 M, 5 M caractères)",series-motivation,Toast bas,MainView.swift:1212,code,
+Toast chapitre terminé / premier chapitre terminé,series-motivation,Toast bas,MainView.swift:1254,code,
+Toast % du projet atteint (paliers) / projet complété,series-motivation,Toast bas,MainView.swift:1260,code,
+Toast nouveau record journalier personnel,series-motivation,Toast bas,MainView.swift:1264,code,
+Toast défi hebdomadaire relevé,series-motivation,Toast bas,MainView.swift:1256,code,
+Bandeau du lundi « Rapport hebdomadaire disponible » ouvrant l'export,export-import,Bandeau bas (lundi),MainView.swift:1416,code,
+"Types de projet : Thèse, Article, Livre, Mémoire, Rapport, Autre",chapitres-structure,Création/édition de projet,Models.swift:6,code,ProjectType
+"Jalons de projet (titre, date, notes) avec récurrence hebdo/mensuelle",echeances-pilotage,Échéances / projet,Models.swift:237,code,Milestone.recurrence
+"Rappel de jalon personnalisable (jours avant, heure)",notifications,Édition de jalon,Models.swift:245; NotificationManager.swift,code,"reminderDays défaut 7, reminderHour défaut 9"
+Lier un jalon à un chapitre,echeances-pilotage,Édition de jalon,Models.swift:248,code,linkedChapterId
+"Statut de jalon : En attente, Soumis, En révision, Validé, Rejeté",echeances-pilotage,Échéances,Models.swift:194,code,
+"Tags couleur (Rouge…Gris) sur projets et chapitres, style Finder",chapitres-structure,Barre latérale (menu contextuel),Models.swift:288,code+protocole,
+Dossiers de projets imbriqués (repliables),chapitres-structure,Barre latérale,Models.swift:306,code+protocole,ProjectFolder.parentId
+Dossiers de chapitres imbriqués dans un projet,chapitres-structure,Barre latérale,Models.swift:317,code,ChapterFolder
+"Journal d'historique du chapitre (notes manuelles, mises à jour compteur, statut, brouillon, notes de séance)",chapitres-structure,Historique du chapitre,Models.swift:327; ChapterHistoryView.swift,code,ChapterLogEntry.LogType
+"Historique des modifications d'une entrée (ancienne/nouvelle valeur, horodatage)",saisie,Popover historique de l'entrée,Models.swift:362; EntryEditHistoryPopover.swift,code,EntryEditRecord
+Entrée quotidienne = total cumulé du chapitre à une date; incrément = total − total précédent,saisie,Tableau de bord,Models.swift:375; Models.swift:543,code+protocole,"increment = max(0, total − précédent)"
+Note attachée à une entrée quotidienne,saisie,Tableau de bord,Models.swift:379,code,DailyEntry.note
+Heure de saisie enregistrée (seulement pour le jour même),saisie,Fond,Models.swift:380,code+protocole,savedAtHour
+Niveau d'énergie 1–5 sur une entrée,saisie,Saisie,Models.swift:382,code,DailyEntry.energyLevel
+"Jour de correction : total en baisse possible, variation nette négative affichée",saisie,Tableau de bord / Historique,Models.swift:383; Models.swift:550,code+protocole,isCorrection; netChange peut être négatif
+"Statut de chapitre : Plan, Rédaction, Révision, Terminé",chapitres-structure,Menu ··· du chapitre > ChapterStatusPickerView,Models.swift:406; ChapterStatusPickerView.swift,code+protocole,Synchronise isCompleted
+Objectif de taille par chapitre,objectifs,Édition de chapitre,Models.swift:445,code+protocole,Chapter.goal
+Échéance (deadline) par chapitre,echeances-pilotage,Édition de chapitre / Échéances,Models.swift:449,code+protocole,
+"Notes de chapitre en 5 champs : générales, plan, idées, blocages, prochaine action",notes-journal,Notes du chapitre,Models.swift:450,code,
+Numéro de version du brouillon (draft) d'un chapitre,chapitres-structure,Chapitre,Models.swift:457,code,draftVersion
+"Priorité de chapitre : Haute, Normale, Basse",chapitres-structure,Chapitre,Models.swift:558,code,
+Tags libres sur les chapitres,chapitres-structure,Chapitre,Models.swift:460,code,customTags
+Sous-chapitres (un niveau),chapitres-structure,Table des matières,Models.swift:461; TableOfContentsView.swift:206,code,Affichés seulement dans la Table des matières ; non branchée ? aucune interface ne permet d'en créer
+Archiver un chapitre (masqué par défaut),chapitres-structure,Barre latérale,Models.swift:467,code,
+Épingler un chapitre ou un projet en haut de la barre latérale,chapitres-structure,Barre latérale,Models.swift:468; Models.swift:589,code,
+Mémoriser par chapitre les widgets masqués (champ hiddenWidgets),interface-navigation,Bibliothèque de widgets,Models.swift:466,code,"Utilisé par la Bibliothèque de widgets, pas par le tableau de bord principal"
+Directeur / co-auteur renseigné par projet,directeur-soutenance,Édition de projet,Models.swift:585,code,Project.supervisor
+Notes libres de projet,notes-journal,Projet,Models.swift:587,code,
+Archiver un projet,chapitres-structure,Barre latérale,Models.swift:588,code,
+Dates épinglées avec libellé dans le calendrier,echeances-pilotage,Calendrier,Models.swift:621; CalendarView.swift,code+protocole,
+"Cycle de relecture directeur : Non envoyé, Envoyé, Retour reçu, Intégré (dates, retour attendu, notes, version)",directeur-soutenance,Carte relecture directeur,Models.swift:120; SupervisorReviewCard.swift,code,daysSinceSent calculé
+"Points de sauvegarde (checkpoints) de chapitre : figent notes, plan, idées, blocages, prochaine action, total, version",chapitres-structure,ChapterCheckpointsView,Models.swift:66; ChapterCheckpointsView.swift,code,"Déclencheurs manuel, avant envoi en relecture, après intégration du retour"
+"Défis hebdomadaires : 6 types (mots, série, sessions Pomodoro, jours écrits, chapitres terminés, chapitres avancés)",series-motivation,Carte défi,Models.swift:629; WeeklyChallengeCard.swift,code+protocole,
+"Journal de bord doctoral (texte, humeur 1–5, tags)",notes-journal,JournalView,Models.swift:683; JournalView.swift,code,Humeur : non branchée ? aucune interface ne la saisit ; tags posés automatiquement seulement (ex. « cooldown »)
+"Carnet de fragments (tags, archivage, déplacement vers un chapitre)",notes-journal,FragmentsView,Models.swift:717; FragmentsView.swift,code,"Tags posés automatiquement seulement (ex. « sanctuaire »), pas de saisie manuelle"
+"Bilans mensuels enregistrés (caractères, jours actifs, chapitres finis, meilleur jour, série, titre, notes personnelles)",statistiques,MonthlyReportView,Models.swift:754; MonthlyReportView.swift,code,
+"Auto-évaluation de chapitre : clarté, argumentation, citations, transitions, originalité (1–5)",chapitres-structure,SelfReviewView,Models.swift:770; SelfReviewView.swift,code,Moyenne des 5 critères
+"Checklist administrative : formulaire, rendez-vous, jalon académique, autorisation, autre (échéance, notes)",echeances-pilotage,AdminChecklistView,Models.swift:788; AdminChecklistView.swift,code,
+"Plan de bataille hebdomadaire : tâches cochables, lien optionnel à un chapitre",echeances-pilotage,WeeklyPlanWidget,Models.swift:862; WeeklyPlanWidget.swift,code,Taux de complétion. Lien chapitre (chapterId) : non branchée ? aucune interface ne le renseigne
+"Notes de soutenance par chapitre : à défendre, question probable, contre-argument",directeur-soutenance,DefenseNotesView,Models.swift:886; DefenseNotesView.swift,code,
+"Temps de recherche : lecture, analyse, réunion, terrain, enseignement, autre (durée, note, projet/chapitre)",saisie,ResearchTimeCard,Models.swift:923; ResearchTimeCard.swift,code,
+"Objectifs globaux journalier, hebdomadaire, mensuel",objectifs,Réglages,Models.swift:980,code+protocole,Défauts 500 / 3000 / 15000
+Tri alphabétique des projets / des chapitres,interface-navigation,Barre latérale,Models.swift:986,code,
+Comptage en caractères ou en mots,reglages,Réglages,Models.swift:988,code+protocole,useWordCount; mots = caractères ÷ 5 selon protocole
+Jours de repos planifiés,series-motivation,Widget Énergie & repos / mode Aujourd hui,Models.swift:993; WellbeingWidget.swift,code,restDays ; seul aujourd'hui peut être marqué (pas de planification à l'avance dans le calendrier)
+Date cible de soutenance,directeur-soutenance,DefenseDateWidget,Models.swift:994; DefenseDateWidget.swift,code,targetDefenseDate
+Migration de l'ancien format (chapitres au niveau racine),donnees-sync,Fond (chargement),Models.swift:1000,code,legacyChapters
+Décodage tolérant de chaque champ (valeurs par défaut si absent) et LossyArray élément par élément,donnees-sync,Fond (chargement),Models.swift; DataSync.swift,code+protocole,
+"Stockage principal dans iCloud Drive (Writing Process/data.json), repli local si iCloud absent",donnees-sync,Fond,DataStore.swift:184,code+protocole,
+Migration automatique des anciennes données locales/legacy vers iCloud si iCloud vide,donnees-sync,Fond (lancement),DataStore.swift:313,code,"Noms legacy : WritingTracker, ThesisTracker"
+"Attente du téléchargement iCloud du fichier (.icloud) avant lecture, nouvel essai toutes les 10 s",donnees-sync,Fond,DataStore.swift:342; DataStore.swift:440,code+protocole,Attente max 20 s
+Aucune écriture tant que data.json n'a pas été chargé correctement (message d'erreur visible),donnees-sync,Fond / icône rouge barre latérale,DataStore.swift:515,code+protocole,"isLoaded, saveErrorMessage"
+Élément illisible ignoré seul + copie du fichier dans Recovery/ avec avertissement,donnees-sync,Fond / message de chargement,DataStore.swift:464,code+protocole,
+Fichier illisible : copie dans Recovery/ et invitation à restaurer un snapshot,donnees-sync,Message d'erreur,DataStore.swift:471,code+protocole,
+Fusion automatique des copies en conflit iCloud puis suppression (copie dans Recovery/),donnees-sync,Fond,DataStore.swift:389,code+protocole,
+Fusion à trois voies quand l'autre Mac a écrit entre deux sauvegardes,donnees-sync,Fond,DataStore.swift:576; DataSync.swift,code+protocole,Modification de ce Mac prioritaire en cas de conflit
+"Sauvegarde différée (debounce 0,35 s, attente max 2 s) sur file d'E/S série",donnees-sync,Fond,DataStore.swift:515,code+protocole,
+Copie de secours locale du dernier état écrit (Application Support),donnees-sync,Fond,DataStore.swift:618,code+protocole,
+Écriture immédiate des modifications en attente à la fermeture de l'app,donnees-sync,Fond (quitter),DataStore.swift:681,code+protocole,
+Badge du Dock : % de l'objectif du jour ou ✓ si atteint,interface-navigation,Dock macOS,DataStore.swift:640,code,
+Titre de fenêtre « Writing Process — +N aujourd'hui » après sauvegarde,interface-navigation,Fenêtre,DataStore.swift:637,code,
+"Indicateur de sauvegarde (1,5 s)",interface-navigation,Interface,DataStore.swift:648,code,showSaveIndicator
+Snapshots automatiques : 30 plus récents + 1 par jour sur 60 jours,donnees-sync,Fond,DataStore.swift:723,code+protocole,Dédoublonnés par signature
+Surveillance du dossier data.json et rechargement quand l'autre Mac écrit,donnees-sync,Fond,DataStore.swift:761,code,Ignore ses propres écritures (<3 s)
+Rechargement + vérification bilans/rappels quand l'app redevient active,donnees-sync,Fond,DataStore.swift:794,code,
+"Affichage des nombres en caractères (« car. ») ou en mots (÷5, « mots »)",reglages,Partout,DataStore.swift:837,code+protocole,
+Tri des chapitres par progression (moins avancés en premier),interface-navigation,Barre latérale,DataStore.swift:878,code,UserDefaults sortChaptersByProgress
+Progression du jour = somme des incréments positifs de tous les chapitres,statistiques,Fond,DataStore.swift:940; DataStore.swift:955,code+protocole,
+Progression hebdomadaire (semaine du lundi à aujourd'hui),objectifs,Tableau de bord,DataStore.swift:959,code,
+Progression « mensuelle » sur 30 jours glissants,objectifs,Tableau de bord,DataStore.swift:975,code,
+Jours actifs et jours restants dans le mois calendaire,statistiques,Widgets,DataStore.swift:1012; DataStore.swift:1030,code,
+Moyenne quotidienne 7 jours (zéros inclus) et sparkline 7 jours,statistiques,Widgets,DataStore.swift:1040; DataStore.swift:1053,code,
+Vitesse d'écriture : moyenne des jours actifs sur 7 jours et tendance vs 7 jours précédents,statistiques,Widget vitesse d'écriture,DataStore.swift:1074; WritingSpeedWidget.swift,code,
+Comparaison semaine en cours vs semaine précédente jour par jour,statistiques,Widget comparaison semaines,DataStore.swift:1109; WeekComparisonWidget.swift,code,
+"Prochains jalons (3 plus proches, en retard signalés)",echeances-pilotage,Widget échéances à venir,DataStore.swift:1142; UpcomingDeadlinesWidget.swift,code,
+Totaux d'hier et d'avant-hier (instantané quotidien),statistiques,Widget instantané,DataStore.swift:1160; DailySnapshotWidget.swift,code,
+"Saisir le total cumulé du jour pour un chapitre (avec annulation, historique d'édition, journal automatique)",saisie,Tableau de bord,DataStore.swift:1175,code,"Historique d'édition limité à 50, journal à 200"
+Supprimer l'entrée d'une date,saisie,Historique,DataStore.swift:1261,code,
+"Créer un projet (nom, type, directeur)",chapitres-structure,Barre latérale / onboarding,DataStore.swift:1270,code,
+Supprimer un projet,chapitres-structure,Barre latérale (menu contextuel),DataStore.swift:1279,code,
+Archiver / désarchiver un projet,chapitres-structure,Barre latérale,DataStore.swift:1307,code,Le projet actif bascule sur un autre non archivé
+"Dupliquer un chapitre (même projet ou vers un autre projet), sans les entrées",chapitres-structure,Barre latérale (menu contextuel),DataStore.swift:1337,code,"Copie notes, statut, priorité, tags, version"
+Alerte de régression : jour < 50 % de la moyenne des 7 jours précédents (≥3 jours actifs),statistiques,Tableau de bord (saisie),DataStore.swift:1363,code,
+Monter / descendre un chapitre dans la liste,chapitres-structure,Barre latérale,DataStore.swift:1394,code,
+Ajouter / modifier / supprimer / cocher un jalon de projet,echeances-pilotage,Échéances,DataStore.swift:1405,code,
+Jalon récurrent : la complétion crée automatiquement l'occurrence suivante (+1 semaine / +1 mois),echeances-pilotage,Échéances,DataStore.swift:1418,code,
+Déplacer un projet dans un dossier,chapitres-structure,Barre latérale (glisser / menu),DataStore.swift:1472,code,
+Créer / renommer / supprimer un dossier de projets (enfants promus au parent),chapitres-structure,Barre latérale,DataStore.swift:1493; DataStore.swift:1505,code,
+Imbriquer / réordonner des dossiers de projets (anti-cycle),chapitres-structure,Barre latérale (glisser-déposer),DataStore.swift:1542; DataStore.swift:1569,code,
+Renommer en ligne un projet / un chapitre,chapitres-structure,Barre latérale,DataStore.swift:1591; DataStore.swift:1600,code,
+"Exporter un projet, un dossier de chapitres ou un chapitre seul en JSON",export-import,Barre latérale (menu contextuel),DataStore.swift:1624,code,SubtreeExportPayload
+Importer un projet / dossier / chapitre exporté (nouveaux identifiants),export-import,Barre latérale (menu contextuel),DataStore.swift:1651,code,
+Plier / déplier tous les dossiers de chapitres d'un projet,interface-navigation,Barre latérale,DataStore.swift:1773,code,
+Créer / renommer / supprimer / imbriquer / réordonner des dossiers de chapitres,chapitres-structure,Barre latérale,DataStore.swift:1804; DataStore.swift:1815; DataStore.swift:1881,code,Suppression : chapitres promus au parent
+"Créer un chapitre (nom, objectif, échéance, notes, version, dossier)",chapitres-structure,Barre latérale,DataStore.swift:1789,code,
+Supprimer un chapitre et toutes ses entrées,chapitres-structure,Barre latérale,DataStore.swift:1923,code,
+Marquer un chapitre terminé / non terminé,chapitres-structure,Barre latérale,DataStore.swift:1936,code,
+Changement de statut journalisé automatiquement dans l'historique du chapitre,chapitres-structure,Fond,DataStore.swift:1944,code,« Statut : X → Y »
+Réordonner les chapitres et projets par glisser-déposer,chapitres-structure,Barre latérale,DataStore.swift:1970; DataStore.swift:2040,code,
+Déplacer un chapitre (avec ses entrées) vers un autre projet / dossier,chapitres-structure,Barre latérale (glisser / menu),DataStore.swift:2002,code,
+"Envoyer un chapitre en relecture (date de retour prévue, checkpoint automatique avant envoi)",directeur-soutenance,Carte relecture directeur,DataStore.swift:2068,code,
+Marquer le retour du directeur reçu (notes de feedback),directeur-soutenance,Carte relecture directeur,DataStore.swift:2093,code,
+Marquer le retour intégré : version du brouillon +1 et checkpoint automatique,directeur-soutenance,Carte relecture directeur,DataStore.swift:2113,code,
+Modifier les notes de retour / annuler le dernier cycle de relecture,directeur-soutenance,Carte relecture directeur,DataStore.swift:2132; DataStore.swift:2141,code,
+Listes des chapitres en attente de retour et des retours non intégrés,directeur-soutenance,—,DataStore.swift:2150; DataStore.swift:2159,code,non branchée ? chaptersAwaitingReview / chaptersWithUnaddressedFeedback ne sont utilisés par aucune vue
+Créer un point de sauvegarde manuel (libellé par défaut « Draft vN »),chapitres-structure,ChapterCheckpointsView,DataStore.swift:2171,code,
+Restaurer un point de sauvegarde (checkpoint « Avant restauration » créé d'abord),chapitres-structure,ChapterCheckpointsView,DataStore.swift:2211,code,Ne touche pas aux entrées
+Supprimer un point de sauvegarde,chapitres-structure,ChapterCheckpointsView,DataStore.swift:2202,code,
+Masquer / réafficher un widget pour un chapitre (« Tout réafficher »),interface-navigation,Bibliothèque de widgets,DataStore.swift:2254; DataStore.swift:2266,code,
+"Plan hebdo : ajouter, cocher (date de fin), modifier, supprimer une tâche ; plan créé à la volée par semaine ISO",echeances-pilotage,WeeklyPlanWidget,DataStore.swift:2281,code,
+Plan de la semaine précédente pour rétrospective,echeances-pilotage,WeeklyPlanWidget,DataStore.swift:2322,code,
+Niveau d'énergie : saisie (1–5) et historique moyen sur 30 jours,saisie,Tableau de bord / Bien-être,DataStore.swift:2334; DataStore.swift:2359,code,
+Marquer / démarquer un jour de repos (aujourd'hui),series-motivation,Widget Énergie & repos,DataStore.swift:2387; WellbeingWidget.swift:161,code,Le jour de repos n'entre pas dans le calcul de la série
+Ajouter / modifier / supprimer une note de soutenance ; vue de toutes les notes du projet,directeur-soutenance,DefenseNotesView,DataStore.swift:2398; DataStore.swift:2426,code,
+"Trois projections de date de fin : vitesse 60 j, 30 j et objectif quotidien idéal",echeances-pilotage,Vue d'ensemble / Statistiques,DataStore.swift:2446,code,Reste = Σ(objectif − total) des chapitres non terminés de projets non archivés
+"Journal : ajouter, modifier, supprimer une entrée (date, humeur bornée 1–5, tags)",notes-journal,JournalView,DataStore.swift:2497,code,
+"Recherche plein texte dans le journal (contenu et tags), tri récent d'abord",notes-journal,JournalView,DataStore.swift:2532,code,
+"Fragments : ajouter, modifier, archiver, désarchiver, supprimer",notes-journal,FragmentsView,DataStore.swift:2548,code,Modifier : non branchée ? updateFragment() n'est appelé nulle part
+Envoyer un fragment dans les idées d'un chapitre (horodaté),notes-journal,FragmentsView,DataStore.swift:2585,code,Ajouté à notesIdeas avec [date]
+Bilan mensuel généré automatiquement pour le mois précédent (titre auto),statistiques,MonthlyReportView,DataStore.swift:2615; DataStore.swift:2652,code,Ne génère rien si aucun projet (sécurité)
+Notes personnelles sur un bilan mensuel,statistiques,MonthlyReportView,DataStore.swift:2661,code,
+"Enregistrer une auto-évaluation de chapitre (5 critères bornés 1–5 + notes, version)",chapitres-structure,SelfReviewView,DataStore.swift:2678,code,
+"Indice « chapitre qui fait mal » : relectures ≥3, checkpoints ≥4, deadline ≤30 j avec <70 %, stagnation ≥14 j",echeances-pilotage,Vue d'ensemble / widget,DataStore.swift:2715,code,"Score 1–5, affiché si ≥2"
+"Checklist administrative : ajouter, modifier, cocher, supprimer ; tri par échéance",echeances-pilotage,AdminChecklistView,DataStore.swift:2767; DataStore.swift:2802,code,
+"Mini-calendrier de la semaine en cours (lettre, n° du jour, écrit, aujourd'hui/futur)",statistiques,Tableau de bord,DataStore.swift:2830,code+protocole,
+"Couleur d'état d'un chapitre selon % objectif (rouge <33, orange <66, ambre <100, vert ≥100)",chapitres-structure,Barre latérale,DataStore.swift:2932,code,
+Date de fin estimée par chapitre (moyenne des jours actifs sur 14 j),echeances-pilotage,Barre latérale / chapitre,DataStore.swift:2877,code,
+Date de fin estimée par projet (moyenne des jours actifs sur 14 j),echeances-pilotage,Barre de statut / projet,DataStore.swift:2948,code,
+% d'achèvement d'un projet (Σ totaux / Σ objectifs),chapitres-structure,Barre latérale,DataStore.swift:2915,code,
+"Série en cours : jours consécutifs avec texte ajouté OU jour marqué Correction, depuis aujourd'hui (ou hier si aujourd'hui vide)",series-motivation,Barre de statut / tableau de bord,DataStore.swift:2981; DataStore.swift:2991,code+protocole,Jours de repos non comptés dans ce calcul; plafond 730 j
+Record de série (plus longue série historique),series-motivation,Accomplissements / barre des menus,DataStore.swift:3006,code+protocole,
+Objectif journalier adaptatif : (objectif hebdo − écrit cette semaine) ÷ jours restants,objectifs,Tableau de bord,DataStore.swift:3033,code+protocole,Signalé s'il diffère de >10 % de l'objectif journalier
+Objectifs journaliers différents par jour de la semaine,objectifs,Réglages,DataStore.swift:3055; DataStore.swift:3074,code,UserDefaults weekdayGoals; objectif effectif du jour
+Rattrapage : +50 % du manqué d'hier si aucun objectif hebdo,objectifs,Carte Session du jour,DataStore.swift:3091,code+protocole,catchUpAmount
+"Objectif intelligent du jour (adaptatif si hebdo, sinon journalier + rattrapage)",objectifs,Carte Session du jour,DataStore.swift:3100,code+protocole,todaySmartGoal
+Objectif journalier dérivé de l'échéance du chapitre actif (reste ÷ jours restants),objectifs,Tableau de bord,DataStore.swift:3107,code,deadlineDailyGoal
+Annuler jusqu'à 0 conserve l'entrée si elle porte une note ou une énergie,saisie,Menu Édition,DataStore.swift:3145,code+protocole,
+"Déclenchement du bilan du jour : une fois par jour, après 19h, si du texte a été écrit (+ notification)",statistiques,Overlay bas,DataStore.swift:3188,code+protocole,
+"Déclenchement du récap hebdo : le lundi à partir de 8h si la semaine passée a des données, une fois par semaine",statistiques,Overlay bas,DataStore.swift:3248,code,
+Couleur d'accent personnalisable (défaut #F59E0B),reglages,Réglages > Apparence,DataStore.swift:3270,code,
+Épingler / désépingler une date du calendrier et modifier son libellé,echeances-pilotage,Calendrier,DataStore.swift:3282,code,
+Créer un projet depuis un modèle avec ses chapitres et objectifs,chapitres-structure,ChapterListView (modèles),DataStore.swift:3299; ChapterListView.swift,code,
+Badges de série débloqués à vie selon le record (3…365 j),series-motivation,Accomplissements,DataStore.swift:3332,code,
+Toast de badge de série déclenché une seule fois par palier (mémorisé),series-motivation,Toast,DataStore.swift:3392,code,UserDefaults toastedStreakMilestones
+"Paliers de projet 50 %, 75 %, 100 % célébrés une fois par projet",series-motivation,Toast,DataStore.swift:3425,code,
+Record journalier célébré si ≥ 1000 caractères et supérieur à tous les jours précédents,series-motivation,Toast,DataStore.swift:3448,code,
+Invite rapport hebdomadaire le lundi si données la semaine précédente (une fois),export-import,Bandeau bas (lundi),DataStore.swift:3356,code,
+Défi hebdomadaire généré automatiquement chaque semaine ISO depuis un calendrier fixe de 52 défis,series-motivation,Carte défi hebdo,DataStore.swift:3564; DataStore.swift:3619,code+protocole,"Index (semaine−1) mod 52 (le protocole dit 50); dont S51 terminer 1 chapitre, S52 avancer 2 chapitres"
+"Calcul de la progression du défi sur la semaine ISO (car., jours écrits, série, sessions, chapitres terminés, chapitres avancés)",series-motivation,Carte défi hebdo,DataStore.swift:3492,code+protocole,Chapitre terminé daté par le log de statut « termin » ou dernière entrée
+Défi marqué relevé automatiquement + toast une seule fois par semaine,series-motivation,Fond / toast,DataStore.swift:3631,code+protocole,UserDefaults notifiedChallengeWeeks
+"Liste des chapitres non terminés avec échéance, triés par date",echeances-pilotage,Échéances,DataStore.swift:3655,code,
+Alerte de rythme : chapitre dont la fin estimée dépasse l'échéance (rythme requis vs actuel 7 j),notifications,Notification macOS,DataStore.swift:3673; NotificationManager.swift,code,
+"Alerte de plateau (chapitres stagnants), au plus une fois par jour",notifications,Notification macOS,DataStore.swift:3718; DataStore+Stats.swift,code,
+Marge de sécurité (buffer) en jours soustraite à toutes les échéances,echeances-pilotage,Réglages,DataStore.swift:3732,code,UserDefaults deadlineBuffer
+Rythme nécessaire par chapitre (car./jour pour tenir l'échéance avec marge),echeances-pilotage,Échéances / chapitre,DataStore.swift:3749,code,
+"Alerte de chevauchement : ≥2 échéances dans les 7 jours, rythme cumulé requis",notifications,Notification macOS,DataStore.swift:3764,code,Une fois par jour
+"Export .ics des échéances de chapitres et des jalons (rappel VALARM selon réglage du jalon, marge appliquée)",export-import,Échéances > export .ics,DataStore.swift:3803; DeadlineBoardView.swift,code+protocole,
+"Notifications de rappel de jalon (jours avant, heure) pour jalons non validés",notifications,Notification macOS,DataStore.swift:3872; NotificationManager.swift,code,
+"Chemin critique des jalons : urgence Critique ≤7 j ou rejeté/dépassé, Risque élevé ≤14 j, À surveiller ≤30 j, À anticiper si bloquant",echeances-pilotage,Échéances,DataStore.swift:3938; DeadlineBoardView.swift,code,
+"Notification de rapport hebdomadaire (dimanche 19h) avec total, jours écrits, meilleur jour",notifications,Notification macOS,DataStore.swift:3990; NotificationManager.swift,code,
+Lister et restaurer un snapshot (réautorise l'écriture),donnees-sync,Réglages > Snapshots,DataStore.swift:4015; DataStore.swift:4033; SnapshotBrowserView.swift,code+protocole,
+Export JSON manuel de toutes les données,export-import,Réglages,DataStore.swift:4047; SettingsView.swift,code,
+"Détection d'anomalies : totaux ou objectifs négatifs, dates invalides, entrées dans le futur",donnees-sync,Réglages,DataStore.swift:4062; SettingsView.swift,code,Calcul en arrière-plan au lancement
+Compactage des entrées de plus de 2 ans (garde la dernière de chaque mois),donnees-sync,Réglages,DataStore.swift:4101; SettingsView.swift,code,
+Compteur d'ouvertures de l'app par mois,statistiques,Réglages,DataStore.swift:4143; SettingsView.swift,code,
+"Temps de recherche : ajouter, supprimer, total par jour",saisie,ResearchTimeCard,DataStore.swift:4217,code,
+Totaux de temps de recherche sur 14 jours,statistiques,—,DataStore.swift:4236,code,non branchée ? researchTotals14Days() n'est appelé nulle part
+Modifier la prochaine action concrète d'un chapitre,notes-journal,Tableau de bord / Cooldown,DataStore.swift:4250,code,
+"Modifier les notes structurées d'un chapitre (plan, idées, blocages, générales)",notes-journal,Tableau de bord / Session bloquée / Cooldown,DataStore.swift:4260,code,
+"Score de santé de la thèse 0–100 (jours sans écriture, deadlines dépassées, rythme insuffisant J-30, aucun chapitre en rédaction, bonus série ≥7)",echeances-pilotage,ThesisHealthWidget,DataStore.swift:4283; ThesisHealthWidget.swift,code,"Bon ≥70, attention ≥40, critique sinon"
+"Projection de soutenance : dates optimiste (Q3), réaliste (médiane), pessimiste (Q1) des incréments sur 60 j",directeur-soutenance,Statistiques / Présentation,DataStore.swift:4377,code,
+Taux de régularité (jours actifs / jours sur une période),statistiques,Statistiques,DataStore.swift:4433; StatsAnalyticsView.swift,code,
+Courbe d'accélération : moyenne 14 derniers jours vs 14 précédents,statistiques,Statistiques,DataStore.swift:4454; StatsAnalyticsView.swift,code,
+"Tableau comparatif des chapitres (% atteint, moyenne/jour, jours restants estimés)",statistiques,Statistiques,DataStore.swift:4493; StatsAnalyticsView.swift,code,
+"Mois en revue : total, jours actifs, meilleur jour, croissance vs mois précédent",statistiques,Statistiques / Présentation,DataStore.swift:4540,code,
+Vélocité glissante sur 14 jours (60 derniers jours),statistiques,Statistiques,DataStore.swift:4588; StatsAnalyticsView.swift,code,
+Heatmap horaire d'écriture (caractères par heure de saisie),statistiques,Statistiques,DataStore.swift:4616; StatsAnalyticsView.swift,code,Basé sur savedAtHour
+Liste des chapitres archivés d'un projet,chapitres-structure,—,DataStore.swift:1741,code,non branchée ? archivedChapters() n'est appelé nulle part (la barre latérale filtre elle-même ?)
+Reste à écrire de la thèse (Σ objectif − total des chapitres non terminés),echeances-pilotage,Vue d'ensemble / Rapport,DataStore+Stats.swift:12,code+protocole,thesisRemainingChars
+Meilleur jour de tous les temps (hors aujourd'hui) et sa date,statistiques,Tableau de bord,DataStore+Stats.swift:24,code,
+Jours écrits ce mois / jours du mois,statistiques,Tableau de bord / Statistiques,DataStore+Stats.swift:48,code,
+Vitesse 14 jours (moyenne des jours actifs),statistiques,Barre de statut / Vue d'ensemble,DataStore+Stats.swift:62,code+protocole,
+Projection en jours pour finir la thèse (reste ÷ vitesse 14 j),echeances-pilotage,Vue d'ensemble (ThesisProjectionCard) / Rapport,DataStore+Stats.swift:76; OverviewStatsSection.swift,code+protocole,
+Histogramme mensuel depuis le premier mois d'écriture,statistiques,Vue d'ensemble (MonthlyMiniChart),DataStore+Stats.swift:84; OverviewStatsSection.swift,code+protocole,
+Statistiques des 6 derniers mois,statistiques,—,DataStore+Stats.swift:128,code+protocole,non branchée ? last6MonthsStats n'est utilisé par aucune vue (remplacé par allMonthlyStats)
+Moyenne par jour de la semaine (Lun…Dim),statistiques,Vue d'ensemble (WeekdayChart),DataStore+Stats.swift:143; OverviewStatsSection.swift,code+protocole,
+Meilleure semaine historique,statistiques,Rapport directeur,DataStore+Stats.swift:168; ThesisReportSheet.swift,code+protocole,
+"Vitesse glissante (fenêtre 7 j, 90 jours, filtrable par projet)",statistiques,Statistiques,DataStore+Stats.swift:190; StatsAnalyticsView.swift,code,
+Courbe de progression cumulée (projet / chapitre),statistiques,Graphiques,DataStore+Stats.swift:209; ChartView.swift,code,
+Total de caractères jamais écrits,statistiques,Accomplissements,DataStore+Stats.swift:229; AchievementsView.swift,code+protocole,
+Productivité par heure (caractères par heure de saisie),statistiques,Statistiques,DataStore+Stats.swift:235; StatsAnalyticsView.swift,code,Le protocole indique un module supprimé de AchievementsView mais la donnée reste utilisée dans Statistiques
+"Détection de plateau : chapitre non terminé, échéance ≤ 60 j, ≥ 5 jours sans entrée",echeances-pilotage,Notification,DataStore+Stats.swift:252,code,Utilisé seulement pour la notification de plateau
+Top 10 des meilleurs jours (avec projet principal),statistiques,Statistiques / Présentation,DataStore+Stats.swift:295,code,
+Plage de vitesse min/moy/max sur 14 jours,statistiques,Statistiques,DataStore+Stats.swift:312,code,
+Répartition de l'écriture par projet sur 30 jours,statistiques,Statistiques,DataStore+Stats.swift:332,code,
+Jours sans écriture ce mois-ci,statistiques,Statistiques,DataStore+Stats.swift:351,code,
+"Fusion JSON générique (objets clé par clé, tableaux par id, valeurs simples) : une modification l'emporte sur une suppression",donnees-sync,Fond,DataSync.swift:74,code+protocole,Couvre automatiquement les futurs champs
+"Normalisation après fusion : une seule entrée par jour et par chapitre (total le plus élevé, note conservée)",donnees-sync,Fond,DataSync.swift:186,code,
+"Barre latérale : groupes repliables Écriture (Tableau de bord, Vue d'ensemble, Échéances, Kanban), Analyse (Graphiques, Activité, Calendrier, Historique, Widgets), Outils (Minuteur, Recherche, Accomplissements)",interface-navigation,Barre latérale,SidebarView.swift:245,code+protocole,Statistiques et Table des matières ne figurent pas dans ces groupes
+Indicateur d'échec de sauvegarde (triangle) ou de sauvegarde réussie dans l'en-tête de la barre latérale,donnees-sync,En-tête barre latérale,SidebarView.swift:176,code+protocole,L'icône d'alerte explique que les modifications ne sont pas sur le disque
+Icône iCloud Drive dans l'en-tête de la barre latérale,donnees-sync,En-tête barre latérale,SidebarView.swift:192,code,
+Masquer la barre latérale (bouton),interface-navigation,En-tête barre latérale,SidebarView.swift:199,code,
+"Filtre en direct des projets, dossiers et chapitres",interface-navigation,Barre latérale > champ Filtrer,SidebarView.swift:400,code,
+Vue compacte / détaillée des projets dans la barre latérale,interface-navigation,Barre latérale > en-tête PROJETS,SidebarView.swift:323,code,sidebarCompactMode
+Mode revues directeur : liste des chapitres « Retour reçu — à intégrer » et « Envoyé — en attente » (jours depuis envoi),directeur-soutenance,Barre latérale > bouton personne,SidebarView.swift:544,code,
+Tout déplier / tout replier les projets,interface-navigation,Barre latérale > en-tête PROJETS,SidebarView.swift:362,code,
+Section Épinglés (projets et chapitres) avec désépinglage,interface-navigation,Barre latérale,SidebarView.swift:616,code,
+Section Archives des projets avec bouton Restaurer,chapitres-structure,Barre latérale (bas),SidebarView.swift:704,code,
+Barre de progression globale du projet actif,chapitres-structure,Barre latérale (bas),SidebarView.swift:760,code,
+Pastilles des badges de série (débloqués / verrouillés) dans le pied de barre latérale,series-motivation,Pied de barre latérale,SidebarView.swift:802,code,
+Frise des sessions Pomodoro du jour dans le pied de barre latérale (12 max),pomodoro,Pied de barre latérale,SidebarView.swift:831,code,
+Boutons Importer / Exporter / Nouveau projet dans le pied de barre latérale,export-import,Pied de barre latérale,SidebarView.swift:855,code,
+Archiver un chapitre en le glissant sur l'icône d'archive ; popover des chapitres archivés avec Restaurer,chapitres-structure,Pied de barre latérale > icône archive,SidebarView.swift:877; SidebarView.swift:1102,code,
+Navigation arrière / avant entre chapitres visités (⌘[ / ⌘]),interface-navigation,Clavier,SidebarView.swift:523; SidebarView.swift:1459,code,Historique de 50 visites
+"Dossier de projets : renommer (double-clic), sous-dossier, déplacer vers, supprimer",chapitres-structure,Barre latérale > menu … du dossier,SidebarView.swift:1333,code,
+Glisser-déposer un projet dans un dossier ou réordonner des dossiers,chapitres-structure,Barre latérale,SidebarView.swift:1401,code,
+Export de branche au format .wpbranch.json via panneau d'enregistrement,export-import,Barre latérale,SidebarView.swift:1434,code,
+"Sélection multiple de chapitres (⌘-clic, ⇧-clic) et glisser-déposer groupé",chapitres-structure,Barre latérale,SidebarView.swift:1497; SidebarView.swift:1575,code,
+"Ligne de projet : anneau de progression, nombre de chapitres / terminés, renommage par double-clic",chapitres-structure,Barre latérale,SidebarView.swift:1729,code,
+"Menu … du projet : renommer, tag, déplacer vers dossier, tri chapitres A→Z ou par progression, nouveau dossier, épingler, exporter/importer branche, archiver, supprimer",chapitres-structure,Barre latérale > menu … du projet,SidebarView.swift:1797,code,
+"Dossier de chapitres : anneau de progression agrégé et infobulle (chapitres, total/objectif, en cours/terminés, dernière saisie)",chapitres-structure,Barre latérale,SidebarView.swift:2106; SidebarView.swift:2139,code,
+"Menu … du dossier de chapitres : renommer, sous-dossier, déplacer, exporter la branche, supprimer",chapitres-structure,Barre latérale,SidebarView.swift:2225,code,
+"Ligne de chapitre : pastille d'état, tag, priorité haute (!), icône notes, 2 tags libres, badge relecture, badge statut, %, barre de progression",chapitres-structure,Barre latérale,SidebarView.swift:2469,code,
+"Ligne de chapitre (vue détaillée) : total/objectif, « Modifié il y a… », fin estimée (⏱), échéance",chapitres-structure,Barre latérale,SidebarView.swift:2555,code,
+Paliers bronze / argent / or (25/50/75 %) sur chaque chapitre,series-motivation,Barre latérale,SidebarView.swift:2753,code,
+"Infobulle riche au survol d'un chapitre (statut, progression, dernière saisie, échéance, priorité)",chapitres-structure,Barre latérale,SidebarView.swift:2793,code,
+Bouton « Hist. » : historique des entrées d'un chapitre,saisie,Barre latérale > ligne chapitre,SidebarView.swift:2582; HistoryView.swift,code,
+"Menu … / clic droit du chapitre : modifier, dupliquer vers, statut, terminé, tag, déplacer, épingler, exporter, archiver, supprimer (confirmation)",chapitres-structure,Barre latérale,SidebarView.swift:2584; SidebarView.swift:2671,code,
+"Palette de commandes : rechercher vues, projets (préfixe « > » pour le mode projets) et chapitres ; 10 résultats max ; navigation clavier ↑↓ ↩ Esc",interface-navigation,⌘K,CommandPaletteView.swift:25,code+protocole,"Sous-titre projet : nb chapitres, total, %"
+Vue Statistiques (StatsAnalyticsView) accessible uniquement via la palette ⌘K,interface-navigation,⌘K > Statistiques,MainView.swift:361; SidebarView.swift:245,code,Absente des groupes de la barre latérale et des raccourcis ⌘1–⌘9
+Vue Table des matières accessible uniquement via la palette ⌘K,interface-navigation,⌘K > Table des matières,MainView.swift:363; TableOfContentsView.swift,code,Absente des groupes de la barre latérale et des raccourcis ⌘1–⌘9
+"Session bloquée : actions proposées sprint court, changer de chapitre (ouvre ⌘K), voir les notes du chapitre",concentration,⌘⇧D > feuille,MainViewHooks.swift:17; BlockedSessionSheet.swift,code,Uniquement accessible par raccourci clavier (aucun bouton n'émet showBlockedSession)
+"Coordinateur de priorité des overlays (bienvenue, post-session, récap, bilan, jalon, alerte, palette)",interface-navigation,—,OverlayCoordinator.swift:53,code,non branchée ? OverlayCoordinator n'est instancié nulle part
+Mode tableau de bord compact (cartes resserrées),interface-navigation,Tableau de bord,ContentView.swift:196; DashboardView.swift:94,code,
+"Thème clair / sombre adaptatif (palette chaude), couleurs de tags et palette de chapitres",reglages,Partout,ContentView.swift:111,code+protocole,
+Réglage objectif journalier (car. ou mots),reglages,Réglages > Objectifs,SettingsView.swift:133,code+protocole,
+"Réglage objectif « 30 jours » (sur 30 jours glissants, stocké comme objectif mensuel)",reglages,Réglages > Objectifs,SettingsView.swift:140,code,monthlyGoal libellé « Objectif 30 jours »
+Réglage objectif hebdomadaire,reglages,Réglages > Objectifs,SettingsView.swift:147,code+protocole,
+Réglage buffer de sécurité des échéances (0 à 14 jours),reglages,Réglages > Objectifs,SettingsView.swift:155,code,
+"Réglage objectif variable selon le jour de la semaine (Lun…Dim, vide = global)",reglages,Réglages > Objectif par jour,SettingsView.swift:182,code,
+Réglage des lettres des raccourcis ⌘⇧ du mode Focus et du Sprint,reglages,Réglages > Raccourcis clavier,SettingsView.swift:250,code,Une lettre ou chiffre
+Réglages : parcourir les snapshots (nombre disponible),reglages,Réglages > Données & sauvegarde,SettingsView.swift:273,code+protocole,
+Réglages : exporter le fichier JSON complet (ThesisTracker-backup-date.json),export-import,Réglages > Données & sauvegarde,SettingsView.swift:302; SettingsView.swift:993,code,
+Réglages : compacter les entrées de plus de 2 ans (confirmation),reglages,Réglages > Données & sauvegarde,SettingsView.swift:333,code,
+Réglages : liste des problèmes de données détectés,donnees-sync,Réglages > Données & sauvegarde,SettingsView.swift:374,code,
+Réglages : statistiques d'utilisation (ouvertures ce mois),reglages,Réglages > Données & sauvegarde,SettingsView.swift:400,code,
+Réglage afficher en mots (÷5),reglages,Réglages > Affichage,SettingsView.swift:434,code+protocole,
+Réglage forcer le mode sombre,reglages,Réglages > Affichage,SettingsView.swift:454,code,
+Réglage couleur d'accent : 12 préréglages + sélecteur personnalisé,reglages,Réglages > Thème,SettingsView.swift:476,code,"Amber, Slate, Indigo, Violet, Rose, Teal, Emeraude, Cyan, Orange, Fuchsia, Sky, Lime"
+Réglage taille du compteur du mode Focus (48–96 pt),reglages,Réglages > Mode focus,SettingsView.swift:532,code,
+Réglage objectif de sessions Pomodoro par semaine (défaut 5),reglages,Réglages > Pomodoro & focus,SettingsView.swift:562,code,weeklyPomodoroGoal
+Réglage lettre du raccourci global ⌃⌥ du mode focus (défaut f),reglages,Réglages > Pomodoro & focus,SettingsView.swift:594,code,
+Réglage démarrer avec macOS (élément d'ouverture),reglages,Réglages > Pomodoro & focus,SettingsView.swift:605,code,SMAppService
+"Réglage rappel quotidien : activation, heure, jours de la semaine",notifications,Réglages > Rappels,SettingsView.swift:633; SettingsView.swift:797,code,Au moins un jour actif
+Réglage alerte série en danger (heure),notifications,Réglages > Rappels,SettingsView.swift:656,code,
+Réglage récapitulatif quotidien (19h),notifications,Réglages > Rappels,SettingsView.swift:689,code,
+Réglage rapport hebdomadaire (dimanche 19h),notifications,Réglages > Rappels,SettingsView.swift:710,code,
+Réglage rappel de saisie si aucune écriture (heure),notifications,Réglages > Rappels,SettingsView.swift:731,code,
+Réglage notification objectif atteint en arrière-plan,notifications,Réglages > Rappels,SettingsView.swift:764,code,
+Avertissement notifications refusées + bouton vers Réglages Système,notifications,Réglages > Rappels,SettingsView.swift:784,code,
+"Diagnostic du stockage : iCloud/local, chemin du fichier, nb projets et entrées, bouton Recharger, erreur de chargement",donnees-sync,Réglages (pied),SettingsView.swift:862,code,
+Réglages : Annuler (Échap) / Enregistrer (Entrée),reglages,Réglages (pied),SettingsView.swift:897,code,
+"Clé GitHub en lecture seule stockée dans le Trousseau (saisie, remplacement, lien de création)",reglages,Réglages > Mises à jour,AppUpdater.swift:55; AppUpdater.swift:291,code+protocole,
+Vérification automatique des mises à jour au lancement (au plus toutes les 20 h) avec proposition d'installer,reglages,Fond / alerte,AppUpdater.swift:92,code+protocole,Seulement si une clé est enregistrée
+Comparaison du numéro de build (tag « vX-buildN ») avec la version installée,reglages,Fond,AppUpdater.swift:141; AppUpdater.swift:254,code+protocole,
+"Installation de la mise à jour : téléchargement, vérification codesign, remplacement de l'app et relance, sans quarantaine",reglages,Réglages > Mises à jour > Installer / alerte,AppUpdater.swift:173,code+protocole,Refus si l'app n'est pas dans un dossier inscriptible (Applications)
+"État des mises à jour affiché (version, build, à jour, disponible, téléchargement, erreur)",reglages,Réglages > Mises à jour,AppUpdater.swift:367,code,
+"Rappel quotidien d'écriture récurrent (« N'oubliez pas d'écrire aujourd'hui »), jours et heure choisis",notifications,Notification macOS,NotificationManager.swift:89,code,"Défaut 20h00, lun–ven"
+"Notifications d'échéance de chapitre à J-7, J-3 et J-1 (9h)",notifications,Notification macOS,NotificationManager.swift:126,code+protocole,Planifiées même si le rappel quotidien est désactivé
+"Alerte de retard (rythme) envoyée le lendemain à 8h, 3 chapitres max, besoin en car./jour",notifications,Notification macOS,NotificationManager.swift:175,code,
+Alerte « Ta série est en danger » si rien écrit aujourd'hui (défaut 23h),notifications,Notification macOS,NotificationManager.swift:234,code,Respecte le réglage série en danger
+Notification « Tes stats du jour sont prêtes » 2 min après l'affichage du bilan du jour,notifications,Notification macOS,NotificationManager.swift:255,code,
+"Notification de plateau (2 chapitres max, dans 1 h)",notifications,Notification macOS,NotificationManager.swift:275,code,
+"Récapitulatif du jour à 19h (total, série, objectif atteint), immédiat s'il est plus tard",notifications,Notification macOS,NotificationManager.swift:302,code,Une fois par jour
+Notification « Bravo ! 2 jours d'affilée »,notifications,Notification macOS,NotificationManager.swift:347,code,Une fois par jour quand la série vaut 2
+"Rappels de jalon avec escalade : J-30 Info, J-14 Attention, J-7 Important, J-1 Urgent + rappel personnalisé",notifications,Notification macOS,NotificationManager.swift:376,code,Son critique à ≤7 j
+"Notification hebdomadaire récurrente le dimanche à 19h (total, jours actifs, meilleur jour)",notifications,Notification macOS,NotificationManager.swift:430,code,
+Notification « Double objectif ! » quand le total du jour atteint 2× l'objectif,notifications,Notification macOS,NotificationManager.swift:456,code,Une fois par jour
+Rappel de saisie si aucune écriture dans la journée (défaut 20h),notifications,Notification macOS,NotificationManager.swift:495,code,
+Notification « Objectif du jour atteint » quand l'app est en arrière-plan,notifications,Notification macOS,NotificationManager.swift:516,code,Une fois par jour
+Notification de chevauchement d'échéances (rythme combiné requis),notifications,Notification macOS,NotificationManager.swift:536,code,
+Bannières affichées même app au premier plan et enregistrées dans le centre de notifications in-app,notifications,Notification macOS / cloche,NotificationManager.swift:561; AppNotificationStore.swift,code,
+Actions des notifications Pomodoro (démarrer pause/session) relayées au minuteur via un délégué unique,pomodoro,Notification macOS,NotificationManager.swift:573,code+protocole,
+Désactiver tous les rappels annule uniquement les notifications de l'app (pas celles du Pomodoro),notifications,Réglages > Rappels,NotificationManager.swift:114,code,
+"Historique des notifications reçues (150 max) classées en catégories Échéances, Série, Progression, Rappels, Jalons, Rapports",notifications,Barre de statut > cloche,AppNotificationStore.swift:7; AppNotificationStore.swift:94,code,Stocké dans UserDefaults
+"Centre de notifications : filtres par catégorie, groupes par jour (Aujourd'hui, Hier, jour de la semaine, date), « il y a… »",notifications,Barre de statut > cloche,NotificationCenterView.swift:5,code,
+"Marquer une notification lue / non lue, tout lire, supprimer, tout effacer",notifications,Barre de statut > cloche,NotificationCenterView.swift:67; NotificationCenterView.swift:255,code,
+"Raccourcis globaux Carbon sans autorisation Accessibilité, événement consommé, lettre du focus ré-enregistrée à chaud (P et N'interdits)",reglages,Fond,GlobalHotKeys.swift:21,code+protocole,
+"Indexation Spotlight des projets non archivés et chapitres (titre, %, prochaine action, tags libres, texte des notes), limitée à une fois toutes les 5 s",donnees-sync,Spotlight macOS,SpotlightIndexer.swift:41; SpotlightIndexer.swift:66,code,
+Supprimer tous les éléments Spotlight de l'app,donnees-sync,—,SpotlightIndexer.swift:85,code,non branchée ? deleteAll() n'est appelé nulle part
+"Tableau de bord à widgets en deux colonnes (gauche : sélecteur projet/chapitre, saisie du jour, calendrier semaine ; droite : 30 widgets)",interface-navigation,Tableau de bord,DashboardView.swift:158; DashboardView.swift:294,code+protocole,"Ordre mémorisé (dashboardWidgetOrder, dashboardLeftWidgets)"
+"Réorganiser les widgets par glisser-déposer (zones d'insertion, changement de colonne)",interface-navigation,Tableau de bord,DashboardView.swift:414; DashboardView.swift:630,code,Appui long = mode personnalisation
+"Clic droit sur un widget : retirer, personnaliser, déplacer à gauche/droite",interface-navigation,Tableau de bord,DashboardView.swift:475,code,
+Panneau Personnaliser du tableau de bord (ajouter/retirer/ordonner les widgets),interface-navigation,Tableau de bord > Personnaliser,DashboardView.swift:89; DashboardView.swift:394,code,DashboardCustomizeSheet
+Flash de la barre + confettis + son « Hero » au premier franchissement de l'objectif du jour,series-motivation,Tableau de bord,DashboardView.swift:126; ConfettiOverlay.swift,code,Une fois par jour
+Supprimer l'entrée de la date sélectionnée (confirmation),saisie,Tableau de bord,DashboardView.swift:142,code,
+Fil d'Ariane cliquable projet › chapitre ouvrant un sélecteur (popover),interface-navigation,Tableau de bord > en-tête,DashboardView.swift:774; BreadcrumbPickers.swift,code,
+Afficher / masquer la barre latérale depuis l'en-tête des vues,interface-navigation,En-tête des vues,DashboardView.swift:738,code,
+Badge série dans l'en-tête du tableau de bord,series-motivation,Tableau de bord > en-tête,DashboardView.swift:834,code,
+Bouton « Rapport » : rapport pour le directeur,directeur-soutenance,Tableau de bord > en-tête,DashboardView.swift:852; DirectorReportSheet.swift,code,
+Bouton Réglages dans l'en-tête du tableau de bord,reglages,Tableau de bord > en-tête,DashboardView.swift:892,code,
+Sélecteurs déroulants de projet et de chapitre actifs,saisie,Tableau de bord > widget sélecteur,DashboardView.swift:912,code,
+Monter / descendre le chapitre actif (↑↓),chapitres-structure,Tableau de bord > widget sélecteur,DashboardView.swift:976,code,
+Prochaine étape du chapitre : édition en ligne et bouton « Marquer comme fait »,notes-journal,Tableau de bord > widget sélecteur,DashboardView.swift:1035,code,"Sauvegarde différée 0,6 s"
+Notes de chapitre en onglets Plan / Idées / Blocages / Notes avec indicateur de contenu,notes-journal,Tableau de bord > bouton note,DashboardView.swift:1086,code,"Sauvegarde différée 0,8 s"
+Modèles de plan de chapitre applicables en un clic (onglet Plan vide),notes-journal,Tableau de bord > notes > Plan,DashboardView.swift:1130; ChapterPlanTemplate.swift,code,
+"Saisir une date passée via le sélecteur de date (badge « Passé », pas de date future)",saisie,Tableau de bord > carte saisie,DashboardView.swift:1227,code,
+"Compteur principal du total cumulé, incrément du jour « +N aujourd'hui »",saisie,Tableau de bord > carte saisie,DashboardView.swift:1258,code,
+Badge « Nouveau record personnel ! » à la saisie,series-motivation,Tableau de bord > carte saisie,DashboardView.swift:1290,code,
+Variation négative affichée avec badge « Correction »,saisie,Tableau de bord > carte saisie,DashboardView.swift:1302,code+protocole,
+« Dernière écriture : il y a N jours » si rien aujourd'hui,saisie,Tableau de bord > carte saisie,DashboardView.swift:1324,code,
+Barre de progression vers l'objectif journalier effectif avec infobulle,objectifs,Tableau de bord > carte saisie,DashboardView.swift:1339,code,
+Encart « Rythme en baisse » (alerte de régression),statistiques,Tableau de bord > carte saisie,DashboardView.swift:1374,code,
+Note du jour (optionnelle) sur l'entrée,saisie,Tableau de bord > carte saisie,DashboardView.swift:1417,code,"Sauvegarde différée 0,6 s"
+"Importer le compte depuis un fichier .docx, .doc, .rtf ou .txt",saisie,Tableau de bord > carte saisie > Importer depuis un fichier…,DashboardView.swift:1433,code+protocole,Conversion textutil hors thread principal
+Glisser-déposer un fichier ou du texte sur la carte de saisie pour compter,saisie,Tableau de bord > carte saisie,DashboardView.swift:1479,code,
+Info-bulles d'aide contextuelle à la première utilisation (onboarding),interface-navigation,Tableau de bord,DashboardView.swift:1510; OnboardingTooltip.swift,code,
+Widget Activité 14 jours du projet (mini-histogramme avec ligne d'objectif),statistiques,Tableau de bord > widget,DashboardView.swift:1521,code,
+"Widget Progression : aujourd'hui, 30 derniers jours, chapitre ; message objectif adaptatif ou objectif dérivé de l'échéance",objectifs,Tableau de bord > widget,DashboardView.swift:1561,code+protocole,
+"Widget Stats rapides : vitesse 14 j, % objectif hebdo, total semaine, jours avant la fin, record, jours écrits ce mois",statistiques,Tableau de bord > widget,DashboardView.swift:1635,code,
+"Widget Progression du projet : anneau, fin estimée, couleur selon tenue de la prochaine échéance",echeances-pilotage,Tableau de bord > widget,DashboardView.swift:1717,code,
+"Widget Planification : fin projet, fin chapitre, cadence actuelle vs objectif deadline, jours restants, message adaptatif (avance / effort supplémentaire)",echeances-pilotage,Tableau de bord > widget,DashboardView.swift:1790; DashboardView.swift:1931,code,
+"Calendrier de la semaine : % de l'objectif par jour, jour atteint en vert",objectifs,Tableau de bord > colonne gauche,DashboardView.swift:1969,code+protocole,
+"Widget Insights : meilleur jour de la semaine, taux de jours à l'objectif sur 30 j, record, moyenne des 30 j actifs",statistiques,Tableau de bord > widget,DashboardView.swift:2075,code+protocole,
+État vide du tableau de bord (créer un projet / ajouter un chapitre),interface-navigation,Tableau de bord,DashboardView.swift:2195,code,
+"Pulsation du badge série à 7 et 14 jours ; toast aux séries 30, 60, 100, 200, 365 lors de la saisie",series-motivation,Tableau de bord,DashboardView.swift:2243,code,
+Toast « Chapitre terminé » quand le total atteint l'objectif du chapitre à la saisie,series-motivation,Tableau de bord,DashboardView.swift:2266,code,Déclenché à chaque saisie tant que l'objectif est dépassé
+"Comptage du texte importé : caractères hors espaces, ou mots si mode mots",saisie,Tableau de bord,DashboardView.swift:2294; DashboardView.swift:2333,code,
+"Champ de saisie numérique tolérant les espaces (ex. « 15 340 »), validation Entrée ou ⌘S",saisie,Tableau de bord > carte saisie,DashboardView.swift:2445; DashboardView.swift:2484,code,
+Dictée vocale d'un nombre dans le champ de saisie,saisie,Tableau de bord > micro,DashboardView.swift:2495; VoiceDictationButton.swift,code+protocole,
+Case « Correction » sous le champ quand le total saisi est inférieur au précédent (écart affiché),saisie,Tableau de bord > carte saisie,DashboardView.swift:2555,code+protocole,Marque retirée si le total repasse au-dessus du précédent
+Compteur en direct avec conversion mots ↔ caractères (≈ ×5 / ÷5),saisie,Tableau de bord > carte saisie,DashboardView.swift:2583,code,
+"Profils de disposition du tableau de bord : Défaut, Focus écriture, Synthèse",interface-navigation,Tableau de bord > Personnaliser,DashboardView.swift:2805,code,
+"Personnaliser : réordonner, retirer, ajouter un widget disponible, tout réinitialiser, appliquer",interface-navigation,Tableau de bord > Personnaliser,DashboardView.swift:2891,code,
+"Tableau de bord Papier (VD) : grand chiffre serif, % objectif, saisie + note, date passée avec bouton « Aujourd'hui », progression (jour, 30 j, chapitre), semaine, insights",saisie,Tableau de bord en mode VD,PaperDashboardView.swift:5,code,Pas de case Correction ni de widgets dans ce mode
+"Vue d'ensemble : statistiques globales (total écrit, aujourd'hui, série, chapitres finis / total)",statistiques,Vue d'ensemble,OverviewView.swift:110,code+protocole,
+"Barre de progression globale de toutes les thèses, segmentée par projet avec légende",chapitres-structure,Vue d'ensemble,OverviewView.swift:124,code,
+"Pipeline de thèse : répartition des chapitres par statut (Plan, Rédaction, Révision, Terminé, Non défini) + volume des 7 derniers jours",chapitres-structure,Vue d'ensemble,OverviewView.swift:218,code+protocole,
+"Cartes projet : % atteint, chapitres en retard, directeur, 4 premiers chapitres, notes de projet, dernière activité, fin estimée, « Aller au projet »",chapitres-structure,Vue d'ensemble,OverviewView.swift:375,code,
+Projets archivés repliables avec bouton Restaurer dans la vue d'ensemble,chapitres-structure,Vue d'ensemble,OverviewView.swift:320,code,
+Boutons Rapport (directeur) et Exporter dans l'en-tête de la vue d'ensemble,export-import,Vue d'ensemble > en-tête,OverviewView.swift:72; OverviewView.swift:89,code+protocole,
+Suggestion d'archivage d'un projet sans saisie depuis 90 jours (Archiver / Ignorer),chapitres-structure,Vue d'ensemble > bandeau,AutoArchiveSuggestionView.swift:5,code,Ignorés mémorisés
+"Carte Projection finale : reste à écrire, durée estimée, mois de fin prévu, couleur (<90 j vert, <365 j ambre, sinon rouge), alerte chapitres sans objectif",echeances-pilotage,Vue d'ensemble,OverviewStatsSection.swift:10,code+protocole,
+Tendance mensuelle : barres de tous les mois avec défilement horizontal,statistiques,Vue d'ensemble,OverviewStatsSection.swift:151,code+protocole,
+Productivité par jour de la semaine avec badge du meilleur jour (jours actifs seulement),statistiques,Vue d'ensemble,OverviewStatsSection.swift:249,code+protocole,
+"Rapport de suivi texte pour le directeur (production 30 j, objectif atteint, meilleure semaine, chapitres avec barres, avancement global, défis), copie en un clic",directeur-soutenance,Vue d'ensemble > Rapport,ThesisReportSheet.swift:8,code+protocole,
+"Rapport pour le directeur par période (1 semaine, 2 semaines, 1 mois, personnalisée) : résumé, temps de recherche, par projet et chapitre (écrit, avancement, statut, prochaine étape, blocage, deadline), jalons, activités de recherche par type ; copie",directeur-soutenance,Tableau de bord > Rapport,DirectorReportSheet.swift:5,code,Les totaux de période additionnent les totaux cumulés des entrées (pas les incréments) — à vérifier
+"Carte Session du jour : objectif intelligent, anneau et barre, badge « +N rattrapage », message contextuel",objectifs,Tableau de bord > widget Session quotidienne,DailySessionCard.swift:11,code+protocole,
+Toast « Objectif du jour atteint ! » une seule fois par jour (carte Session du jour),series-motivation,Tableau de bord > widget Session quotidienne,DailySessionCard.swift:88,code+protocole,AppStorage v33_goalReachedDate
+Suivi des sessions Pomodoro focus de la semaine vs objectif hebdo de sessions,pomodoro,Tableau de bord > widget Session quotidienne,DailySessionCard.swift:35; DailySessionCard.swift:206,code,
+"Widget Santé de la thèse : jauge /100, badge (En bonne forme, Attention requise, Action urgente), points détaillés",echeances-pilotage,Tableau de bord > widget,ThesisHealthWidget.swift:5,code,
+"Widget Temps de recherche du jour : total, répartition par type, liste des sessions avec suppression",statistiques,Tableau de bord > widget,ResearchTimeCard.swift:5,code,
+"Ajouter une session de recherche (type, durée 0–12 h par pas de 5 min, note, projet/chapitre optionnels)",saisie,Tableau de bord > Temps de recherche > +,ResearchTimeCard.swift:151,code,Toujours datée d'aujourd'hui
+"Widget Chapitre en focus : anneau %, statut, total/objectif, fin estimée, prochaine étape",chapitres-structure,Tableau de bord > widget,FocusChapterWidget.swift:5,code,
+"Widget Vitesse d'écriture : moyenne des jours actifs sur 7 j, badge tendance (stable, +%, −%), mini-barres",statistiques,Tableau de bord > widget,WritingSpeedWidget.swift:5,code,
+"Widget Comparaison semaines : barres jour par jour, delta %",statistiques,Tableau de bord > widget,WeekComparisonWidget.swift:5,code,
+"Widget Prochains jalons : compte à rebours J-n / Aujourd'hui / Demain / J+n'en retard, couleurs d'urgence",echeances-pilotage,Tableau de bord > widget,UpcomingDeadlinesWidget.swift:5,code,
+"Widget Citation du jour : 20 citations, rotation quotidienne, bouton « Citer une autre »",series-motivation,Tableau de bord > widget,DailyQuoteWidget.swift:5,code,
+"Widget Snapshot quotidien : hier vs avant-hier (delta), barre d'objectif d'aujourd'hui",statistiques,Tableau de bord > widget,DailySnapshotWidget.swift:5,code,
+"Widget Défi de la semaine : description, progression / cible, badge « Relevé », plage de dates de la semaine ISO",series-motivation,Tableau de bord > widget,WeeklyChallengeCard.swift:5,code+protocole,
+"Widget Défi du mois : objectif mensuel sur le mois calendaire, anneau, jours d'écriture, jours restants, reste à écrire",objectifs,Tableau de bord > widget,MonthlyChallengeCard.swift:5; DataStore.swift:995,code,La progression additionne les totaux cumulés des entrées du mois (pas les incréments) — à vérifier
+"Widget Timeline du jour : saisies d'écriture (heure) et sessions focus Pomodoro chronologiques, « Voir N de plus »",statistiques,Tableau de bord > widget,TodayTimelineView.swift:6,code,
+"Widget Relecture directeur du chapitre actif : selon l'état, Envoyer en relecture, Marquer reçu, Annuler, Ajouter/Modifier notes, Feedback intégré, Nouveau cycle",directeur-soutenance,Tableau de bord > widget Relectures directeur,SupervisorReviewCard.swift:7,code,"Affiche « envoyé il y a N j », retour attendu"
+"Feuille d'envoi en relecture : date de retour prévue (défaut +14 j, optionnelle)",directeur-soutenance,Relecture directeur > Envoyer,SupervisorReviewCard.swift:242,code,
+Feuilles retour reçu (notes du feedback) et édition des notes,directeur-soutenance,Relecture directeur,SupervisorReviewCard.swift:298; SupervisorReviewCard.swift:355,code,
+"Liste des points de sauvegarde (étiquette, version, date, total, présence plan/idées/blockers, déclencheur coloré) avec restaurer / supprimer confirmés",chapitres-structure,Widget Points de sauvegarde > Voir les points,ChapterCheckpointsView.swift:7,code,
+Créer un point de sauvegarde avec étiquette libre,chapitres-structure,Points de sauvegarde > Nouveau point,ChapterCheckpointsView.swift:269,code,
+"Widget Points de sauvegarde (dernier point, ouverture de la liste)",chapitres-structure,Tableau de bord > widget,ChapterCheckpointsView.swift:330,code,
+Accès à l'auto-évaluation depuis la liste des points de sauvegarde,chapitres-structure,Points de sauvegarde > Self-review,ChapterCheckpointsView.swift:87; SelfReviewView.swift,code,
+"Feuille Self-review qualité : 5 critères notés 1–5 avec description, notes, moyenne en direct, rappel de la précédente évaluation",chapitres-structure,Points de sauvegarde > Self-review,SelfReviewView.swift:5,code,
+Widget Chapitres qui font mal : 3 chapitres les plus en souffrance avec score /5 et raisons,echeances-pilotage,Tableau de bord > widget,SelfReviewView.swift:222,code,
+"Widget Plan de bataille : 4 premières actions, compteur faites/total",echeances-pilotage,Tableau de bord > widget,WeeklyPlanWidget.swift:5,code,
+"Feuille Plan de bataille : ajouter, cocher (date affichée), renommer par double-clic, supprimer ; rétrospective de la semaine précédente",echeances-pilotage,Plan de bataille > Ouvrir le plan,WeeklyPlanWidget.swift:100,code,
+Widget Notes de soutenance : total et répartition par type pour le projet actif,directeur-soutenance,Tableau de bord > widget,DefenseNotesView.swift:7,code,
+"Feuille Notes de soutenance : onglets par type, notes groupées par chapitre, ajout pour un chapitre choisi, édition par double-clic, suppression",directeur-soutenance,Notes de soutenance > Voir toutes les notes,DefenseNotesView.swift:92,code,
+"Widget Soutenance — projection : dates de fin aux rythmes 60 j, 30 j et idéal (car./j)",directeur-soutenance,Tableau de bord > widget,DefenseDateWidget.swift:7,code,
+Définir / modifier / effacer la date cible de soutenance (calendrier graphique) et écart avance/retard vs rythme 60 j,directeur-soutenance,Widget Soutenance > Définir une date cible,DefenseDateWidget.swift:35; DefenseDateWidget.swift:148,code,
+"Widget Énergie & repos : niveau d'énergie du jour 1–5 (Épuisé…Excellent), moyenne 7 j, historique 14 jours, bouton Jour de repos / Annuler le repos",saisie,Tableau de bord > widget,WellbeingWidget.swift:6,code,Énergie enregistrée seulement si une entrée du jour existe pour le chapitre actif
+Bandeau « Jour de repos planifié — Pas d'objectif »,series-motivation,Tableau de bord > widget Énergie & repos,WellbeingWidget.swift:103,code,Le repos ne protège pas la série (non pris en compte dans currentStreak)
+"Widget Heatmap par chapitre (8 semaines, 6 chapitres) et vue plein écran (4 sem., 8 sem., 12 sem., 6 mois)",statistiques,Tableau de bord > widget,ChapterHeatmapWidget.swift:7; ChapterHeatmapWidget.swift:129,code,Intensité relative à l'objectif du chapitre ÷ 7 ou à 1500 car.
+"Widget Journal de bord : entrée du jour ou dernière entrée, compteur, « Écrire aujourd'hui »",notes-journal,Tableau de bord > widget,JournalView.swift:7,code,
+"Feuille Journal : composer du jour, recherche, liste datée (humeur et #tags affichés si présents), modifier, supprimer",notes-journal,Journal > Ouvrir le journal,JournalView.swift:80,code,
+Exporter le journal en Word (.docx),export-import,Journal > Exporter,JournalView.swift:347; DOCXWriter.swift:216,code,
+Copier le journal pour Apple Notes / Markdown (RTF mis en forme + texte Markdown),export-import,Journal > Exporter,JournalView.swift:367; DOCXWriter.swift:285,code,
+"Widget Carnet de fragments : capture rapide « Idée qui passe… », 3 derniers fragments",notes-journal,Tableau de bord > widget,FragmentsView.swift:5,code,
+"Feuille Carnet de fragments : capter, afficher actifs/archivés, déplacer vers un chapitre du projet actif, archiver, restaurer, supprimer",notes-journal,Fragments > Ouvrir le carnet,FragmentsView.swift:98,code,
+"Widget Bilans mensuels : dernier bilan (mois, titre), nombre de bilans",statistiques,Tableau de bord > widget,MonthlyReportView.swift:5,code,
+"Feuille Bilans mensuels : liste des mois, détail (caractères, jours actifs, chapitres finis, meilleur jour, série fin de mois) et réflexion libre enregistrable",statistiques,Bilans mensuels > Lire les bilans,MonthlyReportView.swift:82,code,
+Widget Administratif : 3 prochaines tâches avec J−n coloré,echeances-pilotage,Tableau de bord > widget,AdminChecklistView.swift:5,code,
+"Feuille Administratif : en cours / terminées, cocher, supprimer ; ajout (type, titre, échéance optionnelle, notes)",echeances-pilotage,Administratif > Voir tout,AdminChecklistView.swift:120; AdminChecklistView.swift:265,code,Modifier une tâche existante : non branchée ? updateAdminTask() n'est appelé nulle part
+Bibliothèque de widgets (« Statistiques complètes ») : grille de tous les widgets réutilisables,interface-navigation,Barre latérale > Bibliothèque de widgets,WidgetLibraryView.swift:7,code,
+Contexte de la bibliothèque : Général ou un chapitre précis (rend le chapitre actif),interface-navigation,Bibliothèque de widgets > puces de contexte,WidgetLibraryView.swift:138; WidgetLibraryView.swift:267,code,
+Mode « Modifier l'affichage » : masquer/réafficher chaque widget pour le chapitre choisi,interface-navigation,Bibliothèque de widgets,WidgetLibraryView.swift:85; WidgetLibraryView.swift:210,code,
+"Mode Focus d'écriture : fond sombre plein écran, projet › chapitre (type, version), horloge, grand compteur du jour, barre de chapitre et d'objectif",concentration,⌘⇧I / ⌃⌥F,FocusWritingView.swift:6,code,Taille du compteur réglable; Échap pour fermer
+Mode Focus : saisie du total du jour et note de séance,saisie,Mode Focus,FocusWritingView.swift:189; FocusWritingView.swift:432,code,Toujours sur aujourd'hui
+Mode Focus : suggestion de total (total précédent + vitesse 14 j) cliquable,saisie,Mode Focus,FocusWritingView.swift:50; FocusWritingView.swift:241,code,
+Mode Focus : 5 derniers totaux distincts cliquables pour saisie rapide,saisie,Mode Focus,FocusWritingView.swift:61; FocusWritingView.swift:270,code,
+Mode Focus : « Idée rapide » enregistrée dans l'historique du chapitre (💡) sans toucher au compteur,notes-journal,Mode Focus > Idée rapide,FocusWritingView.swift:313; FocusWritingView.swift:453,code,
+"Sprint d'écriture : durée 10/15/25/45 min, objectif de sprint optionnel, minuteur plein écran, pause/reprise, terminer",concentration,⌘⇧T,WritingSprintView.swift:7,code,Minuteur basé sur la date de fin (robuste à la veille)
+"Sprint : delta écrit pendant le sprint (total du jour − total au départ) et % de l'objectif de sprint ; écran de résultat « Objectif atteint ! », nouveau sprint",concentration,Sprint d'écriture,WritingSprintView.swift:36; WritingSprintView.swift:339,code,Aucun champ de saisie dans le sprint : le delta ne bouge que si le total est saisi ailleurs (ex. saisie rapide)
+"Mode Sanctuaire : plein écran sans barre des menus ni Dock, un seul chapitre, durée 60/90/120/180/240 min, anneau et décompte",concentration,⌥⌘⇧K,SanctuaryMode.swift:9,code+protocole,Uniquement accessible par raccourci clavier
+Sanctuaire : sortie par Échap avec confirmation (session notée interrompue),concentration,Mode Sanctuaire,SanctuaryMode.swift:65; SanctuaryMode.swift:281,code,
+Sanctuaire : capture rapide d'idées dans le carnet de fragments (tag « sanctuaire »),notes-journal,Mode Sanctuaire,SanctuaryMode.swift:214,code,
+"Sanctuaire : enregistrement automatique d'une entrée de journal et d'une session de concentration Pomodoro (terminée ou interrompue), une seule fois",concentration,Fond,SanctuaryMode.swift:292,code+protocole,
+Blocage du lancement d'un Pomodoro pendant le Sanctuaire,pomodoro,Mode Sanctuaire,SanctuaryMode.swift:141,code,setExternalFocusActive
+Session bloquée : « Capturer le blocage » ajouté (daté) aux blocages du chapitre,concentration,⌘⇧D > Capturer le blocage,BlockedSessionSheet.swift:140; BlockedSessionSheet.swift:169,code,
+"Session bloquée : options Sprint 5 minutes, Changer de chapitre, Pause forcée 15 min",concentration,⌘⇧D,BlockedSessionSheet.swift:73,code,"« Sprint 5 minutes » ouvre le sprint standard (durée par défaut 25 min, pas 5) ; « Pause forcée » ferme seulement la feuille"
+"Cooldown post-session : 3 questions (accompli, blocage, prochaine action) puis résumé ; enregistre journal (tag cooldown), blocage daté et prochaine étape",concentration,Feuille après focus ≥45 min,CooldownSheet.swift:8; CooldownSheet.swift:181,code,Accessible seulement automatiquement (pas de raccourci)
+"Mode Aujourd'hui : « Bonjour. », date, projet/chapitre actif, prochaine action, anneau de l'objectif du jour, série ; boutons « Lancer une session » (⏎, ouvre le mode Focus) et « Ouvrir le dashboard »",concentration,⌘⇧J,TodayModeView.swift:8,code,Accessible seulement par raccourci ; « Esc pour fermer » affiché mais aucun raccourci Échap câblé ?
+Mode Aujourd'hui : message « Jour de repos planifié — pas d'objectif » à la place de l'anneau,series-motivation,⌘⇧J,TodayModeView.swift:160,code,
+"Saisie rapide flottante (panneau au-dessus des autres apps) : total, projet/chapitre, delta « +N à ajouter / −N à retirer », progression vers l'objectif, moyenne 7 j",saisie,⌃⌥N / invite post-session,QuickEntryView.swift:6; QuickEntryView.swift:60,code+protocole,"Se ferme 0,8 s après l'enregistrement ; Échap ferme"
+Saisie rapide : cible Aujourd'hui ou Hier (⌘Y),saisie,Saisie rapide,QuickEntryView.swift:161,code,
+Saisie rapide : déposer un chapitre glissé depuis la barre latérale pour le présélectionner,saisie,Saisie rapide,QuickEntryView.swift:244,code,
+"Barre des menus : mini-graphique des 7 derniers jours, moyenne, meilleur jour (info-bulles)",statistiques,Barre des menus macOS,MenuBarEntryView.swift:340,code,
+"Barre des menus : contrôle du Pomodoro (démarrer, pause/reprendre, arrêter, démarrer la session/pause recommandée, passer) et pastilles du cycle",pomodoro,Barre des menus macOS,MenuBarEntryView.swift:161,code,
+"Barre des menus : ouvrir l'app, ouvrir la saisie rapide, total du jour",interface-navigation,Barre des menus macOS,MenuBarEntryView.swift:133,code,
+"Pomodoro : durées réglables de concentration, pause courte, pause longue et nombre de sessions avant la pause longue",pomodoro,Minuteur > Réglages,PomodoroModels.swift:88,code+protocole,"Défauts 25/5/15 min, 4 sessions ; bornes 1 min–4 h, 1–12 sessions"
+Pomodoro : sons de fin distincts par phase (14 sons système ou silence) et volume,pomodoro,Minuteur > Réglages,PomodoroModels.swift:5; PomodoroModels.swift:94,code,"Défauts Glass / Tink / Hero, volume 0,8"
+Pomodoro : objectif de mots par session,pomodoro,Minuteur > Réglages,PomodoroModels.swift:98,code,wordsPerSessionGoal
+Pomodoro : rappel de pause (minutes),pomodoro,Minuteur > Réglages,PomodoroModels.swift:99,code,"1–120 min, défaut 5"
+Pomodoro : mode deep work lançant un raccourci de l'app Raccourcis au début et à la fin d'une session (« Ne pas déranger »),concentration,Minuteur > Réglages,PomodoroModels.swift:101,code+protocole,Remplace l'ancien script killall cfprefsd
+"Pomodoro : catégories d'activité colorées (Rédaction, Recherche, Enseignement par défaut)",pomodoro,Minuteur,PomodoroModels.swift:168,code,
+"Pomodoro : objectifs par période (quotidien/hebdo/mensuel) en sessions ou minutes, filtrables par catégorie ou projet",objectifs,Minuteur,PomodoroModels.swift:184,code,"Défauts : 120 min/jour, 20 sessions/semaine"
+"Pomodoro : projets propres au minuteur (description, couleur, cible de sessions ou de minutes)",pomodoro,Minuteur > Projets,PomodoroModels.swift:196; PomodoroProjectsView.swift,code,
+"Pomodoro : historique des sessions (durée active, prévue, type, terminée/interrompue, catégorie, projet, note, lien chapitre)",pomodoro,Minuteur > Journal,PomodoroModels.swift:207,code,
+"Pomodoro : regroupement des sessions en blocs de travail (pause max entre sessions réglable, défaut 90 min)",pomodoro,Minuteur > Statistiques,PomodoroModels.swift:225,code,workBlockMaxBreakMinutes
+Pomodoro : suppressions conservées entre les deux Mac (pierres tombales) et identifiants de blocs déterministes,donnees-sync,Fond,PomodoroModels.swift:262; PomodoroModels.swift:332,code+protocole,
+"Minuteur à 5 onglets : Aujourd'hui, Journal, Statistiques, Projets, Réglages",pomodoro,Barre latérale > Minuteur (⌘9),PomodoroAppController.swift:8; PomodoroTimerTabView.swift,code,
+"Démarrer une session de concentration (catégorie et projet sélectionnés), notification de début, fin planifiée",pomodoro,Minuteur / barre des menus / ⌃⌥P,PomodoroAppController.swift:356; PomodoroAppController.swift:381,code,Refusé si une session est active ou si le Sanctuaire est en cours
+"Proposition de la phase suivante (pause courte, pause longue ou session) à démarrer ou passer ; sauter la grande pause relance un cycle",pomodoro,Minuteur / notification,PomodoroAppController.swift:367; PomodoroAppController.swift:405,code,
+Pause / reprise / arrêt du minuteur (session arrêtée notée interrompue),pomodoro,Minuteur / barre des menus,PomodoroAppController.swift:392; PomodoroAppController.swift:445,code,
+Pause automatique du minuteur à la mise en veille et reprise au réveil (temps de veille non compté),pomodoro,Fond,PomodoroAppController.swift:240; PomodoroAppController.swift:247,code+protocole,
+Rafraîchissement des statistiques du minuteur au passage à minuit,pomodoro,Fond,PomodoroAppController.swift:220,code,
+Restauration d'une session en cours après fermeture ou plantage,pomodoro,Fond (lancement),PomodoroAppController.swift:342,code,
+Écriture synchrone des données Pomodoro à la fermeture ; annulation de la notification de fin,pomodoro,Fond (quitter),PomodoroAppController.swift:257,code,
+Rappel de pause : notification si la pause proposée n'est pas lancée après N minutes,notifications,Notification macOS,PomodoroAppController.swift:426,code,
+Fiche de fin de session focus : note et nombre de mots ajoutés au chapitre actif,pomodoro,Minuteur (fin de session),PomodoroAppController.swift:719; PomodoroSessionNoteSheet.swift,code,
+"Modifier une session passée (début, fin, catégorie, projet, note, état) ; blocs de travail recalculés",pomodoro,Minuteur > Journal,PomodoroAppController.swift:755; PomodoroSessionEditorSheet.swift,code,Durée min 60 s
+Supprimer une session passée,pomodoro,Minuteur > Journal,PomodoroAppController.swift:779,code,
+Ajouter / renommer / supprimer une catégorie d'activité (couleur aléatoire),pomodoro,Minuteur > Projets,PomodoroAppController.swift:563,code,
+Ajouter / modifier / supprimer un projet Pomodoro (cibles sessions/minutes),pomodoro,Minuteur > Projets,PomodoroAppController.swift:603,code,
+"Ajouter / modifier / supprimer un objectif Pomodoro avec validation (titre requis, cible ≤ 1440 min ou ≤ 200 sessions)",objectifs,Minuteur > Réglages,PomodoroAppController.swift:650; PomodoroAppController.swift:700,code,
+Exporter les données Pomodoro en JSON ou les sessions en CSV,export-import,Minuteur > Réglages,PomodoroAppController.swift:791; PomodoroAppController.swift:805,code,
+"Navigation des statistiques Pomodoro par période (jour, semaine, mois, année), précédent/suivant, Aujourd'hui ; clic sur un jour du calendrier → journal",pomodoro,Minuteur > Statistiques,PomodoroAppController.swift:529; PomodoroAppController.swift:538,code,
+Filtres Pomodoro par catégorie et projet (statistiques et journal),pomodoro,Minuteur,PomodoroAppController.swift:46; PomodoroAppController.swift:522,code,
+Rechargement et fusion des données Pomodoro quand l'autre Mac modifie le fichier (pas d'écriture tant que le fichier est illisible),donnees-sync,Fond,PomodoroAppController.swift:834; PomodoroAppController.swift:843,code+protocole,
+Lien d'une session Pomodoro à un chapitre d'écriture,pomodoro,Minuteur > Aujourd'hui,PomodoroAppController.swift:51; PomodoroTodayView.swift:374,code,
+Son de fin de phase joué par l'app (notification de fin silencieuse),pomodoro,Fond,PomodoroAppController.swift:1075,code,
+Mode focus du minuteur (toggleFocusMode / isFocusModeEnabled) et titre/icône de barre des menus du contrôleur,pomodoro,—,PomodoroAppController.swift:304; PomodoroAppController.swift:557,code,"non branchée ? toggleFocusMode, menuBarTitle et menuBarIcon ne sont utilisés par aucune vue"
+"Cycle Pomodoro : après N sessions focus, pause longue ; sinon pause courte ; la pause longue remet le cycle à zéro",pomodoro,Minuteur,PomodoroTimerEngine.swift:365,code,
+Durée active des sessions calculée hors pauses (tolérance de fin 5 s),pomodoro,Fond,PomodoroTimerEngine.swift:358,code+protocole,
+État du minuteur persistant (UserDefaults) : une session expirée pendant la fermeture est enregistrée comme interrompue,pomodoro,Fond,PomodoroTimerEngine.swift:221; PomodoroTimerEngine.swift:405,code,
+Stockage Pomodoro dans iCloud Drive/POMODORO/pomodoro-data.json (repli Documents local),donnees-sync,Fond,PomodoroDataStore.swift:256,code+protocole,
+"Pomodoro : attente du téléchargement iCloud, écriture désactivée si fichier illisible (avertissement affiché)",donnees-sync,Fond / Minuteur,PomodoroDataStore.swift:76; PomodoroDataStore.swift:115,code,
+Pomodoro : fichier corrompu mis de côté (.corrupt) et dernière sauvegarde restaurée ; restauration si fichier absent,donnees-sync,Fond,PomodoroDataStore.swift:125; PomodoroDataStore.swift:95,code,
+Pomodoro : 8 sauvegardes de secours tournantes à chaque écriture (dossier Backups),donnees-sync,Fond,PomodoroDataStore.swift:175,code,
+"Pomodoro : fusion par identifiant (plus récent l'emporte), réglages les plus récents, pierres tombales conservées 180 jours",donnees-sync,Fond,PomodoroDataStore.swift:366,code+protocole,
+"Export CSV des sessions Pomodoro (id, début, fin, fuseau, durées, type, état, catégorie, projet, note)",export-import,Minuteur > Réglages,PomodoroDataStore.swift:232,code,
+"Minuteur > Aujourd'hui : cadran du minuteur, sélecteurs catégorie / projet / chapitre d'écriture, Démarrer / Pause / Arrêter, animation de fin de session",pomodoro,Minuteur > Aujourd'hui,PomodoroTodayView.swift:89,code,
+"Minuteur > Aujourd'hui : pastilles série Pomodoro, cycle, catégorie, projet ; message d'état et avertissement de stockage",pomodoro,Minuteur > Aujourd'hui,PomodoroTodayView.swift:62,code,
+"Minuteur > Aujourd'hui : performance du jour (sessions terminées/interrompues, minutes de concentration, objectif restant, mots écrits, mots vs objectif par session, prochain palier)",pomodoro,Minuteur > Aujourd'hui,PomodoroTodayView.swift:136,code,
+Minuteur > Aujourd'hui : progression des objectifs Pomodoro,objectifs,Minuteur > Aujourd'hui,PomodoroTodayView.swift:177,code,
+"Minuteur > Aujourd'hui : résumé du jour (titre, détail, 3 points saillants)",pomodoro,Minuteur > Aujourd'hui,PomodoroTodayView.swift:202,code,
+"Minuteur > Aujourd'hui : prédictions (minutes probables jour/semaine, probabilité d'atteindre les objectifs, meilleures heures)",statistiques,Minuteur > Aujourd'hui,PomodoroTodayView.swift:227; PomodoroPredictiveAnalyzer.swift,code,
+Minuteur > Aujourd'hui : timeline des sessions de la journée,pomodoro,Minuteur > Aujourd'hui,PomodoroTodayView.swift:246,code,
+"Minuteur > Journal : sessions groupées par jour (type, horaires, état, durée, catégorie, projet, note), recherche dans les notes, filtre par jour, modifier/supprimer",pomodoro,Minuteur > Journal,PomodoroJournalView.swift:3,code,
+Minuteur > Statistiques : graphique minutes et sessions par période,pomodoro,Minuteur > Statistiques,PomodoroStatisticsView.swift:46,code,
+Minuteur > Statistiques : calendrier d'activité annuel cliquable (minutes par jour),pomodoro,Minuteur > Statistiques,PomodoroStatisticsView.swift:110,code,
+Minuteur > Statistiques : répartition par jour de semaine et par heure de la journée,pomodoro,Minuteur > Statistiques,PomodoroStatisticsView.swift:131,code,
+"Minuteur > Projets : bilan par projet (progression vers la cible, sessions, minutes, blocs, notes)",pomodoro,Minuteur > Projets,PomodoroProjectsView.swift:25,code,
+"Minuteur > Réglages : cycle (concentration 5–120 min, pause courte 1–30 min, pause longue 5–60 min, 2–8 sessions, seuil de bloc 15–240 min)",reglages,Minuteur > Réglages,PomodoroTimerSettingsView.swift:23,code,
+"Minuteur > Réglages : objectif de mots par session (0–2000), rappel de pause non démarrée (1–30 min), mode deep work avec noms des raccourcis ON/OFF",reglages,Minuteur > Réglages,PomodoroTimerSettingsView.swift:50,code+protocole,
+"Minuteur > Réglages : choix et écoute des sons de fin par phase, volume",reglages,Minuteur > Réglages,PomodoroTimerSettingsView.swift:83; PomodoroTimerSettingsView.swift:208,code,
+"Fiche fin de session : badge du delta écrit pendant la session, note, mots écrits ajoutés au total du jour du chapitre actif",pomodoro,Feuille fin de session focus,PomodoroSessionNoteSheet.swift:3,code,
+"Feuille Modifier la session (début, fin, état, catégorie, projet, note)",pomodoro,Minuteur > Journal > Modifier,PomodoroSessionEditorSheet.swift:3,code,
+Série Pomodoro : jours consécutifs avec au moins une session focus terminée,series-motivation,Minuteur > Aujourd'hui,PomodoroStatisticsEngine.swift:129,code,Distincte de la série d'écriture
+"Statistiques globales Pomodoro (minutes totales, sessions terminées, taux de complétion, durée moyenne des blocs) recalculées à chaque sauvegarde",pomodoro,Fond,PomodoroStatisticsEngine.swift:225,code,
+"Prédictions Pomodoro : moyenne quotidienne, semaine probable = max(semaine en cours, moyenne × 5), probabilité = prévu ÷ cible, 3 meilleures heures",statistiques,Minuteur > Aujourd'hui,PomodoroPredictiveAnalyzer.swift:24,code,
+Notification Pomodoro « Session démarrée » (durée),notifications,Notification macOS,PomodoroTimerNotificationManager.swift:140,code,
+Notification de fin de session/pause planifiée à l'avance (silencieuse) avec actions Démarrer la pause / Sauter / Démarrer la session / Plus tard,notifications,Notification macOS,PomodoroTimerNotificationManager.swift:99; PomodoroTimerNotificationManager.swift:50,code+protocole,
+Notification « Pause non démarrée » avec actions Démarrer la pause / Sauter,notifications,Notification macOS,PomodoroTimerNotificationManager.swift:127,code,
+"Surveillance du fichier Pomodoro (dossier + fichier, ré-ouverture après écriture atomique, debounce 0,8 s, ignore ses propres écritures 2 s)",donnees-sync,Fond,PomodoroDataFileMonitor.swift:11,code,
+Fenêtre Exporter les données : choix du format et du périmètre (tous les projets ou un projet),export-import,⌘⇧E / barre latérale / Vue d'ensemble,ExportView.swift:45,code+protocole,
+"Export CSV (une ligne par jour et par chapitre, point-virgule, note, BOM UTF-8, protection contre l'injection de formules)",export-import,Exporter > CSV / Excel,ExportView.swift:542; ExportView.swift:585,code+protocole,
+"Export Excel .xlsx natif (feuille « Export » : date, projet, chapitre, total, caractères du jour, note, deadline ; nombres en cellules numériques)",export-import,Exporter > Excel .xlsx,ExportView.swift:591; XLSXWriter.swift:10,code+protocole,Écrit sans dépendance (ZIP stored maison)
+"Export PDF Rapport : couverture, statistiques, progression globale, activité 30 jours, sections par projet avec barres par chapitre",export-import,Exporter > PDF Rapport,ExportView.swift:611; ExportView.swift:645,code,
+Export PDF Tableau brut de toutes les entrées,export-import,Exporter > PDF Tableau,ExportView.swift:611; ExportView.swift:1213,code,
+"Export PDF Hebdo de la semaine écoulée (lundi → dimanche) : activité journalière, chapitres touchés",export-import,Exporter > PDF Hebdo / bandeau du lundi,ExportView.swift:306; ExportView.swift:1330,code,
+"Export Markdown (statistiques, tableau par chapitre, jalons à venir) copié dans le presse-papiers",export-import,Exporter > Markdown,ExportView.swift:368,code+protocole,
+"Envoyer par mail au directeur : brouillon mailto (résumé semaine, chapitres, jalons à venir)",directeur-soutenance,Exporter > Envoyer par mail,ExportView.swift:449,code,
+Bouton Présentation depuis la fenêtre d'export,directeur-soutenance,Exporter > Présentation,ExportView.swift:115; PresentationView.swift,code,
+"Importer des totaux quotidiens par copier-coller depuis Excel ou fichier CSV/TXT (UTF-8, Latin-1, CP1252) vers un projet/chapitre choisi",export-import,Barre latérale > Importer,ImportView.swift:10; ImportView.swift:270,code+protocole,Aperçu des 10 premières entrées ; dernière valeur par date retenue
+"Import : détection du séparateur (tabulation, point-virgule, virgule), dates ISO / françaises / américaines / en lettres, numéros de série Excel, séparateurs de milliers",export-import,Importer,ImportView.swift:287; ImportView.swift:331,code+protocole,Dates d'abord ; numéro de série seulement si 20000–80000 et un autre nombre présent ; total < 10 millions
+"Navigateur de snapshots : liste datée avec taille et badge « Dernier », restaurer (confirmation), ouvrir le dossier dans le Finder",donnees-sync,Réglages > Snapshots > Parcourir,SnapshotBrowserView.swift:4,code+protocole,
+"Onboarding en 3 étapes : bienvenue, nom du premier projet (crée « Chapitre 1 »), objectif journalier avec préréglages 500 / 1000 / 2000",interface-navigation,Feuille au premier lancement,OnboardingView.swift:7,code,
+Bulles d'aide contextuelles affichées une seule fois par vue (mémorisées),interface-navigation,Diverses vues,OnboardingTooltip.swift:9,code,
+Réinitialiser toutes les bulles d'aide,interface-navigation,—,OnboardingTooltip.swift:193,code,non branchée ? resetAllOnboardingTooltips() n'est appelé nulle part
+"Modèles de projet : Thèse 5 chapitres, Article scientifique (IMRaD), Mémoire M2, Monographie, Rapport de recherche, Projet libre (chapitres et objectifs pré-remplis)",chapitres-structure,Formulaire de projet > Choisir un modèle,ProjectTemplatesView.swift:12; ProjectTemplatesView.swift:85,code,
+"Modèles de plan de chapitre : Intro/Corps/Conclusion, IMRaD, Revue de littérature, Analyse de données, Vide",notes-journal,Tableau de bord > notes > Plan,ChapterPlanTemplate.swift:10,code,
+"Formulaire de projet : nom, type de document, directeur/co-auteur, notes de projet",chapitres-structure,Barre latérale > + / Renommer,ChapterListView.swift:73,code,
+"Templates de structure rapides à la création d'un projet : Thèse, Mémoire, Roman, Article scientifique, Scénario",chapitres-structure,Nouveau projet > Template de structure,ChapterListView.swift:5; ChapterListView.swift:161,code,
+"Formulaire de chapitre : nom, objectif, notes, version de brouillon (±), priorité, tags libres séparés par virgules, deadline (date future)",chapitres-structure,Barre latérale > + / Modifier,ChapterListView.swift:310,code,
+Bouton Historique dans le formulaire de chapitre (journal de contexte),chapitres-structure,Modifier le chapitre > Historique,ChapterListView.swift:457; ChapterHistoryView.swift,code,
+"Table des matières : arborescence des projets actifs repliables (chapitres, terminés, %, total), chapitre actif, priorité haute, tags, statut, objectif, deadline",chapitres-structure,⌘K > Table des matières,TableOfContentsView.swift:5,code,
+"Exporter la table des matières en texte Markdown (cases cochées, %, totaux, sous-chapitres) avec bouton Copier",export-import,Table des matières > Exporter,TableOfContentsView.swift:226; TableOfContentsView.swift:250,code,
+"Kanban des chapitres en 3 colonnes : À faire (aucune entrée), En cours (entrées), Terminé",chapitres-structure,Barre latérale > Kanban,KanbanView.swift:29; KanbanView.swift:49,code,Indépendant du statut Plan/Rédaction/Révision/Terminé
+"Kanban : glisser une carte vers une colonne (Terminé = marquer terminé, sinon retirer la marque)",chapitres-structure,Kanban,KanbanView.swift:166,code,Déposer dans « À faire » d'un chapitre ayant des entrées le laisse en « En cours »
+"Kanban : cartes (tag, projet, total/objectif, %, jours restants ou en retard) et bouton Modifier",chapitres-structure,Kanban,KanbanView.swift:278,code,
+Kanban : nouveau chapitre dans le projet actif par double-clic ou bouton + sur l'en-tête de colonne,chapitres-structure,Kanban,KanbanView.swift:110; KanbanView.swift:218,code,
+"Échéances : 5 onglets Chapitres, Jalons, Gantt, 72h, Critique",echeances-pilotage,Barre latérale > Échéances (⌘3),DeadlineBoardView.swift:12; DeadlineBoardView.swift:149,code+protocole,
+Échéances > Chapitres : compteurs En retard / Cette semaine / Terminés,echeances-pilotage,Échéances > Chapitres,DeadlineBoardView.swift:184,code,
+"Échéances > Chapitres : cartes avec case « terminé », deadline effective (buffer affiché), progression, projection, rythme nécessaire, badge J-X/J+X, statut coloré",echeances-pilotage,Échéances > Chapitres,DeadlineBoardView.swift:196,code,
+"Échéances > Jalons : cartes cochables (date, notes, statut, chapitre lié, récurrence), modifier, supprimer ; ajout d'un jalon par projet",echeances-pilotage,Échéances > Jalons,DeadlineBoardView.swift:288; DeadlineBoardView.swift:121,code,
+"Échéances > Gantt : barres des chapitres (de la première entrée à la deadline) et jalons sur un axe des mois ; clic jalon = modifier, clic chapitre = onglet Chapitres",echeances-pilotage,Échéances > Gantt,DeadlineBoardView.swift:754; DeadlineBoardView.swift:990,code,
+Échéances > 72h : chapitres et jalons dus dans les 72 prochaines heures,echeances-pilotage,Échéances > 72h,DeadlineBoardView.swift:676,code,
+"Échéances > Critique : jalons bloquants par niveau d'urgence avec légende, badge Bloquant, modification rapide",echeances-pilotage,Échéances > Critique,DeadlineBoardView.swift:448,code,
+Bouton .ics : exporter deadlines et jalons vers un fichier iCal,export-import,Échéances > .ics,DeadlineBoardView.swift:102; DeadlineBoardView.swift:738,code,
+"Formulaire de jalon : titre, date, notes, récurrence, statut, rappel (1–90 j avant, heure), chapitre lié",echeances-pilotage,Échéances > Jalon / Modifier,DeadlineBoardView.swift:1089,code,
+"Recherche plein texte (insensible à la casse et aux accents) dans noms de chapitres, notes générales, plan, idées, blocages, prochaine étape, notes quotidiennes et notes de projet",interface-navigation,Barre latérale > Recherche (⌘4),SearchView.swift:109,code+protocole,"Ne cherche pas dans le journal, les fragments ni les notes de soutenance"
+"Recherche : extrait contextuel avec terme surligné, badge de source, date et volume",interface-navigation,Recherche,SearchView.swift:185; SearchView.swift:347,code,
+"Recherche : filtre par projet et tri (pertinence, plus récent, plus ancien, volume)",interface-navigation,Recherche,SearchView.swift:3; SearchView.swift:281,code,
+"Graphiques : périodes 7 j, 30 j, 3 mois, 1 an, Tout, dates personnalisées (du… au…)",statistiques,Barre latérale > Graphiques (⌘5),ChartView.swift:6; ChartView.swift:110,code+protocole,
+Graphiques : filtre par projet et par chapitre (barres empilées par chapitre si un projet est choisi),statistiques,Graphiques,ChartView.swift:151; ChartView.swift:159,code,
+"Graphiques : types Courbe, Barres, Vitesse (glissante 7 j), Cumulé",statistiques,Graphiques,ChartView.swift:16,code,
+Graphiques : ligne d'objectif journalier sur le graphe,statistiques,Graphiques,ChartView.swift:758,code,
+Graphiques : comparaison avec la période précédente de même durée,statistiques,Graphiques > Comparer avec la période précédente,ChartView.swift:177,code,Indisponible pour Tout et Dates
+Graphiques Cumulé : projection à la vitesse 14 j jusqu'à la deadline et trajectoire idéale linéaire vers l'objectif,echeances-pilotage,Graphiques > Cumulé > Afficher la projection,ChartView.swift:212; ChartView.swift:257,code,
+Graphiques : vue mensuelle (caractères par mois),statistiques,Graphiques > Vue mensuelle,ChartView.swift:308; ChartView.swift:934,code,
+Graphiques : comparaison de progression des chapitres (ou des projets en vue globale),statistiques,Graphiques > Comparaison chapitres,ChartView.swift:319; ChartView.swift:1013,code,
+"Graphiques : statistiques de la période (total, jours actifs / jours de la période, meilleur jour)",statistiques,Graphiques,ChartView.swift:339; ChartView.swift:926,code,
+"Exporter le graphique en PNG (vignette titrée avec période, total, jours actifs, meilleur jour)",export-import,Graphiques > PNG,ChartView.swift:436; ChartView.swift:1453,code,
+Activité : bascule Heatmap annuelle / Calendrier mensuel,interface-navigation,Activité (⌘6) / Calendrier (⌘8),UnifiedActivityView.swift:5,code,
+"Heatmap d'activité sur 365 jours (5 niveaux : <400, <1200, <2500, ≥2500 car.), libellés de mois, survol/clic = date et caractères",statistiques,Activité,HeatmapView.swift:202; HeatmapView.swift:373,code+protocole,
+"Heatmap : filtre par projet et statistiques (total, jours actifs, moyenne par séance, meilleur jour)",statistiques,Activité,HeatmapView.swift:158; HeatmapView.swift:191,code,"Les statistiques portent sur toutes les dates, pas seulement les 365 derniers jours — à vérifier"
+Exporter la heatmap en PNG,export-import,Activité > PNG,HeatmapView.swift:130; HeatmapView.swift:448,code,
+"Calendrier mensuel : navigation mois précédent/suivant (pas au-delà du mois courant), Aujourd'hui, filtre par projet",statistiques,Calendrier (⌘8),CalendarView.swift:147; CalendarView.swift:210,code+protocole,
+"Calendrier : statistiques du mois (total, jours actifs, moyenne par jour actif, jours avec objectif atteint)",statistiques,Calendrier,CalendarView.swift:238,code,
+"Calendrier : cases colorées par intensité, vert si objectif atteint, total abrégé, repère d'épingle ; survol = détail par chapitre avec notes",statistiques,Calendrier,CalendarView.swift:287; CalendarView.swift:359,code,
+"Calendrier : détail du jour sélectionné (total, % objectif, entrées par projet/chapitre avec note), épingler la date et lui ajouter une note",echeances-pilotage,Calendrier > clic sur un jour,CalendarView.swift:419,code+protocole,
+"Historique : choisir projet et chapitre, liste des entrées (total, +incrément ou variation négative avec badge Correction, note), suppression confirmée",saisie,"Barre latérale > Historique (⌘7, ⌘⇧H)",HistoryListView.swift:3; HistoryView.swift:114,code+protocole,
+"Feuille Historique d'un chapitre (même liste, depuis la barre latérale)",saisie,Barre latérale > Hist.,HistoryView.swift:3,code,
+"Historique de contexte du chapitre : journal chronologique (compteur, statut, version, notes) et ajout de notes de contexte manuelles",notes-journal,Modifier le chapitre > Historique,ChapterHistoryView.swift:6; ChapterHistoryView.swift:166,code,200 entrées max par chapitre
+"Popover « Historique des modifications » d'une entrée (ancienne → nouvelle valeur, delta, horodatage)",saisie,Tableau de bord > icône historique du champ,EntryEditHistoryPopover.swift:5,code,
+"Sélecteur de statut en grille 2×2 avec descriptions, bouton « Retirer le statut »",chapitres-structure,Menu du chapitre > Statut du chapitre…,ChapterStatusPickerView.swift:6,code+protocole,
+"Accomplissements : série actuelle, meilleure série, total de jours écrits, total écrit",series-motivation,Barre latérale > Accomplissements (⌘⇧B),AchievementsView.swift:57,code+protocole,Total = somme des incréments (corrigé le 2026-03-20)
+Accomplissements : progression vers le prochain badge de série,series-motivation,Accomplissements,AchievementsView.swift:362,code,Calculée sur la série actuelle
+"Badges de série (8) : Étincelle 3, Régulier 7, Persévérant 14, Acharné 30, Légende 60, Immortel 100, Titan 200, Année pleine 365 jours",series-motivation,Accomplissements,AchievementsView.swift:14,code,Débloqués selon le record de série
+"Badges de volume (8) : 10 k, 50 k, 100 k, 250 k, 500 k, 1 M, 2 M, 5 M caractères, avec anneau de progression et prochain badge",series-motivation,Accomplissements,AchievementsView.swift:408; AchievementsView.swift:107,code,
+Section « Défis accomplis » (cartes en défilement horizontal),series-motivation,Accomplissements,AchievementsView.swift:141,code+protocole,
+"Accomplissements généraux (16) : Premier mot, Premier projet, Chapitre bouclé, Prolifique, Marathon (10 000/j), Centurion (100 jours), Lève-tôt (<8 h), Couche-tard (≥23 h), Week-end warrior, Sprinter (5 000/j), Polyvalent (3 chapitres/jour), Architecte (10 deadlines), Finisseur (5 chapitres), Mois régulier (20 j), Année productive (200 j), Projet bouclé",series-motivation,Accomplissements,AchievementsView.swift:207,code+protocole,Défilement horizontal style Netflix
+Statistiques & Analyse : Momentum 30 jours (vitesse glissante fenêtre 7 j) avec info-bulle au survol,statistiques,⌘K > Statistiques,StatsAnalyticsView.swift:135,code,
+"Statistiques : Top 10 des meilleurs jours (rang, date, projet, total)",statistiques,Statistiques,StatsAnalyticsView.swift:256,code,
+"Statistiques : semaine en cours vs précédente (barres par jour, totaux, écart %)",statistiques,Statistiques,StatsAnalyticsView.swift:316,code,
+"Statistiques : heure de pic personnel (meilleure fenêtre de 3 h, pic unique matin/après-midi/soir, histogramme 24 h)",statistiques,Statistiques,StatsAnalyticsView.swift:446,code,
+"Statistiques : prévision de fin avec intervalle de confiance (optimiste = vitesse max 14 j, attendu = moyenne, pessimiste = min)",echeances-pilotage,Statistiques,StatsAnalyticsView.swift:531,code,
+"Statistiques : distribution de l'écriture par projet sur 30 jours (barres, %, total)",statistiques,Statistiques,StatsAnalyticsView.swift:624,code,
+"Statistiques : régularité ce mois-ci (jours écrits / sans écriture, alerte si plus de 7 jours sans écriture)",statistiques,Statistiques,StatsAnalyticsView.swift:694,code,
+"Statistiques : projection de fin (dates optimiste/réaliste/pessimiste, J-n, % de l'objectif global)",echeances-pilotage,Statistiques,StatsAnalyticsView.swift:789,code,
+"Statistiques : taux de consistance sur 30, 60 et 90 jours (anneaux)",statistiques,Statistiques,StatsAnalyticsView.swift:867,code,
+Statistiques : courbe d'accélération 14 j vs 14 j précédents,statistiques,Statistiques,StatsAnalyticsView.swift:910,code,
+"Statistiques : tableau comparatif des chapitres (%, moyenne/jour, J-n'estimés)",statistiques,Statistiques,StatsAnalyticsView.swift:974,code,
+"Statistiques : mois en revue (total, moyenne par jour actif, croissance vs mois dernier, meilleur jour)",statistiques,Statistiques,StatsAnalyticsView.swift:1031,code,
+Statistiques : vélocité glissante 14 j sur 60 jours,statistiques,Statistiques,StatsAnalyticsView.swift:1088,code,
+Statistiques : heatmap horaire d'écriture (pic horaire et caractères cumulés),statistiques,Statistiques,StatsAnalyticsView.swift:1165,code,
+"Statistiques : agrandir un graphique en plein écran (bouton ⤢, Échap pour fermer)",interface-navigation,Statistiques,StatsAnalyticsView.swift:1251,code,
+"Mode présentation (4 diapositives) : progression globale du projet actif, chapitres, indicateurs clés (série, vitesse, mois, record), projection de fin ; navigation ← → et Échap",directeur-soutenance,⌥⌘P,PresentationModeView.swift:7,code,
+"Présentation depuis l'export (3 diapositives) : vue d'ensemble globale, chapitres, jalons à venir",directeur-soutenance,Exporter > Présentation,PresentationView.swift:7,code,
+Fil d'Ariane : sélecteur de projet (projets non archivés) dans la barre d'outils,interface-navigation,Barre d'outils,BreadcrumbPickers.swift,code,
+"Fil d'Ariane : sélecteur de chapitre avec pourcentage, version et badge de relecture",chapitres-structure,Barre d'outils,BreadcrumbPickers.swift,code,
+Cache des statistiques du tableau de bord (recalcul seulement quand les données changent),statistiques,Fond (tableau de bord),DashboardStatsCache.swift,code,mécanisme de fond
