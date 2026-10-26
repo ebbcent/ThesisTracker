@@ -169,6 +169,10 @@ struct DirectorReportSheet: View {
         lines.append("RÉSUMÉ DE LA PÉRIODE")
         lines.append(String(repeating: "─", count: 40))
         lines.append("• Total écrit   : \(DataStore.formatNumber(totalChars)) car. ≈ \(DataStore.formatNumber(totalWords)) mots")
+        if let pages = store.pagesNumber(store.thesisWrittenChars, digits: 0),
+           let calibration = store.pageCalibrationLabel {
+            lines.append("• Thèse rédigée : ≈ \(pages) pages (\(calibration))")
+        }
         lines.append("• Jours actifs  : \(activeDays)")
         lines.append("• Streak actuel : \(store.currentStreak) jour\(store.currentStreak > 1 ? "s" : "")")
 
@@ -212,6 +216,9 @@ struct DirectorReportSheet: View {
                 lines.append("    Écrit cette période : +\(DataStore.formatNumber(chChars)) car. (+\(DataStore.formatNumber(chWords)) mots)")
                 if chapter.goal > 0 {
                     lines.append("    Avancement global   : \(DataStore.formatNumber(latest)) / \(DataStore.formatNumber(chapter.goal)) car. (\(pct)%)")
+                    if let written = store.pagesNumber(latest), let goalPages = store.pagesNumber(chapter.goal, digits: 0) {
+                        lines.append("    En pages de thèse   : ≈ \(written) / \(goalPages) p.")
+                    }
                 }
                 if let status = chapter.status {
                     lines.append("    Statut              : \(status.label)")

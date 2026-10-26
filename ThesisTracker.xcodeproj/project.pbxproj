@@ -382,7 +382,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 5.11;
+				MARKETING_VERSION = 5.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.writingprocess.app;
 				PRODUCT_NAME = "Writing Process";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -422,7 +422,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 5.11;
+				MARKETING_VERSION = 5.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.writingprocess.app;
 				PRODUCT_NAME = "Writing Process";
 				PROVISIONING_PROFILE_SPECIFIER = "";

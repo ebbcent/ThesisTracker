@@ -2,7 +2,8 @@ import Foundation
 
 // MARK: - Équivalent en pages (5.10)
 // Les comptes sont toujours stockés en caractères ; une page vaut
-// `writingSchedule.charsPerPage` caractères (réglage vide = pas d'affichage).
+// `writingSchedule.charsPerPage` caractères. Depuis la 5.12 : réglage absent =
+// 1 500 car./p (défaut), 0 = pas d'affichage.
 
 extension DataStore {
 
@@ -16,8 +17,8 @@ extension DataStore {
     ]
 
     var charsPerPage: Int? {
-        guard let value = data.writingSchedule?.charsPerPage, value > 0 else { return nil }
-        return value
+        guard let value = data.writingSchedule?.charsPerPage else { return DataStore.defaultCharsPerPage }
+        return value > 0 ? value : nil
     }
 
     static func pages(chars: Int, charsPerPage: Int) -> Double {

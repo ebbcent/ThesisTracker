@@ -468,6 +468,7 @@ struct Chapter: Codable, Identifiable {
     var isPinned: Bool = false                      // épinglé en haut de la sidebar
     var goalKind: ChapterGoalKind? = nil            // 5.10 — nil = « au moins » (plancher)
     var excludedFromThesisTotal: Bool? = nil        // 5.10 — annexes, dictionnaire…
+    var pacing: ChapterPacing? = nil                // 5.12 — profil de rythme, jours ouvrés
 
     // Initializer de commodité (remplace le memberwise init supprimé par le custom decoder)
     init(name: String, goal: Int, deadline: String? = nil, notes: String? = nil,
@@ -512,6 +513,7 @@ struct Chapter: Codable, Identifiable {
         isPinned        = (try? c.decodeIfPresent(Bool.self,                 forKey: .isPinned))     ?? false
         goalKind        = try? c.decodeIfPresent(ChapterGoalKind.self,      forKey: .goalKind)
         excludedFromThesisTotal = try? c.decodeIfPresent(Bool.self,         forKey: .excludedFromThesisTotal)
+        pacing          = try? c.decodeIfPresent(ChapterPacing.self,        forKey: .pacing)
     }
 
     /// La relecture en cours (la plus récente).
@@ -1002,6 +1004,7 @@ struct AppData: Codable {
     var adminTasks: [AdminTask] = []            // Checklist administrative
     var writingSchedule: WritingSchedule? = nil // 5.9 — calendrier d'écriture synchronisé
     var writingSlots: [WritingSlot]? = nil      // 5.11 — créneaux d'écriture récurrents
+    var dayOffKinds: [String: DayOffKind]? = nil // 5.12 — nature des jours de `restDays` (archives, séminaire, repos)
 
     // Legacy migration fields (old format had chapters at top level)
     var legacyChapters: [Chapter]?
@@ -1013,7 +1016,7 @@ struct AppData: Codable {
         case pinnedDates, weeklyChallenges, researchEntries
         case weeklyPlans, restDays, targetDefenseDate
         case journalEntries, fragments, monthlyReports, adminTasks
-        case writingSchedule, writingSlots
+        case writingSchedule, writingSlots, dayOffKinds
         case legacyChapters = "chapters"
         case legacyActiveChapterId = "activeChapterId"
     }
@@ -1043,6 +1046,10 @@ extension AppData {
         adminTasks                 = (try? c.decodeIfPresent(LossyArray<AdminTask>.self,           forKey: .adminTasks))?.elements                 ?? []
         writingSchedule            = try? c.decodeIfPresent(WritingSchedule.self,       forKey: .writingSchedule)
         writingSlots               = (try? c.decodeIfPresent(LossyArray<WritingSlot>.self,         forKey: .writingSlots))?.elements
+        // Décodage élément par élément : une nature inconnue n'efface pas les autres.
+        if let raw = try? c.decodeIfPresent([String: String].self, forKey: .dayOffKinds) {
+            dayOffKinds = raw.compactMapValues { DayOffKind(rawValue: $0) }
+        }
         legacyChapters             = (try? c.decodeIfPresent(LossyArray<Chapter>.self,             forKey: .legacyChapters))?.elements
         legacyActiveChapterId      = try? c.decodeIfPresent(UUID.self,                  forKey: .legacyActiveChapterId)
     }

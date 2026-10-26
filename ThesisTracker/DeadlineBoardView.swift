@@ -11,6 +11,7 @@ struct DeadlineBoardView: View {
     // MARK: - Onglets
     enum Tab: Int { case chapitres = 0, jalons = 1, gantt = 2, next72h = 3, critique = 4 }
     @State private var selectedTab: Tab = .chapitres
+    @State private var expandedPacing: Set<UUID> = []   // 5.12 — simulateurs de rythme ouverts
 
     // MARK: - Feuilles
     @State private var showAddMilestone: Bool = false
@@ -201,6 +202,7 @@ struct DeadlineBoardView: View {
                 let eta = store.estimatedCompletionDate(for: item.chapter.id, in: item.project.id)
                 let pace = store.requiredPacePerDay(for: item.chapter, in: item.project) // #27
                 GlassCard {
+                  VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .top, spacing: 12) {
                         // V5 — #8 : Quick-check chapitre
                         Button {
@@ -236,7 +238,8 @@ struct DeadlineBoardView: View {
                                         .foregroundColor(.orange.opacity(0.8))
                                 }
                             }
-                            Text(progressLabel(latest: latest, goal: item.chapter.goal, useWordCount: store.data.useWordCount))
+                            Text(progressLabel(latest: latest, goal: item.chapter.goal, useWordCount: store.data.useWordCount)
+                                 + pagesSuffix(latest: latest, goal: item.chapter.goal))
                                 .font(.system(size: 12))
                                 .foregroundColor(.labelMuted)
                             if let eta {
@@ -252,7 +255,8 @@ struct DeadlineBoardView: View {
                                     let paceStr = store.data.useWordCount
                                         ? "\(DataStore.formatNumber(pace / 5)) mots/jour"
                                         : "\(DataStore.formatNumber(pace)) car./jour"
-                                    Text("Il faut \(paceStr) pour finir à temps")
+                                    Text(item.chapter.pacing?.profile.map { "Rythme \($0.label) : \(paceStr) aujourd'hui" }
+                                         ?? "Il faut \(paceStr) pour finir à temps")
                                         .font(.system(size: 11))
                                 }
                                 .foregroundColor(statusColor(for: deadline))
@@ -278,9 +282,47 @@ struct DeadlineBoardView: View {
                             .background(Capsule().fill((item.chapter.isCompleted ? Color.accentGreen : statusColor(for: deadline)).opacity(0.12)))
                         }  // end VStack trailing
                     }
+                    // 5.12 — simulateur de rythme du chapitre
+                    if !item.chapter.isCompleted, item.chapter.goal > 0, item.chapter.deadline != nil {
+                        pacingToggle(for: item.chapter)
+                        if expandedPacing.contains(item.chapter.id) {
+                            PacingSimulatorView(store: store, chapter: item.chapter, projectId: item.project.id)
+                                .padding(.top, 8)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                        }
+                    }
+                  }
                 }
             }
         }
+    }
+
+    private func pacingToggle(for chapter: Chapter) -> some View {
+        let open = expandedPacing.contains(chapter.id)
+        return Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                if open { expandedPacing.remove(chapter.id) } else { expandedPacing.insert(chapter.id) }
+            }
+        } label: {
+            HStack(spacing: 5) {
+                Image(systemName: chapter.pacing?.profile?.symbol ?? "chart.xyaxis.line")
+                    .font(.system(size: 10))
+                Text(chapter.pacing?.profile.map { "Rythme : \($0.label)" } ?? "Choisir un rythme")
+                    .font(.system(size: 11, weight: .medium))
+                Image(systemName: open ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 8, weight: .semibold))
+            }
+            .foregroundColor(.accentWarm)
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 8)
+        .padding(.leading, 32)
+    }
+
+    private func pagesSuffix(latest: Int, goal: Int) -> String {
+        guard let written = store.pagesNumber(latest) else { return "" }
+        if goal > 0, let total = store.pagesNumber(goal, digits: 0) { return " · ≈ \(written) / \(total) p." }
+        return " · ≈ \(written) p."
     }
 
     // MARK: - Jalons tab
