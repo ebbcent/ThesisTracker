@@ -135,6 +135,15 @@ struct ThesisTrackerApp: App {
                         store.setTotalForDate(current + wordCount, for: chapter.id, in: project.id, date: today)
                     }
                     setupGlobalHotkey(store: store, pomodoroController: pomodoroController)
+                    // 5.11 — créneaux d'écriture : « Démarrer » depuis le rappel
+                    NotificationManager.shared.writingSlotStartHandler = { [weak store] slotID in
+                        guard let store, let slot = store.writingSlots.first(where: { $0.id == slotID }) else { return }
+                        pomodoroController.startWritingSlot(slot, store: store)
+                    }
+                    WritingSlotScheduler.reschedule(store.writingSlots)
+                }
+                .onChange(of: store.data.writingSlots ?? []) { _, slots in
+                    WritingSlotScheduler.reschedule(slots)
                 }
                 // #51 — Spotlight deep-link navigation
                 .onContinueUserActivity(CSSearchableItemActionType) { activity in

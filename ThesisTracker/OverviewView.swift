@@ -203,7 +203,7 @@ struct OverviewView: View {
     // MARK: - V3.2 Cockpit pipeline
 
     private var allChapters: [Chapter] {
-        store.data.projects.flatMap { $0.chapters }
+        store.data.projects.flatMap { $0.chapters }.filter { $0.countsInThesisTotal }
     }
 
     private var weeklyVelocity: Int {

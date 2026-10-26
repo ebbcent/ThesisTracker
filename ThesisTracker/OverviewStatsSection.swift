@@ -16,7 +16,11 @@ struct ThesisProjectionCard: View {
 
     private var chaptersWithoutGoal: Int {
         store.data.projects.flatMap { $0.chapters }
-            .filter { !$0.isCompleted && $0.goal == 0 }.count
+            .filter { !$0.isCompleted && $0.goal == 0 && $0.countsInThesisTotal }.count
+    }
+
+    private var chaptersExcluded: Int {
+        store.data.projects.flatMap { $0.chapters }.filter { !$0.countsInThesisTotal }.count
     }
 
     private var projectedDate: String? {
@@ -72,7 +76,8 @@ struct ThesisProjectionCard: View {
                     } else {
                         projStat(label: "Restant",
                                  value: store.formatCountShort(remaining),
-                                 subtitle: "à écrire", color: .primary)
+                                 subtitle: store.pagesLabel(remaining).map { "à écrire · \($0)" } ?? "à écrire",
+                                 color: .primary)
                     }
 
                     if let d = days, remaining > 0 {
@@ -94,6 +99,18 @@ struct ThesisProjectionCard: View {
                     }
 
                     Spacer(minLength: 0)
+                }
+
+                if chaptersExcluded > 0 {
+                    HStack(spacing: 6) {
+                        Image(systemName: "tray.full")
+                            .font(.system(size: 10))
+                            .foregroundColor(.labelMuted)
+                        Text("\(chaptersExcluded) chapitre(s) hors total (annexes…) non compté(s) ici.")
+                            .font(.system(size: 11))
+                            .foregroundColor(.labelMuted)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
 
                 // ── Avertissement chapitres sans objectif ──

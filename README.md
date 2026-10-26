@@ -1,6 +1,6 @@
 # Writing Process
 
-Application macOS de suivi de l'écriture de thèse : saisie quotidienne des signes ou des mots par chapitre, objectifs, séries, échéances, statistiques, Pomodoro, modes immersifs (Sanctuaire, Sprint), exports DOCX/XLSX/ICS/Markdown.
+Application macOS de suivi de l'écriture de thèse : saisie quotidienne des signes ou des mots par chapitre, objectifs, calendrier d'écriture et séries, échéances, statistiques, Pomodoro avec intention et bilan, créneaux d'écriture, modes immersifs (Sanctuaire, Sprint), exports DOCX/XLSX/ICS/Markdown.
 
 Le nom interne du projet Xcode est **ThesisTracker** ; l'application installée s'appelle **Writing Process**.
 
@@ -47,7 +47,7 @@ Fonctionnement avec deux Mac :
 - **Élément abîmé.** Un élément illisible est ignoré seul, sans vider le reste. Le fichier d'origine est copié dans `Recovery/`.
 - **Fermeture.** Ce qui est en attente est écrit immédiatement quand on quitte l'app.
 
-Conseil : utiliser la même version de l'app sur les deux Mac.
+Conseil : utiliser la même version de l'app sur les deux Mac. **Obligatoire à partir de la 5.9** pour le calendrier d'écriture, les créneaux, les types d'objectif et les chapitres hors total : un Mac resté sur une version plus ancienne efface ces réglages en réécrivant `data.json`.
 
 **Restaurer un état antérieur :** Réglages de l'app → Snapshots.
 

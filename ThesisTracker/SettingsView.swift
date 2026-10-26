@@ -246,6 +246,16 @@ struct SettingsView: View {
                             .animation(.spring(response: 0.3, dampingFraction: 0.85), value: weekdayGoalsEnabled)
                         }
 
+                        // ── Calendrier d'écriture (5.9) ────────────────
+                        settingsSection("CALENDRIER D'ÉCRITURE") {
+                            WritingScheduleSettingsView(store: store)
+                        }
+
+                        // ── Créneaux d'écriture (5.11) ─────────────────
+                        settingsSection("CRÉNEAUX D'ÉCRITURE") {
+                            WritingSlotsSettingsView(store: store)
+                        }
+
                         // ── Raccourcis clavier (#40) ──────────────��────
                         settingsSection("RACCOURCIS CLAVIER (⌘⇧ + …)") {
                             VStack(spacing: 0) {

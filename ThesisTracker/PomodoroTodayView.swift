@@ -107,6 +107,8 @@ struct PomodoroTodayView: View {
                     writingChapterPicker
                 }
 
+                PomodoroIntentionField()
+
                 HStack(spacing: 10) {
                     Button("Démarrer") { controller.startFocusSession() }
                         .buttonStyle(CockpitButtonStyle(prominent: true))

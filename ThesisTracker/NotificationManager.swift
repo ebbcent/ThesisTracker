@@ -52,6 +52,9 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     /// Actions des notifications Pomodoro, transmises par le délégué unique (identifiant d'action).
     var pomodoroResponseHandler: ((String) -> Void)?
 
+    /// 5.11 — bouton « Démarrer » d'un rappel de créneau d'écriture (identifiant du créneau).
+    var writingSlotStartHandler: ((UUID) -> Void)?
+
     /// `setNotificationCategories` remplace TOUTES les catégories : on les cumule ici.
     private var registeredCategories: [String: UNNotificationCategory] = [:]
 
@@ -583,6 +586,10 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             // Actions Pomodoro (démarrer la pause / la session…) transmises au minuteur
             if identifier.hasPrefix(NotificationManager.pomodoroIdentifierPrefix) {
                 self.pomodoroResponseHandler?(action)
+            }
+            if action == WritingSlotScheduler.startActionIdentifier,
+               let slotID = WritingSlotScheduler.slotID(fromNotificationIdentifier: identifier) {
+                self.writingSlotStartHandler?(slotID)
             }
         }
         handler()

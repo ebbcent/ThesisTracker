@@ -51,6 +51,7 @@ struct DailySessionCard: View {
 
     private var statusMessage: String {
         guard smartGoal > 0 else {
+            if store.isTodayPlannedOff { return "Jour sans écriture prévue — pas d'objectif." }
             return "Définis un objectif journalier dans les réglages."
         }
         if isGoalReached  { return "Objectif atteint — excellente session !" }

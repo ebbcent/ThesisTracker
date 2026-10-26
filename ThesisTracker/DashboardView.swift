@@ -1624,6 +1624,7 @@ struct DashboardView: View {
                         .help(chapter.goal > 0
                               ? "\(store.formatCount(store.chapterProgress)) / \(store.formatCount(chapter.goal)) \(store.data.useWordCount ? "mots" : "car.") · \(min(100, Int(Double(store.chapterProgress) / Double(chapter.goal) * 100)))% du chapitre"
                               : "\(store.formatCount(store.chapterProgress)) \(store.data.useWordCount ? "mots" : "car.") dans ce chapitre")
+                        ChapterGoalStatusLine(store: store, chapter: chapter, total: store.chapterProgress)
                     }
                 }
             }

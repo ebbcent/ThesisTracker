@@ -66,6 +66,9 @@ final class PomodoroAppController: ObservableObject {
     @Published var noteDraft = ""
     @Published var wordCountDraft = ""
     @Published var isPresentingNoteEditor = false
+    @Published var intentionDraft = ""                       // 5.11 — intention du prochain bloc
+    @Published var focusQualityDraft: Int? = nil             // 5.11 — bilan de fin de bloc
+    @Published private(set) var activeIntention: String? = nil
 
     /// #43 — delta d'écriture pendant la session (injecté depuis MainView/ThesisTrackerApp)
     @Published var sessionWritingDelta: Int? = nil
@@ -381,6 +384,8 @@ final class PomodoroAppController: ObservableObject {
     private func beginFocusSession() {
         timerEngine.updateSettings(data.settings)
         guard timerEngine.startFocusSession(categoryID: selectedCategoryID, projectID: selectedProjectID) else { return }
+        let intention = intentionDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        activeIntention = intention.isEmpty ? nil : intention
         sessionPausedBySleep = false
         notificationManager.scheduleSessionStartedNotification(duration: data.settings.focusDuration)
         scheduleEndNotification()
@@ -722,10 +727,13 @@ final class PomodoroAppController: ObservableObject {
             isPresentingNoteEditor = false
             noteDraft = ""
             wordCountDraft = ""
+            focusQualityDraft = nil
             return
         }
 
         data.sessions[index].note = noteDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        data.sessions[index].focusQuality = focusQualityDraft
+        focusQualityDraft = nil
         data.sessions[index].updatedAt = .now
 
         let trimmed = wordCountDraft
@@ -934,7 +942,8 @@ final class PomodoroAppController: ObservableObject {
             createdAt: .now,
             updatedAt: .now,
             writingProjectId: selectedWritingProjectId,
-            writingChapterId: selectedWritingChapterId
+            writingChapterId: selectedWritingChapterId,
+            intention: mode == .focus ? activeIntention : nil
         )
         data.sessions.append(session)
         data.updatedAt = .now

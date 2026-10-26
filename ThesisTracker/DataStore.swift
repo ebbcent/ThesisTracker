@@ -498,6 +498,7 @@ class DataStore: ObservableObject {
         markLoaded()
         data = decoded
         dataVersion += 1
+        migrateLocalGoalSettingsIfNeeded()
     }
 
     private func applyLegacyMigration(_ decoded: inout AppData) {
@@ -701,7 +702,8 @@ class DataStore: ObservableObject {
         scheduleMilestoneNotificationsIfNeeded()
         scheduleDeadlineConflictAlertsIfNeeded()
         NotificationManager.shared.scheduleStreakWarningIfNeeded(
-            currentStreak: currentStreak, hasWrittenToday: hasWrittenToday)
+            currentStreak: currentStreak,
+            hasWrittenToday: hasWrittenToday || (usesScheduledStreak && isNeutralStreakDay(Date())))
         schedulePlateauAlertsIfNeeded()
         NotificationManager.shared.scheduleDailyRecapIfNeeded(
             totalToday: todayTotal, streak: currentStreak,
@@ -800,7 +802,9 @@ class DataStore: ObservableObject {
         let todayStr = DataStore.today
         let hasWrittenToday = activeWritingDays.contains(todayStr)
         NotificationManager.shared.scheduleEmptyDayReminderIfNeeded(hasWrittenToday: hasWrittenToday)
-        NotificationManager.shared.scheduleStreakWarningIfNeeded(currentStreak: currentStreak, hasWrittenToday: hasWrittenToday)
+        NotificationManager.shared.scheduleStreakWarningIfNeeded(
+            currentStreak: currentStreak,
+            hasWrittenToday: hasWrittenToday || (usesScheduledStreak && isNeutralStreakDay(Date())))
     }
 
     // MARK: - Date helpers
@@ -2947,7 +2951,7 @@ class DataStore: ObservableObject {
 
     func estimatedCompletionDate(for projectId: UUID, lookbackDays: Int = 14) -> Date? {
         guard let project = data.projects.first(where: { $0.id == projectId }) else { return nil }
-        let chapters = project.chapters.filter { !$0.isCompleted && $0.goal > 0 }
+        let chapters = project.chapters.filter { !$0.isCompleted && $0.goal > 0 && $0.countsInThesisTotal }
         guard !chapters.isEmpty else { return nil }
 
         let remaining = chapters.reduce(0) { total, chapter in
@@ -2978,7 +2982,7 @@ class DataStore: ObservableObject {
 
     /// Jours qui comptent pour les séries : du texte ajouté, ou une correction
     /// marquée comme telle (le total a baissé parce que du texte a été retiré).
-    private var activeWritingDays: Set<String> {
+    var activeWritingDays: Set<String> {
         let totals = dailyTotals()
         var days = Set(totals.keys.filter { (totals[$0] ?? 0) > 0 })
         for chapter in allChapters {
@@ -2990,6 +2994,11 @@ class DataStore: ObservableObject {
     /// Jours consécutifs d'écriture (en partant d'aujourd'hui, ou d'hier si aujourd'hui est vide)
     var currentStreak: Int {
         if let c = _currentStreakCache, c.version == dataVersion { return c.value }
+        if usesScheduledStreak {
+            let value = scheduledStreaks().current
+            _currentStreakCache = (dataVersion, value)
+            return value
+        }
         let cal = DataStore.gregorianCal
         let active = activeWritingDays
         let startOffset = active.contains(DataStore.today) ? 0 : 1
@@ -3005,6 +3014,11 @@ class DataStore: ObservableObject {
     /// Meilleure série de jours consécutifs de toute l'histoire
     var longestStreak: Int {
         if let c = _longestStreakCache, c.version == dataVersion { return c.value }
+        if usesScheduledStreak {
+            let value = scheduledStreaks().longest
+            _longestStreakCache = (dataVersion, value)
+            return value
+        }
         let sorted = activeWritingDays.sorted()
         guard !sorted.isEmpty else { _longestStreakCache = (dataVersion, 0); return 0 }
         let cal = DataStore.gregorianCal
@@ -3032,6 +3046,7 @@ class DataStore: ObservableObject {
     /// Objectif journalier recalculé pour rattraper le retard sur l'objectif hebdomadaire
     var adaptedDailyGoal: Int {
         guard data.weeklyGoal > 0 else { return data.dailyGoal }
+        if usesWritingCalendar { return scheduledAdaptedDailyGoal() }
         var cal = DataStore.gregorianCal
         cal.firstWeekday = 2
         let now = Date()
@@ -3051,12 +3066,18 @@ class DataStore: ObservableObject {
     // MARK: - Objectif variable par jour de semaine (V5)
 
     /// Objectifs journaliers spécifiques à chaque jour. Clé = weekday Calendar (1=Dim … 7=Sam).
-    /// Stocké dans UserDefaults sous forme de JSON pour ne pas toucher AppData.
+    /// Synchronisé dans data.json (writingSchedule) ; copie locale dans UserDefaults.
     var weekdayGoals: [Int: Int] {
         get {
-            guard let raw  = UserDefaults.standard.data(forKey: "weekdayGoals"),
-                  let dict = try? DataStore.sharedDecoder.decode([String: Int].self, from: raw)
-            else { return [:] }
+            let dict: [String: Int]
+            if let synced = data.writingSchedule?.weekdayGoals {
+                dict = synced
+            } else if let raw = UserDefaults.standard.data(forKey: "weekdayGoals"),
+                      let local = try? DataStore.sharedDecoder.decode([String: Int].self, from: raw) {
+                dict = local
+            } else {
+                return [:]
+            }
             return Dictionary(uniqueKeysWithValues: dict.compactMap { k, v in
                 guard let i = Int(k) else { return nil }; return (i, v)
             })
@@ -3066,6 +3087,14 @@ class DataStore: ObservableObject {
             if let encoded = try? DataStore.sharedEncoder.encode(stringDict) {
                 UserDefaults.standard.set(encoded, forKey: "weekdayGoals")
             }
+            // Vide et jamais synchronisé : on n'écrit rien, pour ne pas masquer
+            // les objectifs encore propres à l'autre Mac avant sa migration.
+            if stringDict.isEmpty && data.writingSchedule?.weekdayGoals == nil { return }
+            guard data.writingSchedule?.weekdayGoals != stringDict else { return }
+            var schedule = data.writingSchedule ?? WritingSchedule()
+            schedule.weekdayGoals = stringDict
+            data.writingSchedule = schedule
+            save()
         }
     }
 
@@ -3089,7 +3118,7 @@ class DataStore: ObservableObject {
     /// Rattrapage partiel si la veille était vide et qu'un objectif journalier est défini
     /// (50 % du manqué — uniquement quand l'objectif hebdo n'est pas actif)
     var catchUpAmount: Int {
-        guard data.dailyGoal > 0, data.weeklyGoal == 0 else { return 0 }
+        guard data.dailyGoal > 0, data.weeklyGoal == 0, !isYesterdayPlannedOff else { return 0 }
         let missed = max(0, data.dailyGoal - yesterdayProgress)
         return Int(Double(missed) * 0.5)
     }
@@ -3098,6 +3127,7 @@ class DataStore: ObservableObject {
     /// — hebdo défini → adaptedDailyGoal (intègre déjà le rattrapage hebdo)
     /// — sinon         → dailyGoal + 50 % du manqué d'hier
     var todaySmartGoal: Int {
+        if isTodayPlannedOff { return 0 }
         if data.weeklyGoal > 0 { return adaptedDailyGoal }
         if data.dailyGoal > 0  { return data.dailyGoal + catchUpAmount }
         return 0
@@ -3116,6 +3146,7 @@ class DataStore: ObservableObject {
         let currentTotal = latestTotal(for: chapter.id, in: activeProject?.id ?? UUID())
         let remaining = max(0, chapter.goal - currentTotal)
         guard remaining > 0 else { return 0 }
+        if usesWritingCalendar { return scheduledDailyQuota(remaining: remaining, deadline: deadline) }
         return Int(ceil(Double(remaining) / Double(daysRemaining)))
     }
 
@@ -3730,8 +3761,16 @@ class DataStore: ObservableObject {
 
     /// Nombre de jours à soustraire à toutes les deadlines (0 = pas de buffer).
     var deadlineBuffer: Int {
-        get { UserDefaults.standard.integer(forKey: "deadlineBuffer") }
-        set { UserDefaults.standard.set(newValue, forKey: "deadlineBuffer") }
+        get { data.writingSchedule?.deadlineBufferDays ?? UserDefaults.standard.integer(forKey: "deadlineBuffer") }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "deadlineBuffer")
+            if newValue == 0 && data.writingSchedule?.deadlineBufferDays == nil { return }
+            guard data.writingSchedule?.deadlineBufferDays != newValue else { return }
+            var schedule = data.writingSchedule ?? WritingSchedule()
+            schedule.deadlineBufferDays = newValue
+            data.writingSchedule = schedule
+            save()
+        }
     }
 
     /// Date effective d'une deadline après application du buffer.
@@ -3754,6 +3793,7 @@ class DataStore: ObservableObject {
         let latest = latestTotal(for: chapter.id, in: project.id)
         let remaining = max(0, chapter.goal - latest)
         guard remaining > 0 else { return nil }
+        if usesWritingCalendar { return scheduledDailyQuota(remaining: remaining, deadline: deadline) }
         let daysLeft = max(1, Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: today),
                                                                to: Calendar.current.startOfDay(for: deadline)).day ?? 1)
         return Int(ceil(Double(remaining) / Double(daysLeft)))
@@ -4386,7 +4426,7 @@ class DataStore: ObservableObject {
         let cal = DataStore.gregorianCal
         var totalGoal = 0; var totalWritten = 0
         for proj in data.projects where !proj.isArchived {
-            for ch in proj.chapters where !ch.isCompleted {
+            for ch in proj.chapters where !ch.isCompleted && ch.countsInThesisTotal {
                 totalGoal += ch.goal
                 if let latest = ch.entries.max(by: { $0.date < $1.date }) {
                     totalWritten += latest.totalCount
