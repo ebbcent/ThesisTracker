@@ -498,7 +498,7 @@ final class PomodoroAppController: ObservableObject {
 
     /// Lance le raccourci configuré (app Raccourcis) qui active / désactive la Concentration.
     /// Aucun accès aux préférences système : sans raccourci configuré, ne fait rien.
-    private func runFocusShortcut(enabled: Bool) {
+    private func runFocusShortcut(enabled: Bool, completion: (@MainActor () -> Void)? = nil) {
         guard data.settings.deepWorkEnabled else { return }
         let rawName = enabled ? data.settings.focusShortcutOnName : data.settings.focusShortcutOffName
         let name = rawName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -506,6 +506,11 @@ final class PomodoroAppController: ObservableObject {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/shortcuts")
         process.arguments = ["run", name]
+        if let completion {
+            process.terminationHandler = { _ in
+                Task { @MainActor in completion() }
+            }
+        }
         do {
             try process.run()
         } catch {
@@ -1075,7 +1080,16 @@ extension PomodoroAppController: PomodoroTimerEngineDelegate {
                     try? await Task.sleep(for: .milliseconds(900))
                     self.focusSessionJustCompleted = false
                 }
-                if self.data.settings.deepWorkEnabled { self.runFocusShortcut(enabled: false) }
+                if self.data.settings.deepWorkEnabled {
+                    // La notification de fin est tombée pendant « Ne pas déranger » : on la renvoie
+                    // une fois la Concentration désactivée, pour qu'elle s'affiche vraiment.
+                    self.runFocusShortcut(enabled: false) { [weak self] in
+                        self?.notificationManager.redeliverSessionEndNotification(
+                            mode: mode,
+                            plannedDuration: plannedDuration
+                        )
+                    }
+                }
             }
             self.pendingNextMode = nextMode
             if let nextMode, (nextMode == .shortBreak || nextMode == .longBreak) {

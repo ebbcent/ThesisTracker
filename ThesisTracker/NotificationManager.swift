@@ -1,6 +1,7 @@
 import Foundation
 import UserNotifications
 import SwiftUI
+import AppKit
 
 class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationManager()
@@ -78,6 +79,77 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     func requestPermission(completion: @escaping (Bool) -> Void) {
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
             DispatchQueue.main.async { completion(granted) }
+        }
+    }
+
+    /// Dernière erreur renvoyée par macOS lors de la demande d'autorisation (diagnostic).
+    private(set) var lastAuthorizationError: String?
+
+    /// Demande l'autorisation à chaque lancement, indépendamment du Pomodoro.
+    /// Sans effet visible si l'utilisateur a déjà répondu ; garde l'erreur éventuelle
+    /// (par ex. « Notifications are not allowed for this application ») pour le diagnostic.
+    func ensureAuthorization() {
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { _, error in
+            DispatchQueue.main.async {
+                self.lastAuthorizationError = error?.localizedDescription
+            }
+        }
+    }
+
+    /// État détaillé, lisible, des réglages de notifications de l'app dans macOS.
+    func diagnostic(completion: @escaping (UNAuthorizationStatus, String) -> Void) {
+        center.getNotificationSettings { settings in
+            var parts: [String] = []
+            switch settings.authorizationStatus {
+            case .authorized:    parts.append("Autorisées")
+            case .provisional:   parts.append("Autorisées sans alerte (provisoire)")
+            case .denied:        parts.append("Refusées dans les Réglages Système")
+            case .notDetermined: parts.append("Jamais demandées")
+            case .ephemeral:     parts.append("Éphémères")
+            @unknown default:    parts.append("État inconnu")
+            }
+            if settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional {
+                switch settings.alertStyle {
+                case .none:   parts.append("style « Aucun » : rien ne s'affiche à l'écran")
+                case .banner: parts.append("style Bannières")
+                case .alert:  parts.append("style Alertes")
+                @unknown default: break
+                }
+                if settings.soundSetting == .disabled { parts.append("son coupé") }
+                if settings.notificationCenterSetting == .disabled { parts.append("absentes du centre de notifications") }
+                if settings.timeSensitiveSetting == .disabled { parts.append("notifications urgentes désactivées") }
+            }
+            DispatchQueue.main.async {
+                if let error = self.lastAuthorizationError { parts.append("erreur macOS : \(error)") }
+                completion(settings.authorizationStatus, parts.joined(separator: " · "))
+            }
+        }
+    }
+
+    /// Notification de test, envoyée dans 5 secondes (le temps de passer sur une autre app).
+    func sendTestNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Test des notifications"
+        content.body = "Si tu lis ceci, les notifications de Writing Process fonctionnent."
+        content.sound = .default
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        center.removeDeliveredNotifications(withIdentifiers: ["test-notification"])
+        center.add(UNNotificationRequest(identifier: "test-notification", content: content, trigger: trigger)) { error in
+            if let error {
+                DispatchQueue.main.async { self.lastAuthorizationError = error.localizedDescription }
+            }
+        }
+    }
+
+    /// Ouvre directement la page « Writing Process » des réglages de notifications de macOS.
+    static func openSystemNotificationSettings() {
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.writingprocess.app"
+        let candidates = [
+            "x-apple.systempreferences:com.apple.Notifications-Settings.extension?id=\(bundleID)",
+            "x-apple.systempreferences:com.apple.preference.notifications"
+        ]
+        for raw in candidates {
+            if let url = URL(string: raw), NSWorkspace.shared.open(url) { return }
         }
     }
 
@@ -564,7 +636,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler handler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        handler([.banner, .sound])
+        handler([.banner, .list, .sound])
         let identifier = notification.request.identifier
         let title = notification.request.content.title
         let body = notification.request.content.body

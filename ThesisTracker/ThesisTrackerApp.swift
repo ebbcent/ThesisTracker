@@ -114,7 +114,9 @@ struct ThesisTrackerApp: App {
     // dans UserDefaults ("globalFocusKey") par GlobalHotKeys.
 
     init() {
-        _ = NotificationManager.shared
+        // Délégué installé et autorisation demandée dès le lancement (et pas seulement
+        // après le chargement des données Pomodoro, qui peut échouer)
+        NotificationManager.shared.ensureAuthorization()
     }
 
     var body: some Scene {

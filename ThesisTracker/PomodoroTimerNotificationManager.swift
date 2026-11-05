@@ -113,10 +113,34 @@ final class PomodoroTimerNotificationManager: NSObject {
             content.categoryIdentifier = Self.breakFinishedCategory
         }
 
+        // Fin de session : notification « urgente », qui peut passer un mode Concentration
+        // si macOS l'autorise (Réglages > Concentration > Writing Process)
+        content.interruptionLevel = .timeSensitive
+
         // UNTimeIntervalNotificationTrigger exige un intervalle > 0
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, interval), repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         center.add(request)
+    }
+
+    /// Renvoie tout de suite la notification de fin (même identifiant : elle remplace la précédente).
+    /// Utilisé après la désactivation de la Concentration (travail profond) : la notification
+    /// planifiée tombe pendant que « Ne pas déranger » est encore actif et reste muette.
+    func redeliverSessionEndNotification(mode: ActiveTimerMode, plannedDuration: TimeInterval) {
+        let identifier = Self.sessionEndIdentifier
+        center.removeDeliveredNotifications(withIdentifiers: [identifier])
+        let content = UNMutableNotificationContent()
+        content.title = notificationTitle(for: mode)
+        content.body = notificationBody(for: mode, plannedDuration: plannedDuration)
+        content.sound = nil
+        content.interruptionLevel = .timeSensitive
+        switch mode {
+        case .focus:
+            content.categoryIdentifier = Self.focusFinishedCategory
+        case .shortBreak, .longBreak:
+            content.categoryIdentifier = Self.breakFinishedCategory
+        }
+        center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: nil))
     }
 
     /// Annule la notification de fin planifiée (pause, arrêt, veille…).
@@ -133,6 +157,7 @@ final class PomodoroTimerNotificationManager: NSObject {
             : "La pause n'a pas encore commencé. Pense à te reposer."
         content.sound = .default
         content.categoryIdentifier = Self.pauseReminderCategory
+        content.interruptionLevel = .timeSensitive
         let request = UNNotificationRequest(identifier: Self.pauseReminderIdentifier, content: content, trigger: nil)
         center.add(request)
     }

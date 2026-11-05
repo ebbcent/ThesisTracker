@@ -67,6 +67,7 @@ struct SettingsView: View {
     @State private var notificationTime: Date                  = Date()
     @State private var notificationDays: Set<Int>              = [2, 3, 4, 5, 6]
     @State private var permissionStatus: UNAuthorizationStatus = .notDetermined
+    @State private var notificationDiagnostic: String          = ""
     // Heures configurables (#66 / #67)
     @State private var emptyDayReminderTime: Date              = Date()
     @State private var streakWarningTime: Date                 = Date()
@@ -651,12 +652,43 @@ struct SettingsView: View {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Rappel quotidien")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
-                                        Text("Notification à l'heure choisie")
+                                        Text("Notification à l'heure choisie — active aussi les rappels ci-dessous (série, récap, objectif…)")
                                             .font(.system(size: 11)).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Toggle("", isOn: $notificationsEnabled)
                                         .toggleStyle(.switch).labelsHidden().tint(.accent)
+                                }
+                                .padding(14)
+
+                                Divider().padding(.leading, 48)
+
+                                // Diagnostic : état réel dans macOS + notification de test
+                                HStack(spacing: 14) {
+                                    ZStack {
+                                        Circle().fill(Color.accent.opacity(0.12)).frame(width: 34, height: 34)
+                                        Image(systemName: "bell.badge")
+                                            .font(.system(size: 13)).foregroundColor(.accent)
+                                    }
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("État dans macOS")
+                                            .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
+                                        Text(notificationDiagnostic.isEmpty ? "…" : notificationDiagnostic)
+                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
+                                    Spacer()
+                                    Button("Tester") {
+                                        NotificationManager.shared.ensureAuthorization()
+                                        NotificationManager.shared.sendTestNotification()
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { refreshNotificationDiagnostic() }
+                                    }
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(.accent).buttonStyle(.plain)
+                                    .help("Envoie une notification dans 5 secondes")
+                                    Button("Réglages macOS") { openSystemPrefs() }
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(.accent).buttonStyle(.plain)
                                 }
                                 .padding(14)
 
@@ -976,9 +1008,14 @@ struct SettingsView: View {
             streakComps.minute = NotificationManager.shared.streakWarningMinute
             streakWarningTime = cal.date(from: streakComps) ?? Date()
             // Permission actuelle
-            NotificationManager.shared.getAuthorizationStatus { status in
-                permissionStatus = status
-            }
+            refreshNotificationDiagnostic()
+        }
+    }
+
+    private func refreshNotificationDiagnostic() {
+        NotificationManager.shared.diagnostic { status, text in
+            permissionStatus = status
+            notificationDiagnostic = text
         }
     }
 
@@ -1104,9 +1141,7 @@ struct SettingsView: View {
     }
 
     private func openSystemPrefs() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") {
-            NSWorkspace.shared.open(url)
-        }
+        NotificationManager.openSystemNotificationSettings()
     }
 }
 
