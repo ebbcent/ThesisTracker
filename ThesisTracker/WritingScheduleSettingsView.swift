@@ -42,17 +42,30 @@ struct WritingScheduleSettingsView: View {
             Divider().padding(.leading, 48)
             settingRow(icon: "doc.plaintext", color: .accent,
                        title: "Équivalent en pages",
-                       subtitle: "Affiché à côté des totaux du chapitre et du reste à écrire") {
-                Picker("", selection: Binding(
-                    get: { schedule.charsPerPage ?? 0 },
-                    set: { value in store.updateWritingSchedule { $0.charsPerPage = value > 0 ? value : nil } }
-                )) {
-                    ForEach(DataStore.pagePresets, id: \.chars) { preset in
-                        Text(preset.label).tag(preset.chars)
+                       subtitle: "Pages de thèse : barre d'état, tableau de bord, chapitres, rapport au directeur") {
+                HStack(spacing: 6) {
+                    Picker("", selection: Binding(
+                        get: { schedule.charsPerPage ?? DataStore.defaultCharsPerPage },
+                        set: { value in store.updateWritingSchedule { $0.charsPerPage = value } }
+                    )) {
+                        ForEach(DataStore.pagePresets, id: \.chars) { preset in
+                            Text(preset.label).tag(preset.chars)
+                        }
+                        let current = schedule.charsPerPage ?? DataStore.defaultCharsPerPage
+                        if !DataStore.pagePresets.contains(where: { $0.chars == current }) {
+                            Text("\(DataStore.formatNumber(current)) signes").tag(current)
+                        }
                     }
+                    .labelsHidden()
+                    .frame(width: 180)
+                    TextField("car./p", value: Binding(
+                        get: { schedule.charsPerPage ?? DataStore.defaultCharsPerPage },
+                        set: { value in store.updateWritingSchedule { $0.charsPerPage = max(0, min(20_000, value)) } }
+                    ), format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 64)
+                    .help("Caractères par page de thèse (0 = pas d'affichage)")
                 }
-                .labelsHidden()
-                .frame(width: 210)
             }
             Divider().padding(.leading, 48)
             settingRow(icon: "flame.fill", color: .accentWarm,

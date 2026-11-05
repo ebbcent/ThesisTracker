@@ -686,6 +686,20 @@ struct StatusBarView: View {
                 }
             }
 
+            // 5.12 — pages de thèse rédigées
+            if let pages = store.pagesNumber(store.thesisWrittenChars, digits: 0), store.thesisWrittenChars > 0 {
+                sbItem {
+                    HStack(spacing: 5) {
+                        Image(systemName: "doc.text")
+                            .font(.system(size: 9))
+                            .foregroundColor(.accent)
+                        Text("\(pages) p. thèse")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                }
+                .help(store.pageCalibrationLabel.map { "Pages de thèse rédigées (\($0))" } ?? "Pages de thèse rédigées")
+            }
+
             // #54 — Aujourd'hui / objectif journalier
             if store.effectiveDailyGoal > 0 || store.dailyProgress > 0 {
                 sbItem {

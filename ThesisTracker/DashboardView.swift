@@ -1197,6 +1197,17 @@ struct DashboardView: View {
         return chapter.increment(for: selectedDateStr)
     }
 
+    // 5.12 — « ≈ X pages rédigées sur Y (calibrage 1 500 car./p) »
+    private var heroPagesLine: String? {
+        guard currentEntryTotal > 0,
+              let written = store.pagesNumber(currentEntryTotal),
+              let calibration = store.pageCalibrationLabel else { return nil }
+        if let goal = activeChapter?.goal, goal > 0, let total = store.pagesNumber(goal, digits: 0) {
+            return "≈ \(written) pages rédigées sur \(total) (\(calibration))"
+        }
+        return "≈ \(written) pages rédigées (\(calibration))"
+    }
+
     // Variation nette du jour sélectionné (négative après une correction)
     private var currentEntryNet: Int {
         activeChapter?.netChange(for: selectedDateStr) ?? 0
@@ -1227,6 +1238,7 @@ struct DashboardView: View {
                     CompactDatePicker(date: $selectedDate, maxDate: Date())
                         .onChange(of: selectedDate) { _, _ in refreshInput() }
                     Spacer()
+                    DayOffMenuButton(store: store, date: selectedDateStr)
                     if !isToday {
                         Label("Passé", systemImage: "clock.arrow.circlepath")
                             .font(.system(size: 11, weight: .medium))
@@ -1274,6 +1286,13 @@ struct DashboardView: View {
                             .font(.system(size: 15, weight: .regular))
                             .foregroundColor(.labelMuted)
                             .padding(.bottom, 6)
+                    }
+
+                    // 5.12 — équivalent en pages de thèse
+                    if let line = heroPagesLine {
+                        Text(line)
+                            .font(.system(size: 11))
+                            .foregroundColor(.labelMuted)
                     }
 
                     if currentEntryDelta > 0 {

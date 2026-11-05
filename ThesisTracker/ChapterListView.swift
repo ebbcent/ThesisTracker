@@ -328,6 +328,15 @@ struct ChapterFormView: View {
 
     var isEditing: Bool { chapter != nil }
 
+    private var pagesLine: String? {
+        let goal = Int(goalText.trimmingCharacters(in: .whitespaces)) ?? 0
+        let written = chapter?.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
+        guard let calibration = store.pageCalibrationLabel, written > 0 || goal > 0 else { return nil }
+        let goalPart = goal > 0 ? store.pagesNumber(goal, digits: 0).map { " sur \($0)" } ?? "" : ""
+        let writtenPart = store.pagesNumber(written) ?? "0"
+        return "≈ \(writtenPart) pages rédigées\(goalPart) (\(calibration))"
+    }
+
     var body: some View {
         ZStack {
             Color.appBg.ignoresSafeArea()
@@ -339,6 +348,11 @@ struct ChapterFormView: View {
 
                 DarkFormField(label: "Nom du chapitre", placeholder: "ex: Chapitre 1 — Introduction", text: $name)
                 DarkFormField(label: "Objectif (en caractères, optionnel)", placeholder: "ex: 20000 — laisser vide si aucun", text: $goalText)
+                if let line = pagesLine {   // 5.12 — équivalent en pages de thèse
+                    Text(line)
+                        .font(.system(size: 11))
+                        .foregroundColor(.labelMuted)
+                }
                 ChapterGoalOptionsView(goalKind: $goalKind, excludedFromTotal: $excludedFromTotal)
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Notes (optionnel)")

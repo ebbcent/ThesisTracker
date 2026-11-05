@@ -108,13 +108,17 @@ final class ChapterGoalTests: XCTestCase {
         XCTAssertEqual(DataStore.pages(chars: 1_000, charsPerPage: 0), 0)
     }
 
-    func testNoPagesWithoutSetting() {
+    /// 5.12 : sans réglage, 1 500 car./p par défaut ; 0 désactive l'affichage.
+    func testPagesDefaultTo1500AndCanBeTurnedOff() {
         let restore = prepare(); defer { restore() }
-        XCTAssertNil(store.pagesLabel(3_000))
-        var schedule = WritingSchedule()
-        schedule.charsPerPage = 1_500
-        store.data.writingSchedule = schedule
         XCTAssertEqual(store.pagesLabel(3_000), "≈ 2 p.")
+        var schedule = WritingSchedule()
+        schedule.charsPerPage = 0
+        store.data.writingSchedule = schedule
+        XCTAssertNil(store.pagesLabel(3_000))
+        schedule.charsPerPage = 2_000
+        store.data.writingSchedule = schedule
+        XCTAssertEqual(store.pagesLabel(3_000), "≈ 1,5 p.")
     }
 
     // MARK: Simulateur

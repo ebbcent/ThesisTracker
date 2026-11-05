@@ -203,9 +203,13 @@ final class WritingScheduleTests: XCTestCase {
         writeOn(days)
         XCTAssertFalse(store.usesScheduledStreak)
         XCTAssertEqual(store.currentStreak, 3)
-        // Un jour de repos ne protège pas la série classique (comportement 5.8).
+        // 5.12 : une journée sans écriture (archives, séminaire, repos) est
+        // neutre aussi pour la série classique ; un jour vide ordinaire la casse.
         writeOn([days[0], days[2]])
         store.data.restDays = [days[1]]
+        store.dataVersion += 1
+        XCTAssertEqual(store.currentStreak, 2)
+        store.data.restDays = []
         store.dataVersion += 1
         XCTAssertEqual(store.currentStreak, 1)
     }

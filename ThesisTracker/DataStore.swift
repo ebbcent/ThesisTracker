@@ -2391,6 +2391,7 @@ class DataStore: ObservableObject {
     func toggleRestDay(_ date: String) {
         if let idx = data.restDays.firstIndex(of: date) {
             data.restDays.remove(at: idx)
+            data.dayOffKinds?[date] = nil
         } else {
             data.restDays.append(date)
         }
@@ -2461,13 +2462,20 @@ class DataStore: ObservableObject {
         let today = cal.startOfDay(for: Date())
         let totals = dailyTotals()
 
+        // 5.12 — une journée sans écriture (archives, séminaire, repos) sans texte
+        // ajouté ne compte pas dans la moyenne.
         func avgOver(days: Int) -> Double {
             var sum = 0
+            var counted = 0
             for offset in 1...days {
                 guard let d = cal.date(byAdding: .day, value: -offset, to: today) else { continue }
-                sum += totals[DataStore.dateString(from: d)] ?? 0
+                let ds = DataStore.dateString(from: d)
+                let value = totals[ds] ?? 0
+                if value == 0 && data.restDays.contains(ds) { continue }
+                sum += value
+                counted += 1
             }
-            return Double(sum) / Double(days)
+            return counted > 0 ? Double(sum) / Double(counted) : 0
         }
 
         func project(avg: Double) -> Date? {
@@ -3005,7 +3013,10 @@ class DataStore: ObservableObject {
         var streak = 0; var offset = startOffset
         while offset < 730 {
             guard let date = cal.date(byAdding: .day, value: -offset, to: Date()) else { break }
-            if active.contains(DataStore.dateString(from: date)) { streak += 1; offset += 1 } else { break }
+            let ds = DataStore.dateString(from: date)
+            if active.contains(ds) { streak += 1; offset += 1 }
+            else if data.restDays.contains(ds) { offset += 1 }   // 5.12 — archives, séminaire, repos : neutre
+            else { break }
         }
         _currentStreakCache = (dataVersion, streak)
         return streak
@@ -3027,7 +3038,12 @@ class DataStore: ObservableObject {
             guard let prev = DataStore.parseDate(sorted[i-1]),
                   let curr = DataStore.parseDate(sorted[i]) else { continue }
             let diff = cal.dateComponents([.day], from: prev, to: curr).day ?? 0
-            if diff == 1 { current += 1; if current > longest { longest = current } }
+            // 5.12 — un écart fait uniquement de journées sans écriture ne casse pas la série.
+            let gapIsDaysOff = diff > 1 && (1..<diff).allSatisfy { offset in
+                guard let d = cal.date(byAdding: .day, value: offset, to: prev) else { return false }
+                return data.restDays.contains(DataStore.dateString(from: d))
+            }
+            if diff == 1 || gapIsDaysOff { current += 1; if current > longest { longest = current } }
             else { current = 1 }
         }
         _longestStreakCache = (dataVersion, longest)
@@ -3146,6 +3162,7 @@ class DataStore: ObservableObject {
         let currentTotal = latestTotal(for: chapter.id, in: activeProject?.id ?? UUID())
         let remaining = max(0, chapter.goal - currentTotal)
         guard remaining > 0 else { return 0 }
+        if let paced = pacedDailyQuota(for: chapter) { return paced }   // 5.12 — profil de rythme
         if usesWritingCalendar { return scheduledDailyQuota(remaining: remaining, deadline: deadline) }
         return Int(ceil(Double(remaining) / Double(daysRemaining)))
     }
@@ -3793,6 +3810,7 @@ class DataStore: ObservableObject {
         let latest = latestTotal(for: chapter.id, in: project.id)
         let remaining = max(0, chapter.goal - latest)
         guard remaining > 0 else { return nil }
+        if let paced = pacedDailyQuota(for: chapter) { return paced }   // 5.12 — profil de rythme
         if usesWritingCalendar { return scheduledDailyQuota(remaining: remaining, deadline: deadline) }
         let daysLeft = max(1, Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: today),
                                                                to: Calendar.current.startOfDay(for: deadline)).day ?? 1)
