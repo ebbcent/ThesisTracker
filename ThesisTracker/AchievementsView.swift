@@ -171,7 +171,7 @@ struct AchievementsView: View {
             }
             .padding(28)
         }
-        .background(Color.appBg)
+        .background(AppBackdrop())
     }
 
     // MARK: - Computed stats

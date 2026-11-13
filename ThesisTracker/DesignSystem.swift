@@ -106,3 +106,136 @@ struct SystemMaterial: NSViewRepresentable {
         v.blendingMode = blending
     }
 }
+
+// MARK: - 5.16 Verre (Liquid Glass, macOS 26)
+//
+// Demande de Clem : le verre clair d'Apple partout, par cohérence. Réglage « Verre »
+// (Réglages) : clair (défaut), standard, sans verre. Avant macOS 26 : matériaux de la 5.15.
+// Le verre a besoin d'un fond à réfracter : AppBackdrop (deux halos très doux, immobiles).
+// Exception : les surfaces flottantes chargées de texte (palette, note rapide) restent en
+// verre standard, plus dépoli, pour rester lisibles au-dessus du contenu.
+
+enum GlassStyle: String, CaseIterable, Identifiable {
+    case clear, regular, off
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .clear:   return "Verre clair"
+        case .regular: return "Verre standard"
+        case .off:     return "Sans verre"
+        }
+    }
+    static let storageKey = "glassStyle"
+}
+
+private struct AppGlassModifier<S: Shape>: ViewModifier {
+    @AppStorage(GlassStyle.storageKey) private var styleRaw: String = GlassStyle.clear.rawValue
+    let shape: S
+    let tint: Color?
+    /// Surface flottante chargée de texte : jamais plus transparente que le verre standard.
+    let legible: Bool
+    let fallback: Color
+
+    @ViewBuilder func body(content: Content) -> some View {
+        let style = GlassStyle(rawValue: styleRaw) ?? .clear
+        if #available(macOS 26.0, *), style != .off {
+            let base: Glass = (style == .clear && !legible) ? .clear : .regular
+            content.glassEffect(tint.map { base.tint($0) } ?? base, in: shape)
+        } else if style == .off {
+            content.background(fallback, in: shape)
+        } else {
+            content.background(.regularMaterial, in: shape)
+        }
+    }
+}
+
+extension View {
+    /// Verre de l'app (clair, standard ou fond plein selon le réglage « Verre »).
+    func appGlass<S: Shape>(in shape: S, tint: Color? = nil, legible: Bool = false, fallback: Color = .cardBg) -> some View {
+        modifier(AppGlassModifier(shape: shape, tint: tint, legible: legible, fallback: fallback))
+    }
+
+    /// Regroupe les surfaces de verre d'une page (rendu commun, moins coûteux ; fusion des formes proches).
+    @ViewBuilder func appGlassContainer() -> some View {
+        if #available(macOS 26.0, *) {
+            GlassEffectContainer { self }
+        } else {
+            self
+        }
+    }
+}
+
+/// Vrai si le verre est actif (pour retirer les bordures fines devenues inutiles).
+struct GlassIsOn {
+    static var value: Bool {
+        guard #available(macOS 26.0, *) else { return false }
+        return (UserDefaults.standard.string(forKey: GlassStyle.storageKey) ?? GlassStyle.clear.rawValue) != GlassStyle.off.rawValue
+    }
+}
+
+/// Fond de la fenêtre : couleur de l'app et, avec le verre, deux halos très doux (immobiles)
+/// pour que le verre ait quelque chose à réfracter.
+struct AppBackdrop: View {
+    @AppStorage(GlassStyle.storageKey) private var styleRaw: String = GlassStyle.clear.rawValue
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        ZStack {
+            Color.appBg
+            if (GlassStyle(rawValue: styleRaw) ?? .clear) != .off {
+                GeometryReader { geo in
+                    let w = geo.size.width, h = geo.size.height
+                    let k: Double = scheme == .dark ? 0.10 : 0.14
+                    ZStack {
+                        Circle()
+                            .fill(Color.accentWarm.opacity(k))
+                            .frame(width: max(w, h) * 0.7)
+                            .position(x: w * 0.15, y: h * 0.1)
+                        Circle()
+                            .fill(Color(red: 0.376, green: 0.647, blue: 0.980).opacity(k * 0.8))
+                            .frame(width: max(w, h) * 0.6)
+                            .position(x: w * 0.9, y: h * 0.85)
+                    }
+                    .blur(radius: 120)
+                }
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+            }
+        }
+    }
+}
+
+// MARK: - Réglage « Verre »
+
+struct GlassSettingsSection: View {
+    @AppStorage(GlassStyle.storageKey) private var styleRaw: String = GlassStyle.clear.rawValue
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("VERRE")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(.labelMuted)
+                .kerning(1.2)
+            VStack(alignment: .leading, spacing: 8) {
+                Picker("Verre", selection: $styleRaw) {
+                    ForEach(GlassStyle.allCases) { s in Text(s.label).tag(s.rawValue) }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                Text(verreNote)
+                    .font(.system(size: 11))
+                    .foregroundColor(.labelMuted)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(16)
+            .appGlass(in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+    }
+
+    private var verreNote: String {
+        if #available(macOS 26.0, *) {
+            return "Verre d'Apple (Liquid Glass) sur la barre latérale, la barre du haut, les cartes et les boutons. La palette de commandes et la note rapide restent en verre standard pour la lisibilité. « Réduire la transparence » le rend dépoli."
+        }
+        return "Le verre d'Apple demande macOS 26 ; sur cette version, matériaux translucides à la place."
+    }
+}

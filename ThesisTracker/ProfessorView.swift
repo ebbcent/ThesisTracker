@@ -30,7 +30,7 @@ struct ProfessorView: View {
                     .padding(compact ? 12 : 16)
             }
         }
-        .background(Color.appBg)
+        .background(AppBackdrop())
         .sheet(isPresented: $showSources) { sourcesSheet }
         .onAppear {
             inputFocused = true

@@ -86,7 +86,7 @@ struct SettingsView: View {
 
     var body: some View {
         ZStack {
-            Color.appBg.ignoresSafeArea()
+            AppBackdrop().ignoresSafeArea()
 
             VStack(spacing: 0) {
 
@@ -438,6 +438,9 @@ struct SettingsView: View {
 
                         // ── Mises à jour ───────────────────────────────
                         UpdatesSettingsSection()
+
+                        // ── Verre (5.16) ──────────────────────────────
+                        GlassSettingsSection()
 
                         // ── Professeur (5.13) ──────────────────────────
                         ProfessorSettingsSection()

@@ -17,7 +17,7 @@ struct HistoryView: View {
 
     var body: some View {
         ZStack {
-            Color.appBg.ignoresSafeArea()
+            AppBackdrop().ignoresSafeArea()
 
             VStack(spacing: 0) {
                 HStack {

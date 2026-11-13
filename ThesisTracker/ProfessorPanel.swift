@@ -58,7 +58,7 @@ final class ProfessorPanelManager: NSObject, NSWindowDelegate {
         p.contentView = NSHostingView(rootView:
             ProfessorView(store: store, showSidebar: .constant(false), compact: true)
                 .padding(.top, 18)
-                .background(Color.appBg)
+                .background(AppBackdrop())
         )
         if !p.setFrameUsingName("ProfessorQuickPanel") {
             if let screen = NSScreen.main {

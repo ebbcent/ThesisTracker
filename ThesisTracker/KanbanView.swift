@@ -100,7 +100,7 @@ struct KanbanView: View {
                 .padding(.horizontal, 20).padding(.bottom, 20)
             }
         }
-        .background(Color.appBg)
+        .background(AppBackdrop())
         .sheet(item: Binding(
             get: { editingChapter.map { IdentifiableChapterEdit(project: $0.project, chapter: $0.chapter) } },
             set: { _ in editingChapter = nil }

@@ -2846,7 +2846,7 @@ struct DashboardCustomizeSheet: View {
 
     var body: some View {
         ZStack {
-            Color.appBg.ignoresSafeArea()
+            AppBackdrop().ignoresSafeArea()
             VStack(spacing: 0) {
                 // En-tête
                 HStack {

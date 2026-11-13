@@ -51,7 +51,7 @@ struct PomodoroTimerTabView: View {
                     .padding(.trailing, 16)
             }
             .padding(.vertical, 10)
-            .background(Color.appBg)
+            .background(AppBackdrop())
             .overlay(alignment: .bottom) {
                 Divider()
             }
@@ -73,7 +73,7 @@ struct PomodoroTimerTabView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .background(Color.appBg)
+        .background(AppBackdrop())
         .environmentObject(controller)
     }
 

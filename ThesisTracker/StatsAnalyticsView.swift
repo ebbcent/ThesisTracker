@@ -120,7 +120,7 @@ struct StatsAnalyticsView: View {
             }
             .padding(20)
         }
-        .background(Color.appBg)
+        .background(AppBackdrop())
         // #55 — Zoom graphique
         .sheet(item: $zoomedChart) { _ in zoomedSheetContent }
         // #59 — Onboarding contextuel
@@ -1315,7 +1315,7 @@ struct StatsAnalyticsView: View {
                 }
                 .padding(.bottom, 20)
             }
-            .background(Color.appBg)
+            .background(AppBackdrop())
             .frame(minWidth: 700, minHeight: 500)
         }
     }

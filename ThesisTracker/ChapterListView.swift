@@ -87,7 +87,7 @@ struct ProjectFormView: View {
 
     var body: some View {
         ZStack {
-            Color.appBg.ignoresSafeArea()
+            AppBackdrop().ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 24) {
                 Text(isEditing ? "Renommer le projet" : "Nouveau projet")
@@ -339,7 +339,7 @@ struct ChapterFormView: View {
 
     var body: some View {
         ZStack {
-            Color.appBg.ignoresSafeArea()
+            AppBackdrop().ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 24) {
                 Text(isEditing ? "Modifier le chapitre" : "Nouveau chapitre")

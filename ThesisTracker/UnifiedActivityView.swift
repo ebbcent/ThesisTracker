@@ -52,7 +52,7 @@ struct UnifiedActivityView: View {
             .padding(.trailing, 20)
         }
         .padding(.vertical, 6)
-        .background(Color.appBg)
+        .background(AppBackdrop())
     }
 
     private func modeButton(icon: String, target: ViewMode, tooltip: String) -> some View {

@@ -96,7 +96,7 @@ struct ExportView: View {
 
     var body: some View {
         ZStack {
-            Color.appBg.ignoresSafeArea()
+            AppBackdrop().ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 22) {
 
