@@ -41,7 +41,7 @@ struct DirectorReportSheet: View {
             Divider()
             reportBody
         }
-        .frame(width: 640, height: 720)
+        .sheetFrame(width: 640, height: 720)
         .background(Color.cardBg)
     }
 

@@ -17,7 +17,7 @@ extension Notification.Name {
 struct ProfessorTurn: Identifiable, Equatable {
     let id = UUID()
     let role: AnthropicClient.Message.Role
-    let text: String
+    var text: String
     var attachmentName: String? = nil
     var attachmentSigns: Int? = nil
     let date: Date
@@ -41,6 +41,10 @@ final class ProfessorSession: ObservableObject {
     var tabVisible = false
 
     private var apiMessages: [AnthropicClient.Message] = []
+    /// 5.15 — réponse en cours (réception en flux), annulable par « Arrêter ».
+    private var sendTask: Task<Void, Never>?
+    /// Texte de la réponse en cours de réception (vide tant que rien n'est arrivé).
+    @Published private(set) var streamingText: String = ""
     private var sessionStarted: Date?
 
     private init() {}
@@ -114,25 +118,55 @@ final class ProfessorSession: ObservableObject {
         isSending = true
 
         let client = AnthropicClient(apiKey: key, model: settings.model.rawValue)
+        streamingText = ""
         do {
-            let reply = try await client.send(persona: context.persona, context: context.body, messages: apiMessages)
+            // 5.15 : réponse en flux, affichée au fil de l'écriture
+            let reply = try await client.stream(persona: context.persona, context: context.body, messages: apiMessages) { [weak self] partial in
+                self?.streamingText = partial
+            }
             var text = reply.text
             if reply.stoppedAtLimit { text += "\n\n[réponse coupée : limite de longueur atteinte]" }
-            apiMessages.append(.init(role: .assistant, text: text))
-            let answer = ProfessorTurn(role: .assistant, text: text, date: Date())
-            turns.append(answer)
-            lastUsage = reply.usage
-            appendToJournal(question: turns[turns.count - 2], answer: answer, model: settings.model.rawValue)
-            notifyIfUnseen(text)
+            finishAnswer(text, usage: reply.usage, model: settings.model.rawValue)
         } catch {
-            // L'échange raté est retiré pour pouvoir renvoyer la question.
-            apiMessages.removeLast()
-            turns.removeLast()
-            draft = question
-            pendingAttachment = attachment
-            errorMessage = error.localizedDescription
+            let partial = streamingText
+            if Task.isCancelled || error is CancellationError || (error as? URLError)?.code == .cancelled {
+                if partial.isEmpty {
+                    apiMessages.removeLast(); turns.removeLast(); draft = question; pendingAttachment = attachment
+                } else {
+                    finishAnswer(partial + "\n\n[réponse interrompue]", usage: nil, model: settings.model.rawValue)
+                }
+            } else {
+                // L'échange raté est retiré pour pouvoir renvoyer la question.
+                apiMessages.removeLast()
+                turns.removeLast()
+                draft = question
+                pendingAttachment = attachment
+                errorMessage = error.localizedDescription
+            }
         }
+        streamingText = ""
+        sendTask = nil
         isSending = false
+    }
+
+    private func finishAnswer(_ text: String, usage: AnthropicClient.Usage?, model: String) {
+        apiMessages.append(.init(role: .assistant, text: text))
+        let answer = ProfessorTurn(role: .assistant, text: text, date: Date())
+        turns.append(answer)
+        if let usage { lastUsage = usage }
+        appendToJournal(question: turns[turns.count - 2], answer: answer, model: model)
+        notifyIfUnseen(text)
+    }
+
+    /// 5.15 — lance l'envoi dans une tâche annulable.
+    func start(store: DataStore) {
+        guard !isSending else { return }
+        sendTask = Task { [weak self] in await self?.send(store: store) }
+    }
+
+    /// 5.15 — « Arrêter » : garde ce qui est déjà arrivé, marqué comme interrompu.
+    func stop() {
+        sendTask?.cancel()
     }
 
     // MARK: 5.14 — notification de réponse

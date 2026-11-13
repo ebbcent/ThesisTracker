@@ -967,7 +967,7 @@ struct SettingsView: View {
 
             }   // VStack principal
         }   // ZStack
-        .frame(width: 900, height: 580)
+        .sheetFrame(width: 900, height: 580)
         .onAppear {
             snapshotCount = store.listSnapshots().count
             // #46 — sync état réel du login item

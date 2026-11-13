@@ -2529,6 +2529,7 @@ private struct WritingEntryInputCluster: View {
                 }
                 .buttonStyle(.pressable)
                 .help("Historique des modifications")
+                .accessibilityLabel("Historique des modifications")
                 .popover(isPresented: $showEntryHistory, arrowEdge: .bottom) {
                     EntryEditHistoryPopover(entry: entry, useWords: useWordCount)
                 }
@@ -2949,7 +2950,7 @@ struct DashboardCustomizeSheet: View {
                 .padding(20)
             }
         }
-        .frame(width: 420, height: 600)
+        .sheetFrame(width: 420, height: 600)
         .onAppear {
             loadItems()
         }

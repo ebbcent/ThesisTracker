@@ -131,6 +131,7 @@ struct PomodoroIntentionField: View {
                     .menuStyle(.borderlessButton)
                     .fixedSize()
                     .help("Intentions récentes")
+                    .accessibilityLabel("Intentions récentes")
                 }
             }
             .padding(.horizontal, 10)

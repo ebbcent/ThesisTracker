@@ -69,7 +69,7 @@ struct SelfReviewSheet: View {
             Divider()
             footer
         }
-        .frame(width: 540, height: 600)
+        .sheetFrame(width: 540, height: 600)
     }
 
     private var header: some View {

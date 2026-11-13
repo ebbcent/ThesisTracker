@@ -351,22 +351,15 @@ struct MainView: View {
                             DeadlineBoardView(store: store, showSidebar: $showSidebar)
                         case .search:
                             SearchView(store: store, showSidebar: $showSidebar)
-                        case .charts:
-                            ChartView(store: store, showSidebar: $showSidebar)
-                        case .activity:
-                            UnifiedActivityView(store: store, showSidebar: $showSidebar, initialMode: .heatmap)
-                        case .history:
-                            HistoryListView(store: store, showSidebar: $showSidebar)
-                        case .calendar:
-                            UnifiedActivityView(store: store, showSidebar: $showSidebar, initialMode: .calendar)
+                        case .charts, .activity, .history, .calendar, .analytics:
+                            // 5.15 : regroupées sous « Statistiques », à onglets
+                            StatsHubView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
                         case .timer:
                             PomodoroTimerTabView(showSidebar: $showSidebar)
                         case .achievements:
                             AchievementsView(store: store, showSidebar: $showSidebar)
                         case .kanban:
                             KanbanView(store: store, showSidebar: $showSidebar)
-                        case .analytics:
-                            StatsAnalyticsView(store: store, showSidebar: $showSidebar)
                         case .tableOfContents:
                             TableOfContentsView(store: store, showSidebar: $showSidebar)
                         case .widgets:

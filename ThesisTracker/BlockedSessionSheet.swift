@@ -33,7 +33,7 @@ struct BlockedSessionSheet: View {
                 .padding(20)
             }
         }
-        .frame(width: 540, height: 540)
+        .sheetFrame(width: 540, height: 540)
     }
 
     private var header: some View {

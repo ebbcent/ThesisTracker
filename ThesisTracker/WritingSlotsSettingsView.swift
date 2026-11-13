@@ -72,6 +72,7 @@ struct WritingSlotsSettingsView: View {
                 }
                 .buttonStyle(.pressable)
                 .help("Supprimer ce créneau")
+                .accessibilityLabel("Supprimer ce créneau")
             }
             HStack(spacing: 4) {
                 ForEach(days, id: \.0) { weekday, label in

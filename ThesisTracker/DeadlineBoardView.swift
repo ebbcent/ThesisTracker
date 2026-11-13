@@ -223,6 +223,7 @@ struct DeadlineBoardView: View {
                         .buttonStyle(.pressable)
                         .padding(.top, 3)
                         .help(item.chapter.isCompleted ? "Marquer comme non terminé" : "Marquer comme terminé")
+                        .accessibilityLabel(item.chapter.isCompleted ? "Marquer comme non terminé" : "Marquer comme terminé")
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text("\(item.project.name) · \(item.chapter.name)")

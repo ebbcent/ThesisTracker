@@ -32,7 +32,7 @@ struct CooldownSheet: View {
             Divider()
             footer
         }
-        .frame(width: 560, height: 540)
+        .sheetFrame(width: 560, height: 540)
     }
 
     private var header: some View {

@@ -18,7 +18,7 @@ struct ThesisReportSheet: View {
             Divider()
             reportBody
         }
-        .frame(width: 620, height: 700)
+        .sheetFrame(width: 620, height: 700)
         .background(Color.cardBg)
     }
 

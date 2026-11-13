@@ -252,7 +252,7 @@ struct SidebarView: View {
             navGroupDivider
             navGroup(
                 label: "Analyse",
-                items: [.charts, .activity, .calendar, .history, .widgets],
+                items: [.analytics, .widgets],   // 5.15 : Graphiques, Activité, Calendrier, Historique → onglets de « Statistiques »
                 collapsed: $navAnalyseCollapsed
             )
             navGroupDivider
@@ -292,7 +292,8 @@ struct SidebarView: View {
             if !collapsed.wrappedValue {
                 VStack(spacing: 1) {
                     ForEach(items) { item in
-                        NavItemRow(item: item, isSelected: selectedNav == item) {
+                        NavItemRow(item: item, isSelected: selectedNav == item || (item == .analytics && NavItem.statsGroup.contains(selectedNav))) {
+                            if item == .analytics && NavItem.statsGroup.contains(selectedNav) { return }   // déjà dans les statistiques : on garde l'onglet
                             withAppAnimation(.easeInOut(duration: 0.12)) { selectedNav = item }
                         }
                     }
@@ -2482,6 +2483,7 @@ struct ChapterSidebarRow: View {
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(Color(hex: "#DC2626"))
                             .help("Priorité haute")
+                            .accessibilityLabel("Priorité haute")
                     }
                     if renameDraft != nil {
                         InlineRenameField(

@@ -273,7 +273,7 @@ struct ResearchLogSheet: View {
             }
             .padding(20)
         }
-        .frame(width: 420, height: 540)
+        .sheetFrame(width: 420, height: 540)
         .background(Color.cardBg)
     }
 

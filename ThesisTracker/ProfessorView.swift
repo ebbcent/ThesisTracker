@@ -169,18 +169,27 @@ struct ProfessorView: View {
                         bubble(turn).id(turn.id)
                     }
                     if session.isSending {
-                        HStack(spacing: 8) {
-                            ProgressView().controlSize(.small)
-                            Text("Le professeur lit et réfléchit…")
-                                .font(.system(size: 12)).foregroundColor(.labelMuted)
+                        // 5.15 : la réponse s'affiche au fil de l'écriture
+                        if session.streamingText.isEmpty {
+                            HStack(spacing: 8) {
+                                ProgressView().controlSize(.small)
+                                Text("Le professeur lit et réfléchit…")
+                                    .font(.system(size: 12)).foregroundColor(.labelMuted)
+                            }
+                            .id("sending")
+                        } else {
+                            bubble(ProfessorTurn(role: .assistant, text: session.streamingText, date: Date()))
+                                .id("sending")
                         }
-                        .id("sending")
                     }
                 }
                 .padding(compact ? 14 : 24)
             }
             .onChange(of: session.turns.count) { _, _ in
-                withAppAnimation { proxy.scrollTo(session.isSending ? AnyHashable("sending") : AnyHashable(session.turns.last?.id), anchor: .bottom) }
+                withAppAnimation(Motion.panel) { proxy.scrollTo(session.isSending ? AnyHashable("sending") : AnyHashable(session.turns.last?.id), anchor: .bottom) }
+            }
+            .onChange(of: session.streamingText.count / 200) { _, _ in   // suit la réponse en cours sans animer chaque mot
+                proxy.scrollTo(AnyHashable("sending"), anchor: .bottom)
             }
         }
     }
@@ -274,13 +283,19 @@ struct ProfessorView: View {
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
                     .accessibilityLabel("Message au professeur")
 
-                Button("Envoyer") {
-                    Task { await session.send(store: store) }
+                if session.isSending {
+                    // 5.15 : « Arrêter » garde ce qui est déjà arrivé
+                    Button("Arrêter") { session.stop() }
+                        .buttonStyle(AccentPillButtonStyle())
+                        .keyboardShortcut(".", modifiers: .command)
+                        .help("Arrêter la réponse (⌘.)")
+                } else {
+                    Button("Envoyer") { session.start(store: store) }
+                        .buttonStyle(AccentPillButtonStyle())
+                        .keyboardShortcut(.return, modifiers: .command)
+                        .disabled(session.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .help("Envoyer (⌘↩)")
                 }
-                .buttonStyle(AccentPillButtonStyle())
-                .keyboardShortcut(.return, modifiers: .command)
-                .disabled(session.isSending || session.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                .help("Envoyer (⌘↩)")
             }
             if let usage = session.lastUsage {
                 Text("Dernier échange : \(usage.input + usage.cacheRead + usage.cacheWrite) jetons lus (dont \(usage.cacheRead) depuis le cache), \(usage.output) écrits.")

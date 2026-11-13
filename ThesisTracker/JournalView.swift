@@ -114,7 +114,7 @@ struct JournalSheet: View {
                 exportFeedbackBanner(feedback)
             }
         }
-        .frame(width: 640, height: 640)
+        .sheetFrame(width: 640, height: 640)
     }
 
     @ViewBuilder

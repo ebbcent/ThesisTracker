@@ -152,7 +152,7 @@ struct ChapterHeatmapSheet: View {
                     .foregroundColor(.labelMuted)
             }
         }
-        .frame(width: 880, height: 580)
+        .sheetFrame(width: 880, height: 580)
     }
 
     private var header: some View {

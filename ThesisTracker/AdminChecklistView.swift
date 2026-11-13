@@ -140,7 +140,7 @@ struct AdminChecklistSheet: View {
                 listView
             }
         }
-        .frame(width: 580, height: 580)
+        .sheetFrame(width: 580, height: 580)
         .sheet(isPresented: $showAddSheet) {
             AddAdminTaskSheet(store: store)
         }

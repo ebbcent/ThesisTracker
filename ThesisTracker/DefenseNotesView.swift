@@ -121,7 +121,7 @@ struct DefenseNotesSheet: View {
             Divider()
             addBar
         }
-        .frame(width: 640, height: 600)
+        .sheetFrame(width: 640, height: 600)
         .onAppear {
             if selectedChapterId == nil, let first = chapters.first { selectedChapterId = first.id }
         }

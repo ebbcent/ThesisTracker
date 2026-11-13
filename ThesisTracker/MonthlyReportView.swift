@@ -106,7 +106,7 @@ struct MonthlyReportSheet: View {
                 }
             }
         }
-        .frame(width: 720, height: 520)
+        .sheetFrame(width: 720, height: 520)
         .onAppear {
             if selectedKey == nil, let first = reports.first {
                 selectedKey = first.monthKey

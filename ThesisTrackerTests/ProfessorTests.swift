@@ -129,6 +129,21 @@ final class ProfessorTests: XCTestCase {
         XCTAssertTrue(preview.hasSuffix("…"))
     }
 
+    func testStreamEventsAccumulateTextAndUsage() {
+        var st = AnthropicClient.StreamState()
+        AnthropicClient.apply(event: ["type": "message_start", "message": ["usage": ["input_tokens": 12, "cache_read_input_tokens": 900]]], to: &st)
+        XCTAssertTrue(AnthropicClient.apply(event: ["type": "content_block_delta", "delta": ["type": "text_delta", "text": "Qu'est-ce "]], to: &st))
+        XCTAssertTrue(AnthropicClient.apply(event: ["type": "content_block_delta", "delta": ["type": "text_delta", "text": "qui a bloqué ?"]], to: &st))
+        XCTAssertFalse(AnthropicClient.apply(event: ["type": "ping"], to: &st))
+        AnthropicClient.apply(event: ["type": "message_delta", "delta": ["stop_reason": "max_tokens"], "usage": ["output_tokens": 7]], to: &st)
+        XCTAssertEqual(st.text, "Qu'est-ce qui a bloqué ?")
+        XCTAssertEqual(st.usage.cacheRead, 900)
+        XCTAssertEqual(st.usage.output, 7)
+        XCTAssertEqual(st.stopReason, "max_tokens")
+        AnthropicClient.apply(event: ["type": "error", "error": ["message": "Overloaded"]], to: &st)
+        XCTAssertEqual(st.errorMessage, "Overloaded")
+    }
+
     func testTextAttachmentCountsSigns() throws {
         let url = tmp.appendingPathComponent("2026-11-13 — ch4.txt")
         try "Rex et le Parlement.".write(to: url, atomically: true, encoding: .utf8)

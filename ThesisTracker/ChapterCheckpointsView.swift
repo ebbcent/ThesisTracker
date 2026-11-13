@@ -29,7 +29,7 @@ struct ChapterCheckpointsSheet: View {
                 checkpointsList
             }
         }
-        .frame(width: 540, height: 520)
+        .sheetFrame(width: 540, height: 520)
         .sheet(isPresented: $showSaveSheet) {
             SaveCheckpointSheet(store: store, project: project, chapter: chapter)
         }

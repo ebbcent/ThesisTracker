@@ -41,7 +41,7 @@ struct NotificationCenterView: View {
             Divider().overlay(Color.cardBorder)
             content
         }
-        .frame(width: 360, height: 500)
+        .sheetFrame(width: 360, height: 500)
         .background(Color.cardBg)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }

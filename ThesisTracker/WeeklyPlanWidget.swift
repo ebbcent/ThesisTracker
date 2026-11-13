@@ -130,7 +130,7 @@ struct WeeklyPlanSheet: View {
             Divider()
             addBar
         }
-        .frame(width: 540, height: 580)
+        .sheetFrame(width: 540, height: 580)
     }
 
     // MARK: -
