@@ -51,7 +51,7 @@ struct WidgetLibraryView: View {
             }
             .padding(24)
         }
-        .background(Color.appBg)
+        .background(AppBackdrop())
         .onChange(of: selectedContext) { _, new in
             applyContextChange(new)
         }

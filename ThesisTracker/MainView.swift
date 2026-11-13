@@ -335,7 +335,7 @@ struct MainView: View {
                     .overlay(Color.cardBorder)
 
                 ZStack {
-                    Color.appBg.ignoresSafeArea()
+                    AppBackdrop().ignoresSafeArea()   // 5.16 : fond à réfracter pour le verre
 
                     Group {
                         switch selectedNav {
@@ -378,6 +378,8 @@ struct MainView: View {
         }
         .appAnimation(.easeOut(duration: 0.20), value: showSidebar)
         .frame(minWidth: showSidebar ? 720 : 460, minHeight: 560)
+        .background(AppBackdrop().ignoresSafeArea())   // 5.16 : la barre latérale en verre réfracte le même fond
+        .appGlassContainer()                          // 5.16 : verre rendu en commun (performance, fusion des formes)
         .preferredColorScheme(forceDarkMode ? .dark : nil)  // #28 — Slate theme
         .onAppear {
             liveSidebarWidth = CGFloat(sidebarWidthStored)
@@ -865,7 +867,7 @@ struct StatusBarView: View {
             }
         }
         .frame(height: 33)
-        .background(.bar)   // 5.15 : matériau de barre (le contenu passe dessous, opaque si « Réduire la transparence »)
+        .appGlass(in: Rectangle(), fallback: .sidebarBg)   // 5.16 : verre (5.15 : matériau de barre)
     }
 
     private func copyDailySummary() {

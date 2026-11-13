@@ -122,7 +122,7 @@ struct SidebarView: View {
             Divider()
             sidebarFooter
         }
-        .background(SystemMaterial(material: .sidebar))   // 5.15 : matériau de barre latérale (opaque si « Réduire la transparence »)
+        .appGlass(in: Rectangle(), fallback: .sidebarBg)   // 5.16 : verre d'Apple (5.15 : matériau de barre latérale)
         .background(navigationShortcuts)
         .onAppear {
             if let id = store.data.activeProjectId { expandedProjects.insert(id) }
@@ -1064,7 +1064,7 @@ struct FolderFormView: View {
 
     var body: some View {
         ZStack {
-            Color.appBg.ignoresSafeArea()
+            AppBackdrop().ignoresSafeArea()
             VStack(alignment: .leading, spacing: 24) {
                 Text(title)
                     .font(.system(size: 20, weight: .bold, design: .rounded)).foregroundColor(.primary)

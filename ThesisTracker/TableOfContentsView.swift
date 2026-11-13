@@ -74,7 +74,7 @@ struct TableOfContentsView: View {
             }
             .padding(20)
         }
-        .background(Color.appBg)
+        .background(AppBackdrop())
         .sheet(isPresented: $showExportSheet) {
             ExportTextSheet(text: exportText)
         }
@@ -287,6 +287,6 @@ private struct ExportTextSheet: View {
             }
         }
         .frame(width: 480, height: 400)
-        .background(Color.appBg)
+        .background(AppBackdrop())
     }
 }

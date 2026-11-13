@@ -1154,7 +1154,7 @@ struct MilestoneFormView: View {
 
     var body: some View {
         ZStack {
-            Color.appBg.ignoresSafeArea()
+            AppBackdrop().ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 24) {
 

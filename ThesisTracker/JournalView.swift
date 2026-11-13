@@ -218,7 +218,7 @@ struct JournalSheet: View {
                 .font(.system(size: 12))
         }
         .padding(.horizontal, 18).padding(.vertical, 8)
-        .background(Color.appBg)
+        .background(AppBackdrop())
     }
 
     private var emptyState: some View {

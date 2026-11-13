@@ -386,8 +386,12 @@ struct AccentPillButtonStyle: ButtonStyle {
             .font(.system(size: 12, weight: .semibold))
             .foregroundColor(.accentWarm)
             .padding(.horizontal, 12).padding(.vertical, 6)
-            .background(RoundedRectangle(cornerRadius: 8).fill(Color.accentWarm.opacity(configuration.isPressed ? 0.20 : 0.10)))
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentWarm.opacity(0.35), lineWidth: 1))
+            // 5.16 : verre teinté d'ambre (réglage « Verre ») ; resserrement à l'appui
+            .appGlass(in: RoundedRectangle(cornerRadius: 8, style: .continuous),
+                      tint: Color.accentWarm.opacity(configuration.isPressed ? 0.30 : 0.16),
+                      fallback: Color.accentWarm.opacity(configuration.isPressed ? 0.20 : 0.10))
+            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(Color.accentWarm.opacity(GlassIsOn.value ? 0.2 : 0.35), lineWidth: 1))
+            .scaleEffect(configuration.isPressed && !Motion.reduce ? 0.97 : 1)
             .opacity(isEnabled ? 1 : 0.45)
     }
 }

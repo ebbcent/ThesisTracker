@@ -127,7 +127,7 @@ struct SnapshotBrowserView: View {
             .padding(.vertical, 12)
         }
         .frame(width: 540, height: 440)
-        .background(Color.appBg)
+        .background(AppBackdrop())
         .onAppear { reload() }
         .confirmationDialog(
             "Restaurer ce snapshot ?",

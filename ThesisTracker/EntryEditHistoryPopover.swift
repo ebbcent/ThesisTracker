@@ -49,7 +49,7 @@ struct EntryEditHistoryPopover: View {
             }
         }
         .frame(width: 280)
-        .background(Color.appBg)
+        .background(AppBackdrop())
     }
 
     private func editRow(_ rec: EntryEditRecord) -> some View {
