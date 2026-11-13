@@ -5,6 +5,8 @@ import SwiftUI
 struct ProfessorView: View {
     @ObservedObject var store: DataStore
     @Binding var showSidebar: Bool
+    /// 5.14 — version « note rapide » pour la fenêtre flottante.
+    var compact: Bool = false
     @ObservedObject private var session = ProfessorSession.shared
     @ObservedObject private var settings = ProfessorSettings.shared
     @State private var showSources = false
@@ -12,23 +14,68 @@ struct ProfessorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            header
-                .padding(.horizontal, 24).padding(.top, 20).padding(.bottom, 12)
+            Group {
+                if compact { compactHeader } else { header }
+            }
+            .padding(.horizontal, compact ? 14 : 24).padding(.top, compact ? 8 : 20).padding(.bottom, compact ? 8 : 12)
             Divider().overlay(Color.cardBorder)
             if !settings.hasKey || !settings.folderExists {
                 setupNotice
-                    .padding(24)
+                    .padding(compact ? 14 : 24)
                 Spacer()
             } else {
                 conversation
                 Divider().overlay(Color.cardBorder)
                 composer
-                    .padding(16)
+                    .padding(compact ? 12 : 16)
             }
         }
         .background(Color.appBg)
         .sheet(isPresented: $showSources) { sourcesSheet }
-        .onAppear { inputFocused = true }
+        .onAppear {
+            inputFocused = true
+            session.unreadReply = false
+            if !compact { session.tabVisible = true }
+        }
+        .onDisappear {
+            if !compact { session.tabVisible = false }
+        }
+    }
+
+    // MARK: En-tête compact (note rapide)
+
+    private var compactHeader: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "graduationcap.fill")
+                .foregroundColor(.accentWarm)
+            Text("Professeur")
+                .font(.system(size: 13, weight: .semibold))
+            Text(settings.model == .opus ? "Opus" : "Sonnet")
+                .font(.system(size: 10))
+                .foregroundColor(.labelMuted)
+            Spacer()
+            Button {
+                if session.context == nil { session.refreshContext(store: store) }
+                showSources = true
+            } label: {
+                Image(systemName: "doc.text.magnifyingglass")
+            }
+            .buttonStyle(.plain)
+            .foregroundColor(.accentWarm)
+            .help("Fichiers lus par le professeur pour cette séance")
+            .accessibilityLabel("Contexte de la séance")
+            Button {
+                session.newSession()
+            } label: {
+                Image(systemName: "arrow.counterclockwise")
+            }
+            .buttonStyle(.plain)
+            .foregroundColor(.accentWarm)
+            .disabled(session.isSending || session.turns.isEmpty)
+            .help("Nouvelle séance")
+            .accessibilityLabel("Nouvelle séance")
+        }
+        .font(.system(size: 12, weight: .medium))
     }
 
     // MARK: En-tête
@@ -107,7 +154,12 @@ struct ProfessorView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 14) {
-                    if session.turns.isEmpty {
+                    if session.turns.isEmpty && compact {
+                        Text("Note rapide : même séance que l'onglet Professeur. ⌘↩ pour envoyer.")
+                            .font(.system(size: 12))
+                            .foregroundColor(.labelMuted)
+                            .padding(.top, 4)
+                    } else if session.turns.isEmpty {
                         Text("Le professeur lit Suivi.md, ton profil, sa mémoire, les échanges du mois, tes échéances et les chiffres de l'app. Il n'écrit que dans « Échanges app/ ». Pour une relecture de fond, joins un export de « Dépôts ».")
                             .font(.system(size: 12))
                             .foregroundColor(.labelMuted)
@@ -125,7 +177,7 @@ struct ProfessorView: View {
                         .id("sending")
                     }
                 }
-                .padding(24)
+                .padding(compact ? 14 : 24)
             }
             .onChange(of: session.turns.count) { _, _ in
                 withAnimation { proxy.scrollTo(session.isSending ? AnyHashable("sending") : AnyHashable(session.turns.last?.id), anchor: .bottom) }
@@ -136,7 +188,7 @@ struct ProfessorView: View {
     private func bubble(_ turn: ProfessorTurn) -> some View {
         let isUser = turn.role == .user
         return HStack {
-            if isUser { Spacer(minLength: 80) }
+            if isUser { Spacer(minLength: compact ? 30 : 80) }
             VStack(alignment: .leading, spacing: 6) {
                 Text(isUser ? "Toi" : "L. Vandenbossche")
                     .font(.system(size: 10, weight: .bold))
@@ -159,7 +211,7 @@ struct ProfessorView: View {
             )
             .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(isUser ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
-            if !isUser { Spacer(minLength: 80) }
+            if !isUser { Spacer(minLength: compact ? 30 : 80) }
         }
     }
 
@@ -274,7 +326,7 @@ struct ProfessorView: View {
             Spacer()
         }
         .padding(20)
-        .frame(width: 520, height: 400)
+        .frame(width: compact ? 380 : 520, height: compact ? 360 : 400)
         .background(Color.cardBg)
     }
 

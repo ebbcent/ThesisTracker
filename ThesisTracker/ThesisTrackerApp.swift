@@ -143,6 +143,11 @@ struct ThesisTrackerApp: App {
                         pomodoroController.startWritingSlot(slot, store: store)
                     }
                     WritingSlotScheduler.reschedule(store.writingSlots)
+                    // 5.14 — clic sur « Le professeur a répondu » : ouvre la note rapide
+                    NotificationManager.shared.professorReplyHandler = { [weak store] in
+                        guard let store else { return }
+                        ProfessorPanelManager.shared.show(store: store)
+                    }
                 }
                 .onChange(of: store.data.writingSlots ?? []) { _, slots in
                     WritingSlotScheduler.reschedule(slots)

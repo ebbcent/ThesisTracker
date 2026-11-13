@@ -160,6 +160,9 @@ struct MainView: View {
                 .keyboardShortcut(KeyEquivalent(shortcutSprintKey.first ?? "t"), modifiers: [.command, .shift])
             Button("") { showPresentation = true }
                 .keyboardShortcut("p", modifiers: [.option, .command])
+            // 5.14 — Professeur en note rapide
+            Button("") { ProfessorPanelManager.shared.toggle(store: store) }
+                .keyboardShortcut("p", modifiers: [.command, .shift])
             Button("") { withAnimation(.easeOut(duration: 0.15)) { showTodayMode = true } }
                 .keyboardShortcut("j", modifiers: [.command, .shift])
             // Mode panne : ⌘⇧D (⌘⇧B est réservé à « Accomplissements »)

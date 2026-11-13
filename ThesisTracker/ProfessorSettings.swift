@@ -35,6 +35,12 @@ final class ProfessorSettings: ObservableObject {
         didSet { UserDefaults.standard.set(folderPath, forKey: Self.folderKey) }
     }
 
+    /// 5.14 — notification macOS quand le professeur répond hors de vue (activée par défaut).
+    @Published var notifyOnReply: Bool {
+        didSet { UserDefaults.standard.set(notifyOnReply, forKey: Self.notifyKey) }
+    }
+
+    private static let notifyKey = "professor.notifyOnReply"
     private static let modelKey  = "professor.model"
     private static let folderKey = "professor.folderPath"
     private let keychainService = "com.writingprocess.app.anthropic"
@@ -49,6 +55,7 @@ final class ProfessorSettings: ObservableObject {
         model = ProfessorModel(rawValue: stored) ?? .opus
         let path = UserDefaults.standard.string(forKey: Self.folderKey) ?? ""
         folderPath = path.isEmpty ? Self.defaultFolderPath : path
+        notifyOnReply = UserDefaults.standard.object(forKey: Self.notifyKey) as? Bool ?? true
         hasKey = readKey() != nil
     }
 
@@ -164,6 +171,17 @@ struct ProfessorSettingsSection: View {
                     .labelsHidden()
                     .frame(maxWidth: 240)
                 }
+
+                Toggle(isOn: $settings.notifyOnReply) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Notifier quand il répond")
+                            .font(.system(size: 12, weight: .medium))
+                        Text("Seulement si la réponse arrive hors de vue (autre app, autre onglet).")
+                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    }
+                }
+                .toggleStyle(.switch)
+                .tint(.accent)
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {

@@ -56,6 +56,22 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     /// 5.11 — bouton « Démarrer » d'un rappel de créneau d'écriture (identifiant du créneau).
     var writingSlotStartHandler: ((UUID) -> Void)?
 
+    /// 5.14 — clic sur la notification « Le professeur a répondu ».
+    var professorReplyHandler: (() -> Void)?
+    static let professorIdentifierPrefix = "professor-reply"
+
+    /// 5.14 — réponse du professeur arrivée hors de vue : notification immédiate.
+    func sendProfessorReply(preview: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "L. Vandenbossche a répondu"
+        content.body = preview
+        content.sound = .default
+        content.interruptionLevel = .timeSensitive
+        let identifier = Self.professorIdentifierPrefix
+        center.removeDeliveredNotifications(withIdentifiers: [identifier])
+        center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: nil))
+    }
+
     /// `setNotificationCategories` remplace TOUTES les catégories : on les cumule ici.
     private var registeredCategories: [String: UNNotificationCategory] = [:]
 
@@ -658,6 +674,9 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             // Actions Pomodoro (démarrer la pause / la session…) transmises au minuteur
             if identifier.hasPrefix(NotificationManager.pomodoroIdentifierPrefix) {
                 self.pomodoroResponseHandler?(action)
+            }
+            if identifier.hasPrefix(NotificationManager.professorIdentifierPrefix) {
+                self.professorReplyHandler?()
             }
             if action == WritingSlotScheduler.startActionIdentifier,
                let slotID = WritingSlotScheduler.slotID(fromNotificationIdentifier: identifier) {
