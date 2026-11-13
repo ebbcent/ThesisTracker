@@ -35,6 +35,10 @@ final class ProfessorSession: ObservableObject {
     @Published var pendingAttachment: ProfessorContext.Attachment?
     @Published private(set) var lastUsage: AnthropicClient.Usage?
     @Published private(set) var journalWarning: String?
+    /// 5.14 — réponse arrivée pendant que ni l'onglet ni la note rapide n'étaient à l'écran.
+    @Published var unreadReply = false
+    /// 5.14 — onglet Professeur affiché dans la fenêtre principale.
+    var tabVisible = false
 
     private var apiMessages: [AnthropicClient.Message] = []
     private var sessionStarted: Date?
@@ -119,6 +123,7 @@ final class ProfessorSession: ObservableObject {
             turns.append(answer)
             lastUsage = reply.usage
             appendToJournal(question: turns[turns.count - 2], answer: answer, model: settings.model.rawValue)
+            notifyIfUnseen(text)
         } catch {
             // L'échange raté est retiré pour pouvoir renvoyer la question.
             apiMessages.removeLast()
@@ -128,6 +133,28 @@ final class ProfessorSession: ObservableObject {
             errorMessage = error.localizedDescription
         }
         isSending = false
+    }
+
+    // MARK: 5.14 — notification de réponse
+
+    /// Notifie quand la réponse arrive hors de vue : app en arrière-plan, ou
+    /// ni l'onglet Professeur ni la note rapide à l'écran.
+    private func notifyIfUnseen(_ text: String) {
+        let seen = NSApp.isActive && (tabVisible || ProfessorPanelManager.shared.isVisible)
+        guard !seen else { return }
+        unreadReply = true
+        if ProfessorSettings.shared.notifyOnReply {
+            NotificationManager.shared.sendProfessorReply(preview: Self.notificationPreview(text))
+        }
+    }
+
+    static func notificationPreview(_ text: String, limit: Int = 180) -> String {
+        let flat = text
+            .replacingOccurrences(of: "**", with: "")
+            .replacingOccurrences(of: "\n+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard flat.count > limit else { return flat }
+        return String(flat.prefix(limit)).trimmingCharacters(in: .whitespaces) + "…"
     }
 
     // MARK: Journal « Échanges app/AAAA-MM.md »

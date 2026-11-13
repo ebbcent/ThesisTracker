@@ -121,6 +121,14 @@ final class ProfessorTests: XCTestCase {
         XCTAssertEqual(content.components(separatedBy: "**L. Vandenbossche**").count - 1, 2)
     }
 
+    func testNotificationPreviewFlattensAndShortens() {
+        XCTAssertEqual(ProfessorSession.notificationPreview("**Clem**,\n\nqu'est-ce qui a bloqué ?"), "Clem, qu'est-ce qui a bloqué ?")
+        let long = String(repeating: "a", count: 300)
+        let preview = ProfessorSession.notificationPreview(long)
+        XCTAssertEqual(preview.count, 181)
+        XCTAssertTrue(preview.hasSuffix("…"))
+    }
+
     func testTextAttachmentCountsSigns() throws {
         let url = tmp.appendingPathComponent("2026-11-13 — ch4.txt")
         try "Rex et le Parlement.".write(to: url, atomically: true, encoding: .utf8)

@@ -124,6 +124,9 @@ struct PaperDashboardView: View {
                 }
             }
 
+            // 5.14 — Professeur en note rapide (fenêtre flottante)
+            ProfessorQuickButton(store: store, size: 32)
+
             Button { showSettings = true } label: {
                 Image(systemName: "gearshape")
                     .font(.system(size: 13))

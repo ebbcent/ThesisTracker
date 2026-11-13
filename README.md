@@ -62,6 +62,7 @@ Onglet **Professeur** : séance avec le directeur virtuel (Pr L. Vandenbossche).
 - **Ce qu'il écrit** : uniquement `Échanges app/AAAA-MM.md` dans ce dossier (un ajout par échange).
 - **Relire un texte** : trombone → choisir un export de `Dépôts/` (.docx, .pdf, .odt, .rtf, .txt, .md).
 - **Consignes** : intégrées à l'app ; un fichier `Consignes app.md` dans le dossier du directeur les remplace.
+- **Note rapide (5.14)** : icône toque du tableau de bord ou ⇧⌘P → fenêtre flottante, même séance que l'onglet. Notification quand il répond hors de vue (réglable dans Réglages → Professeur).
 
 ---
 

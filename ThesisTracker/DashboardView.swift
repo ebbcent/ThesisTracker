@@ -870,6 +870,9 @@ struct DashboardView: View {
                 DirectorReportSheet(store: store)
             }
 
+            // 5.14 — Professeur en note rapide (fenêtre flottante)
+            ProfessorQuickButton(store: store)
+
             // #16 — Toggle compact
             Button {
                 withAnimation(.easeInOut(duration: 0.15)) { dashboardCompact.toggle() }
