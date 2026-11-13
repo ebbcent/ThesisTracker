@@ -147,7 +147,7 @@ struct HistoryRow: View {
                     if increment > 0 {
                         HStack(spacing: 3) {
                             Image(systemName: "arrow.up")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                             Text("+\(formatNumber(increment))")
                                 .font(.system(size: 11, weight: .medium))
                         }
@@ -155,7 +155,7 @@ struct HistoryRow: View {
                     } else if let chapter, chapter.netChange(for: entry.date) < 0 {
                         HStack(spacing: 3) {
                             Image(systemName: "arrow.down")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                             Text(formatNumber(chapter.netChange(for: entry.date)))
                                 .font(.system(size: 11, weight: .medium))
                             if entry.isCorrection {
@@ -173,7 +173,7 @@ struct HistoryRow: View {
                 if let note = entry.note, !note.isEmpty {
                     HStack(spacing: 4) {
                         Image(systemName: "note.text")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.6))
                         Text(note)
                             .font(.system(size: 11))

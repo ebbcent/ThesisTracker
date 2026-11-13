@@ -116,7 +116,7 @@ struct PaperDashboardView: View {
                 if store.currentStreak > 0 {
                     HStack(spacing: 4) {
                         Image(systemName: "flame.fill")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                         Text("\(store.currentStreak) jours")
                             .font(.system(size: 11, weight: .medium))
                     }
@@ -436,7 +436,7 @@ struct PaperDashboardView: View {
 
             if reached {
                 Image(systemName: "checkmark")
-                    .font(.system(size: 8, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.accentGreen)
                     .frame(height: 10)
             } else if day.written > 0 && !day.isFuture {

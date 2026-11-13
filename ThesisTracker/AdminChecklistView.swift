@@ -80,7 +80,7 @@ struct AdminChecklistWidget: View {
     private func taskMini(_ task: AdminTask) -> some View {
         HStack(spacing: 6) {
             Image(systemName: task.kind.icon)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(task.kind.color)
                 .frame(width: 14)
             Text(task.title)
@@ -90,7 +90,7 @@ struct AdminChecklistWidget: View {
             Spacer()
             if let dueStr = task.dueDate {
                 Text(dueLabel(dueStr))
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(dueColor(dueStr))
             }
         }
@@ -220,10 +220,10 @@ struct AdminChecklistSheet: View {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 5) {
                     Image(systemName: task.kind.icon)
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(task.kind.color)
                     Text(task.kind.label)
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundColor(task.kind.color)
                         .kerning(0.5)
                 }
@@ -234,7 +234,7 @@ struct AdminChecklistSheet: View {
                 if let due = task.dueDate {
                     HStack(spacing: 4) {
                         Image(systemName: "calendar")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.7))
                         Text(due)
                             .font(.system(size: 10))

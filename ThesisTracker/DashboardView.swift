@@ -547,7 +547,7 @@ struct DashboardView: View {
         } label: {
             HStack(spacing: 3) {
                 Image(systemName: column == .right ? "arrow.left" : "arrow.right")
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                 Text(column == .right ? "← Gauche" : "Droite →")
                     .font(.system(size: 10, weight: .medium))
             }
@@ -834,7 +834,7 @@ struct DashboardView: View {
             if store.currentStreak > 0 {
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 10, weight: .bold))
                     Text("Série · \(store.currentStreak) j")
                         .font(.system(size: 10.5, weight: .semibold))
                 }
@@ -984,7 +984,7 @@ struct DashboardView: View {
                                     store.moveChapter(chapter.id, direction: -1, in: project.id)
                                 } label: {
                                     Image(systemName: "chevron.up")
-                                        .font(.system(size: 9, weight: .semibold))
+                                        .font(.system(size: 10, weight: .semibold))
                                         .foregroundColor(idx > 0 ? .secondary : .labelMuted.opacity(0.3))
                                         .frame(width: 22, height: 22)
                                         .background(Color.glassFill)
@@ -1000,7 +1000,7 @@ struct DashboardView: View {
                                     store.moveChapter(chapter.id, direction: 1, in: project.id)
                                 } label: {
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 9, weight: .semibold))
+                                        .font(.system(size: 10, weight: .semibold))
                                         .foregroundColor(idx < chapters.count - 1 ? .secondary : .labelMuted.opacity(0.3))
                                         .frame(width: 22, height: 22)
                                         .background(Color.glassFill)
@@ -1104,7 +1104,7 @@ struct DashboardView: View {
                                     } label: {
                                         HStack(spacing: 4) {
                                             Image(systemName: icons[i])
-                                                .font(.system(size: 9))
+                                                .font(.system(size: 10))
                                             Text(label)
                                                 .font(.system(size: 11, weight: notesTabIndex == i ? .semibold : .regular))
                                             if hasContent && notesTabIndex != i {
@@ -1139,7 +1139,7 @@ struct DashboardView: View {
                                                 scheduleNotesSave(chapter: chapter, project: project)
                                             } label: {
                                                 HStack(spacing: 4) {
-                                                    Image(systemName: tmpl.icon).font(.system(size: 9))
+                                                    Image(systemName: tmpl.icon).font(.system(size: 10))
                                                     Text(tmpl.name).font(.system(size: 10, weight: .medium))
                                                 }
                                                 .foregroundColor(.accent)
@@ -1301,7 +1301,7 @@ struct DashboardView: View {
                     if currentEntryDelta > 0 {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.up")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.system(size: 10, weight: .bold))
                             Text("+\(store.formatCount(currentEntryDelta)) aujourd'hui")
                                 .font(.system(size: 11))
                         }
@@ -1312,7 +1312,7 @@ struct DashboardView: View {
                         if isNewPersonalRecord {
                             HStack(spacing: 4) {
                                 Image(systemName: "trophy.fill")
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                 Text("Nouveau record personnel !")
                                     .font(.system(size: 11, weight: .semibold))
                             }
@@ -1324,7 +1324,7 @@ struct DashboardView: View {
                     } else if currentEntryNet < 0 {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.down")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.system(size: 10, weight: .bold))
                             Text("\(store.formatCount(currentEntryNet)) \(isToday ? "aujourd'hui" : "ce jour-là")")
                                 .font(.system(size: 11))
                             if activeChapter?.entryForDate(selectedDateStr)?.isCorrection == true {
@@ -1346,7 +1346,7 @@ struct DashboardView: View {
                     if let days = daysSinceLastEntry {
                         HStack(spacing: 4) {
                             Image(systemName: "clock")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                             Text("Dernière écriture : il y a \(days) jour\(days > 1 ? "s" : "")")
                                 .font(.system(size: 11))
                         }
@@ -1599,7 +1599,7 @@ struct DashboardView: View {
                     if let ddg = store.deadlineDailyGoal, store.deadlineDailyGoalDiffers {
                         HStack(spacing: 5) {
                             Image(systemName: "calendar.badge.exclamationmark")
-                                .font(.system(size: 9)).foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
+                                .font(.system(size: 10)).foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
                             Text("Deadline : \(store.formatCount(ddg)) / jour pour finir le chapitre")
                                 .font(.system(size: 10)).foregroundColor(.labelMuted)
                         }
@@ -1611,7 +1611,7 @@ struct DashboardView: View {
                     } else if store.adaptedDailyGoalDiffers {
                         HStack(spacing: 5) {
                             Image(systemName: "bolt.fill")
-                                .font(.system(size: 9)).foregroundColor(.accentWarm)
+                                .font(.system(size: 10)).foregroundColor(.accentWarm)
                             Text("Objectif adaptatif : \(store.formatCount(store.adaptedDailyGoal)) aujourd'hui")
                                 .font(.system(size: 10)).foregroundColor(.labelMuted)
                         }
@@ -1885,7 +1885,7 @@ struct DashboardView: View {
         VStack(spacing: 8) {
             HStack(spacing: 0) {
                 Text("À MON RYTHME")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1)
                 Spacer()
@@ -1970,7 +1970,7 @@ struct DashboardView: View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title.uppercased())
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1)
                 Text(subtitle)
@@ -2059,7 +2059,7 @@ struct DashboardView: View {
                 Circle().fill(circleColor).frame(width: 26, height: 26)
                 if reached {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 9, weight: .bold)).foregroundColor(.white)
+                        .font(.system(size: 10, weight: .bold)).foregroundColor(.white)
                 } else if hasWriting && !day.isFuture {
                     Text("\(Int(ratio * 100))%")
                         .font(.system(size: 7, weight: .bold)).foregroundColor(.white)
@@ -2784,7 +2784,7 @@ private struct StatMiniCard: View {
                 Spacer()
                 if let badge {
                     Text(badge)
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundColor(badgeColor)
                         .padding(.horizontal, 5).padding(.vertical, 2)
                         .background(badgeColor.opacity(0.12))

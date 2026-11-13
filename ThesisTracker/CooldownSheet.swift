@@ -62,7 +62,7 @@ struct CooldownSheet: View {
         VStack(alignment: .leading, spacing: 4) {
             if let chapter {
                 Text("CHAPITRE")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(0.6)
                 Text(chapter.name)

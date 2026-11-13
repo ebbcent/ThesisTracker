@@ -84,3 +84,25 @@ extension View {
         return self.frame(width: min(width, visible.width - 80), height: min(height, visible.height - 100))
     }
 }
+
+// MARK: - Matériaux système (translucidité)
+
+/// Matériau AppKit (barre latérale, fenêtre…) : translucidité et vibrance du système.
+/// macOS rend lui-même le matériau opaque quand « Réduire la transparence » est activé.
+struct SystemMaterial: NSViewRepresentable {
+    var material: NSVisualEffectView.Material = .sidebar
+    var blending: NSVisualEffectView.BlendingMode = .behindWindow
+
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let v = NSVisualEffectView()
+        v.material = material
+        v.blendingMode = blending
+        v.state = .followsWindowActiveState
+        return v
+    }
+
+    func updateNSView(_ v: NSVisualEffectView, context: Context) {
+        v.material = material
+        v.blendingMode = blending
+    }
+}

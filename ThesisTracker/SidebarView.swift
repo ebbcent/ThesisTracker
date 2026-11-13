@@ -122,7 +122,7 @@ struct SidebarView: View {
             Divider()
             sidebarFooter
         }
-        .background(Color.sidebarBg)
+        .background(SystemMaterial(material: .sidebar))   // 5.15 : matériau de barre latérale (opaque si « Réduire la transparence »)
         .background(navigationShortcuts)
         .onAppear {
             if let id = store.data.activeProjectId { expandedProjects.insert(id) }
@@ -160,7 +160,7 @@ struct SidebarView: View {
             if store.currentStreak > 0 {
                 HStack(spacing: 3) {
                     Image(systemName: "flame.fill")
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 10, weight: .bold))
                     Text("\(store.currentStreak)")
                         .font(.system(size: 11, weight: .bold, design: .rounded))
                 }
@@ -276,7 +276,7 @@ struct SidebarView: View {
                         .font(.system(size: 7, weight: .bold))
                         .foregroundColor(.labelMuted.opacity(0.45))
                     Text(label.uppercased())
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.labelMuted.opacity(0.5))
                         .kerning(1.0)
                     Spacer()
@@ -370,7 +370,7 @@ struct SidebarView: View {
                 } label: {
                     Image(systemName: expandedProjects.count >= sortedProjects.count
                           ? "chevron.up.chevron.down" : "chevron.down.chevron.up")
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .frame(width: 22, height: 22)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -573,7 +573,7 @@ struct SidebarView: View {
     private func reviewGroupHeader(label: String, tint: Color, count: Int) -> some View {
         HStack(spacing: 5) {
             Circle().fill(tint).frame(width: 6, height: 6)
-            Text(label.uppercased()).font(.system(size: 9, weight: .bold)).foregroundColor(.labelMuted).kerning(0.8)
+            Text(label.uppercased()).font(.system(size: 10, weight: .bold)).foregroundColor(.labelMuted).kerning(0.8)
             Spacer()
             Text("\(count)").font(.system(size: 10, weight: .medium)).foregroundColor(.labelMuted)
         }
@@ -594,10 +594,10 @@ struct SidebarView: View {
                 VStack(alignment: .leading, spacing: 1) {
                     Text(chapter.name).font(.system(size: 12, weight: .medium)).lineLimit(1)
                     HStack(spacing: 4) {
-                        Text(project.name).font(.system(size: 9)).foregroundColor(.labelMuted)
+                        Text(project.name).font(.system(size: 10)).foregroundColor(.labelMuted)
                         if let days = chapter.daysSinceSent(), chapter.reviewState == .sent {
                             Text("· envoyé il y a \(days) j")
-                                .font(.system(size: 9)).foregroundColor(.labelMuted.opacity(0.7))
+                                .font(.system(size: 10)).foregroundColor(.labelMuted.opacity(0.7))
                         }
                     }
                 }
@@ -620,10 +620,10 @@ struct SidebarView: View {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 4) {
                     Image(systemName: "pin.fill")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.accentWarm)
                     Text("ÉPINGLÉS")
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundColor(.labelMuted.opacity(0.7))
                         .kerning(0.8)
                     Spacer()
@@ -639,7 +639,7 @@ struct SidebarView: View {
                             if let tag = project.tag {
                                 Circle().fill(tag.color).frame(width: 7, height: 7)
                             } else {
-                                Image(systemName: "books.vertical").font(.system(size: 9)).foregroundColor(.labelMuted)
+                                Image(systemName: "books.vertical").font(.system(size: 10)).foregroundColor(.labelMuted)
                             }
                             Text(project.name).font(.system(size: 11, weight: .medium)).lineLimit(1)
                             Spacer()
@@ -647,7 +647,7 @@ struct SidebarView: View {
                                 store.toggleProjectPinned(project.id)
                             } label: {
                                 Image(systemName: "pin.slash.fill")
-                                    .font(.system(size: 8))
+                                    .font(.system(size: 10))
                                     .foregroundColor(.labelMuted.opacity(0.6))
                             }
                             .buttonStyle(.pressable).help("Désépingler")
@@ -670,17 +670,17 @@ struct SidebarView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "doc.text")
-                                .font(.system(size: 9)).foregroundColor(.labelMuted)
+                                .font(.system(size: 10)).foregroundColor(.labelMuted)
                             VStack(alignment: .leading, spacing: 0) {
                                 Text(item.chapter.name).font(.system(size: 11, weight: .medium)).lineLimit(1)
-                                Text(item.project.name).font(.system(size: 8)).foregroundColor(.labelMuted.opacity(0.7)).lineLimit(1)
+                                Text(item.project.name).font(.system(size: 10)).foregroundColor(.labelMuted.opacity(0.7)).lineLimit(1)
                             }
                             Spacer()
                             Button {
                                 store.toggleChapterPinned(item.chapter.id, in: item.project.id)
                             } label: {
                                 Image(systemName: "pin.slash.fill")
-                                    .font(.system(size: 8))
+                                    .font(.system(size: 10))
                                     .foregroundColor(.labelMuted.opacity(0.6))
                             }
                             .buttonStyle(.pressable).help("Désépingler")
@@ -719,7 +719,7 @@ struct SidebarView: View {
                         .foregroundColor(.labelMuted)
                     Spacer()
                     Image(systemName: showArchivedSection ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 9, weight: .medium))
+                        .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.labelMuted.opacity(0.6))
                 }
                 .padding(.horizontal, 12).padding(.vertical, 6)
@@ -731,7 +731,7 @@ struct SidebarView: View {
                     ForEach(archivedProjects) { project in
                         HStack(spacing: 8) {
                             if let tag = project.tag { Circle().fill(tag.color).frame(width: 6, height: 6) }
-                            Image(systemName: "archivebox").font(.system(size: 9)).foregroundColor(.labelMuted.opacity(0.6))
+                            Image(systemName: "archivebox").font(.system(size: 10)).foregroundColor(.labelMuted.opacity(0.6))
                             Text(project.name)
                                 .font(.system(size: 12))
                                 .foregroundColor(.labelMuted)
@@ -801,7 +801,7 @@ struct SidebarView: View {
             // Streak badges row
             HStack(spacing: 4) {
                 Image(systemName: "flame.fill")
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(store.currentStreak > 0 ? .accentWarm : .labelMuted)
                 HStack(spacing: 4) {
                     ForEach(DataStore.badgeMilestones, id: \.self) { threshold in
@@ -821,7 +821,7 @@ struct SidebarView: View {
                 Spacer()
                 if store.currentStreak > 0 {
                     Text("\(store.currentStreak) j")
-                        .font(.system(size: 9, weight: .semibold, design: .rounded))
+                        .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundColor(.accentWarm)
                 }
             }
@@ -832,7 +832,7 @@ struct SidebarView: View {
             if !todaySessions.isEmpty {
                 HStack(spacing: 4) {
                     Image(systemName: "timer")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted)
                     HStack(spacing: 3) {
                         ForEach(todaySessions.prefix(12)) { entry in
@@ -843,7 +843,7 @@ struct SidebarView: View {
                         }
                         if todaySessions.count > 12 {
                             Text("+\(todaySessions.count - 12)")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.labelMuted)
                         }
                     }
@@ -894,7 +894,7 @@ struct SidebarView: View {
                     .contentShape(Rectangle())
                 if count > 0 {
                     Text("\(count)")
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                         .padding(.horizontal, 4).padding(.vertical, 1)
                         .background(Capsule().fill(Color.accentWarm))
@@ -1025,7 +1025,7 @@ private struct NavItemRow: View {
                     Spacer()
                     if isHovering, let hint = item.shortcutHint {
                         Text(hint)
-                            .font(.system(size: 9.5, weight: .medium, design: .monospaced))
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
                             .foregroundColor(.labelMuted.opacity(0.7))
                             .padding(.horizontal, 5).padding(.vertical, 2)
                             .background(Color.fieldBg)
@@ -1149,7 +1149,7 @@ private struct ArchivedChaptersPopover: View {
                                         .font(.system(size: 11, weight: .medium))
                                         .lineLimit(1)
                                     Text(item.project.name)
-                                        .font(.system(size: 9))
+                                        .font(.system(size: 10))
                                         .foregroundColor(.labelMuted)
                                         .lineLimit(1)
                                 }
@@ -1335,7 +1335,7 @@ struct FolderSidebarRow: View {
             Button { store.toggleFolderExpanded(folder.id) } label: {
                 HStack(spacing: 8) {
                     Image(systemName: folder.isExpanded ? "chevron.down" : "chevron.right")
-                        .font(.system(size: 9, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 12)
+                        .font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 12)
                     Image(systemName: folder.isExpanded ? "folder.fill" : "folder")
                         .font(.system(size: 12)).foregroundColor(.accent.opacity(0.8))
                     if renameDraft != nil {
@@ -1733,7 +1733,7 @@ struct ProjectSidebarRow: View {
                 Button(action: onToggleExpand) {
                     HStack(spacing: 8) {
                         Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                            .font(.system(size: 9, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 12)
+                            .font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 12)
                         if let tag = project.tag {
                             Circle().fill(tag.color).frame(width: 9, height: 9)
                                 .overlay(Circle().stroke(Color.white.opacity(0.25), lineWidth: 1))
@@ -1758,7 +1758,7 @@ struct ProjectSidebarRow: View {
                             }
                             if let summary = chapterCountSummary {
                                 Text(summary)
-                                    .font(.system(size: 9, weight: .medium))
+                                    .font(.system(size: 10, weight: .medium))
                                     .foregroundColor(.labelMuted.opacity(0.7))
                                     .lineLimit(1)
                             }
@@ -2183,7 +2183,7 @@ private struct ChapterFolderSidebarRow: View {
                     Button { store.toggleChapterFolderExpanded(folderId, in: projectId) } label: {
                         HStack(spacing: 6) {
                             Image(systemName: folder.isExpanded ? "chevron.down" : "chevron.right")
-                                .font(.system(size: 8, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 10)
+                                .font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 10)
                             Image(systemName: folder.isExpanded ? "folder.fill" : "folder")
                                 .font(.system(size: 11))
                                 .foregroundColor(.secondary.opacity(0.7))
@@ -2214,7 +2214,7 @@ private struct ChapterFolderSidebarRow: View {
                     .buttonStyle(.pressable)
 
                     Button { showAddChapter = true } label: {
-                        Image(systemName: "plus").font(.system(size: 9, weight: .semibold)).foregroundColor(.accent)
+                        Image(systemName: "plus").font(.system(size: 10, weight: .semibold)).foregroundColor(.accent)
                             .frame(width: 18, height: 18).background(Color.accent.opacity(0.08))
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
@@ -2254,7 +2254,7 @@ private struct ChapterFolderSidebarRow: View {
                             store.deleteChapterFolder(id: folderId, in: projectId)
                         }
                     } label: {
-                        Image(systemName: "ellipsis").font(.system(size: 9, weight: .medium)).foregroundColor(.secondary)
+                        Image(systemName: "ellipsis").font(.system(size: 10, weight: .medium)).foregroundColor(.secondary)
                             .frame(width: 18, height: 18)
                             .background(RoundedRectangle(cornerRadius: 4).fill(Color.primary.opacity(0.07)))
                     }
@@ -2479,7 +2479,7 @@ struct ChapterSidebarRow: View {
                     // #35 — Priorité haute uniquement (pas polluer pour normale/basse)
                     if chapter.priority == .high && !chapter.isCompleted {
                         Image(systemName: "exclamationmark")
-                            .font(.system(size: 9, weight: .bold))
+                            .font(.system(size: 10, weight: .bold))
                             .foregroundColor(Color(hex: "#DC2626"))
                             .help("Priorité haute")
                     }
@@ -2498,13 +2498,13 @@ struct ChapterSidebarRow: View {
                     }
                     if chapter.notes != nil {
                         Image(systemName: "note.text")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.6))
                     }
                     // #36 — Tags libres (premiers 2 tags)
                     ForEach(chapter.customTags.prefix(2), id: \.self) { tag in
                         Text(tag)
-                            .font(.system(size: 8, weight: .medium))
+                            .font(.system(size: 10, weight: .medium))
                             .foregroundColor(.accent)
                             .padding(.horizontal, 4).padding(.vertical, 1)
                             .background(Color.accent.opacity(0.1))
@@ -2512,7 +2512,7 @@ struct ChapterSidebarRow: View {
                     }
                     if !chapter.countsInThesisTotal {
                         Image(systemName: "tray.full")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.7))
                             .help("Hors total de la thèse")
                     }
@@ -2530,7 +2530,7 @@ struct ChapterSidebarRow: View {
                     // V3.2 — Badge statut
                     if let st = chapter.status, !chapter.isCompleted {
                         Text(st.label)
-                            .font(.system(size: 8, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(Color(hex: st.color))
                             .padding(.horizontal, 5).padding(.vertical, 2)
                             .background(Color(hex: st.color).opacity(0.15))
@@ -2568,18 +2568,18 @@ struct ChapterSidebarRow: View {
                         if let lastDate = chapter.entries.map(\.date).max(),
                            let parsed = DataStore.parseDate(lastDate) {
                             Text("Modifié " + relativeDate(parsed))
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.labelMuted.opacity(0.6))
                         }
                         if let eta = store.estimatedCompletionDate(for: chapter.id, in: projectId) {
                             let label = projectionLabel(eta)
                             Text("⏱ " + label)
-                                .font(.system(size: 9, weight: .medium))
+                                .font(.system(size: 10, weight: .medium))
                                 .foregroundColor(.labelMuted.opacity(0.7))
                         }
                         if !chapter.isCompleted, let deadline = chapter.deadline, let date = DataStore.parseDate(deadline) {
                             Text("Deadline: " + DataStore.formatDate(date))
-                                .font(.system(size: 9, weight: .medium))
+                                .font(.system(size: 10, weight: .medium))
                                 .foregroundColor(.accentWarm.opacity(0.8))
                         }
                     }

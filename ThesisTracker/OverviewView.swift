@@ -350,7 +350,7 @@ struct OverviewView: View {
                                         store.unarchiveProject(project.id)
                                     } label: {
                                         HStack(spacing: 4) {
-                                            Image(systemName: "arrow.uturn.up").font(.system(size: 9))
+                                            Image(systemName: "arrow.uturn.up").font(.system(size: 10))
                                             Text("Restaurer")
                                                 .font(.system(size: 10, weight: .medium))
                                                 .lineLimit(1)
@@ -403,7 +403,7 @@ struct OverviewView: View {
                                 .foregroundColor(.primary)
                             if isActive {
                                 Text("actif")
-                                    .font(.system(size: 9, weight: .semibold))
+                                    .font(.system(size: 10, weight: .semibold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 6).padding(.vertical, 2)
                                     .background(Color.accent.opacity(0.85))
@@ -411,7 +411,7 @@ struct OverviewView: View {
                             }
                             if overdueCount > 0 {
                                 Text("\(overdueCount) en retard")
-                                    .font(.system(size: 9, weight: .semibold))
+                                    .font(.system(size: 10, weight: .semibold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 6).padding(.vertical, 2)
                                     .background(Color.red.opacity(0.85))
@@ -422,7 +422,7 @@ struct OverviewView: View {
                         if let supervisor = project.supervisor, !supervisor.isEmpty {
                             HStack(spacing: 4) {
                                 Image(systemName: "person.fill")
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                     .foregroundColor(.labelMuted.opacity(0.7))
                                 Text(supervisor)
                                     .font(.system(size: 11))

@@ -171,7 +171,7 @@ struct QuickEntryView: View {
                     Spacer()
                     if targetIsYesterday {
                         Label("Saisie passée", systemImage: "clock.arrow.circlepath")
-                            .font(.system(size: 9, weight: .medium))
+                            .font(.system(size: 10, weight: .medium))
                             .foregroundColor(.orange)
                     }
                     // Raccourci invisible ⌘Y → bascule la cible
@@ -312,7 +312,7 @@ struct QuickEntryView: View {
                         }
                         .frame(height: 4)
                         Text(goalContextLabel(total: total, goal: store.data.dailyGoal))
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.75))
                     }
                 }
@@ -320,7 +320,7 @@ struct QuickEntryView: View {
                 // Contexte : moyenne 7 jours
                 HStack(spacing: 4) {
                     Image(systemName: "chart.line.uptrend.xyaxis")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                     Text("Moy. 7j : \(store.formatCountShort(store.sevenDayAverage)) / jour")
                         .font(.system(size: 10))
                 }

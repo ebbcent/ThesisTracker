@@ -519,7 +519,7 @@ struct SettingsView: View {
                                                     }
                                                 }
                                                 Text(preset.name)
-                                                    .font(.system(size: 9, weight: isSelected ? .bold : .regular))
+                                                    .font(.system(size: 10, weight: isSelected ? .bold : .regular))
                                                     .foregroundColor(isSelected ? .primary : .labelMuted)
                                             }
                                         }
@@ -535,7 +535,7 @@ struct SettingsView: View {
                                             selectedAccentHex = newColor.toHex()
                                         }
                                     Text("Perso")
-                                        .font(.system(size: 9))
+                                        .font(.system(size: 10))
                                         .foregroundColor(.labelMuted)
                                 }
                                 .padding(.horizontal, 14).padding(.vertical, 10)
@@ -917,7 +917,7 @@ struct SettingsView: View {
                             .foregroundColor(store.isUsingICloud ? .accent : .labelMuted)
                         Text("·").foregroundColor(.labelMuted).font(.system(size: 10))
                         Text(activeURL.path)
-                            .font(.system(size: 9, design: .monospaced))
+                            .font(.system(size: 10, design: .monospaced))
                             .foregroundColor(.labelMuted)
                             .lineLimit(1).truncationMode(.middle)
                         Circle()

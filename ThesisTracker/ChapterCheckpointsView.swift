@@ -165,7 +165,7 @@ struct ChapterCheckpointsSheet: View {
                     Text(checkpoint.label)
                         .font(.system(size: 13, weight: .semibold))
                     Text("v\(checkpoint.draftVersion)")
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 5).padding(.vertical, 1)
                         .background(Color.labelMuted.opacity(0.1))
@@ -370,7 +370,7 @@ struct CheckpointsWidget: View {
                 } else if let latest = checkpoints.max(by: { $0.timestamp < $1.timestamp }) {
                     HStack(spacing: 6) {
                         Image(systemName: "clock")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.6))
                         Text("Dernier : \(latest.label) (v\(latest.draftVersion))")
                             .font(.system(size: 11))

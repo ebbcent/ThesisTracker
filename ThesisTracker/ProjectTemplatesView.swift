@@ -145,9 +145,9 @@ struct ProjectTemplatePickerSheet: View {
                     .font(.system(size: 10)).foregroundColor(.labelMuted)
                     .lineLimit(2).multilineTextAlignment(.leading)
                 HStack(spacing: 4) {
-                    Image(systemName: "list.bullet").font(.system(size: 9)).foregroundColor(.labelMuted)
+                    Image(systemName: "list.bullet").font(.system(size: 10)).foregroundColor(.labelMuted)
                     Text("\(template.chapters.count) chapitre\(template.chapters.count != 1 ? "s" : "")")
-                        .font(.system(size: 9)).foregroundColor(.labelMuted)
+                        .font(.system(size: 10)).foregroundColor(.labelMuted)
                 }
             }
             .padding(12)

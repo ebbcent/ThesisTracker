@@ -254,7 +254,7 @@ struct PainfulChaptersWidget: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(spacing: 4) {
                                     Image(systemName: "exclamationmark.triangle.fill")
-                                        .font(.system(size: 9))
+                                        .font(.system(size: 10))
                                         .foregroundColor(severityColor(p.score))
                                     Text(p.chapter.name)
                                         .font(.system(size: 12, weight: .semibold))

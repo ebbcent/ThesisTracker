@@ -120,7 +120,7 @@ struct WellbeingWidget: View {
     private var miniHistory: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("14 DERNIERS JOURS")
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(.labelMuted.opacity(0.7))
                 .kerning(0.6)
             HStack(alignment: .bottom, spacing: 3) {

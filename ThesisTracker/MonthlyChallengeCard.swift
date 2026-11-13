@@ -107,7 +107,7 @@ struct MonthlyChallengeCard: View {
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
                 Text("%")
-                    .font(.system(size: 8))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -131,7 +131,7 @@ struct MonthlyChallengeCard: View {
     private func statLine(icon: String, text: String) -> some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(.labelMuted.opacity(0.6))
                 .frame(width: 12)
             Text(text)

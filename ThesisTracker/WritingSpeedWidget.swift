@@ -55,7 +55,7 @@ struct WritingSpeedWidget: View {
         let icon  = isFlat ? "minus" : (isUp ? "arrow.up.right" : "arrow.down.right")
         let label = isFlat ? "stable" : (isUp ? "+\(pct)%" : "-\(pct)%")
         return HStack(spacing: 3) {
-            Image(systemName: icon).font(.system(size: 9, weight: .bold))
+            Image(systemName: icon).font(.system(size: 10, weight: .bold))
             Text(label).font(.system(size: 10, weight: .semibold))
         }
         .foregroundColor(color)

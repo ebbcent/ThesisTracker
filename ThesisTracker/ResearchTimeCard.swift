@@ -93,7 +93,7 @@ struct ResearchTimeCard: View {
     private func typePill(type: ResearchType, minutes: Int) -> some View {
         HStack(spacing: 4) {
             Image(systemName: type.icon)
-                .font(.system(size: 9, weight: .semibold))
+                .font(.system(size: 10, weight: .semibold))
             Text(formatDuration(minutes))
                 .font(.system(size: 10, weight: .semibold))
         }
@@ -129,7 +129,7 @@ struct ResearchTimeCard: View {
                 store.deleteResearchEntry(entry.id)
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
             .buttonStyle(.pressable)

@@ -93,7 +93,7 @@ struct ThesisHealthWidget: View {
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
                 Text("/100")
-                    .font(.system(size: 8))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
         }

@@ -70,7 +70,7 @@ struct BreadcrumbProjectPicker: View {
                 Spacer()
                 if !project.chapters.isEmpty {
                     Text("\(project.chapters.count) ch.")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted)
                 }
                 if isActive {
@@ -161,18 +161,18 @@ struct BreadcrumbChapterPicker: View {
                         .lineLimit(1)
                     if goal > 0 {
                         Text("\(pct)% · v\(chapter.draftVersion)")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted)
                     }
                 }
                 Spacer()
                 if chapter.reviewState == .sent {
                     Image(systemName: "paperplane.fill")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(chapter.reviewState.color)
                 } else if chapter.reviewState == .received {
                     Image(systemName: "envelope.open.fill")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(chapter.reviewState.color)
                 }
                 if isActive {

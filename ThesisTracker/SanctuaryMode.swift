@@ -121,7 +121,7 @@ struct SanctuaryModeView: View {
             }
             VStack(spacing: 10) {
                 Text("DURÉE")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.white.opacity(0.5))
                     .kerning(1.2)
                 HStack(spacing: 8) {
@@ -212,7 +212,7 @@ struct SanctuaryModeView: View {
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("CAPTURE RAPIDE")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.white.opacity(0.4))
                     .kerning(1.0)
                 TextField("Une idée, une question, à reprendre…", text: $noteText)

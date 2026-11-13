@@ -445,7 +445,7 @@ struct PresentationView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 5) {
                 Image(systemName: icon).font(.system(size: 11)).foregroundColor(color)
-                Text(label.uppercased()).font(.system(size: 9, weight: .semibold)).foregroundColor(.white.opacity(0.4)).kerning(0.8)
+                Text(label.uppercased()).font(.system(size: 10, weight: .semibold)).foregroundColor(.white.opacity(0.4)).kerning(0.8)
             }
             HStack(alignment: .lastTextBaseline, spacing: 4) {
                 Text(value).font(.system(size: 28, weight: .bold, design: .rounded)).foregroundColor(.white)

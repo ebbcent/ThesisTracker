@@ -116,7 +116,7 @@ struct DefenseDateWidget: View {
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(color)
                 Text(subtitle)
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted.opacity(0.8))
             }
             .frame(width: 140, alignment: .leading)
@@ -128,14 +128,14 @@ struct DefenseDateWidget: View {
                         .foregroundColor(.primary)
                     let avg = Int(proj.avgPerDay)
                     Text(avg > 0 ? "~ \(avg) car./j" : "")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted)
                 } else {
                     Text("—")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.labelMuted.opacity(0.5))
                     Text("vitesse insuffisante")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted.opacity(0.7))
                 }
             }

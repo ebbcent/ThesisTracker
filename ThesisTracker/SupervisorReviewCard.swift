@@ -233,7 +233,7 @@ struct SupervisorReviewCard: View {
     private func statLine(icon: String, text: String) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(.labelMuted.opacity(0.6))
                 .frame(width: 12)
             Text(text)

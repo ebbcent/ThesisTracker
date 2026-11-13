@@ -211,7 +211,7 @@ struct FragmentsSheet: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
                 Text(fragment.createdAt)
-                    .font(.system(size: 9, weight: .medium))
+                    .font(.system(size: 10, weight: .medium))
                     .foregroundColor(.labelMuted.opacity(0.7))
                 Spacer()
                 if fragment.archivedAt == nil {

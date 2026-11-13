@@ -327,7 +327,7 @@ struct SearchView: View {
         let sel = selectedProjectId == id
         return Button { selectedProjectId = id } label: {
             HStack(spacing: 4) {
-                Image(systemName: icon).font(.system(size: 9))
+                Image(systemName: icon).font(.system(size: 10))
                 Text(name)
                     .font(.system(size: 11, weight: sel ? .semibold : .regular))
                     .lineLimit(1)
@@ -377,7 +377,7 @@ struct SearchView: View {
                                 // #48 — source label pill
                                 if result.source != .chapterName && result.source != .projectNote {
                                     Text(result.source.rawValue)
-                                        .font(.system(size: 9, weight: .semibold))
+                                        .font(.system(size: 10, weight: .semibold))
                                         .foregroundColor(result.source.color)
                                         .padding(.horizontal, 6).padding(.vertical, 2)
                                         .background(result.source.color.opacity(0.12))

@@ -348,7 +348,7 @@ struct PomodoroTodayView: View {
     private func statusChip(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(title.uppercased())
-                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .font(.system(size: 10, weight: .bold, design: .rounded))
                 .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
             Text(value)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))

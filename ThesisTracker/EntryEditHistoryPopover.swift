@@ -61,7 +61,7 @@ struct EntryEditHistoryPopover: View {
                     .fill(isUp ? Color.accentGreen.opacity(0.12) : Color.accentWarm.opacity(0.12))
                     .frame(width: 26, height: 26)
                 Image(systemName: isUp ? "arrow.up" : "arrow.down")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(isUp ? .accentGreen : .accentWarm)
             }
 
@@ -72,7 +72,7 @@ struct EntryEditHistoryPopover: View {
                         .foregroundColor(.labelMuted)
                         .strikethrough()
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 8))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted)
                     Text(fmt(rec.newValue))
                         .font(.system(size: 11, weight: .semibold))

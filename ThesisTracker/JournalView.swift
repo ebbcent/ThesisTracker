@@ -318,7 +318,7 @@ struct JournalSheet: View {
                 HStack(spacing: 4) {
                     ForEach(entry.tags.prefix(5), id: \.self) { tag in
                         Text("#\(tag)")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted)
                             .padding(.horizontal, 5).padding(.vertical, 1)
                             .background(Color.labelMuted.opacity(0.1))

@@ -276,7 +276,7 @@ private struct KanbanCard: View {
                 Spacer()
                 Button { onEdit(project, chapter) } label: {
                     Image(systemName: "pencil")
-                        .font(.system(size: 9)).foregroundColor(.labelMuted)
+                        .font(.system(size: 10)).foregroundColor(.labelMuted)
                 }
                 .buttonStyle(.pressable)
                 .help("Modifier le chapitre")
@@ -298,10 +298,10 @@ private struct KanbanCard: View {
                     .frame(height: 3)
                     HStack {
                         Text("\(store.formatCountShort(latest)) / \(store.formatCountShort(chapter.goal))")
-                            .font(.system(size: 9)).foregroundColor(.labelMuted)
+                            .font(.system(size: 10)).foregroundColor(.labelMuted)
                         Spacer()
                         Text("\(Int(ratio * 100))%")
-                            .font(.system(size: 9, weight: .medium)).foregroundColor(statusColor)
+                            .font(.system(size: 10, weight: .medium)).foregroundColor(statusColor)
                     }
                 }
             }
@@ -309,9 +309,9 @@ private struct KanbanCard: View {
             if let deadline = chapter.deadline.flatMap(DataStore.parseDate) {
                 let daysLeft = Calendar.current.dateComponents([.day], from: Date(), to: deadline).day ?? 0
                 HStack(spacing: 4) {
-                    Image(systemName: "calendar").font(.system(size: 8))
+                    Image(systemName: "calendar").font(.system(size: 10))
                     Text(daysLeft >= 0 ? "\(daysLeft) j. restants" : "En retard")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                 }
                 .foregroundColor(daysLeft < 3 ? Color(red: 0.929, green: 0.329, blue: 0.329) : .labelMuted)
             }

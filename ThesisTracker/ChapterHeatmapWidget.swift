@@ -39,7 +39,7 @@ struct ChapterHeatmapWidget: View {
                     miniMatrix(project: project, days: 56)
                     HStack(spacing: 6) {
                         Text("8 sem.")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.6))
                         Spacer()
                         legendCell(0); legendCell(1); legendCell(2); legendCell(3); legendCell(4)
@@ -64,7 +64,7 @@ struct ChapterHeatmapWidget: View {
             }
             if project.chapters.count > 6 {
                 Text("+ \(project.chapters.count - 6) chapitre\(project.chapters.count - 6 > 1 ? "s" : "")")
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted.opacity(0.7))
             }
         }
@@ -195,7 +195,7 @@ struct ChapterHeatmapSheet: View {
                     .lineLimit(1)
                 let totalChars = totals.values.reduce(0, +)
                 Text("\(totalChars.formatted()) car. sur la période")
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
             .frame(width: 160, alignment: .leading)

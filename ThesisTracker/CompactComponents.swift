@@ -276,7 +276,7 @@ struct CompactDatePicker: View {
             HStack(spacing: 0) {
                 ForEach(["L","M","M","J","V","S","D"], id: \.self) { d in
                     Text(d)
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .frame(maxWidth: .infinity)
                 }
@@ -503,7 +503,7 @@ struct CompactDropdownPicker: View {
                     .lineLimit(1)
                 Spacer(minLength: 4)
                 Image(systemName: "chevron.up.chevron.down")
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(.labelMuted)
             }
             .padding(.horizontal, 12).padding(.vertical, 8)

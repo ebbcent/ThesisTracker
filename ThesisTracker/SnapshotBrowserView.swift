@@ -174,7 +174,7 @@ struct SnapshotBrowserView: View {
                         .foregroundColor(.primary)
                     if index == 0 {
                         Text("Dernier")
-                            .font(.system(size: 9, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(.accent)
                             .padding(.horizontal, 5).padding(.vertical, 2)
                             .background(Color.accent.opacity(0.12))

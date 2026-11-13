@@ -502,7 +502,7 @@ struct ChartView: View {
                     HStack(spacing: 12) {
                         VStack(alignment: .leading, spacing: 5) {
                             Text("DU")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.labelMuted)
                                 .kerning(0.8)
                             CompactDatePicker(date: $customStart, maxDate: now)
@@ -513,7 +513,7 @@ struct ChartView: View {
                             .padding(.top, 18)
                         VStack(alignment: .leading, spacing: 5) {
                             Text("AU")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.labelMuted)
                                 .kerning(0.8)
                             CompactDatePicker(date: $customEnd, maxDate: now)
@@ -1127,7 +1127,7 @@ struct ChartView: View {
                                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 4]))
                                 .annotation(position: .top, alignment: .trailing) {
                                     Text("Objectif \(formatNumber(store.data.dailyGoal))")
-                                        .font(.system(size: 9)).foregroundColor(.accent.opacity(0.7))
+                                        .font(.system(size: 10)).foregroundColor(.accent.opacity(0.7))
                                 }
                         }
                     }
@@ -1431,7 +1431,7 @@ struct MiniStatCard: View {
         GlassCard {
             VStack(alignment: .leading, spacing: 5) {
                 Text(label.uppercased())
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1.0)
                 HStack(alignment: .lastTextBaseline, spacing: 3) {
@@ -1477,7 +1477,7 @@ struct ChartSnapshotView: View {
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 3) {
-                    Text("Meilleur jour").font(.system(size: 9)).foregroundColor(.white.opacity(0.4))
+                    Text("Meilleur jour").font(.system(size: 10)).foregroundColor(.white.opacity(0.4))
                     Text(DataStore.formatNumber(best) + " car.")
                         .font(.system(size: 13, weight: .bold, design: .monospaced))
                         .foregroundColor(Self.accent)
@@ -1506,10 +1506,10 @@ struct ChartSnapshotView: View {
             // Footer
             HStack {
                 Text("ThesisTracker · Ebbcent")
-                    .font(.system(size: 9)).foregroundColor(.white.opacity(0.25))
+                    .font(.system(size: 10)).foregroundColor(.white.opacity(0.25))
                 Spacer()
                 Text(DataStore.today)
-                    .font(.system(size: 9)).foregroundColor(.white.opacity(0.25))
+                    .font(.system(size: 10)).foregroundColor(.white.opacity(0.25))
             }
             .padding(.horizontal, 24).padding(.bottom, 12)
             .background(Self.bg.opacity(0.95))

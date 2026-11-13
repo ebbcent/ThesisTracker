@@ -653,7 +653,7 @@ struct StatusBarView: View {
                     HStack(spacing: 5) {
                         if store.iCloudSyncActive {
                             Image(systemName: "arrow.triangle.2.circlepath")
-                                .font(.system(size: 9, weight: .medium))
+                                .font(.system(size: 10, weight: .medium))
                                 .foregroundColor(.accent)
                                 .rotationEffect(.degrees(syncRotation))
                                 .onAppear {
@@ -664,7 +664,7 @@ struct StatusBarView: View {
                                 .onDisappear { syncRotation = 0 }
                         } else {
                             Image(systemName: "checkmark.icloud")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.accentGreen.opacity(0.7))
                         }
                         Text("iCloud")
@@ -701,7 +701,7 @@ struct StatusBarView: View {
                 sbItem {
                     HStack(spacing: 5) {
                         Image(systemName: "doc.text")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.accent)
                         Text("\(pages) p. thèse")
                             .font(.system(size: 11, weight: .semibold))
@@ -718,7 +718,7 @@ struct StatusBarView: View {
                     let done  = goal > 0 && today >= goal
                     HStack(spacing: 5) {
                         Image(systemName: done ? "checkmark.circle.fill" : "pencil")
-                            .font(.system(size: 9, weight: done ? .semibold : .regular))
+                            .font(.system(size: 10, weight: done ? .semibold : .regular))
                             .foregroundColor(done ? .accentGreen : .accent)
                         Text("Aujourd'hui")
                             .font(.system(size: 11))
@@ -742,7 +742,7 @@ struct StatusBarView: View {
             sbItem {
                 HStack(spacing: 5) {
                     Image(systemName: "bolt.fill")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.accentWarm)
                     Text("Vitesse")
                         .font(.system(size: 11))
@@ -760,7 +760,7 @@ struct StatusBarView: View {
                     let pct = goal > 0 ? min(100, Int(Double(written) / Double(goal) * 100)) : 0
                     HStack(spacing: 5) {
                         Image(systemName: "target")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.accentWarm)
                         Text("Hebdo")
                             .font(.system(size: 11))
@@ -784,7 +784,7 @@ struct StatusBarView: View {
                     let pct = min(100, Int(Double(latest) / Double(chapter.goal) * 100))
                     HStack(spacing: 5) {
                         Image(systemName: "book.closed.fill")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.accentWarm.opacity(0.7))
                         Text(chapter.name)
                             .font(.system(size: 11))
@@ -810,7 +810,7 @@ struct StatusBarView: View {
                         .font(.system(size: 11, weight: .semibold))
                     if days >= 0 {
                         Text("\(days) j")
-                            .font(.system(size: 9.5, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(.accentWarm)
                             .padding(.horizontal, 6).padding(.vertical, 1.5)
                             .background(
@@ -872,7 +872,7 @@ struct StatusBarView: View {
             }
         }
         .frame(height: 33)
-        .background(Color.sidebarBg)
+        .background(.bar)   // 5.15 : matériau de barre (le contenu passe dessous, opaque si « Réduire la transparence »)
     }
 
     private func copyDailySummary() {

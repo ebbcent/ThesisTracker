@@ -118,7 +118,7 @@ struct TableOfContentsView: View {
                                     .font(.system(size: 13, weight: .bold, design: .rounded))
                                     .foregroundColor(.accent)
                                 Text("\(DataStore.formatNumber(totalWritten)) car.")
-                                    .font(.system(size: 9)).foregroundColor(.labelMuted)
+                                    .font(.system(size: 10)).foregroundColor(.labelMuted)
                             }
                         }
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
@@ -162,23 +162,23 @@ struct TableOfContentsView: View {
                             .foregroundColor(.primary)
                         if isActive {
                             Text("actif")
-                                .font(.system(size: 8, weight: .semibold))
+                                .font(.system(size: 10, weight: .semibold))
                                 .foregroundColor(.accent)
                                 .padding(.horizontal, 4).padding(.vertical, 1)
                                 .background(Color.accent.opacity(0.1))
                                 .clipShape(Capsule())
                         }
                         if chapter.priority == .high {
-                            Image(systemName: "exclamationmark").font(.system(size: 8, weight: .bold)).foregroundColor(Color(hex: "#DC2626"))
+                            Image(systemName: "exclamationmark").font(.system(size: 10, weight: .bold)).foregroundColor(Color(hex: "#DC2626"))
                         }
                         ForEach(chapter.customTags.prefix(2), id: \.self) { tag in
-                            Text(tag).font(.system(size: 8)).foregroundColor(.accent)
+                            Text(tag).font(.system(size: 10)).foregroundColor(.accent)
                                 .padding(.horizontal, 3).padding(.vertical, 1)
                                 .background(Color.accent.opacity(0.08)).clipShape(Capsule())
                         }
                     }
                     if let st = chapter.status, !chapter.isCompleted {
-                        Text(st.label).font(.system(size: 9)).foregroundColor(Color(hex: st.color))
+                        Text(st.label).font(.system(size: 10)).foregroundColor(Color(hex: st.color))
                     }
                 }
 
@@ -196,7 +196,7 @@ struct TableOfContentsView: View {
                             .font(.system(size: 10)).foregroundColor(.labelMuted)
                     }
                     if let dl = chapter.deadline, !dl.isEmpty {
-                        Image(systemName: "calendar").font(.system(size: 9)).foregroundColor(.accentWarm)
+                        Image(systemName: "calendar").font(.system(size: 10)).foregroundColor(.accentWarm)
                     }
                 }
             }
@@ -207,7 +207,7 @@ struct TableOfContentsView: View {
                 VStack(spacing: 0) {
                     ForEach(chapter.subchapters) { sub in
                         HStack(spacing: 6) {
-                            Image(systemName: "arrow.turn.down.right").font(.system(size: 9)).foregroundColor(.labelMuted).frame(width: 20)
+                            Image(systemName: "arrow.turn.down.right").font(.system(size: 10)).foregroundColor(.labelMuted).frame(width: 20)
                             Text(sub.name).font(.system(size: 11)).foregroundColor(.secondary)
                             Spacer()
                             let subLatest = sub.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0

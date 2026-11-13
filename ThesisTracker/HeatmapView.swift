@@ -216,7 +216,7 @@ struct HeatmapView: View {
                     VStack(spacing: cellGap) {
                         ForEach(["L", "M", "M", "J", "V", "S", "D"], id: \.self) { day in
                             Text(day)
-                                .font(.system(size: 9, weight: .medium))
+                                .font(.system(size: 10, weight: .medium))
                                 .foregroundColor(.labelMuted)
                                 .frame(width: 24, height: cellSize, alignment: .trailing)
                         }

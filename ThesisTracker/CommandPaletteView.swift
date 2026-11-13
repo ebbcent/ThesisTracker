@@ -193,8 +193,8 @@ struct CommandPaletteView: View {
             .frame(width: 520)
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color.cardBg)
-                    .shadow(color: .black.opacity(0.18), radius: 10, x: 0, y: 4)
+                    .fill(.regularMaterial)   // 5.15 : surface flottante translucide (opaque si « Réduire la transparence »)
+                    .shadow(color: .black.opacity(0.22), radius: 18, x: 0, y: 8)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)

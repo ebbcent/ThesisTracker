@@ -263,7 +263,7 @@ struct ThesisTrackerApp: App {
                 if pomodoroController.timerSnapshot.phase == .idle {
                     if store.currentStreak >= 2 {
                         Image(systemName: "flame.fill")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(Color(red: 0.961, green: 0.455, blue: 0.114))
                         Text("\(store.currentStreak)")
                             .font(.system(size: 11, weight: .bold))

@@ -147,7 +147,7 @@ struct StatsAnalyticsView: View {
                         let vel = store.velocity14Days
                         if vel > 0 {
                             HStack(spacing: 3) {
-                                Image(systemName: "bolt.fill").font(.system(size: 9))
+                                Image(systemName: "bolt.fill").font(.system(size: 10))
                                 Text("\(store.formatCount(vel))/j moy.")
                                     .font(.system(size: 11, weight: .semibold))
                             }
@@ -200,7 +200,7 @@ struct StatsAnalyticsView: View {
                         .chartXAxis {
                             AxisMarks(values: .stride(by: .day, count: 7)) { _ in
                                 AxisValueLabel(format: .dateTime.day().month(.abbreviated))
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                     .foregroundStyle(Color.labelMuted)
                             }
                         }
@@ -210,7 +210,7 @@ struct StatsAnalyticsView: View {
                                 if let v = val.as(Int.self) {
                                     AxisValueLabel {
                                         Text(store.formatCount(v))
-                                            .font(.system(size: 9))
+                                            .font(.system(size: 10))
                                             .foregroundStyle(Color.labelMuted)
                                     }
                                 }
@@ -222,7 +222,7 @@ struct StatsAnalyticsView: View {
                         if let t = momentumTrend(points) {
                             HStack(spacing: 4) {
                                 Image(systemName: t.up ? "arrow.up.right" : "arrow.down.right")
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                 Text(t.label).font(.system(size: 10))
                             }
                             .foregroundColor(t.up ? .accentGreen : .accentWarm)
@@ -272,7 +272,7 @@ struct StatsAnalyticsView: View {
                                     if idx == 0 {
                                         Circle().fill(Color.yellow.opacity(0.15)).frame(width: 20, height: 20)
                                         Image(systemName: "crown.fill")
-                                            .font(.system(size: 8)).foregroundColor(.yellow)
+                                            .font(.system(size: 10)).foregroundColor(.yellow)
                                     } else {
                                         Text("\(idx + 1)")
                                             .font(.system(size: 10, weight: .bold, design: .monospaced))
@@ -287,7 +287,7 @@ struct StatsAnalyticsView: View {
                                         .foregroundColor(.primary)
                                     if let proj = entry.projectName {
                                         Text(proj)
-                                            .font(.system(size: 9))
+                                            .font(.system(size: 10))
                                             .foregroundColor(.labelMuted)
                                             .lineLimit(1)
                                     }
@@ -300,7 +300,7 @@ struct StatsAnalyticsView: View {
                                         .font(.system(size: 12, weight: .bold, design: .monospaced))
                                         .foregroundColor(idx == 0 ? .yellow : .primary)
                                     Text(store.data.useWordCount ? "mots" : "car.")
-                                        .font(.system(size: 9))
+                                        .font(.system(size: 10))
                                         .foregroundColor(.labelMuted)
                                 }
                             }
@@ -399,7 +399,7 @@ struct StatsAnalyticsView: View {
                                 }
                                 .frame(height: 60)
                                 Text(day.letter)
-                                    .font(.system(size: 9, weight: day.isToday ? .bold : .regular))
+                                    .font(.system(size: 10, weight: day.isToday ? .bold : .regular))
                                     .foregroundColor(day.isToday ? .accent : .labelMuted)
                             }
                             .frame(maxWidth: .infinity)
@@ -422,7 +422,7 @@ struct StatsAnalyticsView: View {
                             let pct = Int(abs(Double(delta) / Double(prevTotal) * 100))
                             HStack(spacing: 3) {
                                 Image(systemName: delta >= 0 ? "arrow.up.right" : "arrow.down.right")
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                 Text("\(delta >= 0 ? "+" : "-")\(pct)%")
                                     .font(.system(size: 12, weight: .semibold))
                             }
@@ -587,9 +587,9 @@ struct StatsAnalyticsView: View {
                                       vel: stats.min)
 
                         HStack(spacing: 4) {
-                            Image(systemName: "info.circle").font(.system(size: 9))
+                            Image(systemName: "info.circle").font(.system(size: 10))
                             Text("Basé sur \(store.formatCount(remaining)) \(store.data.useWordCount ? "mots" : "car.") restants · velocity 14j")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                         }
                         .foregroundColor(.labelMuted.opacity(0.7))
                         .frame(maxWidth: .infinity)
@@ -615,7 +615,7 @@ struct StatsAnalyticsView: View {
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.primary)
                 Text("\(days) j · \(store.formatCount(vel))/j")
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -779,7 +779,7 @@ struct StatsAnalyticsView: View {
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundColor(color)
             Text(label)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(.labelMuted)
                 .multilineTextAlignment(.center)
         }
@@ -813,7 +813,7 @@ struct StatsAnalyticsView: View {
                                     .font(.system(size: 16, weight: .bold, design: .rounded))
                                     .foregroundColor(.accent)
                                 Text("au rythme actuel")
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                     .foregroundColor(.labelMuted)
                             }
                         }
@@ -831,7 +831,7 @@ struct StatsAnalyticsView: View {
                                 }
                             }.frame(height: 5)
                             Text("\(Int(ratio * 100))% de l'objectif global atteint")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.labelMuted)
                         }
                     }
@@ -850,7 +850,7 @@ struct StatsAnalyticsView: View {
 
     private func projDatePill(label: String, date: Date?, color: Color) -> some View {
         VStack(spacing: 3) {
-            Text(label).font(.system(size: 9, weight: .semibold)).foregroundColor(.labelMuted).textCase(.uppercase).tracking(0.3)
+            Text(label).font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).textCase(.uppercase).tracking(0.3)
             Text(date.map { fmtMonthYear($0) } ?? "—")
                 .font(.system(size: 12, weight: .bold, design: .rounded))
                 .foregroundColor(date != nil ? color : .labelMuted)
@@ -929,7 +929,7 @@ struct StatsAnalyticsView: View {
                                     .foregroundColor(trendColor)
                             }
                             Text("fenêtre 14 jours vs 14 jours précédents")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.labelMuted)
                         }
                         Spacer()
@@ -986,10 +986,10 @@ struct StatsAnalyticsView: View {
                     VStack(spacing: 0) {
                         // Header
                         HStack(spacing: 0) {
-                            Text("Chapitre").font(.system(size: 9, weight: .semibold)).foregroundColor(.labelMuted).frame(maxWidth: .infinity, alignment: .leading)
-                            Text("%").font(.system(size: 9, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 36, alignment: .trailing)
-                            Text("Moy/j").font(.system(size: 9, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 52, alignment: .trailing)
-                            Text("Jours").font(.system(size: 9, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 40, alignment: .trailing)
+                            Text("Chapitre").font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).frame(maxWidth: .infinity, alignment: .leading)
+                            Text("%").font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 36, alignment: .trailing)
+                            Text("Moy/j").font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 52, alignment: .trailing)
+                            Text("Jours").font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).frame(width: 40, alignment: .trailing)
                         }
                         .padding(.bottom, 6)
                         Divider()
@@ -997,7 +997,7 @@ struct StatsAnalyticsView: View {
                             HStack(spacing: 0) {
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(row.chapterName).font(.system(size: 11, weight: .medium)).foregroundColor(.primary).lineLimit(1)
-                                    Text(row.projectName).font(.system(size: 9)).foregroundColor(.labelMuted).lineLimit(1)
+                                    Text(row.projectName).font(.system(size: 10)).foregroundColor(.labelMuted).lineLimit(1)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 let pctColor: Color = row.isCompleted ? .accentGreen : (row.progressPct >= 75 ? .accentGreen : row.progressPct >= 50 ? .accent : .accentWarm)
@@ -1050,12 +1050,12 @@ struct StatsAnalyticsView: View {
                         VStack(spacing: 3) {
                             HStack(spacing: 2) {
                                 Image(systemName: review.growthPct >= 0 ? "arrow.up" : "arrow.down")
-                                    .font(.system(size: 9, weight: .bold))
+                                    .font(.system(size: 10, weight: .bold))
                                 Text("\(review.growthPct >= 0 ? "+" : "")\(Int(review.growthPct))%")
                                     .font(.system(size: 14, weight: .bold, design: .rounded))
                             }
                             .foregroundColor(growthColor)
-                            Text("vs mois dernier").font(.system(size: 9)).foregroundColor(.labelMuted)
+                            Text("vs mois dernier").font(.system(size: 10)).foregroundColor(.labelMuted)
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -1080,7 +1080,7 @@ struct StatsAnalyticsView: View {
         VStack(spacing: 3) {
             Image(systemName: icon).font(.system(size: 10)).foregroundColor(color)
             Text(value).font(.system(size: 14, weight: .bold, design: .rounded)).foregroundColor(color)
-            Text(label).font(.system(size: 9)).foregroundColor(.labelMuted).multilineTextAlignment(.center)
+            Text(label).font(.system(size: 10)).foregroundColor(.labelMuted).multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
     }
@@ -1115,7 +1115,7 @@ struct StatsAnalyticsView: View {
                                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [3]))
                                     .annotation(position: .top, alignment: .leading, spacing: 4) {
                                         VStack(alignment: .leading, spacing: 2) {
-                                            Text(match.dateStr).font(.system(size: 9)).foregroundColor(.labelMuted)
+                                            Text(match.dateStr).font(.system(size: 10)).foregroundColor(.labelMuted)
                                             Text(store.formatCount(Int(match.rollingAvg)) + "/j")
                                                 .font(.system(size: 11, weight: .semibold)).foregroundColor(.primary)
                                         }
@@ -1135,7 +1135,7 @@ struct StatsAnalyticsView: View {
                         .chartXAxis {
                             AxisMarks(values: .stride(by: .day, count: 14)) { _ in
                                 AxisValueLabel(format: .dateTime.day().month(.abbreviated))
-                                    .font(.system(size: 9)).foregroundStyle(Color.labelMuted)
+                                    .font(.system(size: 10)).foregroundStyle(Color.labelMuted)
                             }
                         }
                         .chartYAxis {
@@ -1144,14 +1144,14 @@ struct StatsAnalyticsView: View {
                                 if let v = val.as(Double.self) {
                                     AxisValueLabel {
                                         Text(store.formatCount(Int(v)))
-                                            .font(.system(size: 9)).foregroundStyle(Color.labelMuted)
+                                            .font(.system(size: 10)).foregroundStyle(Color.labelMuted)
                                     }
                                 }
                             }
                         }
                         .frame(height: 100)
                         Text("Moyenne glissante sur 14 jours consécutifs")
-                            .font(.system(size: 9)).foregroundColor(.labelMuted)
+                            .font(.system(size: 10)).foregroundColor(.labelMuted)
                     } else {
                         Text("Données insuffisantes (14j minimum requis)")
                             .font(.system(size: 11)).foregroundColor(.labelMuted)
@@ -1232,7 +1232,7 @@ struct StatsAnalyticsView: View {
         df.dateFormat = "d MMM"
         return VStack(alignment: .leading, spacing: 2) {
             Text(df.string(from: date))
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(.labelMuted)
             Text(label)
                 .font(.system(size: 11, weight: .semibold))
@@ -1256,7 +1256,7 @@ struct StatsAnalyticsView: View {
             zoomedChart = chart
         } label: {
             Image(systemName: "arrow.up.left.and.arrow.down.right")
-                .font(.system(size: 9, weight: .medium))
+                .font(.system(size: 10, weight: .medium))
                 .foregroundColor(.labelMuted)
                 .padding(4)
                 .background(

@@ -55,7 +55,7 @@ struct DefenseNotesWidget: View {
                             let count = byKind[kind] ?? 0
                             HStack(spacing: 4) {
                                 Image(systemName: kind.icon)
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                     .foregroundColor(kind.color)
                                 Text("\(count)")
                                     .font(.system(size: 10, weight: .semibold))

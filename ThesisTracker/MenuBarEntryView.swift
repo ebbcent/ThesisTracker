@@ -136,7 +136,7 @@ struct MenuBarEntryView: View {
                     QuickEntryPanelManager.shared.show(store: store)
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: "bolt.fill").font(.system(size: 9))
+                        Image(systemName: "bolt.fill").font(.system(size: 10))
                         Text("Saisie rapide")
                     }
                     .font(.system(size: 11))
@@ -384,7 +384,7 @@ struct MenuBarEntryView: View {
                 HStack(spacing: 3) {
                     Circle().fill(Color.accentGreen).frame(width: 5, height: 5)
                     Text("Meilleur jour : \(store.formatCountShort(bestValue))")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted.opacity(0.7))
                 }
             }

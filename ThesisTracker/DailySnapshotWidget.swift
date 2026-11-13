@@ -107,7 +107,7 @@ struct DailySnapshotWidget: View {
     private func statBlock(label: String, value: String, sub: String?, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label)
-                .font(.system(size: 9, weight: .semibold))
+                .font(.system(size: 10, weight: .semibold))
                 .foregroundColor(.labelMuted)
                 .textCase(.uppercase)
                 .tracking(0.4)
@@ -115,7 +115,7 @@ struct DailySnapshotWidget: View {
                 .font(.system(size: 17, weight: .bold, design: .rounded))
                 .foregroundColor(color)
             if let sub {
-                Text(sub).font(.system(size: 9)).foregroundColor(.labelMuted)
+                Text(sub).font(.system(size: 10)).foregroundColor(.labelMuted)
             }
         }
     }

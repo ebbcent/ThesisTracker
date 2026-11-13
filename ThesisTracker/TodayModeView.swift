@@ -216,7 +216,7 @@ struct TodayModeView: View {
     private var footer: some View {
         HStack(spacing: 4) {
             Image(systemName: "keyboard")
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(.labelMuted.opacity(0.5))
             Text("Esc pour fermer · ⏎ pour démarrer")
                 .font(.system(size: 10))

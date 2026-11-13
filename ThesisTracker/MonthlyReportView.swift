@@ -243,7 +243,7 @@ struct MonthlyReportSheet: View {
     private func statTile(label: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label.uppercased())
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.6)
             Text(value)

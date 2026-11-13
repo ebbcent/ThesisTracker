@@ -313,7 +313,7 @@ struct CalendarView: View {
                         .frame(height: 28)
                     if chars > 0 && !isFuture {
                         Text(fmtShort(chars))
-                            .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                            .font(.system(size: 10, weight: .semibold, design: .monospaced))
                             .foregroundColor(level >= 2 ? .white : .primary)
                             .lineLimit(1)
                     }
@@ -480,7 +480,7 @@ struct CalendarView: View {
                                 .frame(width: 36, height: 36)
                                 .rotationEffect(.degrees(-90))
                             Text("\(Int(ratio * 100))%")
-                                .font(.system(size: 8, weight: .bold)).foregroundColor(.accent)
+                                .font(.system(size: 10, weight: .bold)).foregroundColor(.accent)
                         }
                     }
                 }

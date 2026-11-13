@@ -113,7 +113,7 @@ struct DailySessionCard: View {
             // Chiffres gauche
             VStack(alignment: .leading, spacing: 3) {
                 Text("AUJOURD'HUI")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1)
 
@@ -139,7 +139,7 @@ struct DailySessionCard: View {
                 if hasCatchUp && !isGoalReached {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.uturn.right")
-                            .font(.system(size: 9, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                         Text("+\(store.formatCount(catchUp)) rattrapage")
                             .font(.system(size: 10, weight: .semibold))
                     }
@@ -262,7 +262,7 @@ struct SessionRingView: View {
                 .appAnimation(Motion.progress, value: ratio)
 
             Text("\(Int(ratio * 100))%")
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(color)
         }
     }

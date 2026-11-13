@@ -206,7 +206,7 @@ struct WeeklyPlanSheet: View {
             Spacer()
             if let doneDate = item.doneDate {
                 Text(doneDate.suffix(5))
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted.opacity(0.7))
             }
             Button { store.deleteWeeklyPlanItem(itemId: item.id) } label: {

@@ -124,7 +124,7 @@ struct NotificationCenterView: View {
             HStack(spacing: 4) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                 }
                 Text(label)
                     .font(.system(size: 11, weight: isSelected ? .semibold : .regular))

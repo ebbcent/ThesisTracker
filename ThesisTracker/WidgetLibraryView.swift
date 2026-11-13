@@ -171,7 +171,7 @@ struct WidgetLibraryView: View {
                         .lineLimit(1)
                     if let subtitle {
                         Text(subtitle)
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(isSelected ? .white.opacity(0.8) : .labelMuted)
                             .lineLimit(1)
                     }

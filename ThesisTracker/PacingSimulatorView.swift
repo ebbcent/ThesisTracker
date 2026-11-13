@@ -219,7 +219,7 @@ struct PacingCurveView: View {
                         .shadow(color: Color.accentWarm.opacity(0.9), radius: 5)
                         .position(x: tx, y: ty)
                     Text("Aujourd'hui")
-                        .font(.system(size: 9, weight: .medium))
+                        .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.labelMuted)
                         .fixedSize()
                         .position(x: min(max(tx, 30), g.width - 30), y: 6)

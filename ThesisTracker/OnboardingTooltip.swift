@@ -95,7 +95,7 @@ struct OnboardingTooltipBubble: View {
                 onDismiss()
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .padding(5)
                     .background(Circle().fill(Color.cardBorder.opacity(0.5)))
