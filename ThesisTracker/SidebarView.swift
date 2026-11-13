@@ -258,7 +258,7 @@ struct SidebarView: View {
             navGroupDivider
             navGroup(
                 label: "Outils",
-                items: [.timer, .search, .achievements],
+                items: [.timer, .search, .achievements, .professor],
                 collapsed: $navOutilsCollapsed
             )
         }

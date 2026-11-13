@@ -53,6 +53,18 @@ Conseil : utiliser la même version de l'app sur les deux Mac. **Obligatoire à 
 
 ---
 
+## Professeur (5.13)
+
+Onglet **Professeur** : séance avec le directeur virtuel (Pr L. Vandenbossche).
+
+- **Clé API Anthropic** : Réglages → Professeur, une fois par Mac (gardée dans le Trousseau, jamais dans data.json). Facturée à l'usage sur la console Anthropic.
+- **Ce qu'il lit** (sans rien modifier) : `Thèse/10.1 Autres/Directeur de thèse/` — Suivi.md, Profil de Clément.md, Mémoire du professeur.md, Échanges Telegram et Échanges app du mois — plus la rubrique « ## Deadlines » de Taches.md et les chiffres de l'app.
+- **Ce qu'il écrit** : uniquement `Échanges app/AAAA-MM.md` dans ce dossier (un ajout par échange).
+- **Relire un texte** : trombone → choisir un export de `Dépôts/` (.docx, .pdf, .odt, .rtf, .txt, .md).
+- **Consignes** : intégrées à l'app ; un fichier `Consignes app.md` dans le dossier du directeur les remplace.
+
+---
+
 ## Développement
 
 - Xcode 26 ou plus récent ; cible macOS 14.0 ou plus récent ; Swift, SwiftUI ; aucune dépendance externe.
