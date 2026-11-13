@@ -439,6 +439,9 @@ struct SettingsView: View {
                         // ── Mises à jour ───────────────────────────────
                         UpdatesSettingsSection()
 
+                        // ── Professeur (5.13) ──────────────────────────
+                        ProfessorSettingsSection()
+
                         // ── Affichage ──────────────────────────────────
                         settingsSection("AFFICHAGE") {
                             VStack(spacing: 0) {

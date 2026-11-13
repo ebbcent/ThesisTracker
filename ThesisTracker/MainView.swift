@@ -33,6 +33,7 @@ enum NavItem: String, CaseIterable, Identifiable {
     case analytics      = "Statistiques"
     case tableOfContents = "Table des matières"
     case widgets        = "Bibliothèque de widgets"
+    case professor      = "Professeur"            // 5.13
 
     var id: String { rawValue }
 
@@ -52,6 +53,7 @@ enum NavItem: String, CaseIterable, Identifiable {
         case .analytics:         return "chart.bar.doc.horizontal"
         case .tableOfContents:   return "list.bullet.rectangle"
         case .widgets:           return "square.grid.3x3.square"
+        case .professor:         return "graduationcap.fill"
         }
     }
 
@@ -71,6 +73,7 @@ enum NavItem: String, CaseIterable, Identifiable {
         case .analytics:        return nil
         case .tableOfContents:  return nil
         case .widgets:          return nil
+        case .professor:        return nil
         }
     }
 }
@@ -364,6 +367,8 @@ struct MainView: View {
                             TableOfContentsView(store: store, showSidebar: $showSidebar)
                         case .widgets:
                             WidgetLibraryView(store: store, showSidebar: $showSidebar)
+                        case .professor:
+                            ProfessorView(store: store, showSidebar: $showSidebar)
                         }
                     }
                     .id(selectedNav)
@@ -430,6 +435,7 @@ struct MainView: View {
         .onReceive(pomodoroController.$data)                                          { updateWeeklyPomodoroCount($0) }
         .onReceive(NotificationCenter.default.publisher(for: .showExport))            { _ in showExport = true }
         .onReceive(NotificationCenter.default.publisher(for: .navigateToDashboard))   { _ in withAnimation(.easeInOut(duration: 0.2)) { selectedNav = .dashboard } }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToProfessor))   { _ in withAnimation(.easeInOut(duration: 0.2)) { selectedNav = .professor } }
         .onReceive(store.$showDailySummary) { show in
             // handled via overlay below
         }

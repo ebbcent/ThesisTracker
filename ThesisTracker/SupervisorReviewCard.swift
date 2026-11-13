@@ -65,6 +65,17 @@ struct SupervisorReviewCard: View {
                     .background(stateColor.opacity(0.10))
                     .clipShape(Capsule())
                     .overlay(Capsule().stroke(stateColor.opacity(0.25), lineWidth: 1))
+                // 5.13 — ouvre une séance avec le professeur sur ce chapitre
+                Button {
+                    ProfessorSession.shared.prepare(question: "Je voudrais faire le point sur « \(chapter.name) ». ")
+                } label: {
+                    Image(systemName: "graduationcap.fill")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.accentWarm)
+                }
+                .buttonStyle(.plain)
+                .help("Demander l'avis du professeur sur ce chapitre")
+                .accessibilityLabel("Demander l'avis du professeur sur ce chapitre")
             }
         }
     }
