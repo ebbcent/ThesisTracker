@@ -92,7 +92,7 @@ struct PresentationView: View {
                     if currentSlide == 1 { chaptersSlide.transition(.opacity) }
                     if currentSlide == 2 { milestonesSlide.transition(.opacity) }
                 }
-                .animation(.easeInOut(duration: 0.35), value: currentSlide)
+                .appAnimation(.easeInOut(duration: 0.35), value: currentSlide)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 // Bottom nav
@@ -102,11 +102,11 @@ struct PresentationView: View {
         .frame(minWidth: 900, minHeight: 600)
         .onKeyPress(.escape) { isPresented = false; return .handled }
         .onKeyPress(.leftArrow) {
-            withAnimation { if currentSlide > 0 { currentSlide -= 1 } }
+            withAppAnimation { if currentSlide > 0 { currentSlide -= 1 } }
             return .handled
         }
         .onKeyPress(.rightArrow) {
-            withAnimation { if currentSlide < slides.count - 1 { currentSlide += 1 } }
+            withAppAnimation { if currentSlide < slides.count - 1 { currentSlide += 1 } }
             return .handled
         }
         .focusable()
@@ -124,7 +124,7 @@ struct PresentationView: View {
                     .frame(width: 32, height: 32)
                     .background(Circle().fill(Color.white.opacity(0.07)))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Quitter le mode présentation (⎋)")
             .accessibilityLabel("Quitter le mode présentation (⎋)")
 
@@ -133,7 +133,7 @@ struct PresentationView: View {
             // Slide tabs
             HStack(spacing: 4) {
                 ForEach(slides, id: \.self) { idx in
-                    Button { withAnimation { currentSlide = idx } } label: {
+                    Button { withAppAnimation { currentSlide = idx } } label: {
                         Text(slideTitles[idx])
                             .font(.system(size: 12, weight: currentSlide == idx ? .semibold : .regular))
                             .foregroundColor(currentSlide == idx ? .white : .white.opacity(0.35))
@@ -141,7 +141,7 @@ struct PresentationView: View {
                             .background(currentSlide == idx ? Color.white.opacity(0.12) : Color.clear)
                             .clipShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
 
@@ -390,13 +390,13 @@ struct PresentationView: View {
     private var bottomNav: some View {
         HStack {
             Button {
-                withAnimation { if currentSlide > 0 { currentSlide -= 1 } }
+                withAppAnimation { if currentSlide > 0 { currentSlide -= 1 } }
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(currentSlide > 0 ? .white.opacity(0.7) : .white.opacity(0.15))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(currentSlide == 0)
             .help("Diapositive précédente")
             .accessibilityLabel("Diapositive précédente")
@@ -409,20 +409,20 @@ struct PresentationView: View {
                     Circle()
                         .fill(currentSlide == idx ? Self.accent : Color.white.opacity(0.2))
                         .frame(width: currentSlide == idx ? 8 : 5, height: currentSlide == idx ? 8 : 5)
-                        .animation(.spring(response: 0.25), value: currentSlide)
+                        .appAnimation(Motion.panel, value: currentSlide)
                 }
             }
 
             Spacer()
 
             Button {
-                withAnimation { if currentSlide < slides.count - 1 { currentSlide += 1 } }
+                withAppAnimation { if currentSlide < slides.count - 1 { currentSlide += 1 } }
             } label: {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(currentSlide < slides.count - 1 ? .white.opacity(0.7) : .white.opacity(0.15))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(currentSlide == slides.count - 1)
             .help("Diapositive suivante")
             .accessibilityLabel("Diapositive suivante")

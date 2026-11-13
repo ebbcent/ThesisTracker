@@ -60,7 +60,7 @@ struct TodayModeView: View {
                     .font(.system(size: 22))
                     .foregroundColor(.labelMuted.opacity(0.6))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer (Esc)")
             .accessibilityLabel("Fermer (Esc)")
         }
@@ -186,7 +186,7 @@ struct TodayModeView: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .keyboardShortcut(.return, modifiers: [])
                 .disabled(chapter == nil)
 
@@ -207,7 +207,7 @@ struct TodayModeView: View {
                     .clipShape(Capsule())
                     .overlay(Capsule().stroke(Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 Spacer()
             }
         }

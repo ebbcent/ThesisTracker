@@ -11,7 +11,7 @@ struct PomodoroTimerTabView: View {
             HStack(spacing: 0) {
                 // Sidebar toggle (consistent with other views)
                 Button {
-                    withAnimation(.easeOut(duration: 0.15)) {
+                    withAppAnimation(.easeOut(duration: 0.15)) {
                         showSidebar.toggle()
                     }
                 } label: {
@@ -23,7 +23,7 @@ struct PomodoroTimerTabView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.glassBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(.leading, 16)
                 .help("Afficher ou masquer la barre latérale")
                 .accessibilityLabel("Afficher ou masquer la barre latérale")
@@ -80,7 +80,7 @@ struct PomodoroTimerTabView: View {
     private func sectionTab(_ section: PomodoroAppController.AppSection) -> some View {
         let isSelected = controller.selectedSection == section
         return Button {
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAppAnimation(.easeInOut(duration: 0.15)) {
                 controller.selectedSection = section
             }
         } label: {
@@ -98,6 +98,6 @@ struct PomodoroTimerTabView: View {
             .background(isSelected ? Color.accent : Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 7))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 }

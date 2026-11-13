@@ -86,7 +86,7 @@ struct WeeklyPlanWidget: View {
                     .background(color)
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showSheet) {
@@ -148,7 +148,7 @@ struct WeeklyPlanSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -182,7 +182,7 @@ struct WeeklyPlanSheet: View {
                     .font(.system(size: 16))
                     .foregroundColor(item.isDone ? .accentGreen : .labelMuted.opacity(0.5))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help(item.isDone ? "Marquer comme non fait" : "Marquer comme fait")
             .accessibilityLabel(item.isDone ? "Marquer comme non fait" : "Marquer comme fait")
 
@@ -214,7 +214,7 @@ struct WeeklyPlanSheet: View {
                     .font(.system(size: 11))
                     .foregroundColor(.labelMuted.opacity(0.6))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Supprimer")
             .accessibilityLabel("Supprimer")
         }
@@ -273,7 +273,7 @@ struct WeeklyPlanSheet: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(newItemText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
         .padding(.horizontal, 18).padding(.vertical, 12)

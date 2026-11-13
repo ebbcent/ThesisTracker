@@ -54,7 +54,7 @@ struct BlockedSessionSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -77,7 +77,7 @@ struct BlockedSessionSheet: View {
                 color: Color(red: 0.404, green: 0.224, blue: 0.718),
                 title: "Capturer le blocage",
                 subtitle: "Note ce qui te bloque exactement — décharge mentale, et reprends quand tu peux.",
-                action: { withAnimation { showBlockerField = true } }
+                action: { withAppAnimation { showBlockerField = true } }
             )
             option(
                 icon: "timer",
@@ -134,7 +134,7 @@ struct BlockedSessionSheet: View {
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private var blockerInput: some View {
@@ -160,7 +160,7 @@ struct BlockedSessionSheet: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(blockerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chapter == nil)
             }
         }

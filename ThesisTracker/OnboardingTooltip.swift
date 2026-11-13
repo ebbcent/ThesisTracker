@@ -32,16 +32,16 @@ struct OnboardingTooltipModifier: ViewModifier {
                         icon: icon,
                         alignment: alignment
                     ) {
-                        withAnimation(.easeOut(duration: 0.15)) {
+                        withAppAnimation(.easeOut(duration: 0.15)) {
                             visible = false
                         }
                         dismissed = true
                     }
                     .transition(
                         .asymmetric(
-                            insertion: .scale(scale: 0.85, anchor: unitPoint(from: alignment))
+                            insertion: .scale(scale: 0.95, anchor: unitPoint(from: alignment))
                                 .combined(with: .opacity),
-                            removal: .scale(scale: 0.85, anchor: unitPoint(from: alignment))
+                            removal: .scale(scale: 0.95, anchor: unitPoint(from: alignment))
                                 .combined(with: .opacity)
                         )
                     )
@@ -51,7 +51,7 @@ struct OnboardingTooltipModifier: ViewModifier {
             .onAppear {
                 guard !dismissed else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                    withAnimation(.easeOut(duration: 0.18)) {
+                    withAppAnimation(.easeOut(duration: 0.18)) {
                         visible = true
                     }
                 }
@@ -100,7 +100,7 @@ struct OnboardingTooltipBubble: View {
                     .padding(5)
                     .background(Circle().fill(Color.cardBorder.opacity(0.5)))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -124,7 +124,7 @@ struct OnboardingTooltipBubble: View {
                 .offset(caretOffset)
         }
         .scaleEffect(hovered ? 1.02 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: hovered)
+        .appAnimation(.easeInOut(duration: 0.15), value: hovered)
         .onHover { hovered = $0 }
     }
 

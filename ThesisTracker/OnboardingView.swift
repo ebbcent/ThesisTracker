@@ -26,7 +26,7 @@ struct OnboardingView: View {
                         Capsule()
                             .fill(i <= step ? Color.accent : Color.cardBorder)
                             .frame(width: i == step ? 20 : 6, height: 6)
-                            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: step)
+                            .appAnimation(Motion.panel, value: step)
                     }
                 }
                 .padding(.top, 28)
@@ -46,7 +46,7 @@ struct OnboardingView: View {
                     insertion: .move(edge: .trailing).combined(with: .opacity),
                     removal:   .move(edge: .leading).combined(with: .opacity)
                 ))
-                .animation(.spring(response: 0.4, dampingFraction: 0.85), value: step)
+                .appAnimation(Motion.panel, value: step)
 
                 Spacer()
 
@@ -54,11 +54,11 @@ struct OnboardingView: View {
                 HStack(spacing: 12) {
                     if step > 0 {
                         Button("Retour") {
-                            withAnimation { step -= 1 }
+                            withAppAnimation { step -= 1 }
                         }
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.labelMuted)
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
 
                     Spacer()
@@ -66,7 +66,7 @@ struct OnboardingView: View {
                     if step < totalSteps - 1 {
                         Button {
                             applyStep()
-                            withAnimation { step += 1 }
+                            withAppAnimation { step += 1 }
                         } label: {
                             HStack(spacing: 6) {
                                 Text(step == 0 ? "Commencer" : "Suivant")
@@ -82,7 +82,7 @@ struct OnboardingView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .contentShape(RoundedRectangle(cornerRadius: 10))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(step == 1 && projectName.trimmingCharacters(in: .whitespaces).isEmpty)
                     } else {
                         Button {
@@ -103,7 +103,7 @@ struct OnboardingView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .contentShape(RoundedRectangle(cornerRadius: 10))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
                 .padding(.horizontal, 40)
@@ -173,7 +173,7 @@ struct OnboardingView: View {
                 .onSubmit {
                     if !projectName.trimmingCharacters(in: .whitespaces).isEmpty {
                         applyStep()
-                        withAnimation { step += 1 }
+                        withAppAnimation { step += 1 }
                     }
                 }
         }
@@ -237,8 +237,8 @@ struct OnboardingView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.25), lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
-                    .animation(.easeInOut(duration: 0.15), value: goalText)
+                    .buttonStyle(.pressable)
+                    .appAnimation(.easeInOut(duration: 0.15), value: goalText)
                 }
             }
         }

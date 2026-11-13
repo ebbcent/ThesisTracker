@@ -75,12 +75,12 @@ struct MonthlyChallengeCard: View {
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 1.0).delay(0.15)) {
+            withAppAnimation(Motion.progress.delay(0.1)) {
                 animatedRatio = ratio
             }
         }
         .onChange(of: ratio) { _, newRatio in
-            withAnimation(.easeOut(duration: 0.5)) {
+            withAppAnimation(.easeOut(duration: 0.5)) {
                 animatedRatio = newRatio
             }
         }

@@ -66,7 +66,7 @@ struct MenuBarEntryView: View {
                         .padding(.horizontal, 12).padding(.vertical, 6)
                         .background(Color.accent)
                         .clipShape(Capsule())
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                 }
                 .frame(maxWidth: .infinity).padding(.vertical, 24)
                 .accessibilityElement(children: .contain)
@@ -105,7 +105,7 @@ struct MenuBarEntryView: View {
                                 .font(.system(size: 20))
                                 .foregroundColor(savedConfirmation ? .accentGreen : .accent)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(inputInt == nil)
                         .accessibilityLabel(savedConfirmation ? "Saisie enregistrée" : "Enregistrer la saisie")
                     }
@@ -131,7 +131,7 @@ struct MenuBarEntryView: View {
             // Footer
             HStack(spacing: 10) {
                 Button("Ouvrir l'app") { openMainWindow() }
-                    .font(.system(size: 11)).foregroundColor(.accent).buttonStyle(.plain)
+                    .font(.system(size: 11)).foregroundColor(.accent).buttonStyle(.pressable)
                 Button {
                     QuickEntryPanelManager.shared.show(store: store)
                 } label: {
@@ -142,7 +142,7 @@ struct MenuBarEntryView: View {
                     .font(.system(size: 11))
                     .foregroundColor(.accentWarm)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Ouvrir le panneau de saisie rapide (⌃⌥N)")
                 Spacer()
                 if todayProgress > 0 {
@@ -198,7 +198,7 @@ struct MenuBarEntryView: View {
                     .padding(.vertical, 5)
                     .background(Color.accentWarm.opacity(0.85))
                     .clipShape(Capsule())
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Button("Passer") {
                         pomodoroController.skipPendingPhase()
@@ -206,7 +206,7 @@ struct MenuBarEntryView: View {
                     .font(.system(size: 11))
                     .lineLimit(1)
                     .foregroundColor(.labelMuted)
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 } else {
                     // « Démarrer » uniquement quand le minuteur est inactif (sinon la session en cours serait perdue)
                     if pomodoroController.timerSnapshot.phase == .idle {
@@ -220,7 +220,7 @@ struct MenuBarEntryView: View {
                         .padding(.vertical, 5)
                         .background(Color.accentWarm.opacity(0.85))
                         .clipShape(Capsule())
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(pomodoroController.isExternalFocusActive)
                     }
 
@@ -231,7 +231,7 @@ struct MenuBarEntryView: View {
                         .font(.system(size: 11))
                         .lineLimit(1)
                         .foregroundColor(.labelMuted)
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 
                         Button("Arrêter") {
                             pomodoroController.stopTimer()
@@ -239,7 +239,7 @@ struct MenuBarEntryView: View {
                         .font(.system(size: 11))
                         .lineLimit(1)
                         .foregroundColor(.labelMuted)
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
 
@@ -339,7 +339,7 @@ struct MenuBarEntryView: View {
                 .clipShape(Capsule())
                 .overlay(Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityLabel("Cible : \(label)")
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
@@ -429,9 +429,9 @@ struct MenuBarEntryView: View {
               let chapter = activeChapter,
               let project = activeProject else { return }
         store.setTotalForDate(count, for: chapter.id, in: project.id, date: selectedDateStr)
-        withAnimation { savedConfirmation = true }
+        withAppAnimation { savedConfirmation = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation { savedConfirmation = false }
+            withAppAnimation { savedConfirmation = false }
         }
     }
 

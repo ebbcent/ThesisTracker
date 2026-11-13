@@ -82,7 +82,7 @@ struct BreadcrumbProjectPicker: View {
             .padding(.horizontal, 12).padding(.vertical, 8)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .background(isActive ? Color.accent.opacity(0.06) : Color.clear)
     }
 }
@@ -184,7 +184,7 @@ struct BreadcrumbChapterPicker: View {
             .padding(.horizontal, 12).padding(.vertical, 8)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .background(isActive ? Color.accent.opacity(0.06) : Color.clear)
     }
 }

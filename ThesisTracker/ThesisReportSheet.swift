@@ -47,9 +47,9 @@ struct ThesisReportSheet: View {
             Button {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(report, forType: .string)
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { copied = true }
+                withAppAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { copied = true }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                    withAnimation { copied = false }
+                    withAppAnimation { copied = false }
                 }
             } label: {
                 HStack(spacing: 6) {
@@ -69,7 +69,7 @@ struct ThesisReportSheet: View {
                         )
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             // Bouton fermer
             Button { dismiss() } label: {
@@ -80,7 +80,7 @@ struct ThesisReportSheet: View {
                     .background(Circle().fill(Color.glassFill))
                     .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }

@@ -44,7 +44,7 @@ struct FragmentsWidget: View {
                             .font(.system(size: 18))
                             .foregroundColor(Color(red: 0.961, green: 0.620, blue: 0.043))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .disabled(quickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .help("Ajouter le fragment")
                     .accessibilityLabel("Ajouter le fragment")
@@ -79,7 +79,7 @@ struct FragmentsWidget: View {
                         .background(Color(red: 0.961, green: 0.620, blue: 0.043))
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showSheet) {
@@ -139,7 +139,7 @@ struct FragmentsSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -166,7 +166,7 @@ struct FragmentsSheet: View {
                     .background(Color(red: 0.961, green: 0.620, blue: 0.043))
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(newText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
         .padding(.horizontal, 18).padding(.vertical, 10)
@@ -236,7 +236,7 @@ struct FragmentsSheet: View {
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted.opacity(0.6))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Archiver")
                     .accessibilityLabel("Archiver")
                 } else {
@@ -245,7 +245,7 @@ struct FragmentsSheet: View {
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted.opacity(0.6))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Restaurer")
                     .accessibilityLabel("Restaurer")
                 }
@@ -254,7 +254,7 @@ struct FragmentsSheet: View {
                         .font(.system(size: 11))
                         .foregroundColor(.labelMuted.opacity(0.6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Supprimer")
                 .accessibilityLabel("Supprimer")
             }

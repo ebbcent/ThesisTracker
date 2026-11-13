@@ -37,11 +37,11 @@ struct AchievementsView: View {
                 // Top header
                 HStack {
                     if !showSidebar {
-                        Button { withAnimation { showSidebar = true } } label: {
+                        Button { withAppAnimation { showSidebar = true } } label: {
                             Image(systemName: "sidebar.left").font(.system(size: 14))
                                 .foregroundColor(.labelMuted)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Afficher la barre latérale")
                         .accessibilityLabel("Afficher la barre latérale")
                     }
@@ -129,7 +129,7 @@ struct AchievementsView: View {
                                         RoundedRectangle(cornerRadius: 3).fill(next.color.opacity(0.12)).frame(height: 6)
                                         RoundedRectangle(cornerRadius: 3).fill(next.color)
                                             .frame(width: geo.size.width * progress, height: 6)
-                                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
+                                            .appAnimation(Motion.progress, value: progress)
                                     }
                                 }.frame(height: 6)
                             }
@@ -386,7 +386,7 @@ struct AchievementsView: View {
                         RoundedRectangle(cornerRadius: 3).fill(badge.color.opacity(0.12)).frame(height: 6)
                         RoundedRectangle(cornerRadius: 3).fill(badge.color)
                             .frame(width: geo.size.width * progress, height: 6)
-                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
+                            .appAnimation(Motion.progress, value: progress)
                     }
                 }
                 .frame(height: 6)

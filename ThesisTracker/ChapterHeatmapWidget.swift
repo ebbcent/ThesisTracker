@@ -30,7 +30,7 @@ struct ChapterHeatmapWidget: View {
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Voir en grand")
                     .accessibilityLabel("Voir en grand")
                 }
@@ -176,7 +176,7 @@ struct ChapterHeatmapSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }

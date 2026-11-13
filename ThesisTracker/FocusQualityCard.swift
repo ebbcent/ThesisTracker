@@ -163,7 +163,7 @@ struct FocusQualityPicker: View {
                         .background(selected ? level.color : level.color.opacity(0.10))
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
             Spacer(minLength: 0)
         }

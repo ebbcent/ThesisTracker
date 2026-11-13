@@ -128,9 +128,9 @@ struct DashboardView: View {
             guard goal > 0, isToday, lastGoalReachedDate != DataStore.today else { return }
             if Double(newDelta) / Double(goal) >= 1.0 {
                 lastGoalReachedDate = DataStore.today
-                withAnimation(.spring(response: 0.2, dampingFraction: 0.5)) { goalBarFlash = true }
+                withAppAnimation(Motion.celebrate) { goalBarFlash = true }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                    withAnimation(.easeOut(duration: 0.4)) { goalBarFlash = false }
+                    withAppAnimation(Motion.quick) { goalBarFlash = false }
                 }
                 showConfetti = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { showConfetti = false }
@@ -142,7 +142,7 @@ struct DashboardView: View {
         .alert("Effacer cette entrée ?", isPresented: $showDeleteConfirm) {
             Button("Effacer", role: .destructive) {
                 if let chapter = activeChapter, let project = activeProject {
-                    withAnimation { store.deleteEntry(for: chapter.id, in: project.id, date: selectedDateStr) }
+                    withAppAnimation { store.deleteEntry(for: chapter.id, in: project.id, date: selectedDateStr) }
                     inputText = ""
                     inputClusterToken = UUID()
                 }
@@ -378,7 +378,7 @@ struct DashboardView: View {
             Spacer()
             if isCustomizing {
                 Button {
-                    withAnimation(.easeOut(duration: 0.15)) { isCustomizing = false }
+                    withAppAnimation(.easeOut(duration: 0.15)) { isCustomizing = false }
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "checkmark").font(.system(size: 10, weight: .semibold))
@@ -389,7 +389,7 @@ struct DashboardView: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             } else {
                 Button {
                     showCustomizeSheet = true
@@ -404,7 +404,7 @@ struct DashboardView: View {
                     .clipShape(Capsule())
                     .overlay(Capsule().stroke(Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Réorganiser les widgets")
             }
         }
@@ -421,7 +421,7 @@ struct DashboardView: View {
 
             if isCustomizing {
                 columnSwitchControl(for: widget, column: column)
-                    .transition(.opacity.combined(with: .scale(scale: 0.85, anchor: .topTrailing)))
+                    .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .topTrailing)))
             }
         }
         .overlay(
@@ -456,25 +456,25 @@ struct DashboardView: View {
             guard let raw = items.first,
                   let src = DashboardWidget(rawValue: raw),
                   src != widget else { return false }
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.82)) {
+            withAppAnimation(Motion.panel) {
                 handleDrop(from: src, to: widget, dstColumn: column, location: location)
             }
             draggingWidget = nil
             dropHoverWidget = nil
             return true
         } isTargeted: { targeted in
-            withAnimation(.easeInOut(duration: 0.14)) {
+            withAppAnimation(.easeInOut(duration: 0.14)) {
                 dropHoverWidget = targeted ? widget : (dropHoverWidget == widget ? nil : dropHoverWidget)
                 if targeted { draggingWidget = nil } // best-effort: clear on hover of different widget
             }
         }
         .onLongPressGesture(minimumDuration: 0.4) {
-            withAnimation(.easeOut(duration: 0.15)) { isCustomizing = true }
+            withAppAnimation(.easeOut(duration: 0.15)) { isCustomizing = true }
         }
         // Clic droit → menu contextuel pour retirer le widget
         .contextMenu {
             Button {
-                withAnimation(.easeOut(duration: 0.18)) {
+                withAppAnimation(.easeOut(duration: 0.18)) {
                     removeWidget(widget)
                 }
             } label: {
@@ -488,7 +488,7 @@ struct DashboardView: View {
             Divider()
             if column == .right {
                 Button {
-                    withAnimation(.easeOut(duration: 0.15)) {
+                    withAppAnimation(.easeOut(duration: 0.15)) {
                         handleDrop(from: widget, to: nil, dstColumn: .left, location: .zero)
                     }
                 } label: {
@@ -496,7 +496,7 @@ struct DashboardView: View {
                 }
             } else {
                 Button {
-                    withAnimation(.easeOut(duration: 0.15)) {
+                    withAppAnimation(.easeOut(duration: 0.15)) {
                         handleDrop(from: widget, to: nil, dstColumn: .right, location: .zero)
                     }
                 } label: {
@@ -504,8 +504,8 @@ struct DashboardView: View {
                 }
             }
         }
-        .animation(.spring(response: 0.25), value: isCustomizing)
-        .animation(.easeInOut(duration: 0.14), value: isDropTarget)
+        .appAnimation(Motion.panel, value: isCustomizing)
+        .appAnimation(.easeInOut(duration: 0.14), value: isDropTarget)
     }
 
     /// Retire un widget des deux colonnes (le rend "disponible" dans Personnaliser).
@@ -540,7 +540,7 @@ struct DashboardView: View {
     /// Badge pour changer de colonne (reste en mode customize)
     private func columnSwitchControl(for widget: DashboardWidget, column: ColumnSide) -> some View {
         Button {
-            withAnimation(.easeOut(duration: 0.15)) {
+            withAppAnimation(.easeOut(duration: 0.15)) {
                 if column == .right { handleDrop(from: widget, to: nil, dstColumn: .left, location: .zero) }
                 else                { handleDrop(from: widget, to: nil, dstColumn: .right, location: .zero) }
             }
@@ -558,7 +558,7 @@ struct DashboardView: View {
             .overlay(Capsule().stroke(Color.accent.opacity(0.3), lineWidth: 1))
             .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .padding(8)
     }
 
@@ -605,7 +605,7 @@ struct DashboardView: View {
         .dropDestination(for: String.self) { items, _ in
             guard let raw = items.first,
                   let src = DashboardWidget(rawValue: raw) else { return false }
-            withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) {
+            withAppAnimation(Motion.panel) {
                 insertWidget(src, into: column, at: index)
             }
             draggingWidget = nil
@@ -613,7 +613,7 @@ struct DashboardView: View {
             dropHoverWidget = nil
             return true
         } isTargeted: { targeted in
-            withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+            withAppAnimation(Motion.panel) {
                 if targeted {
                     hoveredInsertion = InsertionPoint(column: column, index: index)
                 } else if hoveredInsertion == InsertionPoint(column: column, index: index) {
@@ -621,8 +621,8 @@ struct DashboardView: View {
                 }
             }
         }
-        .animation(.spring(response: 0.30, dampingFraction: 0.82), value: isDragging)
-        .animation(.spring(response: 0.25, dampingFraction: 0.85), value: isActive)
+        .appAnimation(Motion.panel, value: isDragging)
+        .appAnimation(Motion.panel, value: isActive)
     }
 
     /// Insère un widget dans la colonne cible à l'index donné (0 = avant la première carte).
@@ -736,7 +736,7 @@ struct DashboardView: View {
     private var headerView: some View {
         HStack(alignment: .center, spacing: 10) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 13, weight: .medium))
@@ -749,7 +749,7 @@ struct DashboardView: View {
                                 showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -789,7 +789,7 @@ struct DashboardView: View {
                             )
                             .contentShape(RoundedRectangle(cornerRadius: 5))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Changer de projet")
                         .popover(isPresented: $showProjectPicker, arrowEdge: .bottom) {
                             BreadcrumbProjectPicker(store: store) { showProjectPicker = false }
@@ -818,7 +818,7 @@ struct DashboardView: View {
                                 )
                                 .contentShape(RoundedRectangle(cornerRadius: 5))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .help("Changer de chapitre")
                             .popover(isPresented: $showChapterPicker, arrowEdge: .bottom) {
                                 BreadcrumbChapterPicker(store: store, project: project) { showChapterPicker = false }
@@ -846,7 +846,7 @@ struct DashboardView: View {
                         .overlay(Capsule().stroke(Color.accentWarm.opacity(0.22), lineWidth: 1))
                 )
                 .scaleEffect(streakPulse ? 1.12 : 1.0)
-                .animation(.spring(response: 0.35, dampingFraction: 0.5), value: streakPulse)
+                .appAnimation(Motion.celebrate, value: streakPulse)
             }
 
             Button { showDirectorReport = true } label: {
@@ -864,7 +864,7 @@ struct DashboardView: View {
                         .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color(hex: "#0369A1").opacity(0.22), lineWidth: 1))
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Rapport pour le directeur")
             .sheet(isPresented: $showDirectorReport) {
                 DirectorReportSheet(store: store)
@@ -875,7 +875,7 @@ struct DashboardView: View {
 
             // #16 — Toggle compact
             Button {
-                withAnimation(.easeInOut(duration: 0.15)) { dashboardCompact.toggle() }
+                withAppAnimation(.easeInOut(duration: 0.15)) { dashboardCompact.toggle() }
             } label: {
                 Image(systemName: dashboardCompact ? "rectangle.compress.vertical" : "rectangle.expand.vertical")
                     .font(.system(size: 12))
@@ -888,7 +888,7 @@ struct DashboardView: View {
                                 dashboardCompact ? Color.accent.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help(dashboardCompact ? "Mode normal" : "Mode compact")
             .accessibilityLabel(dashboardCompact ? "Mode normal" : "Mode compact")
 
@@ -903,7 +903,7 @@ struct DashboardView: View {
                             .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous).stroke(Color.cardBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Réglages")
             .accessibilityLabel("Réglages")
         }
@@ -941,7 +941,7 @@ struct DashboardView: View {
                     }
 
                     Button {
-                        withAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
+                        withAppAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
                     } label: {
                         HStack(spacing: 5) {
                             Image(systemName: "folder.badge.gearshape").font(.system(size: 11))
@@ -953,7 +953,7 @@ struct DashboardView: View {
                         .background(Capsule().fill(Color.accent.opacity(0.10))
                             .overlay(Capsule().stroke(Color.accent.opacity(0.20), lineWidth: 1)))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
 
                 if let project = activeProject, !project.chapters.isEmpty {
@@ -991,7 +991,7 @@ struct DashboardView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
                                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.cardBorder, lineWidth: 1))
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                                 .disabled(idx <= 0)
                                 .help("Monter le chapitre")
                                 .accessibilityLabel("Monter le chapitre")
@@ -1007,7 +1007,7 @@ struct DashboardView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
                                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.cardBorder, lineWidth: 1))
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                                 .disabled(idx >= chapters.count - 1)
                                 .help("Descendre le chapitre")
                                 .accessibilityLabel("Descendre le chapitre")
@@ -1017,7 +1017,7 @@ struct DashboardView: View {
                         // #5 — Bouton toggle note de chapitre
                         if activeChapter != nil {
                             Button {
-                                withAnimation(.easeOut(duration: 0.15)) { showChapterNotes.toggle() }
+                                withAppAnimation(.easeOut(duration: 0.15)) { showChapterNotes.toggle() }
                             } label: {
                                 Image(systemName: showChapterNotes ? "note.text.badge.plus" : "note.text")
                                     .font(.system(size: 11))
@@ -1028,7 +1028,7 @@ struct DashboardView: View {
                                     .overlay(RoundedRectangle(cornerRadius: 7).stroke(
                                         showChapterNotes ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .help("Note de chapitre")
                             .accessibilityLabel("Note de chapitre")
                         }
@@ -1062,7 +1062,7 @@ struct DashboardView: View {
                                         .lineLimit(2)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                                 if !nextStepText.isEmpty {
                                     Button {
                                         nextStepText = ""
@@ -1072,7 +1072,7 @@ struct DashboardView: View {
                                             .font(.system(size: 11))
                                             .foregroundColor(.accentGreen)
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.pressable)
                                     .help("Marquer comme fait")
                                     .accessibilityLabel("Marquer comme fait")
                                 }
@@ -1100,7 +1100,7 @@ struct DashboardView: View {
                                         !chapterNotesText.isEmpty
                                     ][i]
                                     Button {
-                                        withAnimation(.easeInOut(duration: 0.12)) { notesTabIndex = i }
+                                        withAppAnimation(.easeInOut(duration: 0.12)) { notesTabIndex = i }
                                     } label: {
                                         HStack(spacing: 4) {
                                             Image(systemName: icons[i])
@@ -1116,7 +1116,7 @@ struct DashboardView: View {
                                         .background(notesTabIndex == i ? Color.accentWarm.opacity(0.10) : Color.clear)
                                         .clipShape(Capsule())
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.pressable)
                                 }
                                 Spacer()
                             }
@@ -1148,7 +1148,7 @@ struct DashboardView: View {
                                                 .clipShape(Capsule())
                                                 .overlay(Capsule().stroke(Color.accent.opacity(0.15), lineWidth: 1))
                                             }
-                                            .buttonStyle(.plain)
+                                            .buttonStyle(.pressable)
                                             .help("Appliquer le modèle « \(tmpl.name) »")
                                         }
                                     }
@@ -1249,7 +1249,7 @@ struct DashboardView: View {
                             .padding(.horizontal, 8).padding(.vertical, 3)
                             .background(Capsule().fill(Color.orange.opacity(0.12))
                                 .overlay(Capsule().stroke(Color.orange.opacity(0.20), lineWidth: 1)))
-                            .transition(.scale.combined(with: .opacity))
+                            .transition(.scale(scale: 0.95).combined(with: .opacity))
                     }
                     if hasExistingEntry {
                         Button { showDeleteConfirm = true } label: {
@@ -1261,14 +1261,14 @@ struct DashboardView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 7))
                                 .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.red.opacity(0.18), lineWidth: 1))
                         }
-                        .buttonStyle(.plain)
-                        .transition(.scale.combined(with: .opacity))
+                        .buttonStyle(.pressable)
+                        .transition(.scale(scale: 0.95).combined(with: .opacity))
                         .help("Supprimer la saisie")
                         .accessibilityLabel("Supprimer la saisie")
                     }
                 }
-                .animation(.easeOut(duration: 0.15), value: hasExistingEntry)
-                .animation(.easeOut(duration: 0.15), value: isToday)
+                .appAnimation(.easeOut(duration: 0.15), value: hasExistingEntry)
+                .appAnimation(.easeOut(duration: 0.15), value: isToday)
 
                 // ── Hero count ─────────────────────────────────
                 VStack(spacing: 4) {
@@ -1284,7 +1284,7 @@ struct DashboardView: View {
                                 )
                             )
                             .contentTransition(.numericText())
-                            .animation(.spring(response: 0.4), value: currentEntryTotal)
+                            .appAnimation(Motion.progress, value: currentEntryTotal)
                         Text(store.data.useWordCount ? "mots" : "car.")
                             .font(.system(size: 15, weight: .regular))
                             .foregroundColor(.labelMuted)
@@ -1306,7 +1306,7 @@ struct DashboardView: View {
                                 .font(.system(size: 11))
                         }
                         .foregroundColor(.accentGreen)
-                        .transition(.scale(scale: 0.85).combined(with: .opacity))
+                        .transition(.scale(scale: 0.95).combined(with: .opacity))
 
                         // V5 — #4 : Badge record personnel
                         if isNewPersonalRecord {
@@ -1319,7 +1319,7 @@ struct DashboardView: View {
                             .foregroundColor(.yellow)
                             .padding(.horizontal, 8).padding(.vertical, 3)
                             .background(Capsule().fill(Color.yellow.opacity(0.12)))
-                            .transition(.scale(scale: 0.85).combined(with: .opacity))
+                            .transition(.scale(scale: 0.95).combined(with: .opacity))
                         }
                     } else if currentEntryNet < 0 {
                         HStack(spacing: 4) {
@@ -1335,7 +1335,7 @@ struct DashboardView: View {
                             }
                         }
                         .foregroundColor(.accentWarm)
-                        .transition(.scale(scale: 0.85).combined(with: .opacity))
+                        .transition(.scale(scale: 0.95).combined(with: .opacity))
                     } else if currentEntryTotal == 0 {
                         Text(isToday ? "Aucune entrée pour aujourd'hui" : "Aucune entrée ce jour-là")
                             .font(.system(size: 11))
@@ -1379,8 +1379,8 @@ struct DashboardView: View {
                                               : ratio >= 1.0 ? [.accentGreen] : [.accent, .accentWarm],
                                         startPoint: .leading, endPoint: .trailing))
                                     .frame(width: geo.size.width * CGFloat(ratio), height: goalBarFlash ? 5 : 3)
-                                    .animation(.spring(response: 0.5), value: ratio)
-                                    .animation(.spring(response: 0.2), value: goalBarFlash)
+                                    .appAnimation(Motion.progress, value: ratio)
+                                    .appAnimation(.spring(response: 0.2), value: goalBarFlash)
                             }
                         }
                         .frame(height: 5)
@@ -1465,7 +1465,7 @@ struct DashboardView: View {
                         }
                         .foregroundColor(.accent)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Extrait le nombre de mots/caractères d'un .docx, .doc, .rtf ou .txt")
 
                     Spacer()
@@ -1493,8 +1493,8 @@ struct DashboardView: View {
                     }
                 }
                 .padding(.top, 6)
-                .animation(.easeInOut(duration: 0.2), value: importedFileName)
-                .animation(.easeInOut(duration: 0.2), value: importError)
+                .appAnimation(.easeInOut(duration: 0.2), value: importedFileName)
+                .appAnimation(.easeInOut(duration: 0.2), value: importError)
             }
         }
         // #3 / #57 — Drop fichier directement sur la carte (Finder & autres sources)
@@ -1526,7 +1526,7 @@ struct DashboardView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.accent, lineWidth: 2)
                 .opacity(isFileDropTarget ? 1 : 0)
-                .animation(.easeInOut(duration: 0.15), value: isFileDropTarget)
+                .appAnimation(.easeInOut(duration: 0.15), value: isFileDropTarget)
         )
         // #59 — Onboarding contextuel
         .onboardingTooltip(
@@ -2227,14 +2227,14 @@ struct DashboardView: View {
                     .font(.system(size: 15, weight: .medium))
                     .foregroundColor(.primary)
                 Button("Ouvrir les projets") {
-                    withAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
+                    withAppAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
                 }
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 20).padding(.vertical, 10)
                 .background(RoundedRectangle(cornerRadius: 10).fill(Color.accent)
                     .shadow(color: Color.accent.opacity(0.35), radius: 8, x: 0, y: 3))
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
@@ -2255,10 +2255,10 @@ struct DashboardView: View {
         guard let chapter = activeChapter,
               let project = activeProject else { return }
         inputText = "\(count)"
-        withAnimation { store.setTotalForDate(count, for: chapter.id, in: project.id, date: selectedDateStr, isCorrection: isCorrection) }
-        withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = true }
+        withAppAnimation { store.setTotalForDate(count, for: chapter.id, in: project.id, date: selectedDateStr, isCorrection: isCorrection) }
+        withAppAnimation(.easeOut(duration: 0.15)) { savedConfirmation = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = false }
+            withAppAnimation(.easeOut(duration: 0.15)) { savedConfirmation = false }
         }
         checkMilestones()
     }
@@ -2493,7 +2493,7 @@ private struct WritingEntryInputCluster: View {
             }
         }
         .padding(.top, 12)
-        .animation(.easeInOut(duration: 0.15), value: hasValue)
+        .appAnimation(.easeInOut(duration: 0.15), value: hasValue)
         .onReceive(NotificationCenter.default.publisher(for: .dashboardSave)) { _ in
             commit()
         }
@@ -2527,7 +2527,7 @@ private struct WritingEntryInputCluster: View {
                         .font(.system(size: 11))
                         .foregroundColor(.labelMuted)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Historique des modifications")
                 .popover(isPresented: $showEntryHistory, arrowEdge: .bottom) {
                     EntryEditHistoryPopover(entry: entry, useWords: useWordCount)
@@ -2542,7 +2542,7 @@ private struct WritingEntryInputCluster: View {
                 .overlay(RoundedRectangle(cornerRadius: 9)
                     .stroke(isDictating ? Color.accent : Color.cardBorder, lineWidth: isDictating ? 1.5 : 1))
         )
-        .animation(.easeInOut(duration: 0.2), value: isDictating)
+        .appAnimation(.easeInOut(duration: 0.2), value: isDictating)
     }
 
     // Static gradients — avoid building a fresh LinearGradient per render.
@@ -2567,10 +2567,10 @@ private struct WritingEntryInputCluster: View {
                     .shadow(color: Color.accent.opacity(0.3), radius: 6, x: 0, y: 2)
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .disabled(!hasValue)
         .help("Sauvegarder · ⌘S")
-        .animation(.easeInOut(duration: 0.2), value: savedConfirmation)
+        .appAnimation(.easeInOut(duration: 0.2), value: savedConfirmation)
     }
 
     // Total en baisse : du texte a été retiré. La case marque le jour comme
@@ -2591,7 +2591,7 @@ private struct WritingEntryInputCluster: View {
                         .foregroundColor(isCorrection ? .accentWarm : .primary)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Jour de correction : du texte a été retiré. Le jour compte dans la série.")
             .accessibilityAddTraits(isCorrection ? .isSelected : [])
             Text("\(DataStore.formatNumber(delta)) \(useWordCount ? "mots" : "car.") par rapport au total précédent")
@@ -2866,7 +2866,7 @@ struct DashboardCustomizeSheet: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Fermer")
                     .accessibilityLabel("Fermer")
                 }
@@ -2898,7 +2898,7 @@ struct DashboardCustomizeSheet: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 7))
                                 .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.accent.opacity(0.18), lineWidth: 1))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .help("Appliquer le profil « \(profile.name) »")
                         }
                         Spacer()
@@ -2931,7 +2931,7 @@ struct DashboardCustomizeSheet: View {
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.labelMuted)
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Spacer()
 
@@ -2944,7 +2944,7 @@ struct DashboardCustomizeSheet: View {
                     .padding(.horizontal, 20).padding(.vertical, 9)
                     .background(Color.accent)
                     .clipShape(RoundedRectangle(cornerRadius: 9))
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 .padding(20)
             }
@@ -2997,7 +2997,7 @@ struct DashboardCustomizeSheet: View {
                 .foregroundColor(.primary)
             Spacer()
             Button {
-                withAnimation(.easeOut(duration: 0.15)) {
+                withAppAnimation(.easeOut(duration: 0.15)) {
                     items.removeAll { $0 == widget }
                 }
             } label: {
@@ -3005,7 +3005,7 @@ struct DashboardCustomizeSheet: View {
                     .font(.system(size: 14))
                     .foregroundColor(Color(red: 0.93, green: 0.26, blue: 0.26).opacity(0.7))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Retirer du tableau de bord")
             .accessibilityLabel("Retirer du tableau de bord")
             Image(systemName: "line.3.horizontal")
@@ -3026,13 +3026,13 @@ struct DashboardCustomizeSheet: View {
                   src != widget,
                   let si = items.firstIndex(of: src),
                   let di = items.firstIndex(of: widget) else { return false }
-            withAnimation(.spring(response: 0.25)) {
+            withAppAnimation(Motion.panel) {
                 items.move(fromOffsets: IndexSet(integer: si), toOffset: di < si ? di : di + 1)
             }
             dropHover = nil
             return true
         } isTargeted: { targeted in
-            withAnimation(.easeInOut(duration: 0.12)) {
+            withAppAnimation(.easeInOut(duration: 0.12)) {
                 dropHover = targeted ? widget : (dropHover == widget ? nil : dropHover)
             }
         }
@@ -3051,7 +3051,7 @@ struct DashboardCustomizeSheet: View {
                         .foregroundColor(.labelMuted)
                     Spacer()
                     Button {
-                        withAnimation(.easeOut(duration: 0.18)) {
+                        withAppAnimation(.easeOut(duration: 0.18)) {
                             items.append(widget)
                         }
                     } label: {
@@ -3065,7 +3065,7 @@ struct DashboardCustomizeSheet: View {
                         .background(Color.accent.opacity(0.12))
                         .clipShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 .padding(.horizontal, 16).padding(.vertical, 10)
                 .background(Color.cardBg.opacity(0.5))
@@ -3091,6 +3091,6 @@ struct DashboardCustomizeSheet: View {
 
     private func applyProfile(_ profile: LayoutProfile) {
         widgetOrderStored = profile.rightOrder
-        withAnimation(.easeOut(duration: 0.15)) { loadItems() }
+        withAppAnimation(.easeOut(duration: 0.15)) { loadItems() }
     }
 }

@@ -30,7 +30,7 @@ struct PresentationModeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-                .animation(.easeInOut(duration: 0.4), value: currentSlide)
+                .appAnimation(.easeInOut(duration: 0.4), value: currentSlide)
 
                 // Navigation dots + buttons
                 slideNavBar
@@ -45,7 +45,7 @@ struct PresentationModeView: View {
                     .foregroundStyle(.white.opacity(0.5))
                     .padding(20)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .keyboardShortcut(.escape, modifiers: [])
             .help("Quitter la présentation (Échap)")
             .accessibilityLabel("Quitter la présentation (Échap)")
@@ -58,13 +58,13 @@ struct PresentationModeView: View {
     private var slideNavBar: some View {
         HStack(spacing: 16) {
             Button {
-                withAnimation { currentSlide = max(0, currentSlide - 1) }
+                withAppAnimation { currentSlide = max(0, currentSlide - 1) }
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.white.opacity(currentSlide > 0 ? 0.8 : 0.2))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(currentSlide == 0)
             .keyboardShortcut(.leftArrow, modifiers: [])
             .help("Diapositive précédente")
@@ -75,18 +75,18 @@ struct PresentationModeView: View {
                     Circle()
                         .fill(idx == currentSlide ? Color.white : Color.white.opacity(0.3))
                         .frame(width: idx == currentSlide ? 8 : 6, height: idx == currentSlide ? 8 : 6)
-                        .onTapGesture { withAnimation { currentSlide = idx } }
+                        .onTapGesture { withAppAnimation { currentSlide = idx } }
                 }
             }
 
             Button {
-                withAnimation { currentSlide = min(slides.count - 1, currentSlide + 1) }
+                withAppAnimation { currentSlide = min(slides.count - 1, currentSlide + 1) }
             } label: {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.white.opacity(currentSlide < slides.count - 1 ? 0.8 : 0.2))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(currentSlide == slides.count - 1)
             .keyboardShortcut(.rightArrow, modifiers: [])
             .help("Diapositive suivante")
@@ -137,7 +137,7 @@ struct PresentationModeView: View {
                         )
                         .frame(width: 180, height: 180)
                         .rotationEffect(.degrees(-90))
-                        .animation(.easeOut(duration: 1.2), value: pct)
+                        .appAnimation(.easeOut(duration: 1.2), value: pct)
                     VStack(spacing: 4) {
                         Text("\(Int(pct * 100))%")
                             .font(.system(size: 40, weight: .bold, design: .rounded))
@@ -206,7 +206,7 @@ struct PresentationModeView: View {
                                     RoundedRectangle(cornerRadius: 4)
                                         .fill(done ? Color.accentGreen : Color.accent)
                                         .frame(width: geo.size.width * CGFloat(pct), height: 6)
-                                        .animation(.easeOut(duration: 0.8), value: pct)
+                                        .appAnimation(.easeOut(duration: 0.8), value: pct)
                                 }
                             }
                             .frame(width: 160, height: 6)

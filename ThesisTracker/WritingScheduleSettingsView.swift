@@ -108,7 +108,7 @@ struct WritingScheduleSettingsView: View {
                 }
             }
         }
-        .animation(.spring(response: 0.3, dampingFraction: 0.85), value: rule)
+        .appAnimation(Motion.panel, value: rule)
     }
 
     private func dayButton(weekday: Int, label: String) -> some View {
@@ -127,7 +127,7 @@ struct WritingScheduleSettingsView: View {
                 .background(Circle().fill(isOn ? Color.accent : Color.fieldBg))
                 .overlay(Circle().stroke(Color.cardBorder, lineWidth: isOn ? 0 : 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help(isOn ? "Jour d'écriture" : "Jour sans écriture prévue")
     }
 

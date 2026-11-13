@@ -382,7 +382,7 @@ struct ChartView: View {
     private var headerView: some View {
         HStack(alignment: .center, spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 15, weight: .medium))
@@ -395,7 +395,7 @@ struct ChartView: View {
                                 showSidebar ? Color.accent.opacity(0.4) : Color.glassBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -427,8 +427,8 @@ struct ChartView: View {
                     pngExportSuccess ? Color.accentGreen.opacity(0.4) : Color.glassBorder, lineWidth: 1))
                 .contentShape(RoundedRectangle(cornerRadius: 10))
             }
-            .buttonStyle(.plain)
-            .animation(.easeInOut(duration: 0.2), value: pngExportSuccess)
+            .buttonStyle(.pressable)
+            .appAnimation(.easeInOut(duration: 0.2), value: pngExportSuccess)
             .help("Exporter ce graphique en image PNG")
         }
     }
@@ -479,7 +479,7 @@ struct ChartView: View {
                 HStack(spacing: 0) {
                     ForEach(ChartPeriod.allCases) { p in
                         Button {
-                            withAnimation(.easeInOut(duration: 0.2)) { period = p }
+                            withAppAnimation(.easeInOut(duration: 0.2)) { period = p }
                         } label: {
                             Text(p.rawValue)
                                 .font(.system(size: 12, weight: period == p ? .semibold : .regular))
@@ -489,7 +489,7 @@ struct ChartView: View {
                                 .background(period == p ? Color.accent : Color.clear)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
                 .padding(3)
@@ -567,7 +567,7 @@ struct ChartView: View {
                         : ChartType.allCases.filter { $0 != .bar }
                     ForEach(visibleTypes) { type in
                         Button {
-                            withAnimation(.easeInOut(duration: 0.2)) {
+                            withAppAnimation(.easeInOut(duration: 0.2)) {
                                 chartType = type
                                 if type != .cumulative { showProjection = false }
                             }
@@ -587,7 +587,7 @@ struct ChartView: View {
                                 lineWidth: 1))
                             .contentShape(Capsule())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                     Spacer()
                 }
@@ -597,7 +597,7 @@ struct ChartView: View {
                     Divider().overlay(Color.primary.opacity(0.07))
                     HStack(spacing: 6) {
                         Button {
-                            withAnimation(.easeInOut(duration: 0.2)) { showProjection.toggle() }
+                            withAppAnimation(.easeInOut(duration: 0.2)) { showProjection.toggle() }
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "arrow.forward.to.line").font(.system(size: 11))
@@ -612,7 +612,7 @@ struct ChartView: View {
                             .overlay(Capsule().stroke(showProjection ? Color.accentGreen : Color.primary.opacity(0.1), lineWidth: 1))
                             .contentShape(Capsule())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         Spacer()
                     }
                 }
@@ -623,7 +623,7 @@ struct ChartView: View {
                     Divider().overlay(Color.primary.opacity(0.07))
                     HStack(spacing: 8) {
                         Button {
-                            withAnimation(.easeInOut(duration: 0.2)) { showComparison.toggle() }
+                            withAppAnimation(.easeInOut(duration: 0.2)) { showComparison.toggle() }
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "arrow.left.arrow.right")
@@ -639,7 +639,7 @@ struct ChartView: View {
                             .overlay(Capsule().stroke(showComparison ? Color.accentWarm : Color.primary.opacity(0.1), lineWidth: 1))
                             .contentShape(Capsule())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         Spacer()
                     }
                 }
@@ -648,7 +648,7 @@ struct ChartView: View {
                 Divider().overlay(Color.primary.opacity(0.07))
                 HStack(spacing: 8) {
                     Button {
-                        withAnimation(.easeInOut(duration: 0.2)) { showMonthlyView.toggle() }
+                        withAppAnimation(.easeInOut(duration: 0.2)) { showMonthlyView.toggle() }
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "calendar.badge.clock")
@@ -664,10 +664,10 @@ struct ChartView: View {
                         .overlay(Capsule().stroke(showMonthlyView ? Color.accent : Color.primary.opacity(0.1), lineWidth: 1))
                         .contentShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Button {
-                        withAnimation(.easeInOut(duration: 0.2)) { showChapterComparison.toggle() }
+                        withAppAnimation(.easeInOut(duration: 0.2)) { showChapterComparison.toggle() }
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "chart.bar.doc.horizontal")
@@ -683,7 +683,7 @@ struct ChartView: View {
                         .overlay(Capsule().stroke(showChapterComparison ? Color.accentGreen : Color.primary.opacity(0.1), lineWidth: 1))
                         .contentShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     Spacer()
                 }
         }
@@ -692,7 +692,7 @@ struct ChartView: View {
     private func scopeChip(id: UUID?, name: String, icon: String) -> some View {
         let isSelected = selectedProjectId == id
         return Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAppAnimation(.easeInOut(duration: 0.2)) {
                 selectedProjectId = id
                 selectedChapterId = nil
                 if id != nil { chartType = .line }
@@ -711,13 +711,13 @@ struct ChartView: View {
             .overlay(Capsule().stroke(isSelected ? Color.accent : Color.primary.opacity(0.1), lineWidth: 1))
             .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private func chapterChip(id: UUID?, name: String) -> some View {
         let isSelected = selectedChapterId == id
         return Button {
-            withAnimation(.easeInOut(duration: 0.2)) { selectedChapterId = id }
+            withAppAnimation(.easeInOut(duration: 0.2)) { selectedChapterId = id }
         } label: {
             Text(name)
                 .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
@@ -729,7 +729,7 @@ struct ChartView: View {
                 .overlay(Capsule().stroke(isSelected ? Color.accentWarm : Color.primary.opacity(0.1), lineWidth: 1))
                 .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Chart card

@@ -151,7 +151,7 @@ struct QuickEntryView: View {
                             .background(Color.glassFill)
                             .clipShape(Circle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .keyboardShortcut(.escape, modifiers: [])
                     .accessibilityLabel("Fermer la saisie rapide")
                 }
@@ -288,7 +288,7 @@ struct QuickEntryView: View {
                             .font(.system(size: 26))
                             .foregroundColor(savedConfirmation ? .accentGreen : .accent)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .disabled(inputInt == nil)
                     .help("Enregistrer (↩)")
                     .accessibilityLabel(savedConfirmation ? "Saisie enregistrée" : "Enregistrer la saisie")
@@ -307,7 +307,7 @@ struct QuickEntryView: View {
                                 RoundedRectangle(cornerRadius: 3).fill(color.opacity(0.15)).frame(height: 4)
                                 RoundedRectangle(cornerRadius: 3).fill(color)
                                     .frame(width: geo.size.width * ratio, height: 4)
-                                    .animation(.spring(response: 0.5, dampingFraction: 0.85), value: ratio)
+                                    .appAnimation(Motion.progress, value: ratio)
                             }
                         }
                         .frame(height: 4)
@@ -350,7 +350,7 @@ struct QuickEntryView: View {
             store.data.projects[idx].activeChapterId = chapter.id
         }
         store.save()
-        withAnimation { savedConfirmation = true }
+        withAppAnimation { savedConfirmation = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             onDismiss()
         }
@@ -371,7 +371,7 @@ struct QuickEntryView: View {
                 .clipShape(Capsule())
                 .overlay(Capsule().stroke(selected ? Color.accent : Color.white.opacity(0.08), lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityLabel("Cible : \(label)")
         .accessibilityAddTraits(selected ? [.isSelected] : [])
     }

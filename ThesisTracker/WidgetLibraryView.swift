@@ -62,11 +62,11 @@ struct WidgetLibraryView: View {
     private var header: some View {
         HStack {
             if !showSidebar {
-                Button { withAnimation { showSidebar = true } } label: {
+                Button { withAppAnimation { showSidebar = true } } label: {
                     Image(systemName: "sidebar.left").font(.system(size: 14))
                         .foregroundColor(.labelMuted)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Afficher la barre latérale")
                 .accessibilityLabel("Afficher la barre latérale")
             }
@@ -94,10 +94,10 @@ struct WidgetLibraryView: View {
                             .background(Color.accent.opacity(0.10))
                             .clipShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 Button {
-                    withAnimation(.easeOut(duration: 0.15)) {
+                    withAppAnimation(.easeOut(duration: 0.15)) {
                         isEditingVisibility.toggle()
                     }
                 } label: {
@@ -113,7 +113,7 @@ struct WidgetLibraryView: View {
                     .clipShape(Capsule())
                     .overlay(Capsule().stroke(isEditingVisibility ? Color.accent : Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Masquer ou réafficher des widgets pour ce chapitre")
             }
         }
@@ -183,7 +183,7 @@ struct WidgetLibraryView: View {
             .clipShape(Capsule())
             .overlay(Capsule().stroke(isSelected ? Color.accent : Color.cardBorder, lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Grille des widgets
@@ -223,7 +223,7 @@ struct WidgetLibraryView: View {
                         .background(.regularMaterial, in: Circle())
                         .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(10)
                 .help(isHidden ? "Réafficher ce widget" : "Masquer ce widget pour ce chapitre")
                 .accessibilityLabel(isHidden ? "Réafficher ce widget" : "Masquer ce widget pour ce chapitre")

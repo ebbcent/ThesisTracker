@@ -60,7 +60,7 @@ struct ProfessorView: View {
             } label: {
                 Image(systemName: "doc.text.magnifyingglass")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .foregroundColor(.accentWarm)
             .help("Fichiers lus par le professeur pour cette séance")
             .accessibilityLabel("Contexte de la séance")
@@ -69,7 +69,7 @@ struct ProfessorView: View {
             } label: {
                 Image(systemName: "arrow.counterclockwise")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .foregroundColor(.accentWarm)
             .disabled(session.isSending || session.turns.isEmpty)
             .help("Nouvelle séance")
@@ -83,7 +83,7 @@ struct ProfessorView: View {
     private var header: some View {
         HStack(spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 13, weight: .medium))
@@ -96,7 +96,7 @@ struct ProfessorView: View {
                                 .stroke(showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -180,7 +180,7 @@ struct ProfessorView: View {
                 .padding(compact ? 14 : 24)
             }
             .onChange(of: session.turns.count) { _, _ in
-                withAnimation { proxy.scrollTo(session.isSending ? AnyHashable("sending") : AnyHashable(session.turns.last?.id), anchor: .bottom) }
+                withAppAnimation { proxy.scrollTo(session.isSending ? AnyHashable("sending") : AnyHashable(session.turns.last?.id), anchor: .bottom) }
             }
         }
     }
@@ -245,7 +245,7 @@ struct ProfessorView: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill").font(.system(size: 11))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .accessibilityLabel("Retirer le texte joint")
                 }
                 .foregroundColor(.labelMuted)
@@ -258,7 +258,7 @@ struct ProfessorView: View {
                         .font(.system(size: 13, weight: .medium))
                         .frame(width: 30, height: 30)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .foregroundColor(.accentWarm)
                 .help("Joindre un texte à relire (dossier Dépôts)")
                 .accessibilityLabel("Joindre un texte à relire")

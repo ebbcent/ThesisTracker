@@ -52,7 +52,7 @@ struct WritingSlotsSettingsView: View {
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.accent)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(14)
         }
@@ -70,7 +70,7 @@ struct WritingSlotsSettingsView: View {
                 } label: {
                     Image(systemName: "trash").font(.system(size: 12)).foregroundColor(.labelMuted)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Supprimer ce créneau")
             }
             HStack(spacing: 4) {
@@ -90,7 +90,7 @@ struct WritingSlotsSettingsView: View {
                             .background(Circle().fill(isOn ? Color.accent : Color.fieldBg))
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: isOn ? 0 : 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 Spacer(minLength: 12)
                 DatePicker("", selection: binding(slot.id, \.startDate, default: Date()), displayedComponents: .hourAndMinute)

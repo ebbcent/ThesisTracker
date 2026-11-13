@@ -88,7 +88,7 @@ struct FocusWritingView: View {
                             Color.white.opacity(0.06).frame(height: 3)
                             Color.accentGreen.opacity(0.8)
                                 .frame(width: geo.size.width * chapterProgress, height: 3)
-                                .animation(.spring(response: 0.6), value: chapterProgress)
+                                .appAnimation(Motion.progress, value: chapterProgress)
                         }
                     }
                     .frame(height: 3)
@@ -143,7 +143,7 @@ struct FocusWritingView: View {
                                 .font(.system(size: counterSize, weight: .bold, design: .rounded))
                                 .foregroundColor(.white)
                                 .contentTransition(.numericText())
-                                .animation(.spring(response: 0.4), value: currentTotal)
+                                .appAnimation(Motion.progress, value: currentTotal)
                             Text(store.data.useWordCount ? "mots" : "car.")
                                 .font(.system(size: 22, weight: .light))
                                 .foregroundColor(.white.opacity(0.4))
@@ -172,7 +172,7 @@ struct FocusWritingView: View {
                                         RoundedRectangle(cornerRadius: 2)
                                             .fill(ratio >= 1.0 ? Color.accentGreen : Color.accent)
                                             .frame(width: max(0, geo.size.width * ratio), height: 4)
-                                            .animation(.spring(response: 0.5), value: ratio)
+                                            .appAnimation(Motion.progress, value: ratio)
                                     }
                                 }
                                 .frame(width: 280, height: 4)
@@ -184,7 +184,7 @@ struct FocusWritingView: View {
                         }
                     }
                     .scaleEffect(pulseAmount)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: pulseAmount)
+                    .appAnimation(Motion.celebrate, value: pulseAmount)
 
                     // Champ de saisie + bouton
                     HStack(spacing: 12) {
@@ -232,9 +232,9 @@ struct FocusWritingView: View {
                                 }
                             )
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(inputInt == nil)
-                        .animation(.easeInOut(duration: 0.2), value: savedConfirmation)
+                        .appAnimation(.easeInOut(duration: 0.2), value: savedConfirmation)
                     }
 
                     // #3 — Suggestion "+delta habituel"
@@ -258,7 +258,7 @@ struct FocusWritingView: View {
                                     .clipShape(Capsule())
                                     .overlay(Capsule().stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             Text(store.data.useWordCount ? "mots" : "car.")
                                 .font(.system(size: 11))
                                 .foregroundColor(.white.opacity(0.25))
@@ -285,7 +285,7 @@ struct FocusWritingView: View {
                                         .clipShape(Capsule())
                                         .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                                 .help("Saisir \(DataStore.formatNumber(val)) \(store.data.useWordCount ? "mots" : "car.")")
                             }
                         }
@@ -332,17 +332,17 @@ struct FocusWritingView: View {
                                             .background(Color.yellow.opacity(0.15))
                                             .clipShape(Capsule())
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.pressable)
                                 }
                                 Button {
-                                    withAnimation(.easeOut(duration: 0.15)) { showIdeaZone = false }
+                                    withAppAnimation(.easeOut(duration: 0.15)) { showIdeaZone = false }
                                     ideaText = ""
                                 } label: {
                                     Image(systemName: "xmark")
                                         .font(.system(size: 10))
                                         .foregroundColor(.white.opacity(0.3))
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                                 .help("Fermer la zone d’idées")
                                 .accessibilityLabel("Fermer la zone d’idées")
                             }
@@ -370,7 +370,7 @@ struct FocusWritingView: View {
                         Spacer()
                         // #6 — Toggle idée rapide
                         Button {
-                            withAnimation(.easeOut(duration: 0.15)) { showIdeaZone.toggle() }
+                            withAppAnimation(.easeOut(duration: 0.15)) { showIdeaZone.toggle() }
                             if !showIdeaZone { ideaText = "" }
                         } label: {
                             HStack(spacing: 4) {
@@ -386,7 +386,7 @@ struct FocusWritingView: View {
                             .overlay(Capsule().stroke(
                                 showIdeaZone ? Color.yellow.opacity(0.25) : Color.white.opacity(0.08), lineWidth: 1))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Capturer une idée sans affecter le compteur")
                     }
                 }
@@ -408,7 +408,7 @@ struct FocusWritingView: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Color.white.opacity(0.12), lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(20)
                     .keyboardShortcut(.escape, modifiers: [])
                     .help("Fermer")
@@ -435,11 +435,11 @@ struct FocusWritingView: View {
               let proj = activeProject else { return }
         store.setTotalForDate(count, for: ch.id, in: proj.id, date: todayStr)
         saveNote()
-        withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = true }
+        withAppAnimation(.easeOut(duration: 0.15)) { savedConfirmation = true }
         pulseAmount = 1.04
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { pulseAmount = 1.0 }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation { savedConfirmation = false }
+            withAppAnimation { savedConfirmation = false }
         }
     }
 
@@ -461,7 +461,7 @@ struct FocusWritingView: View {
         )
         store.addLogEntry(entry, for: ch.id, in: proj.id)
         ideaText = ""
-        withAnimation(.easeOut(duration: 0.15)) { showIdeaZone = false }
+        withAppAnimation(.easeOut(duration: 0.15)) { showIdeaZone = false }
     }
 
     private var currentTimeString: String {

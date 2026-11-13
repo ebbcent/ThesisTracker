@@ -119,7 +119,7 @@ struct CommandPaletteView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.labelMuted)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Effacer la recherche")
                         .accessibilityLabel("Effacer la recherche")
                     }
@@ -167,7 +167,7 @@ struct CommandPaletteView: View {
                                         )
                                         .contentShape(Rectangle())
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.pressable)
                                     .id(i)
                                 }
                             }
@@ -175,7 +175,7 @@ struct CommandPaletteView: View {
                         }
                         .frame(maxHeight: 320)
                         .onChange(of: selectedIndex) { _, idx in
-                            withAnimation { proxy.scrollTo(idx, anchor: .center) }
+                            withAppAnimation { proxy.scrollTo(idx, anchor: .center) }
                         }
                     }
 

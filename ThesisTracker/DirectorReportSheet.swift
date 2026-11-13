@@ -66,8 +66,8 @@ struct DirectorReportSheet: View {
             Button {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(generateReport(), forType: .string)
-                withAnimation(.easeOut(duration: 0.15)) { copied = true }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { withAnimation { copied = false } }
+                withAppAnimation(.easeOut(duration: 0.15)) { copied = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { withAppAnimation { copied = false } }
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: copied ? "checkmark.circle.fill" : "doc.on.clipboard")
@@ -84,14 +84,14 @@ struct DirectorReportSheet: View {
                             .stroke(copied ? Color.accentGreen.opacity(0.3) : Color.clear, lineWidth: 1))
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Button { dismiss() } label: {
                 Image(systemName: "xmark").font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.labelMuted).padding(7)
                     .background(Circle().fill(Color.glassFill))
                     .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -104,7 +104,7 @@ struct DirectorReportSheet: View {
         HStack(spacing: 12) {
             ForEach(Period.allCases) { p in
                 Button {
-                    withAnimation(.easeInOut(duration: 0.15)) { period = p }
+                    withAppAnimation(.easeInOut(duration: 0.15)) { period = p }
                 } label: {
                     Text(p.rawValue)
                         .font(.system(size: 12, weight: period == p ? .semibold : .regular))
@@ -113,7 +113,7 @@ struct DirectorReportSheet: View {
                         .background(period == p ? Color(hex: "#0369A1") : Color.fieldBg)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
             if period == .custom {
                 DatePicker("", selection: $customStart, displayedComponents: .date)

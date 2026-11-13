@@ -101,7 +101,7 @@ struct SidebarView: View {
                     Color.clear.frame(height: 18)
                         .dropDestination(for: String.self) { _, _ in false } isTargeted: { hovering in
                             if hovering {
-                                withAnimation(.easeOut(duration: 0.25)) {
+                                withAppAnimation(.easeOut(duration: 0.25)) {
                                     proxy.scrollTo("__sidebar_top__", anchor: .top)
                                 }
                             }
@@ -111,7 +111,7 @@ struct SidebarView: View {
                     Color.clear.frame(height: 18)
                         .dropDestination(for: String.self) { _, _ in false } isTargeted: { hovering in
                             if hovering {
-                                withAnimation(.easeOut(duration: 0.25)) {
+                                withAppAnimation(.easeOut(duration: 0.25)) {
                                     proxy.scrollTo("__sidebar_bottom__", anchor: .bottom)
                                 }
                             }
@@ -180,14 +180,14 @@ struct SidebarView: View {
                     .help("Sauvegarde échouée — \(saveError). Vos modifications ne sont pas encore sur le disque.")
                     .accessibilityLabel("Sauvegarde échouée")
                     .accessibilityHint(saveError)
-                    .transition(.scale(scale: 0.7).combined(with: .opacity))
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
             } else if store.showSaveIndicator {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 11))
                     .foregroundColor(.accentGreen.opacity(0.85))
                     .help("Sauvegardé")
                     .accessibilityLabel("Sauvegardé")
-                    .transition(.scale(scale: 0.7).combined(with: .opacity))
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
             }
             if store.isUsingICloud {
                 Image(systemName: "icloud.fill")
@@ -197,7 +197,7 @@ struct SidebarView: View {
                     .accessibilityLabel("iCloud Drive activé")
             }
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar = false }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar = false }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 12, weight: .medium))
@@ -207,13 +207,13 @@ struct SidebarView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.cardBorder, lineWidth: 1))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Masquer la barre latérale")
             .accessibilityLabel("Masquer la barre latérale")
         }
         .padding(.horizontal, 14).padding(.vertical, 12)
-        .animation(.easeInOut(duration: 0.3), value: store.showSaveIndicator)
-        .animation(.easeInOut(duration: 0.3), value: store.saveErrorMessage != nil)
+        .appAnimation(Motion.quick, value: store.showSaveIndicator)
+        .appAnimation(Motion.quick, value: store.saveErrorMessage != nil)
     }
 
     // MARK: - Section helpers
@@ -269,7 +269,7 @@ struct SidebarView: View {
     private func navGroup(label: String, items: [NavItem], collapsed: Binding<Bool>) -> some View {
         VStack(spacing: 0) {
             Button {
-                withAnimation(.easeInOut(duration: 0.15)) { collapsed.wrappedValue.toggle() }
+                withAppAnimation(.easeInOut(duration: 0.15)) { collapsed.wrappedValue.toggle() }
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: collapsed.wrappedValue ? "chevron.right" : "chevron.down")
@@ -286,14 +286,14 @@ struct SidebarView: View {
                 .padding(.top, 9)
                 .padding(.bottom, 2)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help(collapsed.wrappedValue ? "Déplier \(label)" : "Replier \(label)")
 
             if !collapsed.wrappedValue {
                 VStack(spacing: 1) {
                     ForEach(items) { item in
                         NavItemRow(item: item, isSelected: selectedNav == item) {
-                            withAnimation(.easeInOut(duration: 0.12)) { selectedNav = item }
+                            withAppAnimation(.easeInOut(duration: 0.12)) { selectedNav = item }
                         }
                     }
                 }
@@ -321,7 +321,7 @@ struct SidebarView: View {
                     .font(.system(size: 10, weight: .bold)).foregroundColor(.labelMuted).kerning(1.0)
                 Spacer()
                 Button {
-                    withAnimation { compactMode.toggle() }
+                    withAppAnimation { compactMode.toggle() }
                 } label: {
                     Image(systemName: compactMode ? "rectangle.compress.vertical" : "rectangle.expand.vertical")
                         .font(.system(size: 10, weight: .semibold))
@@ -330,11 +330,11 @@ struct SidebarView: View {
                         .background(compactMode ? Color.accent.opacity(0.10) : Color.clear)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help(compactMode ? "Vue détaillée" : "Vue compacte")
                 .accessibilityLabel(compactMode ? "Passer en vue détaillée" : "Passer en vue compacte")
                 Button {
-                    withAnimation { reviewFocusMode.toggle() }
+                    withAppAnimation { reviewFocusMode.toggle() }
                 } label: {
                     Image(systemName: reviewFocusMode ? "person.fill.badge.plus" : "person.badge.plus")
                         .font(.system(size: 10, weight: .semibold))
@@ -343,11 +343,11 @@ struct SidebarView: View {
                         .background(reviewFocusMode ? Color(hex: "#7C3AED").opacity(0.10) : Color.clear)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help(reviewFocusMode ? "Quitter le mode revues" : "Mode revues directeur")
                 .accessibilityLabel(reviewFocusMode ? "Quitter le mode revues" : "Activer le mode revues")
                 Button {
-                    withAnimation { store.data.sortProjectsAlphabetically.toggle(); store.save() }
+                    withAppAnimation { store.data.sortProjectsAlphabetically.toggle(); store.save() }
                 } label: {
                     Image(systemName: "textformat.abc")
                         .font(.system(size: 10, weight: .semibold))
@@ -356,11 +356,11 @@ struct SidebarView: View {
                         .background(store.data.sortProjectsAlphabetically ? Color.accent.opacity(0.10) : Color.clear)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help(store.data.sortProjectsAlphabetically ? "Ordre alphabétique (actif)" : "Trier A → Z")
                 .accessibilityLabel(store.data.sortProjectsAlphabetically ? "Tri alphabétique activé" : "Trier alphabétiquement")
                 Button {
-                    withAnimation {
+                    withAppAnimation {
                         if expandedProjects.count >= sortedProjects.count {
                             expandedProjects.removeAll()
                         } else {
@@ -375,7 +375,7 @@ struct SidebarView: View {
                         .frame(width: 22, height: 22)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help(expandedProjects.count >= sortedProjects.count ? "Tout replier" : "Tout déplier")
                 .accessibilityLabel(expandedProjects.count >= sortedProjects.count ? "Replier tous les projets" : "Déplier tous les projets")
                 Button { editingFolderName = ""; showAddFolder = true } label: {
@@ -383,7 +383,7 @@ struct SidebarView: View {
                         .font(.system(size: 11, weight: .semibold)).foregroundColor(.labelMuted)
                         .frame(width: 22, height: 22).clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain).help("Nouveau dossier")
+                .buttonStyle(.pressable).help("Nouveau dossier")
                 .accessibilityLabel("Nouveau dossier")
                 Button { showAddProject = true } label: {
                     Image(systemName: "plus")
@@ -391,7 +391,7 @@ struct SidebarView: View {
                         .frame(width: 22, height: 22)
                         .background(Color.accent.opacity(0.10)).clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain).help("Nouveau projet")
+                .buttonStyle(.pressable).help("Nouveau projet")
                 .accessibilityLabel("Nouveau projet")
             }
             .padding(.horizontal, 18).padding(.bottom, 8)
@@ -411,7 +411,7 @@ struct SidebarView: View {
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted.opacity(0.7))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Effacer le filtre")
                     .accessibilityLabel("Effacer le filtre")
                 }
@@ -447,7 +447,7 @@ struct SidebarView: View {
                             .background(Color.accent)
                             .clipShape(Capsule())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .accessibilityLabel("Créer un premier projet")
                     }
                     .frame(maxWidth: .infinity).padding(.vertical, 24)
@@ -507,7 +507,7 @@ struct SidebarView: View {
                                 store.moveProjectToEnd(id)
                                 return true
                             } isTargeted: { targeted in
-                                withAnimation { dropTargetProjectId = targeted ? UUID() : nil }
+                                withAppAnimation { dropTargetProjectId = targeted ? UUID() : nil }
                             }
                     }
                 }
@@ -607,7 +607,7 @@ struct SidebarView: View {
             .background(RoundedRectangle(cornerRadius: 7).fill(Color.cardBg.opacity(0.7)))
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Pinned section (épinglés)
@@ -650,14 +650,14 @@ struct SidebarView: View {
                                     .font(.system(size: 8))
                                     .foregroundColor(.labelMuted.opacity(0.6))
                             }
-                            .buttonStyle(.plain).help("Désépingler")
+                            .buttonStyle(.pressable).help("Désépingler")
                             .accessibilityLabel("Désépingler")
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(RoundedRectangle(cornerRadius: 6).fill(Color.accentWarm.opacity(0.06)))
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
 
                 ForEach(pinnedChapters, id: \.chapter.id) { item in
@@ -683,14 +683,14 @@ struct SidebarView: View {
                                     .font(.system(size: 8))
                                     .foregroundColor(.labelMuted.opacity(0.6))
                             }
-                            .buttonStyle(.plain).help("Désépingler")
+                            .buttonStyle(.pressable).help("Désépingler")
                             .accessibilityLabel("Désépingler")
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(RoundedRectangle(cornerRadius: 6).fill(Color.accentWarm.opacity(0.04)))
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
             .padding(.horizontal, 2).padding(.bottom, 6)
@@ -708,7 +708,7 @@ struct SidebarView: View {
 
             // Header
             Button {
-                withAnimation(.easeInOut(duration: 0.2)) { showArchivedSection.toggle() }
+                withAppAnimation(.easeInOut(duration: 0.2)) { showArchivedSection.toggle() }
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: showArchivedSection ? "archivebox.fill" : "archivebox")
@@ -724,7 +724,7 @@ struct SidebarView: View {
                 }
                 .padding(.horizontal, 12).padding(.vertical, 6)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             if showArchivedSection {
                 VStack(alignment: .leading, spacing: 2) {
@@ -744,7 +744,7 @@ struct SidebarView: View {
                                     .font(.system(size: 10, weight: .medium))
                                     .foregroundColor(.accent)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                         }
                         .padding(.horizontal, 14).padding(.vertical, 5)
                     }
@@ -782,7 +782,7 @@ struct SidebarView: View {
                                 RoundedRectangle(cornerRadius: 2)
                                     .fill(ratio >= 1.0 ? Color.accentGreen : Color.accent)
                                     .frame(width: geo.size.width * CGFloat(ratio), height: 3)
-                                    .animation(.spring(response: 0.6, dampingFraction: 0.85), value: ratio)
+                                    .appAnimation(Motion.progress, value: ratio)
                             }
                         }
                     }
@@ -902,7 +902,7 @@ struct SidebarView: View {
                 }
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help(count == 0 ? "Glisse un chapitre ici pour l'archiver"
                           : "\(count) chapitre\(count > 1 ? "s" : "") archivé\(count > 1 ? "s" : "") · clique pour restaurer")
         .accessibilityLabel("Archive")
@@ -918,7 +918,7 @@ struct SidebarView: View {
             chapterSelection.clear()
             return true
         } isTargeted: { targeted in
-            withAnimation { archiveDropActive = targeted }
+            withAppAnimation { archiveDropActive = targeted }
         }
         .popover(isPresented: $showArchivedChaptersPopover, arrowEdge: .top) {
             ArchivedChaptersPopover(store: store, isPresented: $showArchivedChaptersPopover)
@@ -950,7 +950,7 @@ struct SidebarView: View {
     // MARK: - Helpers
 
     private func toggleExpand(_ id: UUID) {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+        withAppAnimation(Motion.panel) {
             if expandedProjects.contains(id) { expandedProjects.remove(id) }
             else { expandedProjects.insert(id) }
         }
@@ -988,7 +988,7 @@ struct SidebarView: View {
                 )
                 .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help(help)
         .accessibilityLabel(help)
     }
@@ -1012,7 +1012,7 @@ private struct NavItemRow: View {
                           : LinearGradient(colors: [Color.clear], startPoint: .top, endPoint: .bottom))
                     .frame(width: 3, height: 16)
                     .padding(.leading, 2)
-                    .animation(.easeInOut(duration: 0.12), value: isSelected)
+                    .appAnimation(.easeInOut(duration: 0.12), value: isSelected)
 
                 HStack(spacing: 8) {
                     Image(systemName: item.icon)
@@ -1030,7 +1030,7 @@ private struct NavItemRow: View {
                             .padding(.horizontal, 5).padding(.vertical, 2)
                             .background(Color.fieldBg)
                             .clipShape(RoundedRectangle(cornerRadius: 4))
-                            .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .trailing)))
+                            .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .trailing)))
                     }
                 }
                 .padding(.horizontal, 9).padding(.vertical, 7)
@@ -1046,9 +1046,9 @@ private struct NavItemRow: View {
             .padding(.horizontal, 6)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.08)) { isHovering = hovering }
+            withAppAnimation(.easeInOut(duration: 0.08)) { isHovering = hovering }
         }
     }
 }
@@ -1077,7 +1077,7 @@ struct FolderFormView: View {
                         .padding(.horizontal, 18).padding(.vertical, 10).background(Color.cardBg)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
-                        .buttonStyle(.plain).keyboardShortcut(.escape)
+                        .buttonStyle(.pressable).keyboardShortcut(.escape)
                     Spacer()
                     Button("Créer") {
                         guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { return }
@@ -1087,7 +1087,7 @@ struct FolderFormView: View {
                     .padding(.horizontal, 22).padding(.vertical, 10)
                     .background(!name.trimmingCharacters(in: .whitespaces).isEmpty ? Color.accent : Color.cardBorder)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .buttonStyle(.plain).disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .buttonStyle(.pressable).disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                     .keyboardShortcut(.return)
                 }
             }
@@ -1161,7 +1161,7 @@ private struct ArchivedChaptersPopover: View {
                                         .font(.system(size: 10, weight: .medium))
                                         .foregroundColor(.accent)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                             }
                             .padding(.horizontal, 10).padding(.vertical, 6)
                             .background(RoundedRectangle(cornerRadius: 6).fill(Color.cardBg.opacity(0.7)))
@@ -1294,7 +1294,7 @@ struct FolderSidebarRow: View {
                                 sidebarFilter: sidebarFilter,
                                 chapterSelection: chapterSelection,
                                 onToggleExpand: {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    withAppAnimation(Motion.panel) {
                                         if expandedProjects.contains(project.id) { expandedProjects.remove(project.id) }
                                         else { expandedProjects.insert(project.id) }
                                     }
@@ -1354,7 +1354,7 @@ struct FolderSidebarRow: View {
                     Text("\(totalProjectCount)").font(.system(size: 10, weight: .medium)).foregroundColor(.labelMuted)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Menu {
                 Button("Renommer") { renameDraft = folder.name }
                 Button("Nouveau sous-dossier…") {
@@ -1424,7 +1424,7 @@ struct FolderSidebarRow: View {
             isDropTarget = false
             return true
         } isTargeted: { targeted in
-            withAnimation { isDropTarget = targeted }
+            withAppAnimation { isDropTarget = targeted }
         }
     }
 }
@@ -1646,7 +1646,7 @@ private struct MiniProgressRing: View {
                 .trim(from: 0, to: CGFloat(min(ratio, 1.0)))
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: ratio)
+                .appAnimation(Motion.progress, value: ratio)
             if ratio > 0 {
                 Text("\(Int(ratio * 100))%")
                     .font(.system(size: 5.5, weight: .bold))
@@ -1768,7 +1768,7 @@ struct ProjectSidebarRow: View {
                             .opacity(0.85)
                     }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 HStack(spacing: 4) {
                     Button {
@@ -1782,7 +1782,7 @@ struct ProjectSidebarRow: View {
                             .background(Color.accent.opacity(0.08))
                             .clipShape(RoundedRectangle(cornerRadius: 5))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Nouveau dossier dans \(project.name)")
                     .accessibilityLabel("Nouveau dossier")
 
@@ -1790,7 +1790,7 @@ struct ProjectSidebarRow: View {
                         Image(systemName: "plus").font(.system(size: 10, weight: .semibold)).foregroundColor(.accent)
                             .frame(width: 20, height: 20).background(Color.accent.opacity(0.10)).clipShape(RoundedRectangle(cornerRadius: 5))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Nouveau chapitre dans \(project.name)")
                     .accessibilityLabel("Nouveau chapitre")
 
@@ -1907,7 +1907,7 @@ struct ProjectSidebarRow: View {
                 dropTargetProjectId = nil
                 return true
             } isTargeted: { targeted in
-                withAnimation { dropTargetProjectId = targeted ? project.id : nil }
+                withAppAnimation { dropTargetProjectId = targeted ? project.id : nil }
             }
             .overlay(alignment: .top) {
                 if dropTargetProjectId == project.id {
@@ -1930,7 +1930,7 @@ struct ProjectSidebarRow: View {
                             .foregroundColor(.accent.opacity(0.7)).padding(.leading, 28).padding(.vertical, 6)
                             .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     } else {
                         // Chapitres non rangés — affichés EN PREMIER
                         let ungrouped = sortedChapters.filter { $0.chapterFolderId == nil }
@@ -1967,7 +1967,7 @@ struct ProjectSidebarRow: View {
                                     dropTargetChapterId = nil
                                     return true
                                 } isTargeted: { targeted in
-                                    withAnimation { dropTargetChapterId = targeted ? chapter.id : nil }
+                                    withAppAnimation { dropTargetChapterId = targeted ? chapter.id : nil }
                                 }
                                 .overlay(alignment: .top) {
                                     if dropTargetChapterId == chapter.id {
@@ -2211,14 +2211,14 @@ private struct ChapterFolderSidebarRow: View {
                                 .font(.system(size: 10)).foregroundColor(.labelMuted)
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Button { showAddChapter = true } label: {
                         Image(systemName: "plus").font(.system(size: 9, weight: .semibold)).foregroundColor(.accent)
                             .frame(width: 18, height: 18).background(Color.accent.opacity(0.08))
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Nouveau chapitre")
                     .accessibilityLabel("Nouveau chapitre")
 
@@ -2299,7 +2299,7 @@ private struct ChapterFolderSidebarRow: View {
                     }
                     return false
                 } isTargeted: { targeted in
-                    withAnimation { isDropTarget = targeted }
+                    withAppAnimation { isDropTarget = targeted }
                 }
 
                 if folder.isExpanded || filterActive {
@@ -2341,7 +2341,7 @@ private struct ChapterFolderSidebarRow: View {
                                 .foregroundColor(.accent.opacity(0.6)).padding(.leading, 24).padding(.vertical, 4)
                                 .contentShape(Rectangle())
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                         } else {
                             let folderChapterIds = chaptersInFolder.map(\.id)
                             ForEach(chaptersInFolder) { chapter in
@@ -2586,7 +2586,7 @@ struct ChapterSidebarRow: View {
                     Spacer()
                     HStack(spacing: 8) {
                         Button("Hist.") { onHistory() }
-                            .font(.system(size: 10)).foregroundColor(.accent).buttonStyle(.plain)
+                            .font(.system(size: 10)).foregroundColor(.accent).buttonStyle(.pressable)
                         Menu {
                             Button("Modifier") { onEdit() }
                             Button("Statut du chapitre…") { showStatusPicker = true }  // V3.2
@@ -2671,7 +2671,7 @@ struct ChapterSidebarRow: View {
                     lineWidth: isMultiSelected ? 1.5 : 1
                 ))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help(rowTooltip)
         // Clic droit — menu contextuel
         .contextMenu {

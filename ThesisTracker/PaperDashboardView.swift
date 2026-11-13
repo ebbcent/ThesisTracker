@@ -75,7 +75,7 @@ struct PaperDashboardView: View {
         .alert("Effacer cette entrée ?", isPresented: $showDeleteConfirm) {
             Button("Effacer", role: .destructive) {
                 if let chapter = activeChapter, let project = activeProject {
-                    withAnimation { store.deleteEntry(for: chapter.id, in: project.id, date: selectedDateStr) }
+                    withAppAnimation { store.deleteEntry(for: chapter.id, in: project.id, date: selectedDateStr) }
                     inputText = ""
                 }
             }
@@ -90,7 +90,7 @@ struct PaperDashboardView: View {
     private var paperHeader: some View {
         HStack(alignment: .center, spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 14, weight: .medium))
@@ -103,7 +103,7 @@ struct PaperDashboardView: View {
                                 .stroke(Color.cardBorder.opacity(0.7), lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -139,7 +139,7 @@ struct PaperDashboardView: View {
                                 .stroke(Color.cardBorder.opacity(0.7), lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Réglages")
             .accessibilityLabel("Réglages")
         }
@@ -213,7 +213,7 @@ struct PaperDashboardView: View {
                     .font(.system(size: 64, weight: .light))
                     .foregroundColor(.primary)
                     .contentTransition(.numericText())
-                    .animation(.spring(response: 0.5), value: count)
+                    .appAnimation(Motion.progress, value: count)
 
                 Text(store.data.useWordCount ? "mots" : "car.")
                     .font(.system(size: 20))
@@ -254,10 +254,10 @@ struct PaperDashboardView: View {
                     .datePickerStyle(.compact)
                     .onChange(of: selectedDate) { _, _ in refreshInput() }
                 if !isToday {
-                    Button("Aujourd'hui") { withAnimation { selectedDate = Date() } }
+                    Button("Aujourd'hui") { withAppAnimation { selectedDate = Date() } }
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.accent)
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     Label("Passé", systemImage: "clock.arrow.circlepath")
                         .font(.system(size: 11))
                         .foregroundColor(.orange)
@@ -269,7 +269,7 @@ struct PaperDashboardView: View {
                             .font(.system(size: 11))
                             .foregroundColor(Color(red: 1, green: 0.35, blue: 0.35))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
 
@@ -309,9 +309,9 @@ struct PaperDashboardView: View {
                                     radius: 6, x: 0, y: 2)
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(inputInt == nil)
-                .animation(.easeInOut(duration: 0.22), value: savedConfirmation)
+                .appAnimation(.easeInOut(duration: 0.22), value: savedConfirmation)
             }
 
             // Note
@@ -548,13 +548,13 @@ struct PaperDashboardView: View {
                 .font(.system(size: 15))
                 .foregroundColor(.secondary)
             Button("Ouvrir les projets") {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
             }
             .font(.system(size: 13, weight: .medium))
             .foregroundColor(.white)
             .padding(.horizontal, 20).padding(.vertical, 9)
             .background(RoundedRectangle(cornerRadius: 9).fill(Color.accent))
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
@@ -611,10 +611,10 @@ struct PaperDashboardView: View {
 
     private func saveEntry() {
         guard let count = inputInt, let chapter = activeChapter, let project = activeProject else { return }
-        withAnimation { store.setTotalForDate(count, for: chapter.id, in: project.id, date: selectedDateStr) }
-        withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = true }
+        withAppAnimation { store.setTotalForDate(count, for: chapter.id, in: project.id, date: selectedDateStr) }
+        withAppAnimation(.easeOut(duration: 0.15)) { savedConfirmation = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation(.easeOut(duration: 0.15)) { savedConfirmation = false }
+            withAppAnimation(.easeOut(duration: 0.15)) { savedConfirmation = false }
         }
     }
 

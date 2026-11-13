@@ -58,7 +58,7 @@ struct ImportView: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Fermer")
                     .accessibilityLabel("Fermer")
                 }
@@ -74,14 +74,14 @@ struct ImportView: View {
                         Button("Choisir un fichier CSV…") { openFile() }
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.accent)
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                         if !pastedText.isEmpty {
                             Button { pastedText = "" } label: {
                                 Image(systemName: "xmark.circle.fill")
                                     .foregroundColor(.labelMuted)
                                     .font(.system(size: 12))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .help("Effacer le texte collé")
                             .accessibilityLabel("Effacer le texte collé")
                         }
@@ -159,7 +159,7 @@ struct ImportView: View {
                         .background(Color.cardBg)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
 
                     Spacer()
 
@@ -179,9 +179,9 @@ struct ImportView: View {
                         .shadow(color: canImport ? Color.accent.opacity(0.30) : .clear, radius: 6, x: 0, y: 3)
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .disabled(!canImport)
-                    .animation(.easeInOut(duration: 0.2), value: importDone)
+                    .appAnimation(.easeInOut(duration: 0.2), value: importDone)
                 }
             }
             .padding(28)
@@ -478,7 +478,7 @@ struct ImportView: View {
         for entry in parsedEntries {
             store.setTotalForDate(entry.count, for: chapterId, in: projectId, date: entry.date)
         }
-        withAnimation { importDone = true }
+        withAppAnimation { importDone = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { dismiss() }
     }
 

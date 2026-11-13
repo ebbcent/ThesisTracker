@@ -87,7 +87,7 @@ struct ProgressRingView: View {
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .frame(width: size, height: size)
                 .rotationEffect(.degrees(-90))
-                .animation(.easeOut(duration: 0.25), value: ratio)
+                .appAnimation(.easeOut(duration: 0.25), value: ratio)
             if let label {
                 Text(label)
                     .font(.system(size: size * 0.28, weight: .bold, design: .rounded))
@@ -179,7 +179,7 @@ struct CompactDatePicker: View {
                     .foregroundColor(canGoPrev ? .labelMuted : .labelMuted.opacity(0.25))
                     .frame(width: 28, height: 30)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(!canGoPrev)
             .help("Jour précédent")
             .accessibilityLabel("Jour précédent")
@@ -195,7 +195,7 @@ struct CompactDatePicker: View {
                     .padding(.horizontal, 10)
                     .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .popover(isPresented: $isOpen, arrowEdge: .bottom) {
                 popoverContent
                     .background(Color.cardBg)
@@ -211,7 +211,7 @@ struct CompactDatePicker: View {
                     .foregroundColor(canGoNext ? .labelMuted : .labelMuted.opacity(0.25))
                     .frame(width: 28, height: 30)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(!canGoNext)
             .help("Jour suivant")
             .accessibilityLabel("Jour suivant")
@@ -248,7 +248,7 @@ struct CompactDatePicker: View {
                         .background(Color.glassFill)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Mois précédent")
                 .accessibilityLabel("Mois précédent")
 
@@ -266,7 +266,7 @@ struct CompactDatePicker: View {
                         .background(Color.glassFill)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(!canGoNextMonth)
                 .help("Mois suivant")
                 .accessibilityLabel("Mois suivant")
@@ -315,7 +315,7 @@ struct CompactDatePicker: View {
                             .font(.system(size: 10))
                             .foregroundColor(.accent)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Valider la date saisie")
                     .accessibilityLabel("Valider la date saisie")
                 }
@@ -353,7 +353,7 @@ struct CompactDatePicker: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 6))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .disabled(disabled)
     }
 
@@ -375,7 +375,7 @@ struct CompactDatePicker: View {
                 .clipShape(Capsule())
                 .overlay(Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .disabled(!available)
     }
 
@@ -514,7 +514,7 @@ struct CompactDropdownPicker: View {
                     .stroke(Color.glassBorder, lineWidth: 1)
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .popover(isPresented: $isOpen, arrowEdge: .bottom) {
             VStack(spacing: 2) {
                 ForEach(items, id: \.id) { item in
@@ -542,7 +542,7 @@ struct CompactDropdownPicker: View {
                         .background(item.id == selectedId ? iconColor.opacity(0.08) : Color.clear)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
             .padding(6)

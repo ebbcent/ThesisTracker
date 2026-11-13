@@ -15,7 +15,7 @@ struct TableOfContentsView: View {
                 // En-tête
                 HStack(spacing: 12) {
                     Button {
-                        withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                        withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
                     } label: {
                         Image(systemName: "sidebar.left")
                             .font(.system(size: 13, weight: .medium))
@@ -28,7 +28,7 @@ struct TableOfContentsView: View {
                                         .stroke(showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                             )
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Afficher ou masquer la barre latérale")
                     .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -55,7 +55,7 @@ struct TableOfContentsView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.2), lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
 
                 let activeProjects = store.data.projects.filter { !$0.isArchived }
@@ -94,7 +94,7 @@ struct TableOfContentsView: View {
             VStack(spacing: 0) {
                 // Projet header
                 Button {
-                    withAnimation(.easeOut(duration: 0.15)) {
+                    withAppAnimation(.easeOut(duration: 0.15)) {
                         if isExpanded { expandedProjects.remove(project.id) }
                         else { expandedProjects.insert(project.id) }
                     }
@@ -125,7 +125,7 @@ struct TableOfContentsView: View {
                             .font(.system(size: 10, weight: .medium)).foregroundColor(.labelMuted)
                     }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 if isExpanded && !project.chapters.isEmpty {
                     Divider().padding(.top, 8)
@@ -268,11 +268,11 @@ private struct ExportTextSheet: View {
                     .padding(.horizontal, 10).padding(.vertical, 5)
                     .background(Color.accent.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 Button { dismiss() } label: {
                     Image(systemName: "xmark").font(.system(size: 12, weight: .semibold)).foregroundColor(.labelMuted)
                         .padding(8).background(Color.cardBg).clipShape(Circle())
-                }.buttonStyle(.plain)
+                }.buttonStyle(.pressable)
                 .help("Fermer")
                 .accessibilityLabel("Fermer")
             }

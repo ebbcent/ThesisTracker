@@ -73,7 +73,7 @@ struct HeatmapView: View {
     private func headerView(metrics: ActivityMetrics) -> some View {
         HStack(alignment: .center, spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 15, weight: .medium))
@@ -88,7 +88,7 @@ struct HeatmapView: View {
                             )
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -121,8 +121,8 @@ struct HeatmapView: View {
                     pngExportSuccess ? Color.accentGreen.opacity(0.4) : Color.glassBorder, lineWidth: 1))
                 .contentShape(RoundedRectangle(cornerRadius: 10))
             }
-            .buttonStyle(.plain)
-            .animation(.easeInOut(duration: 0.2), value: pngExportSuccess)
+            .buttonStyle(.pressable)
+            .appAnimation(.easeInOut(duration: 0.2), value: pngExportSuccess)
             .help("Exporter la heatmap en image PNG")
         }
     }
@@ -183,7 +183,7 @@ struct HeatmapView: View {
                 .overlay(Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
                 .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // ── Stats row ─────────────────────────────────────────────────────────────

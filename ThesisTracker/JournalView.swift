@@ -66,7 +66,7 @@ struct JournalWidget: View {
                     .background(Color(red: 0.404, green: 0.224, blue: 0.718))
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showSheet) {
@@ -168,7 +168,7 @@ struct JournalSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -201,7 +201,7 @@ struct JournalSheet: View {
                     .background(Color(red: 0.404, green: 0.224, blue: 0.718))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(newEntryText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }
@@ -277,7 +277,7 @@ struct JournalSheet: View {
                         .font(.system(size: 11))
                         .foregroundColor(editingId == entry.id ? .accentGreen : .labelMuted.opacity(0.6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help(editingId == entry.id ? "Terminer" : "Modifier")
                 .accessibilityLabel(editingId == entry.id ? "Terminer" : "Modifier")
                 Button {
@@ -287,7 +287,7 @@ struct JournalSheet: View {
                         .font(.system(size: 11))
                         .foregroundColor(.labelMuted.opacity(0.6))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Supprimer")
                 .accessibilityLabel("Supprimer")
             }
@@ -302,7 +302,7 @@ struct JournalSheet: View {
                     store.updateJournalEntry(entry.id, content: editingText)
                     editingId = nil
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 10).padding(.vertical, 4)
@@ -354,21 +354,21 @@ struct JournalSheet: View {
             let data = DOCXWriter.make(title: "Journal de bord", blocks: blocks)
             do {
                 try data.write(to: url)
-                withAnimation { exportFeedback = .success("Journal exporté : \(url.lastPathComponent)") }
+                withAppAnimation { exportFeedback = .success("Journal exporté : \(url.lastPathComponent)") }
             } catch {
-                withAnimation { exportFeedback = .failure("Export impossible : \(error.localizedDescription)") }
+                withAppAnimation { exportFeedback = .failure("Export impossible : \(error.localizedDescription)") }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                withAnimation { exportFeedback = nil }
+                withAppAnimation { exportFeedback = nil }
             }
         }
     }
 
     private func copyForAppleNotes() {
         JournalExport.copyToPasteboard(entries: entries)
-        withAnimation { showCopyToast = true }
+        withAppAnimation { showCopyToast = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            withAnimation { showCopyToast = false }
+            withAppAnimation { showCopyToast = false }
         }
     }
 

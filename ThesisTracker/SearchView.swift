@@ -219,7 +219,7 @@ struct SearchView: View {
     private var headerView: some View {
         HStack(spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 15, weight: .medium))
@@ -232,7 +232,7 @@ struct SearchView: View {
                                 showSidebar ? Color.accent.opacity(0.30) : Color.cardBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -268,7 +268,7 @@ struct SearchView: View {
                             .foregroundColor(.labelMuted)
                             .font(.system(size: 14))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Effacer la recherche")
                     .accessibilityLabel("Effacer la recherche")
                 }
@@ -302,7 +302,7 @@ struct SearchView: View {
                     HStack(spacing: 6) {
                         ForEach(SearchSortOrder.allCases) { order in
                             Button {
-                                withAnimation(.easeInOut(duration: 0.15)) { sortOrder = order }
+                                withAppAnimation(.easeInOut(duration: 0.15)) { sortOrder = order }
                             } label: {
                                 Text(order.rawValue)
                                     .font(.system(size: 11, weight: sortOrder == order ? .semibold : .regular))
@@ -315,7 +315,7 @@ struct SearchView: View {
                                         sortOrder == order ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
                                     .contentShape(Capsule())
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                         }
                     }
                 }
@@ -339,7 +339,7 @@ struct SearchView: View {
             .overlay(Capsule().stroke(sel ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
             .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Results list
@@ -463,17 +463,9 @@ struct SearchView: View {
     }
 
     private var noResults: some View {
-        GlassCard {
-            VStack(spacing: 8) {
-                Image(systemName: "doc.text.magnifyingglass")
-                    .font(.system(size: 24))
-                    .foregroundColor(.labelMuted.opacity(0.5))
-                Text("Aucun résultat pour « \(query) »")
-                    .foregroundColor(.labelMuted)
-                    .font(.system(size: 13))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
+        GlassCard {   // 5.15 : état vide commun
+            EmptyStateView(icon: "doc.text.magnifyingglass", title: "Aucun résultat pour « \(query) »",
+                           message: "Essaie un autre mot, ou une partie seulement du mot.")
         }
     }
 }

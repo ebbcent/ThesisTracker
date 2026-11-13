@@ -44,7 +44,7 @@ struct DeadlineBoardView: View {
                 }
                 .id(selectedTab)
                 .transition(.opacity)
-                .animation(.easeInOut(duration: 0.15), value: selectedTab)
+                .appAnimation(.easeInOut(duration: 0.15), value: selectedTab)
             }
             .padding(20)
         }
@@ -65,7 +65,7 @@ struct DeadlineBoardView: View {
     private var headerView: some View {
         HStack(spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 15, weight: .medium))
@@ -78,7 +78,7 @@ struct DeadlineBoardView: View {
                                 showSidebar ? Color.accent.opacity(0.30) : Color.cardBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -115,7 +115,7 @@ struct DeadlineBoardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Exporter les deadlines et jalons au format iCal (.ics)")
 
             // Bouton ajouter jalon (tab Jalons uniquement)
@@ -162,7 +162,7 @@ struct DeadlineBoardView: View {
 
     private func tabButton(_ label: String, icon: String, tab: Tab) -> some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+            withAppAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: icon).font(.system(size: 11))
@@ -177,7 +177,7 @@ struct DeadlineBoardView: View {
             .clipShape(RoundedRectangle(cornerRadius: 9))
             .contentShape(RoundedRectangle(cornerRadius: 9))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Chapitres tab
@@ -220,7 +220,7 @@ struct DeadlineBoardView: View {
                                 }
                             }
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .padding(.top, 3)
                         .help(item.chapter.isCompleted ? "Marquer comme non terminé" : "Marquer comme terminé")
 
@@ -300,7 +300,7 @@ struct DeadlineBoardView: View {
     private func pacingToggle(for chapter: Chapter) -> some View {
         let open = expandedPacing.contains(chapter.id)
         return Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAppAnimation(.easeInOut(duration: 0.2)) {
                 if open { expandedPacing.remove(chapter.id) } else { expandedPacing.insert(chapter.id) }
             }
         } label: {
@@ -314,7 +314,7 @@ struct DeadlineBoardView: View {
             }
             .foregroundColor(.accentWarm)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .padding(.top, 8)
         .padding(.leading, 32)
     }
@@ -362,7 +362,7 @@ struct DeadlineBoardView: View {
                         }
                     }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(.top, 2)
 
                 VStack(alignment: .leading, spacing: 5) {
@@ -461,14 +461,14 @@ struct DeadlineBoardView: View {
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(.top, 1)
                 .help("Modifier le jalon")
                 .accessibilityLabel("Modifier le jalon")
 
                 // Delete
                 Button {
-                    withAnimation { store.deleteMilestone(item.milestone.id, from: item.project.id) }
+                    withAppAnimation { store.deleteMilestone(item.milestone.id, from: item.project.id) }
                 } label: {
                     Image(systemName: "trash")
                         .font(.system(size: 12))
@@ -477,7 +477,7 @@ struct DeadlineBoardView: View {
                         .background(Color.red.opacity(0.06))
                         .clipShape(Circle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(.top, 1)
                 .help("Supprimer le jalon")
                 .accessibilityLabel("Supprimer le jalon")
@@ -617,7 +617,7 @@ struct DeadlineBoardView: View {
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(.top, 1)
                 .help("Modifier le jalon")
                 .accessibilityLabel("Modifier le jalon")
@@ -1028,7 +1028,7 @@ extension DeadlineBoardView {
             .background(isEven ? Color.clear : Color.black.opacity(0.018))
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help(row.isMilestone ? "Modifier ce jalon" : "Voir ce chapitre dans l'onglet Chapitres")
     }
 
@@ -1042,7 +1042,7 @@ extension DeadlineBoardView {
             }
         } else {
             // #26 — naviguer vers l'onglet chapitres
-            withAnimation(.easeInOut(duration: 0.15)) { selectedTab = .chapitres }
+            withAppAnimation(.easeInOut(duration: 0.15)) { selectedTab = .chapitres }
         }
     }
 
@@ -1182,7 +1182,7 @@ struct MilestoneFormView: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Fermer")
                     .accessibilityLabel("Fermer")
                 }
@@ -1354,7 +1354,7 @@ struct MilestoneFormView: View {
                         .background(Color.cardBg)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
                     Spacer()
@@ -1365,7 +1365,7 @@ struct MilestoneFormView: View {
                         .padding(.horizontal, 22).padding(.vertical, 10)
                         .background(title.trimmingCharacters(in: .whitespaces).isEmpty ? Color.accent.opacity(0.4) : Color.accent)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
                         .keyboardShortcut(.return)
                 }

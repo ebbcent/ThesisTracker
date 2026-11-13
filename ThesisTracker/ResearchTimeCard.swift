@@ -39,7 +39,7 @@ struct ResearchTimeCard: View {
                             .background(Color.accent.opacity(0.10))
                             .clipShape(Circle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Ajouter une session")
                     .accessibilityLabel("Ajouter une session")
                 }
@@ -132,7 +132,7 @@ struct ResearchTimeCard: View {
                     .font(.system(size: 9))
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Supprimer la session")
             .accessibilityLabel("Supprimer la session")
         }
@@ -180,7 +180,7 @@ struct ResearchLogSheet: View {
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Fermer")
                 .accessibilityLabel("Fermer")
             }
@@ -260,7 +260,7 @@ struct ResearchLogSheet: View {
                 Button("Annuler") { isPresented = false }
                     .font(.system(size: 13))
                     .foregroundColor(.labelMuted)
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                 Button("Enregistrer") { save() }
                     .font(.system(size: 13, weight: .semibold))
@@ -268,7 +268,7 @@ struct ResearchLogSheet: View {
                     .padding(.horizontal, 18).padding(.vertical, 8)
                     .background(totalMinutes > 0 ? Color.accent : Color.accent.opacity(0.4))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .disabled(totalMinutes == 0)
             }
             .padding(20)
@@ -313,7 +313,7 @@ struct ResearchLogSheet: View {
                     .stroke(isSelected ? Color(hex: type.color).opacity(0.35) : Color.cardBorder, lineWidth: 1)
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private func durationPicker(value: Binding<Int>, label: String, range: ClosedRange<Int>, step: Int = 1) -> some View {

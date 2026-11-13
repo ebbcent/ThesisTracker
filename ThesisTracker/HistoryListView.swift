@@ -64,7 +64,7 @@ struct HistoryListView: View {
                 if let entry = entryToDelete,
                    let chapter = selectedChapter,
                    let project = selectedProject {
-                    withAnimation { store.deleteEntry(for: chapter.id, in: project.id, date: entry.date) }
+                    withAppAnimation { store.deleteEntry(for: chapter.id, in: project.id, date: entry.date) }
                     entryToDelete = nil
                 }
             }
@@ -81,7 +81,7 @@ struct HistoryListView: View {
     private var headerView: some View {
         HStack(alignment: .center, spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 15, weight: .medium))
@@ -94,7 +94,7 @@ struct HistoryListView: View {
                                 showSidebar ? Color.accent.opacity(0.30) : Color.cardBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -122,7 +122,7 @@ struct HistoryListView: View {
                     ForEach(store.data.projects) { project in
                         let isSelected = selectedProjectId == project.id
                         Button {
-                            withAnimation(.easeInOut(duration: 0.15)) {
+                            withAppAnimation(.easeInOut(duration: 0.15)) {
                                 selectedProjectId = project.id
                             }
                         } label: {
@@ -139,7 +139,7 @@ struct HistoryListView: View {
                             .overlay(Capsule().stroke(isSelected ? Color.accent : Color.cardBorder, lineWidth: 1))
                             .contentShape(Capsule())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
                 .padding(.horizontal, 2)
@@ -157,7 +157,7 @@ struct HistoryListView: View {
                         let isSelected = selectedChapterId == chapter.id
                             || (selectedChapterId == nil && project.chapters.first?.id == chapter.id)
                         Button {
-                            withAnimation(.easeInOut(duration: 0.15)) {
+                            withAppAnimation(.easeInOut(duration: 0.15)) {
                                 selectedChapterId = chapter.id
                             }
                         } label: {
@@ -171,7 +171,7 @@ struct HistoryListView: View {
                                 .overlay(Capsule().stroke(isSelected ? Color.accentWarm : Color.cardBorder, lineWidth: 1))
                                 .contentShape(Capsule())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
                 .padding(.horizontal, 2)
@@ -197,85 +197,25 @@ struct HistoryListView: View {
     // MARK: - Empty states (#23)
 
     private var emptyState: some View {
-        GlassCard {
-            VStack(spacing: 14) {
-                Image(systemName: "tray.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(.labelMuted.opacity(0.5))
-                VStack(spacing: 4) {
-                    Text("Aucune entrée pour ce chapitre")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.primary)
-                    Text("Saisie du tableau de bord ou via ⌃⌥N.")
-                        .font(.system(size: 12))
-                        .foregroundColor(.labelMuted)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 32)
+        GlassCard {   // 5.15 : état vide commun
+            EmptyStateView(icon: "tray", title: "Aucune entrée pour ce chapitre",
+                           message: "Saisie du tableau de bord ou via ⌃⌥N.")
         }
     }
 
     private var noChapterState: some View {
-        GlassCard {
-            VStack(spacing: 14) {
-                Image(systemName: "book.closed.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(.labelMuted.opacity(0.5))
-                VStack(spacing: 4) {
-                    Text("Aucun chapitre dans ce projet")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.primary)
-                    Text("Ajoute des chapitres depuis la barre latérale.")
-                        .font(.system(size: 12))
-                        .foregroundColor(.labelMuted)
-                }
-                Button {
-                    withAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
-                } label: {
-                    Text("Ouvrir la barre latérale")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.accent)
-                        .padding(.horizontal, 16).padding(.vertical, 7)
-                        .background(Color.accent.opacity(0.10))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.25), lineWidth: 1))
-                }
-                .buttonStyle(.plain)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 32)
+        GlassCard {   // 5.15 : état vide commun
+            EmptyStateView(icon: "book.closed", title: "Aucun chapitre dans ce projet",
+                           message: "Ajoute des chapitres depuis la barre latérale.", iconColor: .accent,
+                           action: { withAppAnimation(Motion.quick) { showSidebar = true } }, actionLabel: "Ouvrir la barre latérale")
         }
     }
 
     private var noProjectState: some View {
-        GlassCard {
-            VStack(spacing: 14) {
-                Image(systemName: "folder.fill.badge.plus")
-                    .font(.system(size: 40))
-                    .foregroundColor(.labelMuted.opacity(0.5))
-                VStack(spacing: 4) {
-                    Text("Aucun projet créé")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.primary)
-                    Text("Crée ton premier projet depuis la barre latérale.")
-                        .font(.system(size: 12))
-                        .foregroundColor(.labelMuted)
-                }
-                Button {
-                    withAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
-                } label: {
-                    Text("Créer un projet")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16).padding(.vertical, 7)
-                        .background(Color.accent)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-                .buttonStyle(.plain)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 32)
+        GlassCard {   // 5.15 : état vide commun
+            EmptyStateView(icon: "folder.badge.plus", title: "Aucun projet créé",
+                           message: "Crée ton premier projet depuis la barre latérale.", iconColor: .accent,
+                           action: { withAppAnimation(Motion.quick) { showSidebar = true } }, actionLabel: "Créer un projet")
         }
     }
 

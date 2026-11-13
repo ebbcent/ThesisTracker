@@ -110,7 +110,7 @@ struct SettingsView: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Fermer")
                     .accessibilityLabel("Fermer")
                 }
@@ -244,7 +244,7 @@ struct SettingsView: View {
                                     }
                                 }
                             }
-                            .animation(.spring(response: 0.3, dampingFraction: 0.85), value: weekdayGoalsEnabled)
+                            .appAnimation(Motion.panel, value: weekdayGoalsEnabled)
                         }
 
                         // ── Calendrier d'écriture (5.9) ────────────────
@@ -300,7 +300,7 @@ struct SettingsView: View {
                                         .padding(.horizontal, 10).padding(.vertical, 5)
                                         .background(Color.accent.opacity(0.1))
                                         .clipShape(RoundedRectangle(cornerRadius: 7))
-                                        .buttonStyle(.plain)
+                                        .buttonStyle(.pressable)
                                 }
                                 .padding(14)
                                 .sheet(isPresented: $showSnapshotBrowser) {
@@ -333,7 +333,7 @@ struct SettingsView: View {
                                             .padding(.horizontal, 10).padding(.vertical, 5)
                                             .background(Color.blue.opacity(0.1))
                                             .clipShape(RoundedRectangle(cornerRadius: 7))
-                                            .buttonStyle(.plain)
+                                            .buttonStyle(.pressable)
                                     }
                                 }
                                 .padding(14)
@@ -365,7 +365,7 @@ struct SettingsView: View {
                                         .padding(.horizontal, 10).padding(.vertical, 5)
                                         .background(Color.orange.opacity(0.1))
                                         .clipShape(RoundedRectangle(cornerRadius: 7))
-                                        .buttonStyle(.plain)
+                                        .buttonStyle(.pressable)
                                 }
                                 .padding(14)
                                 .confirmationDialog(
@@ -523,7 +523,7 @@ struct SettingsView: View {
                                                     .foregroundColor(isSelected ? .primary : .labelMuted)
                                             }
                                         }
-                                        .buttonStyle(.plain)
+                                        .buttonStyle(.pressable)
                                     }
 
                                     Divider().frame(height: 36)
@@ -687,11 +687,11 @@ struct SettingsView: View {
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { refreshNotificationDiagnostic() }
                                     }
                                     .font(.system(size: 12, weight: .semibold))
-                                    .foregroundColor(.accent).buttonStyle(.plain)
+                                    .foregroundColor(.accent).buttonStyle(.pressable)
                                     .help("Envoie une notification dans 5 secondes")
                                     Button("Réglages macOS") { openSystemPrefs() }
                                         .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(.accent).buttonStyle(.plain)
+                                        .foregroundColor(.accent).buttonStyle(.pressable)
                                 }
                                 .padding(14)
 
@@ -835,7 +835,7 @@ struct SettingsView: View {
                                             Spacer()
                                             Button("Ouvrir") { openSystemPrefs() }
                                                 .font(.system(size: 12, weight: .semibold))
-                                                .foregroundColor(.accent).buttonStyle(.plain)
+                                                .foregroundColor(.accent).buttonStyle(.pressable)
                                         }
                                         .padding(14)
                                     } else {
@@ -884,7 +884,7 @@ struct SettingsView: View {
                                                             .overlay(RoundedRectangle(cornerRadius: 6)
                                                                 .stroke(isOn ? Color.accent : Color.cardBorder, lineWidth: 1))
                                                     }
-                                                    .buttonStyle(.plain)
+                                                    .buttonStyle(.pressable)
                                                 }
                                             }
                                         }
@@ -892,7 +892,7 @@ struct SettingsView: View {
                                     }
                                 }
                             }
-                            .animation(.spring(response: 0.3, dampingFraction: 0.85), value: notificationsEnabled)
+                            .appAnimation(Motion.panel, value: notificationsEnabled)
                         }
                     }
                     .frame(maxWidth: .infinity)
@@ -931,7 +931,7 @@ struct SettingsView: View {
                         Text("\(totalEntries) entrée(s)")
                             .font(.system(size: 10, design: .monospaced)).foregroundColor(.labelMuted)
                         Button("↺ Recharger") { store.load() }
-                            .font(.system(size: 10, weight: .semibold)).foregroundColor(.accent).buttonStyle(.plain)
+                            .font(.system(size: 10, weight: .semibold)).foregroundColor(.accent).buttonStyle(.pressable)
                     }
                     if let err = store.loadErrorMessage {
                         Text("⚠ \(err)")
@@ -947,7 +947,7 @@ struct SettingsView: View {
                             .background(Color.cardBg)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .keyboardShortcut(.escape)
 
                         Spacer()
@@ -958,7 +958,7 @@ struct SettingsView: View {
                             .padding(.horizontal, 22).padding(.vertical, 9)
                             .background(Color.accent)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .keyboardShortcut(.return)
                     }
                 }

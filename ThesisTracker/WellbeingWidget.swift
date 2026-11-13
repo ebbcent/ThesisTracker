@@ -93,7 +93,7 @@ struct WellbeingWidget: View {
                                 .foregroundColor(localEnergy ?? 0 >= lvl ? .white : .labelMuted)
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help(energyLabel(lvl))
                 }
             }
@@ -172,7 +172,7 @@ struct WellbeingWidget: View {
                 .background(isRest ? Color(red: 0.404, green: 0.224, blue: 0.718) : Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
                 .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
     }
 

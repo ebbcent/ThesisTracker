@@ -27,7 +27,7 @@ struct TodayTimelineView: View {
 
                         if events.count > 5 && !expanded {
                             Button {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) { expanded = true }
+                                withAppAnimation(Motion.panel) { expanded = true }
                             } label: {
                                 HStack(spacing: 5) {
                                     Image(systemName: "chevron.down")
@@ -39,7 +39,7 @@ struct TodayTimelineView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.top, 8)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                         }
                     }
                 }

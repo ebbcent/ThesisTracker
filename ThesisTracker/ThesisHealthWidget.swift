@@ -65,12 +65,12 @@ struct ThesisHealthWidget: View {
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.28)) {
+            withAppAnimation(.easeOut(duration: 0.28)) {
                 animatedScore = Double(health.score)
             }
         }
         .onChange(of: health.score) { _, newScore in
-            withAnimation(.easeOut(duration: 0.20)) {
+            withAppAnimation(.easeOut(duration: 0.20)) {
                 animatedScore = Double(newScore)
             }
         }

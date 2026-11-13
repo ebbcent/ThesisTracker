@@ -92,7 +92,7 @@ struct ChapterCheckpointsSheet: View {
                     .background(Color.accent.opacity(0.10))
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Button { showSaveSheet = true } label: {
                 Label("Nouveau point", systemImage: "plus.circle.fill")
                     .font(.system(size: 12, weight: .semibold))
@@ -101,13 +101,13 @@ struct ChapterCheckpointsSheet: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Button { dismiss() } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -207,7 +207,7 @@ struct ChapterCheckpointsSheet: View {
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Restaurer ce point")
                 .accessibilityLabel("Restaurer ce point")
                 Button { pendingDeleteId = checkpoint.id } label: {
@@ -217,7 +217,7 @@ struct ChapterCheckpointsSheet: View {
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Supprimer")
                 .accessibilityLabel("Supprimer")
             }
@@ -302,7 +302,7 @@ private struct SaveCheckpointSheet: View {
                 .foregroundColor(.labelMuted.opacity(0.7))
             HStack {
                 Button("Annuler") { dismiss() }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(.horizontal, 12).padding(.vertical, 6)
                 Spacer()
                 Button {
@@ -317,7 +317,7 @@ private struct SaveCheckpointSheet: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(20)
@@ -390,7 +390,7 @@ struct CheckpointsWidget: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(chapter == nil)
             }
         }

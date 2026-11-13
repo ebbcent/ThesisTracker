@@ -39,7 +39,7 @@ struct HistoryView: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Fermer")
                     .accessibilityLabel("Fermer")
                 }
@@ -195,7 +195,7 @@ struct HistoryRow: View {
                     .background(Color(red: 0.95, green: 0.35, blue: 0.35).opacity(0.10))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Supprimer")
             .accessibilityLabel("Supprimer")
         }

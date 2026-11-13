@@ -45,7 +45,7 @@ struct StatsAnalyticsView: View {
                 // ── En-tête ──────────────────────────────────────
                 HStack(spacing: 12) {
                     Button {
-                        withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                        withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
                     } label: {
                         Image(systemName: "sidebar.left")
                             .font(.system(size: 13, weight: .medium))
@@ -58,7 +58,7 @@ struct StatsAnalyticsView: View {
                                         .stroke(showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                             )
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Afficher ou masquer la barre latérale")
                     .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -665,7 +665,7 @@ struct StatsAnalyticsView: View {
                                         RoundedRectangle(cornerRadius: 2)
                                             .fill(color)
                                             .frame(width: geo.size.width * CGFloat(ratio), height: 5)
-                                            .animation(.spring(response: 0.5), value: ratio)
+                                            .appAnimation(Motion.progress, value: ratio)
                                     }
                                 }
                                 .frame(height: 5)
@@ -743,7 +743,7 @@ struct StatsAnalyticsView: View {
                                         colors: written > 0 ? [.accentGreen, .accent] : [.cardBorder],
                                         startPoint: .leading, endPoint: .trailing))
                                     .frame(width: max(0, geo.size.width * writtenRatio), height: 6)
-                                    .animation(.spring(response: 0.5), value: writtenRatio)
+                                    .appAnimation(Motion.progress, value: writtenRatio)
                             }
                         }
                         .frame(height: 6)
@@ -1266,7 +1266,7 @@ struct StatsAnalyticsView: View {
                             .stroke(Color.cardBorder, lineWidth: 0.5))
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help("Agrandir ce graphique")
         .accessibilityLabel("Agrandir ce graphique")
     }
@@ -1288,7 +1288,7 @@ struct StatsAnalyticsView: View {
                                 .font(.system(size: 16))
                                 .foregroundColor(.labelMuted)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .keyboardShortcut(.escape, modifiers: [])
                         .help("Fermer")
                         .accessibilityLabel("Fermer")

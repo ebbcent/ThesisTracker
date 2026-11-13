@@ -64,7 +64,7 @@ struct DailyQuoteWidget: View {
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(.labelMuted)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Citer une autre")
                     .accessibilityLabel("Citer une autre")
                 }

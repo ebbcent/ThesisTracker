@@ -126,13 +126,13 @@ struct ExportView: View {
                         .overlay(RoundedRectangle(cornerRadius: 9).stroke(Color.cardBorder, lineWidth: 1))
                         .contentShape(RoundedRectangle(cornerRadius: 9))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 18)).foregroundColor(.labelMuted)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Fermer")
                     .accessibilityLabel("Fermer")
                 }
@@ -163,7 +163,7 @@ struct ExportView: View {
                                         .stroke(format == f ? Color.accent : Color.cardBorder, lineWidth: 1))
                                     .contentShape(RoundedRectangle(cornerRadius: 10))
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                             }
                         }
                         .padding(.horizontal, 2)
@@ -217,7 +217,7 @@ struct ExportView: View {
                         .padding(.horizontal, 18).padding(.vertical, 10).background(Color.cardBg)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
-                        .buttonStyle(.plain).keyboardShortcut(.escape)
+                        .buttonStyle(.pressable).keyboardShortcut(.escape)
 
                     // Bouton email directeur
                     Button { sendEmailToDirector() } label: {
@@ -234,7 +234,7 @@ struct ExportView: View {
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accent.opacity(0.25), lineWidth: 1))
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Spacer()
                     Button { doExport() } label: {
@@ -254,7 +254,7 @@ struct ExportView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                     }
-                    .buttonStyle(.plain).disabled(isExporting)
+                    .buttonStyle(.pressable).disabled(isExporting)
                     .keyboardShortcut(.return)
                 }
             }
@@ -282,7 +282,7 @@ struct ExportView: View {
             .overlay(Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
             .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private func feedbackRow(_ msg: String, icon: String, color: Color) -> some View {

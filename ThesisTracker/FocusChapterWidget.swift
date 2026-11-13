@@ -146,10 +146,10 @@ struct FocusChapterWidget: View {
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.9).delay(0.2)) { animatedRatio = ratio }
+            withAppAnimation(Motion.progress.delay(0.1)) { animatedRatio = ratio }
         }
         .onChange(of: ratio) { _, v in
-            withAnimation(.easeOut(duration: 0.5)) { animatedRatio = v }
+            withAppAnimation(.easeOut(duration: 0.5)) { animatedRatio = v }
         }
     }
 
