@@ -24,8 +24,8 @@ struct TimerDialView: View {
                 .stroke(accentColor, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .shadow(color: accentColor.opacity(0.45), radius: 10)
-                .animation(.easeInOut(duration: 0.4), value: progress)
-                .animation(.easeInOut(duration: 0.5), value: accentColor)
+                .appAnimation(.easeInOut(duration: 0.4), value: progress)
+                .appAnimation(.easeInOut(duration: 0.5), value: accentColor)
 
             if progress > 0 && progress < 1 {
                 Circle()
@@ -42,14 +42,14 @@ struct TimerDialView: View {
                     .font(.system(size: titleSize, weight: .semibold, design: .rounded))
                     .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                     .contentTransition(.numericText())
-                    .animation(.easeInOut(duration: 0.25), value: title)
+                    .appAnimation(.easeInOut(duration: 0.25), value: title)
 
                 Text(timeText)
                     .font(.system(size: timeSize, weight: .heavy, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                     .contentTransition(.numericText(countsDown: true))
-                    .animation(.linear(duration: 0.15), value: timeText)
+                    .appAnimation(.linear(duration: 0.15), value: timeText)
             }
         }
         .frame(width: size, height: size)

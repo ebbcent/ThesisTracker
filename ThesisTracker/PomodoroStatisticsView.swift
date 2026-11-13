@@ -123,7 +123,7 @@ struct PomodoroStatisticsView: View {
                             .fill(contributionColor(for: cell.intensity))
                             .frame(width: 13, height: 13)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("\(cell.date.formatted(date: .abbreviated, time: .omitted)) : \(cell.minutes) min")
                 }
             }

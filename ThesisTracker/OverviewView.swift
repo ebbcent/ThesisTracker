@@ -41,7 +41,7 @@ struct OverviewView: View {
     private var headerView: some View {
         HStack(spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 15, weight: .medium))
@@ -54,7 +54,7 @@ struct OverviewView: View {
                                 showSidebar ? Color.accent.opacity(0.30) : Color.cardBorder, lineWidth: 1))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -83,7 +83,7 @@ struct OverviewView: View {
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
                     .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 // Bouton Export existant
                 Button { showExport = true } label: {
@@ -100,7 +100,7 @@ struct OverviewView: View {
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.25), lineWidth: 1))
                     .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
     }
@@ -320,7 +320,7 @@ struct OverviewView: View {
             if !archivedProjects.isEmpty {
                 VStack(spacing: 8) {
                     Button {
-                        withAnimation(.easeInOut(duration: 0.2)) { showArchivedOverview.toggle() }
+                        withAppAnimation(.easeInOut(duration: 0.2)) { showArchivedOverview.toggle() }
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: showArchivedOverview ? "archivebox.fill" : "archivebox")
@@ -339,7 +339,7 @@ struct OverviewView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     if showArchivedOverview {
                         ForEach(archivedProjects) { project in
@@ -350,7 +350,7 @@ struct OverviewView: View {
                                         store.unarchiveProject(project.id)
                                     } label: {
                                         HStack(spacing: 4) {
-                                            Image(systemName: "arrow.uturn.up").font(.system(size: 9))
+                                            Image(systemName: "arrow.uturn.up").font(.system(size: 10))
                                             Text("Restaurer")
                                                 .font(.system(size: 10, weight: .medium))
                                                 .lineLimit(1)
@@ -362,7 +362,7 @@ struct OverviewView: View {
                                         .contentShape(Capsule())
                                         .padding(12)
                                     }
-                                    .buttonStyle(.plain)
+                                    .buttonStyle(.pressable)
                                 }
                         }
                         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -403,7 +403,7 @@ struct OverviewView: View {
                                 .foregroundColor(.primary)
                             if isActive {
                                 Text("actif")
-                                    .font(.system(size: 9, weight: .semibold))
+                                    .font(.system(size: 10, weight: .semibold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 6).padding(.vertical, 2)
                                     .background(Color.accent.opacity(0.85))
@@ -411,7 +411,7 @@ struct OverviewView: View {
                             }
                             if overdueCount > 0 {
                                 Text("\(overdueCount) en retard")
-                                    .font(.system(size: 9, weight: .semibold))
+                                    .font(.system(size: 10, weight: .semibold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 6).padding(.vertical, 2)
                                     .background(Color.red.opacity(0.85))
@@ -422,7 +422,7 @@ struct OverviewView: View {
                         if let supervisor = project.supervisor, !supervisor.isEmpty {
                             HStack(spacing: 4) {
                                 Image(systemName: "person.fill")
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                     .foregroundColor(.labelMuted.opacity(0.7))
                                 Text(supervisor)
                                     .font(.system(size: 11))
@@ -440,13 +440,13 @@ struct OverviewView: View {
                     Button {
                         store.data.activeProjectId = project.id
                         store.save()
-                        withAnimation(.easeInOut(duration: 0.15)) { selectedNav = .dashboard }
+                        withAppAnimation(.easeInOut(duration: 0.15)) { selectedNav = .dashboard }
                     } label: {
                         Image(systemName: "arrow.right.circle")
                             .font(.system(size: 16))
                             .foregroundColor(.labelMuted)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Aller au projet")
                     .accessibilityLabel("Aller au projet")
                 }
@@ -577,22 +577,10 @@ struct OverviewView: View {
     // MARK: - Empty state
 
     private var emptyState: some View {
-        GlassCard {
-            VStack(spacing: 12) {
-                Image(systemName: "folder.badge.plus")
-                    .font(.system(size: 36)).foregroundColor(.labelMuted)
-                Text("Aucun projet pour l'instant")
-                    .font(.system(size: 14)).foregroundColor(.labelMuted)
-                Button("Créer un projet") {
-                    withAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
-                }
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 20).padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: 10).fill(Color.accent))
-                .buttonStyle(.plain)
-            }
-            .frame(maxWidth: .infinity).padding(.vertical, 28)
+        GlassCard {   // 5.15 : état vide commun
+            EmptyStateView(icon: "folder.badge.plus", title: "Aucun projet pour l'instant",
+                           message: "Un projet regroupe les chapitres d'une thèse ou d'un livre.", iconColor: .accent,
+                           action: { withAppAnimation(Motion.quick) { showSidebar = true } }, actionLabel: "Créer un projet")
         }
     }
 

@@ -73,7 +73,7 @@ struct SupervisorReviewCard: View {
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.accentWarm)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Demander l'avis du professeur sur ce chapitre")
                 .accessibilityLabel("Demander l'avis du professeur sur ce chapitre")
             }
@@ -113,7 +113,7 @@ struct SupervisorReviewCard: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 if !chapter.supervisorReviews.isEmpty {
                     Text("Cycle précédent : v\(chapter.supervisorReviews.last?.draftVersion ?? 1)")
                         .font(.system(size: 10))
@@ -143,7 +143,7 @@ struct SupervisorReviewCard: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 Button {
                     if let proj = project {
                         store.cancelLastChapterReview(chapterId: chapter.id, in: proj.id)
@@ -154,7 +154,7 @@ struct SupervisorReviewCard: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 8).padding(.vertical, 6)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
     }
@@ -179,7 +179,7 @@ struct SupervisorReviewCard: View {
                         .font(.system(size: 11))
                         .foregroundColor(.accent)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
             HStack(spacing: 6) {
                 Button {
@@ -194,14 +194,14 @@ struct SupervisorReviewCard: View {
                         .background(Color.accentGreen)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 if review.feedbackNotes?.isEmpty == false {
                     Button { showNotesSheet = true } label: {
                         Text("Modifier notes")
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
         }
@@ -224,7 +224,7 @@ struct SupervisorReviewCard: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
     }
 
@@ -233,7 +233,7 @@ struct SupervisorReviewCard: View {
     private func statLine(icon: String, text: String) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(.labelMuted.opacity(0.6))
                 .frame(width: 12)
             Text(text)
@@ -280,7 +280,7 @@ private struct SendForReviewSheet: View {
             }
             HStack {
                 Button("Annuler") { dismiss() }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(.horizontal, 12).padding(.vertical, 6)
                 Spacer()
                 Button {
@@ -296,7 +296,7 @@ private struct SendForReviewSheet: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(20)
@@ -337,7 +337,7 @@ private struct ReceiveReviewSheet: View {
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
             HStack {
                 Button("Annuler") { dismiss() }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(.horizontal, 12).padding(.vertical, 6)
                 Spacer()
                 Button {
@@ -353,7 +353,7 @@ private struct ReceiveReviewSheet: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(20)
@@ -386,7 +386,7 @@ private struct ReviewNotesSheet: View {
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
             HStack {
                 Button("Annuler") { dismiss() }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(.horizontal, 12).padding(.vertical, 6)
                 Spacer()
                 Button {
@@ -400,7 +400,7 @@ private struct ReviewNotesSheet: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(20)

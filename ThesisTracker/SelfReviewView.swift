@@ -69,7 +69,7 @@ struct SelfReviewSheet: View {
             Divider()
             footer
         }
-        .frame(width: 540, height: 600)
+        .sheetFrame(width: 540, height: 600)
     }
 
     private var header: some View {
@@ -85,7 +85,7 @@ struct SelfReviewSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -141,7 +141,7 @@ struct SelfReviewSheet: View {
                                 .foregroundColor(currentValue(for: c.id) >= lvl ? .white : .labelMuted)
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
         }
@@ -154,7 +154,7 @@ struct SelfReviewSheet: View {
     private var footer: some View {
         HStack {
             Button("Annuler") { dismiss() }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(.horizontal, 12).padding(.vertical, 6)
                 .foregroundColor(.labelMuted)
             Spacer()
@@ -178,7 +178,7 @@ struct SelfReviewSheet: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
         .padding(.horizontal, 18).padding(.vertical, 12)
     }
@@ -254,7 +254,7 @@ struct PainfulChaptersWidget: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(spacing: 4) {
                                     Image(systemName: "exclamationmark.triangle.fill")
-                                        .font(.system(size: 9))
+                                        .font(.system(size: 10))
                                         .foregroundColor(severityColor(p.score))
                                     Text(p.chapter.name)
                                         .font(.system(size: 12, weight: .semibold))

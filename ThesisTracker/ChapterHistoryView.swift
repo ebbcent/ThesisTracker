@@ -40,7 +40,7 @@ struct ChapterHistoryView: View {
                         .background(Color.cardBg)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
                 }
                 .padding(.horizontal, 24)
@@ -69,7 +69,7 @@ struct ChapterHistoryView: View {
                                 .background(Color.accent)
                                 .clipShape(Circle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Ajouter la note")
                         .accessibilityLabel("Ajouter la note")
                     }

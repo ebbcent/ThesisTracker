@@ -55,7 +55,7 @@ struct DefenseNotesWidget: View {
                             let count = byKind[kind] ?? 0
                             HStack(spacing: 4) {
                                 Image(systemName: kind.icon)
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 10))
                                     .foregroundColor(kind.color)
                                 Text("\(count)")
                                     .font(.system(size: 10, weight: .semibold))
@@ -78,7 +78,7 @@ struct DefenseNotesWidget: View {
                     .background(Color(red: 0.404, green: 0.224, blue: 0.718))
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showSheet) {
@@ -121,7 +121,7 @@ struct DefenseNotesSheet: View {
             Divider()
             addBar
         }
-        .frame(width: 640, height: 600)
+        .sheetFrame(width: 640, height: 600)
         .onAppear {
             if selectedChapterId == nil, let first = chapters.first { selectedChapterId = first.id }
         }
@@ -140,7 +140,7 @@ struct DefenseNotesSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -161,7 +161,7 @@ struct DefenseNotesSheet: View {
                     .background(isActive ? kind.color : kind.color.opacity(0.10))
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
             Spacer()
         }
@@ -220,14 +220,14 @@ struct DefenseNotesSheet: View {
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     HStack(spacing: 6) {
                         Button("Annuler") { editingNoteId = nil }
-                            .buttonStyle(.plain).font(.system(size: 11)).foregroundColor(.labelMuted)
+                            .buttonStyle(.pressable).font(.system(size: 11)).foregroundColor(.labelMuted)
                         Button("Enregistrer") {
                             if let proj = project {
                                 store.updateDefenseNote(noteId: note.id, chapterId: chapter.id, in: proj.id, text: editingText)
                             }
                             editingNoteId = nil
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .font(.system(size: 11, weight: .semibold)).foregroundColor(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(Color.accent)
@@ -253,7 +253,7 @@ struct DefenseNotesSheet: View {
                     .font(.system(size: 10))
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Supprimer")
             .accessibilityLabel("Supprimer")
         }
@@ -292,7 +292,7 @@ struct DefenseNotesSheet: View {
                         .background(selectedKind.color)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(selectedChapterId == nil || newNoteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }

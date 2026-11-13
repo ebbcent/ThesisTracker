@@ -69,7 +69,7 @@ struct AdminChecklistWidget: View {
                     .background(Color(red: 0.300, green: 0.650, blue: 0.900))
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showSheet) {
@@ -80,7 +80,7 @@ struct AdminChecklistWidget: View {
     private func taskMini(_ task: AdminTask) -> some View {
         HStack(spacing: 6) {
             Image(systemName: task.kind.icon)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(task.kind.color)
                 .frame(width: 14)
             Text(task.title)
@@ -90,7 +90,7 @@ struct AdminChecklistWidget: View {
             Spacer()
             if let dueStr = task.dueDate {
                 Text(dueLabel(dueStr))
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(dueColor(dueStr))
             }
         }
@@ -140,7 +140,7 @@ struct AdminChecklistSheet: View {
                 listView
             }
         }
-        .frame(width: 580, height: 580)
+        .sheetFrame(width: 580, height: 580)
         .sheet(isPresented: $showAddSheet) {
             AddAdminTaskSheet(store: store)
         }
@@ -168,13 +168,13 @@ struct AdminChecklistSheet: View {
                 .background(Color(red: 0.300, green: 0.650, blue: 0.900))
                 .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Button { dismiss() } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -214,16 +214,16 @@ struct AdminChecklistSheet: View {
                     .font(.system(size: 16))
                     .foregroundColor(task.isCompleted ? .accentGreen : .labelMuted.opacity(0.5))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help(task.isCompleted ? "Marquer comme non fait" : "Marquer comme fait")
             .accessibilityLabel(task.isCompleted ? "Marquer comme non fait" : "Marquer comme fait")
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 5) {
                     Image(systemName: task.kind.icon)
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(task.kind.color)
                     Text(task.kind.label)
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundColor(task.kind.color)
                         .kerning(0.5)
                 }
@@ -234,7 +234,7 @@ struct AdminChecklistSheet: View {
                 if let due = task.dueDate {
                     HStack(spacing: 4) {
                         Image(systemName: "calendar")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.7))
                         Text(due)
                             .font(.system(size: 10))
@@ -254,7 +254,7 @@ struct AdminChecklistSheet: View {
                     .font(.system(size: 11))
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Supprimer la tâche")
             .accessibilityLabel("Supprimer la tâche")
         }
@@ -318,7 +318,7 @@ private struct AddAdminTaskSheet: View {
             }
             HStack {
                 Button("Annuler") { dismiss() }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(.horizontal, 12).padding(.vertical, 6)
                 Spacer()
                 Button {
@@ -337,7 +337,7 @@ private struct AddAdminTaskSheet: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }

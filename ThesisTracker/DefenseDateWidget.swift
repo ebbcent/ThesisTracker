@@ -47,7 +47,7 @@ struct DefenseDateWidget: View {
                     .background(Color.accent.opacity(0.08))
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showTargetEditor) {
@@ -63,13 +63,13 @@ struct DefenseDateWidget: View {
                             store.targetDefenseDate = nil
                             showTargetEditor = false
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .font(.system(size: 11))
                         .foregroundColor(Color(red: 0.93, green: 0.26, blue: 0.26))
                     }
                     Spacer()
                     Button("Annuler") { showTargetEditor = false }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .font(.system(size: 11))
                         .foregroundColor(.labelMuted)
                     Button {
@@ -83,7 +83,7 @@ struct DefenseDateWidget: View {
                             .background(Color.accent)
                             .clipShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
             .padding(20)
@@ -116,7 +116,7 @@ struct DefenseDateWidget: View {
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(color)
                 Text(subtitle)
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted.opacity(0.8))
             }
             .frame(width: 140, alignment: .leading)
@@ -128,14 +128,14 @@ struct DefenseDateWidget: View {
                         .foregroundColor(.primary)
                     let avg = Int(proj.avgPerDay)
                     Text(avg > 0 ? "~ \(avg) car./j" : "")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted)
                 } else {
                     Text("—")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.labelMuted.opacity(0.5))
                     Text("vitesse insuffisante")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted.opacity(0.7))
                 }
             }

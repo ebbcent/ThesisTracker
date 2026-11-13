@@ -37,11 +37,7 @@ extension Color {
             : NSColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1)   // #FFFFFF
     }))
 
-    static let cardBorder = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            ? NSColor(red: 0.153, green: 0.137, blue: 0.125, alpha: 1)   // #272320
-            : NSColor(red: 0.910, green: 0.898, blue: 0.886, alpha: 1)   // #E8E4E2
-    }))
+    static let cardBorder = adaptive(light: 0xE8E4E2, dark: 0x272320, hcLight: 0x8A8480, hcDark: 0x8C847C)   // 5.15 : contraste renforcé
 
     static let fieldBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
         trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
@@ -49,11 +45,7 @@ extension Color {
             : NSColor(white: 0, alpha: 0.04)
     }))
 
-    static let labelMuted = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            ? NSColor(red: 0.627, green: 0.596, blue: 0.565, alpha: 1)   // #a09890
-            : NSColor(red: 0.420, green: 0.400, blue: 0.380, alpha: 1)   // #6B6660
-    }))
+    static let labelMuted = adaptive(light: 0x6B6660, dark: 0xA09890, hcLight: 0x3F3B37, hcDark: 0xD6CFC8)   // 5.15 : contraste renforcé
 
     static let glassFill = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
         trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? NSColor(white: 1, alpha: 0.05) : NSColor(white: 0, alpha: 0.04)
@@ -62,7 +54,7 @@ extension Color {
         trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? NSColor(white: 1, alpha: 0.08) : NSColor(white: 0, alpha: 0.09)
     }))
 
-    // Accents — identiques en mode clair et sombre.
+    // Accent choisi par l'utilisateur (Réglages) :
     // CACHÉ : lire UserDefaults + parser hex à chaque accès (233 sites d'appel)
     // coûtait des milliers d'appels par frame. Invalidé via `refreshAccent()`
     // depuis DataStore.setAccentColor() quand l'utilisateur change la couleur.
@@ -77,10 +69,28 @@ extension Color {
     static func refreshAccent() {
         _accentCache = computeAccent()
     }
-    static let accentWarm  = Color(red: 0.961, green: 0.620, blue: 0.043)  // #F59E0B — amber principal
-    static let accentGold  = Color(red: 0.918, green: 0.345, blue: 0.047)  // #EA580C — orange profond
-    static let accentGreen = Color(red: 0.133, green: 0.773, blue: 0.369)  // #22C55E — succès
-    static let accentRose  = Color(red: 0.957, green: 0.247, blue: 0.369)  // #F43F5E — alertes
+    // 5.15 — accents adaptatifs : inchangés en mode sombre ; plus soutenus en mode clair, où ils servent
+    // aussi de couleur de texte (l'ambre #F59E0B sur blanc ne contrastait qu'à ≈ 2:1) ; encore plus nets
+    // avec « Augmenter le contraste » (Réglages système › Accessibilité › Affichage).
+    static let accentWarm  = adaptive(light: 0xD97706, dark: 0xF59E0B, hcLight: 0xB45309, hcDark: 0xFBBF24)  // ambre principal
+    static let accentGold  = adaptive(light: 0xEA580C, dark: 0xEA580C, hcLight: 0xC2410C, hcDark: 0xFB923C)  // orange profond
+    static let accentGreen = adaptive(light: 0x16A34A, dark: 0x22C55E, hcLight: 0x15803D, hcDark: 0x4ADE80)  // succès
+    static let accentRose  = adaptive(light: 0xE11D48, dark: 0xF43F5E, hcLight: 0xBE123C, hcDark: 0xFB7185)  // alertes
+
+    /// Couleur dynamique : clair, sombre, et variantes « Augmenter le contraste ».
+    static func adaptive(light: UInt32, dark: UInt32, hcLight: UInt32, hcDark: UInt32) -> Color {
+        func ns(_ v: UInt32) -> NSColor {
+            NSColor(srgbRed: CGFloat((v >> 16) & 0xFF) / 255, green: CGFloat((v >> 8) & 0xFF) / 255, blue: CGFloat(v & 0xFF) / 255, alpha: 1)
+        }
+        return Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
+            switch trait.bestMatch(from: [.aqua, .darkAqua, .accessibilityHighContrastAqua, .accessibilityHighContrastDarkAqua]) {
+            case .darkAqua?: return ns(dark)
+            case .accessibilityHighContrastAqua?: return ns(hcLight)
+            case .accessibilityHighContrastDarkAqua?: return ns(hcDark)
+            default: return ns(light)
+            }
+        }))
+    }
 
     // Palette chapitres (graphiques)
     static let chapterPalette: [Color] = [

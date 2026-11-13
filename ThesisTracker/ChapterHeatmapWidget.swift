@@ -30,7 +30,7 @@ struct ChapterHeatmapWidget: View {
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Voir en grand")
                     .accessibilityLabel("Voir en grand")
                 }
@@ -39,7 +39,7 @@ struct ChapterHeatmapWidget: View {
                     miniMatrix(project: project, days: 56)
                     HStack(spacing: 6) {
                         Text("8 sem.")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.6))
                         Spacer()
                         legendCell(0); legendCell(1); legendCell(2); legendCell(3); legendCell(4)
@@ -64,7 +64,7 @@ struct ChapterHeatmapWidget: View {
             }
             if project.chapters.count > 6 {
                 Text("+ \(project.chapters.count - 6) chapitre\(project.chapters.count - 6 > 1 ? "s" : "")")
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted.opacity(0.7))
             }
         }
@@ -152,7 +152,7 @@ struct ChapterHeatmapSheet: View {
                     .foregroundColor(.labelMuted)
             }
         }
-        .frame(width: 880, height: 580)
+        .sheetFrame(width: 880, height: 580)
     }
 
     private var header: some View {
@@ -176,7 +176,7 @@ struct ChapterHeatmapSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -195,7 +195,7 @@ struct ChapterHeatmapSheet: View {
                     .lineLimit(1)
                 let totalChars = totals.values.reduce(0, +)
                 Text("\(totalChars.formatted()) car. sur la période")
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
             .frame(width: 160, alignment: .leading)

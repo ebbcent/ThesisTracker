@@ -37,7 +37,7 @@ struct SnapshotBrowserView: View {
                         .font(.system(size: 18))
                         .foregroundColor(.labelMuted)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Fermer")
                 .accessibilityLabel("Fermer")
             }
@@ -110,7 +110,7 @@ struct SnapshotBrowserView: View {
                     NSWorkspace.shared.open(store.snapshotsDirectoryURLPublic)
                 }
                 .font(.system(size: 12)).foregroundColor(.labelMuted)
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 Spacer()
 
@@ -121,7 +121,7 @@ struct SnapshotBrowserView: View {
                     .background(Color.cardBg)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
@@ -174,7 +174,7 @@ struct SnapshotBrowserView: View {
                         .foregroundColor(.primary)
                     if index == 0 {
                         Text("Dernier")
-                            .font(.system(size: 9, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(.accent)
                             .padding(.horizontal, 5).padding(.vertical, 2)
                             .background(Color.accent.opacity(0.12))
@@ -204,7 +204,7 @@ struct SnapshotBrowserView: View {
             .padding(.horizontal, 10).padding(.vertical, 5)
             .background(Color.accent.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 6))
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)

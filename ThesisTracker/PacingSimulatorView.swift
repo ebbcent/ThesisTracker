@@ -42,7 +42,7 @@ struct PacingSimulatorView: View {
             ForEach(PacingProfile.allCases) { profile in
                 let selected = profile == shownProfile
                 Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAppAnimation(.easeInOut(duration: 0.2)) {
                         preview = profile == (savedProfile ?? .steady) ? nil : profile
                     }
                 } label: {
@@ -58,7 +58,7 @@ struct PacingSimulatorView: View {
                     .background(Capsule().fill(selected ? Color.accentWarm : Color.cardBg))
                     .overlay(Capsule().stroke(selected ? Color.clear : Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help(profile.summary)
                 .accessibilityAddTraits(selected ? .isSelected : [])
             }
@@ -75,7 +75,7 @@ struct PacingSimulatorView: View {
                 Button("Retirer") {
                     store.updatePacing(chapterId: chapter.id, in: projectId) { $0.profile = nil; $0.startDate = nil }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .font(.system(size: 11))
                 .foregroundColor(.labelMuted)
                 .help("Revenir au calcul linéaire d'avant")
@@ -136,7 +136,7 @@ struct PacingSimulatorView: View {
                         .background(Circle().fill(on ? Color.accentWarm : Color.cardBg))
                         .overlay(Circle().stroke(on ? Color.clear : Color.cardBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help(day.name)
                 .accessibilityLabel(day.name)
                 .accessibilityAddTraits(on ? .isSelected : [])
@@ -219,7 +219,7 @@ struct PacingCurveView: View {
                         .shadow(color: Color.accentWarm.opacity(0.9), radius: 5)
                         .position(x: tx, y: ty)
                     Text("Aujourd'hui")
-                        .font(.system(size: 9, weight: .medium))
+                        .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.labelMuted)
                         .fixedSize()
                         .position(x: min(max(tx, 30), g.width - 30), y: 6)

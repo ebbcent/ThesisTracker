@@ -9,6 +9,10 @@ struct UndoEntry {
     let date: String
     let oldValue: Int
     let newValue: Int
+    /// 5.15 — annulation d'une suppression ou d'un archivage : état complet avant / après l'action.
+    var snapshotBefore: AppData? = nil
+    var snapshotAfter: AppData? = nil
+    var label: String? = nil
 }
 
 class DataStore: ObservableObject {
@@ -1263,6 +1267,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteEntry(for chapterId: UUID, in projectId: UUID, date: String) {
+        recordSnapshotUndo("Supprimer l'entrée")   // 5.15
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
               let chapIdx = data.projects[projIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
         data.projects[projIdx].chapters[chapIdx].entries.removeAll { $0.date == date }
@@ -1281,6 +1286,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteProject(at offsets: IndexSet) {
+        recordSnapshotUndo("Supprimer le projet")   // 5.15
         let removedIds = offsets.map { data.projects[$0].id }
         data.projects.remove(atOffsets: offsets)
         if let activeId = data.activeProjectId, removedIds.contains(activeId) {
@@ -1296,6 +1302,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteProject(id: UUID) {
+        recordSnapshotUndo("Supprimer le projet")   // 5.15
         guard let idx = data.projects.firstIndex(where: { $0.id == id }) else { return }
         deleteProject(at: IndexSet([idx]))
     }
@@ -1309,6 +1316,7 @@ class DataStore: ObservableObject {
     // MARK: - Project archive / notes (#16, #17)
 
     func archiveProject(_ id: UUID) {
+        recordSnapshotUndo("Archiver le projet")   // 5.15
         guard let idx = data.projects.firstIndex(where: { $0.id == id }) else { return }
         data.projects[idx].isArchived = true
         // Deactivate if it was the active project
@@ -1451,6 +1459,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteMilestone(_ milestoneId: UUID, from projectId: UUID) {
+        recordSnapshotUndo("Supprimer le jalon")   // 5.15
         guard let pIdx = data.projects.firstIndex(where: { $0.id == projectId }) else { return }
         data.projects[pIdx].milestones.removeAll { $0.id == milestoneId }
         save()
@@ -1507,6 +1516,7 @@ class DataStore: ObservableObject {
     /// À la suppression d'un dossier : promeut ses enfants directs (sous-dossiers + projets)
     /// au niveau du parent du dossier supprimé (ou racine si pas de parent).
     func deleteFolder(id: UUID, keepProjects: Bool = true) {
+        recordSnapshotUndo("Supprimer le dossier")   // 5.15
         guard let folder = data.folders.first(where: { $0.id == id }) else { return }
         let promotedParentId = folder.parentId
 
@@ -1817,6 +1827,7 @@ class DataStore: ObservableObject {
 
     /// À la suppression : promeut sous-dossiers et chapitres au parent du dossier supprimé.
     func deleteChapterFolder(id folderId: UUID, in projectId: UUID) {
+        recordSnapshotUndo("Supprimer le dossier de chapitres")   // 5.15
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }) else { return }
         let promotedParentId = data.projects[projIdx].chapterFolders
             .first(where: { $0.id == folderId })?.parentId
@@ -1914,6 +1925,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteChapter(at offsets: IndexSet, in projectId: UUID) {
+        recordSnapshotUndo("Supprimer le chapitre")   // 5.15
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }) else { return }
         let removedIds = offsets.map { data.projects[projIdx].chapters[$0].id }
         data.projects[projIdx].chapters.remove(atOffsets: offsets)
@@ -1925,6 +1937,7 @@ class DataStore: ObservableObject {
 
     /// Supprime un chapitre et toutes ses entrées
     func deleteChapterById(_ chapterId: UUID, in projectId: UUID) {
+        recordSnapshotUndo("Supprimer le chapitre")   // 5.15
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
               let chapIdx = data.projects[projIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
         deleteChapter(at: IndexSet([chapIdx]), in: projectId)
@@ -2204,6 +2217,7 @@ class DataStore: ObservableObject {
 
     /// Supprime un point de sauvegarde.
     func deleteCheckpoint(checkpointId: UUID, chapterId: UUID, in projectId: UUID) {
+        recordSnapshotUndo("Supprimer le point d'étape")   // 5.15
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
               let chapIdx = data.projects[projIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
         data.projects[projIdx].chapters[chapIdx].checkpoints.removeAll { $0.id == checkpointId }
@@ -2317,6 +2331,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteWeeklyPlanItem(itemId: UUID) {
+        recordSnapshotUndo("Supprimer l'élément du plan")   // 5.15
         guard let pIdx = data.weeklyPlans.firstIndex(where: { $0.weekKey == DataStore.currentWeekKey }) else { return }
         data.weeklyPlans[pIdx].items.removeAll { $0.id == itemId }
         save()
@@ -2421,6 +2436,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteDefenseNote(noteId: UUID, chapterId: UUID, in projectId: UUID) {
+        recordSnapshotUndo("Supprimer la note de soutenance")   // 5.15
         guard let projIdx = data.projects.firstIndex(where: { $0.id == projectId }),
               let chapIdx = data.projects[projIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
         data.projects[projIdx].chapters[chapIdx].defenseNotes.removeAll { $0.id == noteId }
@@ -2536,6 +2552,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteJournalEntry(_ id: UUID) {
+        recordSnapshotUndo("Supprimer l'entrée du journal")   // 5.15
         data.journalEntries.removeAll { $0.id == id }
         save()
     }
@@ -2577,6 +2594,7 @@ class DataStore: ObservableObject {
     }
 
     func archiveFragment(_ id: UUID) {
+        recordSnapshotUndo("Archiver le fragment")   // 5.15
         guard let idx = data.fragments.firstIndex(where: { $0.id == id }) else { return }
         data.fragments[idx].archivedAt = DataStore.today
         save()
@@ -2589,6 +2607,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteFragment(_ id: UUID) {
+        recordSnapshotUndo("Supprimer le fragment")   // 5.15
         data.fragments.removeAll { $0.id == id }
         save()
     }
@@ -2807,6 +2826,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteAdminTask(_ id: UUID) {
+        recordSnapshotUndo("Supprimer la tâche")   // 5.15
         data.adminTasks.removeAll { $0.id == id }
         save()
     }
@@ -3174,8 +3194,35 @@ class DataStore: ObservableObject {
 
     // MARK: - Undo / Redo
 
+    // 5.15 — photo de l'état avant une suppression ou un archivage, pour ⌘Z.
+    // Une action composée (une suppression qui en appelle une autre) ne crée qu'une entrée.
+    private var lastSnapshotAt: Date = .distantPast
+    func recordSnapshotUndo(_ label: String) {
+        let now = Date()
+        if now.timeIntervalSince(lastSnapshotAt) < 0.3, undoStack.last?.snapshotBefore != nil { return }
+        lastSnapshotAt = now
+        undoStack.append(UndoEntry(projectId: UUID(), chapterId: UUID(), date: "", oldValue: 0, newValue: 0,
+                                   snapshotBefore: data, label: label))
+        redoStack.removeAll()
+        if undoStack.count > 50 { undoStack.removeFirst() }
+        canUndo = true; canRedo = false
+    }
+
+    /// Libellé de la prochaine annulation (menu Édition).
+    var undoLabel: String? { undoStack.last?.label }
+    var redoLabel: String? { redoStack.last?.label }
+
     func undo() {
-        guard let entry = undoStack.popLast() else { return }
+        guard var entry = undoStack.popLast() else { return }
+        if let before = entry.snapshotBefore {
+            entry.snapshotAfter = data
+            redoStack.append(entry)
+            data = before
+            save()
+            canUndo = !undoStack.isEmpty
+            canRedo = !redoStack.isEmpty
+            return
+        }
         redoStack.append(entry)
         applyEntryValue(entry.oldValue, chapterId: entry.chapterId, projectId: entry.projectId, date: entry.date)
         canUndo = !undoStack.isEmpty
@@ -3184,6 +3231,14 @@ class DataStore: ObservableObject {
 
     func redo() {
         guard let entry = redoStack.popLast() else { return }
+        if let after = entry.snapshotAfter {
+            undoStack.append(entry)
+            data = after
+            save()
+            canUndo = !undoStack.isEmpty
+            canRedo = !redoStack.isEmpty
+            return
+        }
         undoStack.append(entry)
         applyEntryValue(entry.newValue, chapterId: entry.chapterId, projectId: entry.projectId, date: entry.date)
         canUndo = !undoStack.isEmpty
@@ -3429,12 +3484,12 @@ class DataStore: ObservableObject {
         guard pendingMilestone == nil else { return }   // pas de double
         pendingMilestone = milestone
         DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
-            withAnimation { self?.pendingMilestone = nil }
+            withAppAnimation { self?.pendingMilestone = nil }
         }
     }
 
     func dismissMilestone() {
-        withAnimation { pendingMilestone = nil }
+        withAppAnimation { pendingMilestone = nil }
     }
 
     private func checkNewBadgeUnlocks() {
@@ -4278,6 +4333,7 @@ class DataStore: ObservableObject {
     }
 
     func deleteResearchEntry(_ id: UUID) {
+        recordSnapshotUndo("Supprimer la note de recherche")   // 5.15
         data.researchEntries.removeAll { $0.id == id }
         save()
     }

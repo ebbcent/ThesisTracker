@@ -45,7 +45,7 @@ struct ProgressBarView: View {
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.primary)
                         .contentTransition(.numericText())
-                        .animation(.easeOut(duration: 0.15), value: value)
+                        .appAnimation(.easeOut(duration: 0.15), value: value)
                     if hasGoal {
                         Text(" / \(formatNumber(goal))")
                             .font(.system(size: 11))
@@ -54,7 +54,7 @@ struct ProgressBarView: View {
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(displayColor)
                             .contentTransition(.numericText())
-                            .animation(.easeOut(duration: 0.15), value: percentage)
+                            .appAnimation(.easeOut(duration: 0.15), value: percentage)
                     }
                 }
             }
@@ -83,13 +83,13 @@ struct ProgressBarView: View {
         .onAppear {
             guard hasGoal else { return }
             // Fast fill — no sluggish delay
-            withAnimation(.easeOut(duration: 0.25)) {
+            withAppAnimation(.easeOut(duration: 0.25)) {
                 animatedProgress = targetProgress
             }
         }
         .onChange(of: value) { _, _ in
             guard hasGoal else { return }
-            withAnimation(.easeOut(duration: 0.18)) {
+            withAppAnimation(.easeOut(duration: 0.18)) {
                 animatedProgress = targetProgress
             }
         }

@@ -15,7 +15,7 @@ struct TableOfContentsView: View {
                 // En-tête
                 HStack(spacing: 12) {
                     Button {
-                        withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                        withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
                     } label: {
                         Image(systemName: "sidebar.left")
                             .font(.system(size: 13, weight: .medium))
@@ -28,7 +28,7 @@ struct TableOfContentsView: View {
                                         .stroke(showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                             )
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Afficher ou masquer la barre latérale")
                     .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -55,7 +55,7 @@ struct TableOfContentsView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.2), lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
 
                 let activeProjects = store.data.projects.filter { !$0.isArchived }
@@ -94,7 +94,7 @@ struct TableOfContentsView: View {
             VStack(spacing: 0) {
                 // Projet header
                 Button {
-                    withAnimation(.easeOut(duration: 0.15)) {
+                    withAppAnimation(.easeOut(duration: 0.15)) {
                         if isExpanded { expandedProjects.remove(project.id) }
                         else { expandedProjects.insert(project.id) }
                     }
@@ -118,14 +118,14 @@ struct TableOfContentsView: View {
                                     .font(.system(size: 13, weight: .bold, design: .rounded))
                                     .foregroundColor(.accent)
                                 Text("\(DataStore.formatNumber(totalWritten)) car.")
-                                    .font(.system(size: 9)).foregroundColor(.labelMuted)
+                                    .font(.system(size: 10)).foregroundColor(.labelMuted)
                             }
                         }
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .font(.system(size: 10, weight: .medium)).foregroundColor(.labelMuted)
                     }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 if isExpanded && !project.chapters.isEmpty {
                     Divider().padding(.top, 8)
@@ -162,23 +162,23 @@ struct TableOfContentsView: View {
                             .foregroundColor(.primary)
                         if isActive {
                             Text("actif")
-                                .font(.system(size: 8, weight: .semibold))
+                                .font(.system(size: 10, weight: .semibold))
                                 .foregroundColor(.accent)
                                 .padding(.horizontal, 4).padding(.vertical, 1)
                                 .background(Color.accent.opacity(0.1))
                                 .clipShape(Capsule())
                         }
                         if chapter.priority == .high {
-                            Image(systemName: "exclamationmark").font(.system(size: 8, weight: .bold)).foregroundColor(Color(hex: "#DC2626"))
+                            Image(systemName: "exclamationmark").font(.system(size: 10, weight: .bold)).foregroundColor(Color(hex: "#DC2626"))
                         }
                         ForEach(chapter.customTags.prefix(2), id: \.self) { tag in
-                            Text(tag).font(.system(size: 8)).foregroundColor(.accent)
+                            Text(tag).font(.system(size: 10)).foregroundColor(.accent)
                                 .padding(.horizontal, 3).padding(.vertical, 1)
                                 .background(Color.accent.opacity(0.08)).clipShape(Capsule())
                         }
                     }
                     if let st = chapter.status, !chapter.isCompleted {
-                        Text(st.label).font(.system(size: 9)).foregroundColor(Color(hex: st.color))
+                        Text(st.label).font(.system(size: 10)).foregroundColor(Color(hex: st.color))
                     }
                 }
 
@@ -196,7 +196,7 @@ struct TableOfContentsView: View {
                             .font(.system(size: 10)).foregroundColor(.labelMuted)
                     }
                     if let dl = chapter.deadline, !dl.isEmpty {
-                        Image(systemName: "calendar").font(.system(size: 9)).foregroundColor(.accentWarm)
+                        Image(systemName: "calendar").font(.system(size: 10)).foregroundColor(.accentWarm)
                     }
                 }
             }
@@ -207,7 +207,7 @@ struct TableOfContentsView: View {
                 VStack(spacing: 0) {
                     ForEach(chapter.subchapters) { sub in
                         HStack(spacing: 6) {
-                            Image(systemName: "arrow.turn.down.right").font(.system(size: 9)).foregroundColor(.labelMuted).frame(width: 20)
+                            Image(systemName: "arrow.turn.down.right").font(.system(size: 10)).foregroundColor(.labelMuted).frame(width: 20)
                             Text(sub.name).font(.system(size: 11)).foregroundColor(.secondary)
                             Spacer()
                             let subLatest = sub.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
@@ -268,11 +268,11 @@ private struct ExportTextSheet: View {
                     .padding(.horizontal, 10).padding(.vertical, 5)
                     .background(Color.accent.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 Button { dismiss() } label: {
                     Image(systemName: "xmark").font(.system(size: 12, weight: .semibold)).foregroundColor(.labelMuted)
                         .padding(8).background(Color.cardBg).clipShape(Circle())
-                }.buttonStyle(.plain)
+                }.buttonStyle(.pressable)
                 .help("Fermer")
                 .accessibilityLabel("Fermer")
             }

@@ -22,7 +22,7 @@ struct CockpitButtonStyle: ButtonStyle {
             )
             .shadow(color: CockpitTheme.shadow(for: colorScheme).opacity(prominent ? 0.9 : 0.35), radius: prominent ? 10 : 4, y: 6)
             .scaleEffect(configuration.isPressed ? 0.985 : 1)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+            .appAnimation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 
     private func background(configuration: Configuration) -> Color {

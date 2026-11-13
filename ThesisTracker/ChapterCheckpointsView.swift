@@ -29,7 +29,7 @@ struct ChapterCheckpointsSheet: View {
                 checkpointsList
             }
         }
-        .frame(width: 540, height: 520)
+        .sheetFrame(width: 540, height: 520)
         .sheet(isPresented: $showSaveSheet) {
             SaveCheckpointSheet(store: store, project: project, chapter: chapter)
         }
@@ -92,7 +92,7 @@ struct ChapterCheckpointsSheet: View {
                     .background(Color.accent.opacity(0.10))
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Button { showSaveSheet = true } label: {
                 Label("Nouveau point", systemImage: "plus.circle.fill")
                     .font(.system(size: 12, weight: .semibold))
@@ -101,13 +101,13 @@ struct ChapterCheckpointsSheet: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Button { dismiss() } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -165,7 +165,7 @@ struct ChapterCheckpointsSheet: View {
                     Text(checkpoint.label)
                         .font(.system(size: 13, weight: .semibold))
                     Text("v\(checkpoint.draftVersion)")
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 5).padding(.vertical, 1)
                         .background(Color.labelMuted.opacity(0.1))
@@ -207,7 +207,7 @@ struct ChapterCheckpointsSheet: View {
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Restaurer ce point")
                 .accessibilityLabel("Restaurer ce point")
                 Button { pendingDeleteId = checkpoint.id } label: {
@@ -217,7 +217,7 @@ struct ChapterCheckpointsSheet: View {
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Supprimer")
                 .accessibilityLabel("Supprimer")
             }
@@ -302,7 +302,7 @@ private struct SaveCheckpointSheet: View {
                 .foregroundColor(.labelMuted.opacity(0.7))
             HStack {
                 Button("Annuler") { dismiss() }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(.horizontal, 12).padding(.vertical, 6)
                 Spacer()
                 Button {
@@ -317,7 +317,7 @@ private struct SaveCheckpointSheet: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(20)
@@ -370,7 +370,7 @@ struct CheckpointsWidget: View {
                 } else if let latest = checkpoints.max(by: { $0.timestamp < $1.timestamp }) {
                     HStack(spacing: 6) {
                         Image(systemName: "clock")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.6))
                         Text("Dernier : \(latest.label) (v\(latest.draftVersion))")
                             .font(.system(size: 11))
@@ -390,7 +390,7 @@ struct CheckpointsWidget: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(chapter == nil)
             }
         }

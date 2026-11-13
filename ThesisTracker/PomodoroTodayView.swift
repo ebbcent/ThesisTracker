@@ -299,7 +299,7 @@ struct PomodoroTodayView: View {
                         .offset(burstOffset(index: i, radius: 110))
                         .scaleEffect(controller.focusSessionJustCompleted ? 1 : 0)
                         .opacity(controller.focusSessionJustCompleted ? 0 : 1)
-                        .animation(.easeOut(duration: 0.7).delay(Double(i) * 0.04), value: controller.focusSessionJustCompleted)
+                        .appAnimation(.easeOut(duration: 0.7).delay(Double(i) * 0.04), value: controller.focusSessionJustCompleted)
                 }
             }
         }
@@ -348,7 +348,7 @@ struct PomodoroTodayView: View {
     private func statusChip(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(title.uppercased())
-                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .font(.system(size: 10, weight: .bold, design: .rounded))
                 .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
             Text(value)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))

@@ -56,7 +56,7 @@ struct FocusChapterWidget: View {
                         Spacer()
                         if let st = chapter.status, !chapter.isCompleted {
                             Text(st.label)
-                                .font(.system(size: 9, weight: .semibold))
+                                .font(.system(size: 10, weight: .semibold))
                                 .foregroundColor(Color(hex: st.color))
                                 .padding(.horizontal, 6).padding(.vertical, 2)
                                 .background(Color(hex: st.color).opacity(0.12))
@@ -98,7 +98,7 @@ struct FocusChapterWidget: View {
                             if let days = daysToETA {
                                 HStack(spacing: 4) {
                                     Image(systemName: "clock")
-                                        .font(.system(size: 9))
+                                        .font(.system(size: 10))
                                         .foregroundColor(.labelMuted)
                                     Text(days <= 0 ? "Fin prévue aujourd'hui"
                                          : days == 1 ? "Fin prévue demain"
@@ -111,7 +111,7 @@ struct FocusChapterWidget: View {
                             if let nextStep = chapter.nextStep, !nextStep.isEmpty {
                                 HStack(alignment: .top, spacing: 4) {
                                     Image(systemName: "arrow.right.circle.fill")
-                                        .font(.system(size: 9))
+                                        .font(.system(size: 10))
                                         .foregroundColor(.accent)
                                         .padding(.top, 1)
                                     Text(nextStep)
@@ -128,7 +128,7 @@ struct FocusChapterWidget: View {
                     if let eta, goal > 0, ratio < 1.0 {
                         HStack(spacing: 4) {
                             Image(systemName: "calendar")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.labelMuted.opacity(0.6))
                             Text("Fin estimée le \(etaFormatted(eta))")
                                 .font(.system(size: 10))
@@ -146,10 +146,10 @@ struct FocusChapterWidget: View {
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.9).delay(0.2)) { animatedRatio = ratio }
+            withAppAnimation(Motion.progress.delay(0.1)) { animatedRatio = ratio }
         }
         .onChange(of: ratio) { _, v in
-            withAnimation(.easeOut(duration: 0.5)) { animatedRatio = v }
+            withAppAnimation(.easeOut(duration: 0.5)) { animatedRatio = v }
         }
     }
 
@@ -178,7 +178,7 @@ struct FocusChapterWidget: View {
                     .font(.system(size: 15, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
                 Text("%")
-                    .font(.system(size: 8))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
         }

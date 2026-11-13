@@ -31,8 +31,9 @@ struct VoiceDictationButton: View {
                 .foregroundColor(isDictating ? .accent : .labelMuted)
                 .symbolEffect(.bounce, value: isDictating)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help(isDictating ? "Arrêter la dictée" : "Dicter un nombre (ex: « quinze mille »)")
+        .accessibilityLabel(isDictating ? "Arrêter la dictée" : "Dicter un nombre (ex: « quinze mille »)")
         .alert("Dictée indisponible", isPresented: .constant(errorMessage != nil)) {
             Button("OK") { errorMessage = nil }
         } message: {

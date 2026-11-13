@@ -58,10 +58,10 @@ struct KanbanView: View {
             // Header
             HStack {
                 if !showSidebar {
-                    Button { withAnimation { showSidebar = true } } label: {
+                    Button { withAppAnimation { showSidebar = true } } label: {
                         Image(systemName: "sidebar.left").font(.system(size: 14)).foregroundColor(.labelMuted)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Afficher la barre latérale")
                     .accessibilityLabel("Afficher la barre latérale")
                 }
@@ -93,7 +93,7 @@ struct KanbanView: View {
                             dropTarget = nil
                             return true
                         } isTargeted: { targeted in
-                            withAnimation(.easeInOut(duration: 0.15)) { dropTarget = targeted ? status : nil }
+                            withAppAnimation(.easeInOut(duration: 0.15)) { dropTarget = targeted ? status : nil }
                         }
                     }
                 }
@@ -121,7 +121,7 @@ struct KanbanView: View {
                     Text("Créez d'abord un projet depuis la barre latérale.")
                         .font(.system(size: 13))
                         .foregroundColor(.labelMuted)
-                    Button("Fermer") { addingChapterForStatus = nil }.buttonStyle(.plain)
+                    Button("Fermer") { addingChapterForStatus = nil }.buttonStyle(.pressable)
                 }
                 .padding(40)
             }
@@ -129,38 +129,13 @@ struct KanbanView: View {
     }
 
     private var kanbanEmptyState: some View {
-        VStack(spacing: 16) {
+        VStack {   // 5.15 : état vide commun
             Spacer()
-            Image(systemName: "rectangle.split.3x1")
-                .font(.system(size: 48))
-                .foregroundColor(.labelMuted.opacity(0.4))
-            VStack(spacing: 6) {
-                Text("Aucun chapitre à afficher")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.primary)
-                Text("Ajoute des chapitres à tes projets depuis la barre latérale.")
-                    .font(.system(size: 12))
-                    .foregroundColor(.labelMuted)
-                    .multilineTextAlignment(.center)
-            }
-            Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
-            } label: {
-                Text("Ouvrir la barre latérale")
-                    .font(.system(size: 12, weight: .semibold))
-                    .lineLimit(1)
-                    .foregroundColor(.accent)
-                    .padding(.horizontal, 16).padding(.vertical, 8)
-                    .background(Color.accent.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.25), lineWidth: 1))
-                    .contentShape(RoundedRectangle(cornerRadius: 8))
-            }
-            .buttonStyle(.plain)
+            EmptyStateView(icon: "rectangle.split.3x1", title: "Aucun chapitre à afficher",
+                           message: "Ajoute des chapitres à tes projets depuis la barre latérale.", iconColor: .accent,
+                           action: { withAppAnimation(Motion.quick) { showSidebar = true } }, actionLabel: "Ouvrir la barre latérale")
             Spacer()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal, 40)
     }
 
     private func applyDrop(chapterId: UUID, newStatus: KanbanStatus) {
@@ -226,9 +201,9 @@ private struct KanbanColumn: View {
                             .padding(4)
                             .background(Circle().fill(status.color.opacity(0.12)))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Nouveau chapitre dans « \(status.rawValue) » (ou double-clic)")
-                    .transition(.scale.combined(with: .opacity))
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
                     .accessibilityLabel("Nouveau chapitre dans « \(status.rawValue) » (ou double-clic)")
                 }
                 Text("\(items.count)")
@@ -242,7 +217,7 @@ private struct KanbanColumn: View {
             .contentShape(Rectangle())
             .onHover { headerHovered = $0 }
             .onTapGesture(count: 2) { onAddChapter?() }
-            .animation(.easeInOut(duration: 0.15), value: headerHovered)
+            .appAnimation(.easeInOut(duration: 0.15), value: headerHovered)
 
             // Cards
             ScrollView(.vertical, showsIndicators: false) {
@@ -269,7 +244,7 @@ private struct KanbanColumn: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isDropTarget ? status.color.opacity(0.35) : Color.cardBorder, lineWidth: isDropTarget ? 1.5 : 1)
         )
-        .animation(.easeInOut(duration: 0.15), value: isDropTarget)
+        .appAnimation(.easeInOut(duration: 0.15), value: isDropTarget)
     }
 }
 
@@ -301,9 +276,9 @@ private struct KanbanCard: View {
                 Spacer()
                 Button { onEdit(project, chapter) } label: {
                     Image(systemName: "pencil")
-                        .font(.system(size: 9)).foregroundColor(.labelMuted)
+                        .font(.system(size: 10)).foregroundColor(.labelMuted)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Modifier le chapitre")
                 .accessibilityLabel("Modifier le chapitre")
             }
@@ -323,10 +298,10 @@ private struct KanbanCard: View {
                     .frame(height: 3)
                     HStack {
                         Text("\(store.formatCountShort(latest)) / \(store.formatCountShort(chapter.goal))")
-                            .font(.system(size: 9)).foregroundColor(.labelMuted)
+                            .font(.system(size: 10)).foregroundColor(.labelMuted)
                         Spacer()
                         Text("\(Int(ratio * 100))%")
-                            .font(.system(size: 9, weight: .medium)).foregroundColor(statusColor)
+                            .font(.system(size: 10, weight: .medium)).foregroundColor(statusColor)
                     }
                 }
             }
@@ -334,9 +309,9 @@ private struct KanbanCard: View {
             if let deadline = chapter.deadline.flatMap(DataStore.parseDate) {
                 let daysLeft = Calendar.current.dateComponents([.day], from: Date(), to: deadline).day ?? 0
                 HStack(spacing: 4) {
-                    Image(systemName: "calendar").font(.system(size: 8))
+                    Image(systemName: "calendar").font(.system(size: 10))
                     Text(daysLeft >= 0 ? "\(daysLeft) j. restants" : "En retard")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                 }
                 .foregroundColor(daysLeft < 3 ? Color(red: 0.929, green: 0.329, blue: 0.329) : .labelMuted)
             }

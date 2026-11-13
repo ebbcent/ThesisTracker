@@ -77,7 +77,7 @@ struct WeekComparisonWidget: View {
                             .frame(width: 7, height: th)
                     }
                     Text(data.dayLabels[i])
-                        .font(.system(size: 8))
+                        .font(.system(size: 10))
                         .foregroundColor(.labelMuted)
                 }
                 if i < 6 { Spacer(minLength: 0) }

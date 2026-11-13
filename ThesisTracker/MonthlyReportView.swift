@@ -55,7 +55,7 @@ struct MonthlyReportWidget: View {
                         .background(Color(red: 0.300, green: 0.650, blue: 0.900))
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .sheet(isPresented: $showSheet) {
@@ -106,7 +106,7 @@ struct MonthlyReportSheet: View {
                 }
             }
         }
-        .frame(width: 720, height: 520)
+        .sheetFrame(width: 720, height: 520)
         .onAppear {
             if selectedKey == nil, let first = reports.first {
                 selectedKey = first.monthKey
@@ -131,7 +131,7 @@ struct MonthlyReportSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -179,7 +179,7 @@ struct MonthlyReportSheet: View {
                         .background(selectedKey == report.monthKey ? Color.accent.opacity(0.10) : Color.clear)
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     Divider()
                 }
             }
@@ -228,7 +228,7 @@ struct MonthlyReportSheet: View {
                             .background(Color.accent)
                             .clipShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
                 .padding(20)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -243,7 +243,7 @@ struct MonthlyReportSheet: View {
     private func statTile(label: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label.uppercased())
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.6)
             Text(value)

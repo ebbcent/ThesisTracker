@@ -41,7 +41,7 @@ struct NotificationCenterView: View {
             Divider().overlay(Color.cardBorder)
             content
         }
-        .frame(width: 360, height: 500)
+        .sheetFrame(width: 360, height: 500)
         .background(Color.cardBg)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
@@ -66,18 +66,18 @@ struct NotificationCenterView: View {
             HStack(spacing: 8) {
                 if store.unreadCount > 0 {
                     Button {
-                        withAnimation(.easeInOut(duration: 0.18)) { store.markAllRead() }
+                        withAppAnimation(.easeInOut(duration: 0.18)) { store.markAllRead() }
                     } label: {
                         Text("Tout lire")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.accent)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
 
                 if !store.notifications.isEmpty {
                     Button {
-                        withAnimation(.easeInOut(duration: 0.18)) { store.clearAll() }
+                        withAppAnimation(.easeInOut(duration: 0.18)) { store.clearAll() }
                     } label: {
                         Image(systemName: "trash")
                             .font(.system(size: 12))
@@ -86,7 +86,7 @@ struct NotificationCenterView: View {
                             .background(Color.fieldBg)
                             .clipShape(Circle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Tout effacer")
                     .accessibilityLabel("Tout effacer")
                 }
@@ -103,11 +103,11 @@ struct NotificationCenterView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
                 chip(label: "Tout", icon: nil, isSelected: selectedCategory == nil, color: .accent) {
-                    withAnimation(.easeInOut(duration: 0.15)) { selectedCategory = nil }
+                    withAppAnimation(.easeInOut(duration: 0.15)) { selectedCategory = nil }
                 }
                 ForEach(usedCategories, id: \.self) { cat in
                     chip(label: cat.displayName, icon: cat.icon, isSelected: selectedCategory == cat, color: cat.color) {
-                        withAnimation(.easeInOut(duration: 0.15)) {
+                        withAppAnimation(.easeInOut(duration: 0.15)) {
                             selectedCategory = selectedCategory == cat ? nil : cat
                         }
                     }
@@ -124,7 +124,7 @@ struct NotificationCenterView: View {
             HStack(spacing: 4) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                 }
                 Text(label)
                     .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
@@ -136,7 +136,7 @@ struct NotificationCenterView: View {
                 Capsule().fill(isSelected ? color : Color.fieldBg)
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Content
@@ -253,7 +253,7 @@ struct NotificationRow: View {
 
             // Toggle read button (visible on hover)
             Button {
-                withAnimation(.easeInOut(duration: 0.15)) {
+                withAppAnimation(.easeInOut(duration: 0.15)) {
                     if notif.isRead {
                         store.markAsUnread(notif.id)
                     } else {
@@ -266,7 +266,7 @@ struct NotificationRow: View {
                     .foregroundColor(notif.isRead ? .labelMuted.opacity(0.35) : .accent)
                     .opacity(hovering || !notif.isRead ? 1 : 0.3)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help(notif.isRead ? "Marquer comme non lu" : "Marquer comme lu")
             .accessibilityLabel(notif.isRead ? "Marquer comme non lu" : "Marquer comme lu")
         }
@@ -281,7 +281,7 @@ struct NotificationRow: View {
         .onHover { hovering = $0 }
         .onTapGesture {
             if !notif.isRead {
-                withAnimation(.easeInOut(duration: 0.15)) { store.markAsRead(notif.id) }
+                withAppAnimation(.easeInOut(duration: 0.15)) { store.markAsRead(notif.id) }
             }
         }
         .contextMenu {
@@ -291,7 +291,7 @@ struct NotificationRow: View {
             Divider()
             Button("Supprimer", role: .destructive) { store.delete(notif.id) }
         }
-        .animation(.easeInOut(duration: 0.12), value: notif.isRead)
+        .appAnimation(.easeInOut(duration: 0.12), value: notif.isRead)
     }
 
     private func timeAgo(_ date: Date) -> String {

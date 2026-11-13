@@ -139,7 +139,7 @@ struct DaysOffManagerSheet: View {
             } label: {
                 Image(systemName: "trash").font(.system(size: 11))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .foregroundColor(.labelMuted)
             .help("Retirer cette journée")
             .accessibilityLabel("Retirer cette journée")

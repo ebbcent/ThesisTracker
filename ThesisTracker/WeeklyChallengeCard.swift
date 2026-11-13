@@ -69,7 +69,7 @@ struct WeeklyChallengeCard: View {
                                         )
                                     )
                                     .frame(width: geo.size.width * ratio, height: 6)
-                                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: ratio)
+                                    .appAnimation(Motion.progress, value: ratio)
                             }
                         }
                         .frame(height: 6)

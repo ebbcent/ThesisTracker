@@ -93,7 +93,7 @@ struct WellbeingWidget: View {
                                 .foregroundColor(localEnergy ?? 0 >= lvl ? .white : .labelMuted)
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help(energyLabel(lvl))
                 }
             }
@@ -120,7 +120,7 @@ struct WellbeingWidget: View {
     private var miniHistory: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("14 DERNIERS JOURS")
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(.labelMuted.opacity(0.7))
                 .kerning(0.6)
             HStack(alignment: .bottom, spacing: 3) {
@@ -172,7 +172,7 @@ struct WellbeingWidget: View {
                 .background(isRest ? Color(red: 0.404, green: 0.224, blue: 0.718) : Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
                 .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
     }
 

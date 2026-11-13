@@ -18,13 +18,13 @@ struct BlockedSessionAndTodayHooks: ViewModifier {
                 BlockedSessionSheet(
                     store: store,
                     onShortSprint: {
-                        withAnimation(.easeOut(duration: 0.15)) { showWritingSprint = true }
+                        withAppAnimation(.easeOut(duration: 0.15)) { showWritingSprint = true }
                     },
                     onSwitchChapter: {
-                        withAnimation(.easeOut(duration: 0.15)) { showCommandPalette = true }
+                        withAppAnimation(.easeOut(duration: 0.15)) { showCommandPalette = true }
                     },
                     onShowChapterNotes: {
-                        withAnimation(.easeInOut(duration: 0.15)) { selectedNav = .dashboard }
+                        withAppAnimation(.easeInOut(duration: 0.15)) { selectedNav = .dashboard }
                     }
                 )
             }
@@ -32,16 +32,16 @@ struct BlockedSessionAndTodayHooks: ViewModifier {
                 CooldownSheet(store: store)
             }
             .onReceive(NotificationCenter.default.publisher(for: .showTodayMode)) { _ in
-                withAnimation(.easeOut(duration: 0.15)) { showTodayMode = true }
+                withAppAnimation(.easeOut(duration: 0.15)) { showTodayMode = true }
             }
             .onReceive(NotificationCenter.default.publisher(for: .showBlockedSession)) { _ in
-                withAnimation(.easeOut(duration: 0.15)) { showBlockedSession = true }
+                withAppAnimation(.easeOut(duration: 0.15)) { showBlockedSession = true }
             }
             .onReceive(NotificationCenter.default.publisher(for: .showSanctuary)) { _ in
-                withAnimation(.easeOut(duration: 0.15)) { showSanctuary = true }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSanctuary = true }
             }
             .onReceive(NotificationCenter.default.publisher(for: .showCooldown)) { _ in
-                withAnimation(.easeOut(duration: 0.15)) { showCooldown = true }
+                withAppAnimation(.easeOut(duration: 0.15)) { showCooldown = true }
             }
     }
 }

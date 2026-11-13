@@ -104,7 +104,7 @@ struct ProjectTemplatePickerSheet: View {
                             .padding(8).background(Color.cardBg).clipShape(Circle())
                             .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Fermer")
                     .accessibilityLabel("Fermer")
                 }
@@ -145,9 +145,9 @@ struct ProjectTemplatePickerSheet: View {
                     .font(.system(size: 10)).foregroundColor(.labelMuted)
                     .lineLimit(2).multilineTextAlignment(.leading)
                 HStack(spacing: 4) {
-                    Image(systemName: "list.bullet").font(.system(size: 9)).foregroundColor(.labelMuted)
+                    Image(systemName: "list.bullet").font(.system(size: 10)).foregroundColor(.labelMuted)
                     Text("\(template.chapters.count) chapitre\(template.chapters.count != 1 ? "s" : "")")
-                        .font(.system(size: 9)).foregroundColor(.labelMuted)
+                        .font(.system(size: 10)).foregroundColor(.labelMuted)
                 }
             }
             .padding(12)
@@ -156,6 +156,6 @@ struct ProjectTemplatePickerSheet: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 }

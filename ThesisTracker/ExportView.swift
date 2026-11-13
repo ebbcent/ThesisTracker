@@ -126,13 +126,13 @@ struct ExportView: View {
                         .overlay(RoundedRectangle(cornerRadius: 9).stroke(Color.cardBorder, lineWidth: 1))
                         .contentShape(RoundedRectangle(cornerRadius: 9))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 18)).foregroundColor(.labelMuted)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .help("Fermer")
                     .accessibilityLabel("Fermer")
                 }
@@ -163,7 +163,7 @@ struct ExportView: View {
                                         .stroke(format == f ? Color.accent : Color.cardBorder, lineWidth: 1))
                                     .contentShape(RoundedRectangle(cornerRadius: 10))
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                             }
                         }
                         .padding(.horizontal, 2)
@@ -217,7 +217,7 @@ struct ExportView: View {
                         .padding(.horizontal, 18).padding(.vertical, 10).background(Color.cardBg)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
-                        .buttonStyle(.plain).keyboardShortcut(.escape)
+                        .buttonStyle(.pressable).keyboardShortcut(.escape)
 
                     // Bouton email directeur
                     Button { sendEmailToDirector() } label: {
@@ -234,7 +234,7 @@ struct ExportView: View {
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accent.opacity(0.25), lineWidth: 1))
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
 
                     Spacer()
                     Button { doExport() } label: {
@@ -254,7 +254,7 @@ struct ExportView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                     }
-                    .buttonStyle(.plain).disabled(isExporting)
+                    .buttonStyle(.pressable).disabled(isExporting)
                     .keyboardShortcut(.return)
                 }
             }
@@ -282,7 +282,7 @@ struct ExportView: View {
             .overlay(Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
             .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private func feedbackRow(_ msg: String, icon: String, color: Color) -> some View {
@@ -736,7 +736,7 @@ struct PDFReportContent: View {
                 VStack(alignment: .leading, spacing: 10) {
                     // Surtitre
                     Text("RAPPORT DE PROGRESSION ACADÉMIQUE")
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(Self.accentGold.opacity(0.8))
                         .kerning(2)
 
@@ -825,7 +825,7 @@ struct PDFReportContent: View {
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(accent)
                 Text(label.uppercased())
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(.secondary)
                     .kerning(0.8)
             }
@@ -1017,7 +1017,7 @@ struct PDFReportContent: View {
 
                     // Badge statut
                     Text(statusInfo.label)
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundColor(statusInfo.color)
                         .padding(.horizontal, 6).padding(.vertical, 2)
                         .background(statusInfo.color.opacity(0.12))
@@ -1029,9 +1029,9 @@ struct PDFReportContent: View {
                     if let dl = chapter.deadline, let d = DataStore.parseDate(dl) {
                         HStack(spacing: 3) {
                             Image(systemName: "calendar")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                             Text(DataStore.formatDate(d))
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                         }
                         .foregroundColor(deadlineColor(dl))
                     }
@@ -1125,7 +1125,7 @@ struct PDFReportContent: View {
 
     private func sectionLabel(_ title: String) -> some View {
         Text(title)
-            .font(.system(size: 9, weight: .bold))
+            .font(.system(size: 10, weight: .bold))
             .foregroundColor(.secondary)
             .kerning(1.5)
     }
@@ -1391,7 +1391,7 @@ struct PDFWeeklyReportContent: View {
                 }
                 VStack(alignment: .leading, spacing: 8) {
                     Text("RAPPORT HEBDOMADAIRE")
-                        .font(.system(size: 9, weight: .semibold)).foregroundColor(Self.accent.opacity(0.8)).kerning(2)
+                        .font(.system(size: 10, weight: .semibold)).foregroundColor(Self.accent.opacity(0.8)).kerning(2)
                     Text(weekLabel)
                         .font(.system(size: 22, weight: .bold, design: .rounded)).foregroundColor(.white)
                     Text("Généré le \(generatedAt)")
@@ -1412,7 +1412,7 @@ struct PDFWeeklyReportContent: View {
 
                 // Barres journalières
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("ACTIVITÉ JOURNALIÈRE").font(.system(size: 9, weight: .bold)).foregroundColor(.secondary).kerning(1.5)
+                    Text("ACTIVITÉ JOURNALIÈRE").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary).kerning(1.5)
                     let bars = dailyBars
                     let maxVal = bars.map(\.value).max() ?? 1
                     HStack(alignment: .bottom, spacing: 0) {
@@ -1420,7 +1420,7 @@ struct PDFWeeklyReportContent: View {
                             let ratio = maxVal > 0 ? Double(item.value) / Double(maxVal) : 0
                             VStack(spacing: 4) {
                                 Text(DataStore.formatNumber(item.value))
-                                    .font(.system(size: 9)).foregroundColor(.secondary)
+                                    .font(.system(size: 10)).foregroundColor(.secondary)
                                     .opacity(item.value > 0 ? 1 : 0)
                                 RoundedRectangle(cornerRadius: 4)
                                     .fill(item.value > 0 ? Self.accent.opacity(0.4 + 0.6 * ratio) : Color.black.opacity(0.06))
@@ -1446,7 +1446,7 @@ struct PDFWeeklyReportContent: View {
                     }.sorted { $0.2 > $1.2 }
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("CHAPITRES").font(.system(size: 9, weight: .bold)).foregroundColor(.secondary).kerning(1.5)
+                        Text("CHAPITRES").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary).kerning(1.5)
                         VStack(spacing: 0) {
                             ForEach(Array(chaps.enumerated()), id: \.offset) { idx, ch in
                                 HStack {
@@ -1478,7 +1478,7 @@ struct PDFWeeklyReportContent: View {
 
     private func weekStatBox(label: String, value: String, sub: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(label.uppercased()).font(.system(size: 9, weight: .semibold)).foregroundColor(.secondary).kerning(0.8)
+            Text(label.uppercased()).font(.system(size: 10, weight: .semibold)).foregroundColor(.secondary).kerning(0.8)
             HStack(alignment: .lastTextBaseline, spacing: 3) {
                 Text(value).font(.system(size: 20, weight: .bold, design: .rounded)).foregroundColor(.primary)
                 if !sub.isEmpty {

@@ -123,6 +123,7 @@ struct ThesisTrackerApp: App {
         // ── Fenêtre principale ────────────────────────────
         WindowGroup {
             MainView(store: store)
+                .monospacedDigit()   // 5.15 : chiffres à largeur fixe partout (les compteurs ne « sautent » plus)
                 .environmentObject(pomodoroController)
                 .environmentObject(store)
                 .background(WindowAccessor())
@@ -179,7 +180,7 @@ struct ThesisTrackerApp: App {
             // Menu Édition : annuler/rétablir. Si un champ texte a le focus, on
             // laisse l'UndoManager du champ agir ; sinon on utilise l'historique du store.
             CommandGroup(replacing: .undoRedo) {
-                Button("Annuler") {
+                Button(store.undoLabel.map { "Annuler « \($0) »" } ?? "Annuler") {   // 5.15 : libellé de l'action
                     if NSApp.keyWindow?.firstResponder is NSText {
                         NSApp.sendAction(Selector(("undo:")), to: nil, from: nil)
                     } else {
@@ -188,7 +189,7 @@ struct ThesisTrackerApp: App {
                 }
                 .keyboardShortcut("z", modifiers: .command)
 
-                Button("Rétablir") {
+                Button(store.redoLabel.map { "Rétablir « \($0) »" } ?? "Rétablir") {
                     if NSApp.keyWindow?.firstResponder is NSText {
                         NSApp.sendAction(Selector(("redo:")), to: nil, from: nil)
                     } else {
@@ -262,7 +263,7 @@ struct ThesisTrackerApp: App {
                 if pomodoroController.timerSnapshot.phase == .idle {
                     if store.currentStreak >= 2 {
                         Image(systemName: "flame.fill")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(Color(red: 0.961, green: 0.455, blue: 0.114))
                         Text("\(store.currentStreak)")
                             .font(.system(size: 11, weight: .bold))

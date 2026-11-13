@@ -43,7 +43,7 @@ struct ChapterStatusPickerView: View {
                         .font(.system(size: 18))
                         .foregroundColor(.secondary)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Fermer")
                 .accessibilityLabel("Fermer")
             }
@@ -100,7 +100,7 @@ struct ChapterStatusPickerView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             } else {
                 Color.clear.frame(height: 10)
             }
@@ -171,7 +171,7 @@ private struct StatusOptionCard: View {
                     )
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .onHover { isHovered = $0 }
     }
 }

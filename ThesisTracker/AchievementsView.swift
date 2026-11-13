@@ -37,11 +37,11 @@ struct AchievementsView: View {
                 // Top header
                 HStack {
                     if !showSidebar {
-                        Button { withAnimation { showSidebar = true } } label: {
+                        Button { withAppAnimation { showSidebar = true } } label: {
                             Image(systemName: "sidebar.left").font(.system(size: 14))
                                 .foregroundColor(.labelMuted)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Afficher la barre latérale")
                         .accessibilityLabel("Afficher la barre latérale")
                     }
@@ -129,7 +129,7 @@ struct AchievementsView: View {
                                         RoundedRectangle(cornerRadius: 3).fill(next.color.opacity(0.12)).frame(height: 6)
                                         RoundedRectangle(cornerRadius: 3).fill(next.color)
                                             .frame(width: geo.size.width * progress, height: 6)
-                                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
+                                            .appAnimation(Motion.progress, value: progress)
                                     }
                                 }.frame(height: 6)
                             }
@@ -386,7 +386,7 @@ struct AchievementsView: View {
                         RoundedRectangle(cornerRadius: 3).fill(badge.color.opacity(0.12)).frame(height: 6)
                         RoundedRectangle(cornerRadius: 3).fill(badge.color)
                             .frame(width: geo.size.width * progress, height: 6)
-                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
+                            .appAnimation(Motion.progress, value: progress)
                     }
                 }
                 .frame(height: 6)
@@ -397,7 +397,7 @@ struct AchievementsView: View {
     @ViewBuilder
     private func sectionHeader(_ text: String, icon: String, color: Color) -> some View {
         HStack(spacing: 6) {
-            Image(systemName: icon).font(.system(size: 9, weight: .bold)).foregroundColor(color)
+            Image(systemName: icon).font(.system(size: 10, weight: .bold)).foregroundColor(color)
             Text(text).font(.system(size: 10, weight: .bold)).foregroundColor(.labelMuted).kerning(1.0)
         }
     }
@@ -460,13 +460,13 @@ private struct VolumeBadgeCard: View {
             }
             if isUnlocked {
                 HStack(spacing: 3) {
-                    Image(systemName: "checkmark.circle.fill").font(.system(size: 9))
-                    Text("Débloqué").font(.system(size: 9, weight: .medium))
+                    Image(systemName: "checkmark.circle.fill").font(.system(size: 10))
+                    Text("Débloqué").font(.system(size: 10, weight: .medium))
                 }
                 .foregroundColor(badge.color)
             } else {
                 Text("\(Int(progress * 100))%")
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -512,8 +512,8 @@ private struct BadgeCard: View {
             }
             if isUnlocked {
                 HStack(spacing: 3) {
-                    Image(systemName: "checkmark.circle.fill").font(.system(size: 9))
-                    Text("Débloqué").font(.system(size: 9, weight: .medium))
+                    Image(systemName: "checkmark.circle.fill").font(.system(size: 10))
+                    Text("Débloqué").font(.system(size: 10, weight: .medium))
                 }
                 .foregroundColor(badge.color)
             }
@@ -606,7 +606,7 @@ private struct CompletedChallengeCard: View {
                     .foregroundColor(.labelMuted)
                     .lineLimit(1)
                 Text(weekLabel)
-                    .font(.system(size: 9))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted.opacity(0.7))
                     .lineLimit(1)
             }

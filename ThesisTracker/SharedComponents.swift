@@ -39,7 +39,7 @@ struct EmptyStateView: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .frame(maxWidth: .infinity)
@@ -80,7 +80,7 @@ struct FilterChipButton: View {
             HStack(spacing: 4) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 9, weight: isSelected ? .semibold : .regular))
+                        .font(.system(size: 10, weight: isSelected ? .semibold : .regular))
                 }
                 Text(label)
                     .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
@@ -93,7 +93,7 @@ struct FilterChipButton: View {
                 Capsule().stroke(isSelected ? Color.accent : Color.white.opacity(0.10), lineWidth: 1)
             )
         }
-        .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.15), value: isSelected)
+        .buttonStyle(.pressable)
+        .appAnimation(.easeInOut(duration: 0.15), value: isSelected)
     }
 }

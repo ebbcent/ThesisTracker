@@ -106,7 +106,7 @@ struct ProfessorQuickButton: View {
                 }
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help("Professeur — note rapide (⇧⌘P)")
         .accessibilityLabel("Ouvrir le professeur en note rapide")
     }

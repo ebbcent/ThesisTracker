@@ -121,7 +121,7 @@ struct SanctuaryModeView: View {
             }
             VStack(spacing: 10) {
                 Text("DURÉE")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.white.opacity(0.5))
                     .kerning(1.2)
                 HStack(spacing: 8) {
@@ -150,11 +150,11 @@ struct SanctuaryModeView: View {
                 .background(Color.white)
                 .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(chapter == nil)
             Spacer()
             Button("Quitter") { onDismiss() }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .font(.system(size: 11))
                 .foregroundColor(.white.opacity(0.4))
         }
@@ -170,7 +170,7 @@ struct SanctuaryModeView: View {
                 .background(totalSeconds == minutes * 60 ? Color.white : Color.white.opacity(0.08))
                 .clipShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     private var runningView: some View {
@@ -212,7 +212,7 @@ struct SanctuaryModeView: View {
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("CAPTURE RAPIDE")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.white.opacity(0.4))
                     .kerning(1.0)
                 TextField("Une idée, une question, à reprendre…", text: $noteText)
@@ -236,7 +236,7 @@ struct SanctuaryModeView: View {
                         .background(Color.white)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
             .frame(maxWidth: 420)
@@ -271,7 +271,7 @@ struct SanctuaryModeView: View {
                     .background(Color.white)
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             Spacer()
         }
     }

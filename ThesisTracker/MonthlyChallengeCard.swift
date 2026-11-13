@@ -75,12 +75,12 @@ struct MonthlyChallengeCard: View {
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 1.0).delay(0.15)) {
+            withAppAnimation(Motion.progress.delay(0.1)) {
                 animatedRatio = ratio
             }
         }
         .onChange(of: ratio) { _, newRatio in
-            withAnimation(.easeOut(duration: 0.5)) {
+            withAppAnimation(.easeOut(duration: 0.5)) {
                 animatedRatio = newRatio
             }
         }
@@ -107,7 +107,7 @@ struct MonthlyChallengeCard: View {
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
                 Text("%")
-                    .font(.system(size: 8))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -131,7 +131,7 @@ struct MonthlyChallengeCard: View {
     private func statLine(icon: String, text: String) -> some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundColor(.labelMuted.opacity(0.6))
                 .frame(width: 12)
             Text(text)

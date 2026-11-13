@@ -131,6 +131,7 @@ struct PomodoroIntentionField: View {
                     .menuStyle(.borderlessButton)
                     .fixedSize()
                     .help("Intentions récentes")
+                    .accessibilityLabel("Intentions récentes")
                 }
             }
             .padding(.horizontal, 10)
@@ -163,7 +164,7 @@ struct FocusQualityPicker: View {
                         .background(selected ? level.color : level.color.opacity(0.10))
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
             Spacer(minLength: 0)
         }

@@ -65,12 +65,12 @@ struct ThesisHealthWidget: View {
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.28)) {
+            withAppAnimation(.easeOut(duration: 0.28)) {
                 animatedScore = Double(health.score)
             }
         }
         .onChange(of: health.score) { _, newScore in
-            withAnimation(.easeOut(duration: 0.20)) {
+            withAppAnimation(.easeOut(duration: 0.20)) {
                 animatedScore = Double(newScore)
             }
         }
@@ -93,7 +93,7 @@ struct ThesisHealthWidget: View {
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
                 Text("/100")
-                    .font(.system(size: 8))
+                    .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
         }

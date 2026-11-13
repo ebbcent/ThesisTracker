@@ -32,7 +32,7 @@ struct CooldownSheet: View {
             Divider()
             footer
         }
-        .frame(width: 560, height: 540)
+        .sheetFrame(width: 560, height: 540)
     }
 
     private var header: some View {
@@ -51,7 +51,7 @@ struct CooldownSheet: View {
                     .font(.system(size: 18))
                     .foregroundColor(.labelMuted)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -62,7 +62,7 @@ struct CooldownSheet: View {
         VStack(alignment: .leading, spacing: 4) {
             if let chapter {
                 Text("CHAPITRE")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(0.6)
                 Text(chapter.name)
@@ -113,7 +113,7 @@ struct CooldownSheet: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             if focusStep == index {
                 Button {
-                    withAnimation { focusStep += 1 }
+                    withAppAnimation { focusStep += 1 }
                 } label: {
                     Text(focusStep == 2 ? "Voir le résumé" : "Continuer")
                         .font(.system(size: 11, weight: .semibold))
@@ -122,7 +122,7 @@ struct CooldownSheet: View {
                         .background(Color.accent)
                         .clipShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
     }
@@ -157,7 +157,7 @@ struct CooldownSheet: View {
     private var footer: some View {
         HStack {
             Button("Passer") { dismiss() }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .padding(.horizontal, 12).padding(.vertical, 6)
                 .foregroundColor(.labelMuted)
             Spacer()
@@ -172,7 +172,7 @@ struct CooldownSheet: View {
                     .background(Color.accent)
                     .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .disabled(focusStep < 3)
         }
         .padding(.horizontal, 18).padding(.vertical, 10)

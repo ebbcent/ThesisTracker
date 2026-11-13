@@ -147,7 +147,7 @@ struct CalendarView: View {
     private var headerView: some View {
         HStack(alignment: .center, spacing: 12) {
             Button {
-                withAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSidebar.toggle() }
             } label: {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 15, weight: .medium))
@@ -158,7 +158,7 @@ struct CalendarView: View {
                         .overlay(RoundedRectangle(cornerRadius: 10)
                             .stroke(showSidebar ? Color.accent.opacity(0.4) : Color.glassBorder, lineWidth: 1)))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Afficher ou masquer la barre latérale")
             .accessibilityLabel("Afficher ou masquer la barre latérale")
 
@@ -180,15 +180,15 @@ struct CalendarView: View {
                         .background(Color.glassFill).clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.glassBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Mois précédent")
                 .accessibilityLabel("Mois précédent")
 
                 Button("Aujourd'hui") {
-                    withAnimation { goToCurrentMonth() }
+                    withAppAnimation { goToCurrentMonth() }
                 }
                 .font(.system(size: 11, weight: .medium)).foregroundColor(.accent)
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 Button { changeMonth(by: 1) } label: {
                     Image(systemName: "chevron.right")
@@ -197,7 +197,7 @@ struct CalendarView: View {
                         .background(Color.glassFill).clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.glassBorder, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .disabled(!canGoForward)
                 .help("Mois suivant")
                 .accessibilityLabel("Mois suivant")
@@ -230,7 +230,7 @@ struct CalendarView: View {
                 .clipShape(Capsule())
                 .overlay(Capsule().stroke(sel ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 
     // MARK: - Stats du mois
@@ -296,7 +296,7 @@ struct CalendarView: View {
         let isPinned = store.data.pinnedDates.contains(where: { $0.date == ds })
 
         return Button {
-            withAnimation(.spring(response: 0.25)) {
+            withAppAnimation(Motion.panel) {
                 selectedDate = isSelected ? nil : date
             }
         } label: {
@@ -313,7 +313,7 @@ struct CalendarView: View {
                         .frame(height: 28)
                     if chars > 0 && !isFuture {
                         Text(fmtShort(chars))
-                            .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                            .font(.system(size: 10, weight: .semibold, design: .monospaced))
                             .foregroundColor(level >= 2 ? .white : .primary)
                             .lineLimit(1)
                     }
@@ -344,7 +344,7 @@ struct CalendarView: View {
             }
             .contentShape(RoundedRectangle(cornerRadius: 10))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .onHover { hovering in
             hoveredDateStr = hovering ? ds : nil
         }
@@ -451,7 +451,7 @@ struct CalendarView: View {
                     Spacer()
                     // Bouton épingler
                     Button {
-                        withAnimation(.spring(response: 0.25)) {
+                        withAppAnimation(Motion.panel) {
                             store.togglePinnedDate(ds, label: pinnedLabelEdit)
                             pinnedLabelEdit = store.data.pinnedDates.first(where: { $0.date == ds })?.label ?? ""
                         }
@@ -467,8 +467,8 @@ struct CalendarView: View {
                         .background(Capsule().fill(isPinned ? Color.fieldBg : Color.accent.opacity(0.10))
                             .overlay(Capsule().stroke(isPinned ? Color.cardBorder : Color.accent.opacity(0.22), lineWidth: 1)))
                     }
-                    .buttonStyle(.plain)
-                    .animation(.spring(response: 0.25), value: isPinned)
+                    .buttonStyle(.pressable)
+                    .appAnimation(Motion.panel, value: isPinned)
 
                     if chars > 0 && goal > 0 {
                         ZStack {
@@ -480,7 +480,7 @@ struct CalendarView: View {
                                 .frame(width: 36, height: 36)
                                 .rotationEffect(.degrees(-90))
                             Text("\(Int(ratio * 100))%")
-                                .font(.system(size: 8, weight: .bold)).foregroundColor(.accent)
+                                .font(.system(size: 10, weight: .bold)).foregroundColor(.accent)
                         }
                     }
                 }
@@ -555,7 +555,7 @@ struct CalendarView: View {
     private func changeMonth(by value: Int) {
         guard let next = cal.date(byAdding: .month, value: value, to: displayedMonth) else { return }
         let now = cal.date(from: cal.dateComponents([.year, .month], from: Date()))!
-        withAnimation { displayedMonth = min(next, now) }
+        withAppAnimation { displayedMonth = min(next, now) }
         selectedDate = nil
     }
 

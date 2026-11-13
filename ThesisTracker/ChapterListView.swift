@@ -105,7 +105,7 @@ struct ProjectFormView: View {
                         HStack(spacing: 8) {
                             // Option "Aucun"
                             Button {
-                                withAnimation(.easeInOut(duration: 0.15)) { selectedType = nil }
+                                withAppAnimation(.easeInOut(duration: 0.15)) { selectedType = nil }
                             } label: {
                                 HStack(spacing: 5) {
                                     Image(systemName: "minus.circle").font(.system(size: 11))
@@ -117,11 +117,11 @@ struct ProjectFormView: View {
                                 .clipShape(Capsule())
                                 .overlay(Capsule().stroke(selectedType == nil ? Color.accent : Color.white.opacity(0.1), lineWidth: 1))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             ForEach(ProjectType.allCases, id: \.self) { type in
                                 let isSelected = selectedType == type
                                 Button {
-                                    withAnimation(.easeInOut(duration: 0.15)) { selectedType = type }
+                                    withAppAnimation(.easeInOut(duration: 0.15)) { selectedType = type }
                                 } label: {
                                     HStack(spacing: 5) {
                                         Image(systemName: type.icon).font(.system(size: 11))
@@ -133,7 +133,7 @@ struct ProjectFormView: View {
                                     .clipShape(Capsule())
                                     .overlay(Capsule().stroke(isSelected ? Color.accentWarm : Color.white.opacity(0.1), lineWidth: 1))
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                             }
                         }
                     }
@@ -167,7 +167,7 @@ struct ProjectFormView: View {
                             ForEach(ChapterTemplate.allCases) { template in
                                 let isSelected = selectedTemplate == template
                                 Button {
-                                    withAnimation(.easeInOut(duration: 0.15)) {
+                                    withAppAnimation(.easeInOut(duration: 0.15)) {
                                         selectedTemplate = template
                                     }
                                 } label: {
@@ -189,7 +189,7 @@ struct ProjectFormView: View {
                                     .overlay(RoundedRectangle(cornerRadius: 10)
                                         .stroke(isSelected ? Color.accent : Color.cardBorder, lineWidth: 1))
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                             }
                         }
                         if selectedTemplate != .none {
@@ -218,7 +218,7 @@ struct ProjectFormView: View {
                                 }
                             }
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .sheet(isPresented: $showTemplatePicker) {
                             ProjectTemplatePickerSheet { tmpl in
                                 selectedProjectTemplate = tmpl
@@ -236,7 +236,7 @@ struct ProjectFormView: View {
                         .background(Color.cardBg)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
                     Spacer()
@@ -247,7 +247,7 @@ struct ProjectFormView: View {
                         .padding(.horizontal, 22).padding(.vertical, 10)
                         .background(isValid ? Color.accent : Color.cardBorder)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(!isValid)
                         .keyboardShortcut(.return)
                 }
@@ -388,7 +388,7 @@ struct ChapterFormView: View {
                                 .font(.system(size: 18))
                                 .foregroundColor(draftVersion > 1 ? .accent : .labelMuted.opacity(0.3))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Diminuer le numéro de version")
                         .accessibilityLabel("Diminuer le numéro de version")
                         Text("v\(draftVersion)")
@@ -402,7 +402,7 @@ struct ChapterFormView: View {
                                 .font(.system(size: 18))
                                 .foregroundColor(.accent)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Augmenter le numéro de version")
                         .accessibilityLabel("Augmenter le numéro de version")
                     }
@@ -430,7 +430,7 @@ struct ChapterFormView: View {
                                 .clipShape(Capsule())
                                 .overlay(Capsule().stroke(sel ? Color(hex: p.color) : Color.cardBorder, lineWidth: 1))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                         }
                     }
                 }
@@ -468,7 +468,7 @@ struct ChapterFormView: View {
                         .background(Color.cardBg)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
                     // V5 — Historique de contexte (mode édition seulement)
@@ -489,7 +489,7 @@ struct ChapterFormView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accent.opacity(0.2), lineWidth: 1))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .fixedSize()
                     }
 
@@ -502,7 +502,7 @@ struct ChapterFormView: View {
                         .padding(.horizontal, 22).padding(.vertical, 10)
                         .background(isValid ? Color.accent : Color.cardBorder)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .disabled(!isValid)
                         .fixedSize()
                         .keyboardShortcut(.return)

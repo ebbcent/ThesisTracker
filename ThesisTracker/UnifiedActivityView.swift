@@ -27,7 +27,7 @@ struct UnifiedActivityView: View {
         }
         .id(mode)
         .transition(.opacity)
-        .animation(.easeInOut(duration: 0.18), value: mode)
+        .appAnimation(.easeInOut(duration: 0.18), value: mode)
         .safeAreaInset(edge: .top, spacing: 0) {
             toggleBar
         }
@@ -58,7 +58,7 @@ struct UnifiedActivityView: View {
     private func modeButton(icon: String, target: ViewMode, tooltip: String) -> some View {
         let selected = mode == target
         return Button {
-            withAnimation(.easeInOut(duration: 0.18)) { mode = target }
+            withAppAnimation(.easeInOut(duration: 0.18)) { mode = target }
         } label: {
             Image(systemName: icon)
                 .font(.system(size: 13, weight: .medium))
@@ -67,9 +67,9 @@ struct UnifiedActivityView: View {
                 .background(selected ? Color.accent : Color.clear)
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .help(tooltip)
-        .animation(.easeInOut(duration: 0.15), value: selected)
+        .appAnimation(.easeInOut(duration: 0.15), value: selected)
         .accessibilityLabel(tooltip)
     }
 }

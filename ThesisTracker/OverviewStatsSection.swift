@@ -132,7 +132,7 @@ struct ThesisProjectionCard: View {
     private func projStat(label: String, value: String, subtitle: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label.uppercased())
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.8)
             Text(value)
@@ -215,11 +215,11 @@ struct MonthlyMiniChart: View {
                                     Group {
                                         if item.chars > 0 {
                                             Text(store.formatCountShort(item.chars))
-                                                .font(.system(size: 8, weight: .semibold))
+                                                .font(.system(size: 10, weight: .semibold))
                                                 .foregroundColor(isLast ? .accent : .labelMuted)
                                         } else {
                                             Text("—")
-                                                .font(.system(size: 8))
+                                                .font(.system(size: 10))
                                                 .foregroundColor(.labelMuted.opacity(0.5))
                                         }
                                     }
@@ -242,7 +242,7 @@ struct MonthlyMiniChart: View {
 
                                     // Label mois
                                     Text(item.label)
-                                        .font(.system(size: 9, weight: isLast ? .semibold : .regular))
+                                        .font(.system(size: 10, weight: isLast ? .semibold : .regular))
                                         .foregroundColor(isLast ? .accent : .labelMuted)
                                         .lineLimit(1)
                                         .frame(width: barWidth)
@@ -286,7 +286,7 @@ struct WeekdayChart: View {
                     if bestIdx >= 0 {
                         HStack(spacing: 4) {
                             Image(systemName: "star.fill")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.accentWarm)
                             Text(data[bestIdx].day)
                                 .font(.system(size: 11, weight: .semibold))
@@ -324,7 +324,7 @@ struct WeekdayChart: View {
                                     }
 
                                     Text(item.day)
-                                        .font(.system(size: 9, weight: isBest ? .bold : .regular))
+                                        .font(.system(size: 10, weight: isBest ? .bold : .regular))
                                         .foregroundColor(isBest ? .accentWarm : .labelMuted)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -335,7 +335,7 @@ struct WeekdayChart: View {
                         HStack {
                             Spacer()
                             Text("moyenne · toute la période · jours actifs seulement")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.labelMuted)
                         }
                     }

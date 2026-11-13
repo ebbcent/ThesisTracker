@@ -73,7 +73,7 @@ struct WritingSprintView: View {
                             Color.white.opacity(0.06).frame(height: 3)
                             Color.accent.opacity(0.8)
                                 .frame(width: geo.size.width * timerRatio, height: 3)
-                                .animation(.linear(duration: 1), value: timerRatio)
+                                .appAnimation(.linear(duration: 1), value: timerRatio)
                         }
                     }
                     .frame(height: 3)
@@ -107,7 +107,7 @@ struct WritingSprintView: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Color.white.opacity(0.12), lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(20)
                     .keyboardShortcut(.escape, modifiers: [])
                     .help("Fermer")
@@ -152,7 +152,7 @@ struct WritingSprintView: View {
                 HStack(spacing: 10) {
                     ForEach(presets, id: \.self) { min in
                         Button {
-                            withAnimation(.easeInOut(duration: 0.15)) { durationMinutes = min }
+                            withAppAnimation(.easeInOut(duration: 0.15)) { durationMinutes = min }
                         } label: {
                             Text("\(min) min")
                                 .font(.system(size: 13,
@@ -168,8 +168,8 @@ struct WritingSprintView: View {
                                 )
                                 .contentShape(RoundedRectangle(cornerRadius: 10))
                         }
-                        .buttonStyle(.plain)
-                        .animation(.easeInOut(duration: 0.15), value: durationMinutes)
+                        .buttonStyle(.pressable)
+                        .appAnimation(.easeInOut(duration: 0.15), value: durationMinutes)
                     }
                 }
             }
@@ -223,7 +223,7 @@ struct WritingSprintView: View {
                 )
                 .contentShape(RoundedRectangle(cornerRadius: 14))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
         }
         .padding(.horizontal, 48)
     }
@@ -247,13 +247,13 @@ struct WritingSprintView: View {
                     .font(.system(size: 80, weight: .bold, design: .monospaced))
                     .foregroundColor(isPaused ? .white.opacity(0.3) : .white)
                     .contentTransition(.numericText())
-                    .animation(.easeOut(duration: 0.15), value: secondsRemaining)
+                    .appAnimation(.easeOut(duration: 0.15), value: secondsRemaining)
                 Text(isPaused ? "En pause" : "\(durationMinutes) min")
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.3))
             }
             .scaleEffect(pulseAmount)
-            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: pulseAmount)
+            .appAnimation(Motion.celebrate, value: pulseAmount)
 
             // Delta écrit pendant le sprint
             VStack(spacing: 10) {
@@ -262,7 +262,7 @@ struct WritingSprintView: View {
                         .font(.system(size: 44, weight: .bold, design: .rounded))
                         .foregroundColor(sprintDelta > 0 ? .accentGreen : .white.opacity(0.3))
                         .contentTransition(.numericText())
-                        .animation(.spring(response: 0.4), value: sprintDelta)
+                        .appAnimation(Motion.progress, value: sprintDelta)
                     Text(store.data.useWordCount ? "mots" : "car.")
                         .font(.system(size: 18, weight: .light))
                         .foregroundColor(.white.opacity(0.3))
@@ -278,7 +278,7 @@ struct WritingSprintView: View {
                                 RoundedRectangle(cornerRadius: 2)
                                     .fill(sprintProgress >= 1 ? Color.accentGreen : Color.accent)
                                     .frame(width: max(0, geo.size.width * sprintProgress), height: 4)
-                                    .animation(.spring(response: 0.5), value: sprintProgress)
+                                    .appAnimation(Motion.progress, value: sprintProgress)
                             }
                         }
                         .frame(width: 280, height: 4)
@@ -309,7 +309,7 @@ struct WritingSprintView: View {
                     )
                     .contentShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 Button(action: endSprint) {
                     HStack(spacing: 6) {
@@ -328,7 +328,7 @@ struct WritingSprintView: View {
                     )
                     .contentShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(.horizontal, 48)
@@ -375,7 +375,7 @@ struct WritingSprintView: View {
                     )
                     .contentShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 Button(action: onClose) {
                     Text("Fermer")
@@ -389,7 +389,7 @@ struct WritingSprintView: View {
                                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(.horizontal, 48)
@@ -450,6 +450,6 @@ struct WritingSprintView: View {
         fireTimer()
     }
     private func stopTimer()       { timerRef?.invalidate(); timerRef = nil }
-    private func endSprint()       { stopTimer(); endDate = nil; withAnimation { phase = .finished } }
+    private func endSprint()       { stopTimer(); endDate = nil; withAppAnimation { phase = .finished } }
     private func resetForNewSprint() { phase = .setup; secondsRemaining = 0; startCount = 0; endDate = nil }
 }

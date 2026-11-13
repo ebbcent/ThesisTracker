@@ -89,7 +89,7 @@ struct DailySessionCard: View {
         .onChange(of: isGoalReached) { reached in
             guard reached, goalReachedDate != DataStore.today else { return }
             goalReachedDate = DataStore.today
-            withAnimation(.spring(response: 0.45, dampingFraction: 0.65)) {
+            withAppAnimation(Motion.celebrate) {
                 showGoalReached = true
             }
         }
@@ -99,7 +99,7 @@ struct DailySessionCard: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) {
-                            withAnimation(.easeOut(duration: 0.35)) { showGoalReached = false }
+                            withAppAnimation(Motion.quick) { showGoalReached = false }
                         }
                     }
             }
@@ -113,7 +113,7 @@ struct DailySessionCard: View {
             // Chiffres gauche
             VStack(alignment: .leading, spacing: 3) {
                 Text("AUJOURD'HUI")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1)
 
@@ -123,7 +123,7 @@ struct DailySessionCard: View {
                             .font(.system(size: 24, weight: .bold, design: .rounded))
                             .foregroundColor(isGoalReached ? .accentGreen : .primary)
                             .contentTransition(.numericText())
-                            .animation(.spring(response: 0.4, dampingFraction: 0.75), value: progress)
+                            .appAnimation(Motion.progress, value: progress)
 
                         Text("/ \(store.formatCount(smartGoal))")
                             .font(.system(size: 13))
@@ -139,7 +139,7 @@ struct DailySessionCard: View {
                 if hasCatchUp && !isGoalReached {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.uturn.right")
-                            .font(.system(size: 9, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                         Text("+\(store.formatCount(catchUp)) rattrapage")
                             .font(.system(size: 10, weight: .semibold))
                     }
@@ -157,7 +157,7 @@ struct DailySessionCard: View {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 32))
                     .foregroundColor(.accentGreen)
-                    .transition(.scale.combined(with: .opacity))
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
             } else if smartGoal > 0 {
                 SessionRingView(ratio: ratio, color: statusColor)
                     .frame(width: 48, height: 48)
@@ -180,7 +180,7 @@ struct DailySessionCard: View {
                         )
                     )
                     .frame(width: max(0, geo.size.width * ratio), height: 7)
-                    .animation(.spring(response: 0.55, dampingFraction: 0.8), value: ratio)
+                    .appAnimation(Motion.progress, value: ratio)
             }
         }
         .frame(height: 7)
@@ -230,7 +230,7 @@ struct DailySessionCard: View {
                     RoundedRectangle(cornerRadius: 3)
                         .fill(done ? Color.accentGreen : Color.accent.opacity(0.7))
                         .frame(width: geo.size.width * ratio, height: 4)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: ratio)
+                        .appAnimation(Motion.progress, value: ratio)
                 }
             }
             .frame(height: 4)
@@ -259,10 +259,10 @@ struct SessionRingView: View {
                     style: StrokeStyle(lineWidth: 5, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.spring(response: 0.55, dampingFraction: 0.8), value: ratio)
+                .appAnimation(Motion.progress, value: ratio)
 
             Text("\(Int(ratio * 100))%")
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(color)
         }
     }

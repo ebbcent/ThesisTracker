@@ -66,14 +66,14 @@ struct AutoArchiveSuggestionBanner: View {
                 .padding(.horizontal, 10).padding(.vertical, 4)
                 .background(Color.accentWarm)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
 
                 Button("Ignorer") {
                     dismissProject(project)
                 }
                 .font(.system(size: 11))
                 .foregroundColor(.labelMuted)
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
             }
         }
         .padding(12)

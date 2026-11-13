@@ -129,15 +129,16 @@ struct MainView: View {
     // MARK: - Hidden keyboard shortcuts (extracted to reduce type-checker load)
 
     @ViewBuilder private var hiddenShortcuts: some View {
+        // 5.15 : rien d'animé au clavier (gestes répétés cent fois par jour : l'animation les ferait paraître lents)
         Group {
             ForEach(Array(NavItem.allCases.enumerated()), id: \.offset) { idx, item in
                 if idx < 9 {
-                    Button("") { withAnimation(.easeInOut(duration: 0.15)) { selectedNav = item } }
+                    Button("") { withoutAnimation { selectedNav = item } }
                         .keyboardShortcut(KeyEquivalent(Character(UnicodeScalar(49 + idx)!)), modifiers: .command)
                 }
             }
             Button("") {
-                withAnimation(.easeOut(duration: 0.15)) {
+                withoutAnimation {
                     isFocusMode.toggle()
                     if isFocusMode { showSidebar = false }
                 }
@@ -154,21 +155,21 @@ struct MainView: View {
                 .keyboardShortcut("n", modifiers: .command)
         }
         Group {
-            Button("") { withAnimation(.easeOut(duration: 0.15)) { showFocusWriting = true } }
+            Button("") { withoutAnimation { showFocusWriting = true } }
                 .keyboardShortcut(KeyEquivalent(shortcutFocusKey.first ?? "i"), modifiers: [.command, .shift])
-            Button("") { withAnimation(.easeOut(duration: 0.15)) { showWritingSprint = true } }
+            Button("") { withoutAnimation { showWritingSprint = true } }
                 .keyboardShortcut(KeyEquivalent(shortcutSprintKey.first ?? "t"), modifiers: [.command, .shift])
             Button("") { showPresentation = true }
                 .keyboardShortcut("p", modifiers: [.option, .command])
             // 5.14 — Professeur en note rapide
             Button("") { ProfessorPanelManager.shared.toggle(store: store) }
                 .keyboardShortcut("p", modifiers: [.command, .shift])
-            Button("") { withAnimation(.easeOut(duration: 0.15)) { showTodayMode = true } }
+            Button("") { withoutAnimation { showTodayMode = true } }
                 .keyboardShortcut("j", modifiers: [.command, .shift])
             // Mode panne : ⌘⇧D (⌘⇧B est réservé à « Accomplissements »)
-            Button("") { withAnimation(.easeOut(duration: 0.15)) { showBlockedSession = true } }
+            Button("") { withoutAnimation { showBlockedSession = true } }
                 .keyboardShortcut("d", modifiers: [.command, .shift])
-            Button("") { withAnimation(.easeOut(duration: 0.15)) { showSanctuary = true } }
+            Button("") { withoutAnimation { showSanctuary = true } }
                 .keyboardShortcut("k", modifiers: [.command, .shift, .option])
         }
         .frame(width: 0, height: 0)
@@ -182,7 +183,7 @@ struct MainView: View {
 
     private func handlePomodoroFocusStarted() {
         if selectedNav == .timer, showSidebar {
-            withAnimation(.easeOut(duration: 0.15)) { showSidebar = false }
+            withAppAnimation(.easeOut(duration: 0.15)) { showSidebar = false }
         }
     }
 
@@ -210,18 +211,18 @@ struct MainView: View {
             let duration = recorded?.duration ?? Date().timeIntervalSince(started)
             if duration >= 45 * 60 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                    withAnimation(.easeOut(duration: 0.15)) { showCooldown = true }
+                    withAppAnimation(.easeOut(duration: 0.15)) { showCooldown = true }
                 }
             }
         }
         focusSessionStartedAt = nil
         pomodoroSessionWasActive = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            withAnimation(.easeOut(duration: 0.15)) {
+            withAppAnimation(.easeOut(duration: 0.15)) {
                 self.showPostSessionPrompt = true
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                withAnimation { self.showPostSessionPrompt = false }
+                withAppAnimation { self.showPostSessionPrompt = false }
             }
         }
     }
@@ -254,7 +255,7 @@ struct MainView: View {
                         .font(.system(size: 11)).foregroundColor(.labelMuted)
                         .padding(5).background(Color.cardBg).clipShape(Circle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .help("Fermer l’alerte de conflit")
                 .accessibilityLabel("Fermer l’alerte de conflit")
             }
@@ -302,7 +303,7 @@ struct MainView: View {
                 .padding(.horizontal, 10).padding(.vertical, 5)
                 .background(color)
                 .clipShape(RoundedRectangle(cornerRadius: 7))
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -350,22 +351,15 @@ struct MainView: View {
                             DeadlineBoardView(store: store, showSidebar: $showSidebar)
                         case .search:
                             SearchView(store: store, showSidebar: $showSidebar)
-                        case .charts:
-                            ChartView(store: store, showSidebar: $showSidebar)
-                        case .activity:
-                            UnifiedActivityView(store: store, showSidebar: $showSidebar, initialMode: .heatmap)
-                        case .history:
-                            HistoryListView(store: store, showSidebar: $showSidebar)
-                        case .calendar:
-                            UnifiedActivityView(store: store, showSidebar: $showSidebar, initialMode: .calendar)
+                        case .charts, .activity, .history, .calendar, .analytics:
+                            // 5.15 : regroupées sous « Statistiques », à onglets
+                            StatsHubView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
                         case .timer:
                             PomodoroTimerTabView(showSidebar: $showSidebar)
                         case .achievements:
                             AchievementsView(store: store, showSidebar: $showSidebar)
                         case .kanban:
                             KanbanView(store: store, showSidebar: $showSidebar)
-                        case .analytics:
-                            StatsAnalyticsView(store: store, showSidebar: $showSidebar)
                         case .tableOfContents:
                             TableOfContentsView(store: store, showSidebar: $showSidebar)
                         case .widgets:
@@ -376,13 +370,13 @@ struct MainView: View {
                     }
                     .id(selectedNav)
                     .transition(.opacity)
-                    .animation(.easeInOut(duration: 0.15), value: selectedNav)
+                    .appAnimation(.easeInOut(duration: 0.15), value: selectedNav)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .animation(.easeOut(duration: 0.20), value: showSidebar)
+        .appAnimation(.easeOut(duration: 0.20), value: showSidebar)
         .frame(minWidth: showSidebar ? 720 : 460, minHeight: 560)
         .preferredColorScheme(forceDarkMode ? .dark : nil)  // #28 — Slate theme
         .onAppear {
@@ -406,7 +400,7 @@ struct MainView: View {
                 HStack {
                     Spacer()
                     Button {
-                        withAnimation(.easeOut(duration: 0.15)) { isFocusMode = false }
+                        withAppAnimation(.easeOut(duration: 0.15)) { isFocusMode = false }
                     } label: {
                         HStack(spacing: 5) {
                             Image(systemName: "eye.slash")
@@ -422,7 +416,7 @@ struct MainView: View {
                         .overlay(Capsule().stroke(Color.cardBorder, lineWidth: 1))
                         .contentShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     Spacer()
                 }
                 .padding(.top, 10)
@@ -430,15 +424,15 @@ struct MainView: View {
             }
         }
         .onReceive(store.$data)                                                        { updateWindowTitle(from: $0) }
-        .onReceive(NotificationCenter.default.publisher(for: .navigateToHistory))     { _ in withAnimation(.easeInOut(duration: 0.15)) { selectedNav = .history } }
-        .onReceive(NotificationCenter.default.publisher(for: .showAchievements))      { _ in withAnimation(.easeInOut(duration: 0.15)) { selectedNav = .achievements } }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToHistory))     { _ in withAppAnimation(.easeInOut(duration: 0.15)) { selectedNav = .history } }
+        .onReceive(NotificationCenter.default.publisher(for: .showAchievements))      { _ in withAppAnimation(.easeInOut(duration: 0.15)) { selectedNav = .achievements } }
         .onReceive(NotificationCenter.default.publisher(for: .pomodoroFocusStarted))  { _ in handlePomodoroFocusStarted() }
         .onReceive(pomodoroController.$focusSessionJustCompleted)                     { handleFocusSessionCompleted($0) }
         .onReceive(pomodoroController.$timerSnapshot)                                 { handlePomodoroSnapshot($0) }
         .onReceive(pomodoroController.$data)                                          { updateWeeklyPomodoroCount($0) }
         .onReceive(NotificationCenter.default.publisher(for: .showExport))            { _ in showExport = true }
-        .onReceive(NotificationCenter.default.publisher(for: .navigateToDashboard))   { _ in withAnimation(.easeInOut(duration: 0.2)) { selectedNav = .dashboard } }
-        .onReceive(NotificationCenter.default.publisher(for: .navigateToProfessor))   { _ in withAnimation(.easeInOut(duration: 0.2)) { selectedNav = .professor } }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToDashboard))   { _ in withAppAnimation(.easeInOut(duration: 0.2)) { selectedNav = .dashboard } }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToProfessor))   { _ in withAppAnimation(.easeInOut(duration: 0.2)) { selectedNav = .professor } }
         .onReceive(store.$showDailySummary) { show in
             // handled via overlay below
         }
@@ -450,7 +444,7 @@ struct MainView: View {
                     .zIndex(99)
             }
         }
-        .animation(.easeOut(duration: 0.22), value: store.showDailySummary)
+        .appAnimation(.easeOut(duration: 0.22), value: store.showDailySummary)
         // Weekly summary overlay
         .overlay {
             if store.showWeeklySummary {
@@ -459,7 +453,7 @@ struct MainView: View {
                     .zIndex(97)
             }
         }
-        .animation(.easeOut(duration: 0.22), value: store.showWeeklySummary)
+        .appAnimation(.easeOut(duration: 0.22), value: store.showWeeklySummary)
         // Milestone toast
         .overlay(alignment: .bottom) {
             if let milestone = store.pendingMilestone {
@@ -471,23 +465,23 @@ struct MainView: View {
                 .padding(.bottom, 28)
             }
         }
-        .animation(.easeOut(duration: 0.22), value: store.pendingMilestone != nil)
+        .appAnimation(.easeOut(duration: 0.22), value: store.pendingMilestone != nil)
 
         // Post-session writing prompt
         .overlay(alignment: .bottom) {
             if showPostSessionPrompt {
                 PostSessionPromptView(store: store) {
-                    withAnimation { showPostSessionPrompt = false }
+                    withAppAnimation { showPostSessionPrompt = false }
                     QuickEntryPanelManager.shared.show(store: store)
                 } onDismiss: {
-                    withAnimation { showPostSessionPrompt = false }
+                    withAppAnimation { showPostSessionPrompt = false }
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .zIndex(96)
                 .padding(.bottom, 28)
             }
         }
-        .animation(.easeOut(duration: 0.22), value: showPostSessionPrompt)
+        .appAnimation(.easeOut(duration: 0.22), value: showPostSessionPrompt)
 
         // #31 — Rapport hebdomadaire automatique le lundi
         .overlay(alignment: .bottom) {
@@ -498,7 +492,7 @@ struct MainView: View {
                     .padding(.bottom, 28)
             }
         }
-        .animation(.easeOut(duration: 0.22), value: store.showWeeklyReportPrompt)
+        .appAnimation(.easeOut(duration: 0.22), value: store.showWeeklyReportPrompt)
 
         // #70 — iCloud conflict resolution
         .overlay(alignment: .bottom) {
@@ -509,15 +503,15 @@ struct MainView: View {
                     .padding(.bottom, store.showWeeklyReportPrompt ? 100 : 28)
             }
         }
-        .animation(.easeOut(duration: 0.22), value: store.pendingConflict != nil)
+        .appAnimation(.easeOut(duration: 0.22), value: store.pendingConflict != nil)
 
         // V5 — Overlays immersifs : mode focus (⌘⇧I) et sprint (⌘⇧T)
         .overlay { immersiveOverlays }
         .onReceive(NotificationCenter.default.publisher(for: .showFocusWriting)) { _ in
-            withAnimation(.easeOut(duration: 0.15)) { showFocusWriting = true }
+            withAppAnimation(.easeOut(duration: 0.15)) { showFocusWriting = true }
         }
         .onReceive(NotificationCenter.default.publisher(for: .showWritingSprint)) { _ in
-            withAnimation(.easeOut(duration: 0.15)) { showWritingSprint = true }
+            withAppAnimation(.easeOut(duration: 0.15)) { showWritingSprint = true }
         }
 
         // Command Palette (Cmd+K)
@@ -527,19 +521,19 @@ struct MainView: View {
                     store: store,
                     isPresented: $showCommandPalette,
                     onNavigate: { nav in
-                        withAnimation(.easeInOut(duration: 0.15)) { selectedNav = nav }
+                        withAppAnimation(.easeInOut(duration: 0.15)) { selectedNav = nav }
                     },
                     onSelectProject: { project in
                         store.data.activeProjectId = project.id
                         store.save()
-                        withAnimation(.easeInOut(duration: 0.15)) { selectedNav = .dashboard }
+                        withAppAnimation(.easeInOut(duration: 0.15)) { selectedNav = .dashboard }
                     }
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .top)))
                 .zIndex(100)
             }
         }
-        .animation(.easeOut(duration: 0.15), value: showCommandPalette)
+        .appAnimation(.easeOut(duration: 0.15), value: showCommandPalette)
         .background(hiddenShortcuts)
         .sheet(isPresented: $showExport) {
             ExportView(store: store)
@@ -564,7 +558,7 @@ struct MainView: View {
     @ViewBuilder private var immersiveOverlays: some View {
         if showFocusWriting {
             FocusWritingView(store: store) {
-                withAnimation(.easeOut(duration: 0.15)) { showFocusWriting = false }
+                withAppAnimation(.easeOut(duration: 0.15)) { showFocusWriting = false }
             }
             .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .center)))
             .zIndex(101)
@@ -572,23 +566,23 @@ struct MainView: View {
         if showTodayMode {
             TodayModeView(
                 store: store,
-                onDismiss: { withAnimation(.easeOut(duration: 0.15)) { showTodayMode = false } },
-                onStartFocus: { withAnimation(.easeOut(duration: 0.15)) { showFocusWriting = true } },
-                onOpenDashboard: { withAnimation(.easeInOut(duration: 0.15)) { selectedNav = .dashboard } }
+                onDismiss: { withAppAnimation(.easeOut(duration: 0.15)) { showTodayMode = false } },
+                onStartFocus: { withAppAnimation(.easeOut(duration: 0.15)) { showFocusWriting = true } },
+                onOpenDashboard: { withAppAnimation(.easeInOut(duration: 0.15)) { selectedNav = .dashboard } }
             )
             .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .center)))
             .zIndex(103)
         }
         if showSanctuary {
             SanctuaryModeView(store: store) {
-                withAnimation(.easeOut(duration: 0.15)) { showSanctuary = false }
+                withAppAnimation(.easeOut(duration: 0.15)) { showSanctuary = false }
             }
             .transition(.opacity)
             .zIndex(104)
         }
         if showWritingSprint {
             WritingSprintView(store: store) {
-                withAnimation(.easeOut(duration: 0.15)) { showWritingSprint = false }
+                withAppAnimation(.easeOut(duration: 0.15)) { showWritingSprint = false }
             }
             .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .center)))
             .zIndex(102)
@@ -609,8 +603,8 @@ struct MainView: View {
                                 : Color.cardBorder.opacity(0.7)
                     )
                     .frame(width: sidebarHandleHovering || sidebarHandleDragging ? 4 : 3)
-                    .animation(.easeInOut(duration: 0.15), value: sidebarHandleHovering)
-                    .animation(.easeInOut(duration: 0.1), value: sidebarHandleDragging)
+                    .appAnimation(.easeInOut(duration: 0.15), value: sidebarHandleHovering)
+                    .appAnimation(.easeInOut(duration: 0.1), value: sidebarHandleDragging)
             )
             .contentShape(Rectangle())
             .onHover { hovering in
@@ -652,18 +646,18 @@ struct StatusBarView: View {
                     HStack(spacing: 5) {
                         if store.iCloudSyncActive {
                             Image(systemName: "arrow.triangle.2.circlepath")
-                                .font(.system(size: 9, weight: .medium))
+                                .font(.system(size: 10, weight: .medium))
                                 .foregroundColor(.accent)
                                 .rotationEffect(.degrees(syncRotation))
                                 .onAppear {
-                                    withAnimation(.linear(duration: 1.0).repeatForever(autoreverses: false)) {
+                                    withAppAnimation(.linear(duration: 1.0).repeatForever(autoreverses: false)) {
                                         syncRotation = 360
                                     }
                                 }
                                 .onDisappear { syncRotation = 0 }
                         } else {
                             Image(systemName: "checkmark.icloud")
-                                .font(.system(size: 9))
+                                .font(.system(size: 10))
                                 .foregroundColor(.accentGreen.opacity(0.7))
                         }
                         Text("iCloud")
@@ -671,7 +665,7 @@ struct StatusBarView: View {
                             .foregroundColor(.labelMuted)
                     }
                 }
-                .animation(.easeInOut(duration: 0.3), value: store.iCloudSyncActive)
+                .appAnimation(Motion.quick, value: store.iCloudSyncActive)
             }
 
             // Streak
@@ -700,7 +694,7 @@ struct StatusBarView: View {
                 sbItem {
                     HStack(spacing: 5) {
                         Image(systemName: "doc.text")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.accent)
                         Text("\(pages) p. thèse")
                             .font(.system(size: 11, weight: .semibold))
@@ -717,7 +711,7 @@ struct StatusBarView: View {
                     let done  = goal > 0 && today >= goal
                     HStack(spacing: 5) {
                         Image(systemName: done ? "checkmark.circle.fill" : "pencil")
-                            .font(.system(size: 9, weight: done ? .semibold : .regular))
+                            .font(.system(size: 10, weight: done ? .semibold : .regular))
                             .foregroundColor(done ? .accentGreen : .accent)
                         Text("Aujourd'hui")
                             .font(.system(size: 11))
@@ -741,7 +735,7 @@ struct StatusBarView: View {
             sbItem {
                 HStack(spacing: 5) {
                     Image(systemName: "bolt.fill")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                         .foregroundColor(.accentWarm)
                     Text("Vitesse")
                         .font(.system(size: 11))
@@ -759,7 +753,7 @@ struct StatusBarView: View {
                     let pct = goal > 0 ? min(100, Int(Double(written) / Double(goal) * 100)) : 0
                     HStack(spacing: 5) {
                         Image(systemName: "target")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.accentWarm)
                         Text("Hebdo")
                             .font(.system(size: 11))
@@ -783,7 +777,7 @@ struct StatusBarView: View {
                     let pct = min(100, Int(Double(latest) / Double(chapter.goal) * 100))
                     HStack(spacing: 5) {
                         Image(systemName: "book.closed.fill")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                             .foregroundColor(.accentWarm.opacity(0.7))
                         Text(chapter.name)
                             .font(.system(size: 11))
@@ -809,7 +803,7 @@ struct StatusBarView: View {
                         .font(.system(size: 11, weight: .semibold))
                     if days >= 0 {
                         Text("\(days) j")
-                            .font(.system(size: 9.5, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(.accentWarm)
                             .padding(.horizontal, 6).padding(.vertical, 1.5)
                             .background(
@@ -836,7 +830,7 @@ struct StatusBarView: View {
                 .frame(height: 33)
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Centre de notifications")
             .accessibilityLabel("Centre de notifications")
             .overlay(alignment: .leading) {
@@ -863,15 +857,15 @@ struct StatusBarView: View {
                 .frame(height: 33)
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Copier le résumé du jour dans le presse-papier")
-            .animation(.easeInOut(duration: 0.2), value: copiedFeedback)
+            .appAnimation(.easeInOut(duration: 0.2), value: copiedFeedback)
             .overlay(alignment: .leading) {
                 Rectangle().fill(Color.cardBorder).frame(width: 1)
             }
         }
         .frame(height: 33)
-        .background(Color.sidebarBg)
+        .background(.bar)   // 5.15 : matériau de barre (le contenu passe dessous, opaque si « Réduire la transparence »)
     }
 
     private func copyDailySummary() {
@@ -975,7 +969,7 @@ struct WeeklySummaryOverlay: View {
                         }
                         Spacer()
                         Button {
-                            withAnimation { store.dismissWeeklySummary() }
+                            withAppAnimation { store.dismissWeeklySummary() }
                         } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 11, weight: .semibold))
@@ -985,7 +979,7 @@ struct WeeklySummaryOverlay: View {
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Fermer le résumé hebdomadaire")
                         .accessibilityLabel("Fermer le résumé hebdomadaire")
                     }
@@ -1117,7 +1111,7 @@ struct DailySummaryOverlay: View {
                         }
                         Spacer()
                         Button {
-                            withAnimation { store.dismissDailySummary() }
+                            withAppAnimation { store.dismissDailySummary() }
                         } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 11, weight: .semibold))
@@ -1127,7 +1121,7 @@ struct DailySummaryOverlay: View {
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .help("Fermer le résumé du jour")
                         .accessibilityLabel("Fermer le résumé du jour")
                     }
@@ -1342,7 +1336,7 @@ struct MilestoneToastView: View {
                     .background(Color.fieldBg)
                     .clipShape(Circle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -1360,12 +1354,12 @@ struct MilestoneToastView: View {
         )
         .onAppear {
             // Icon bounce in
-            withAnimation(.easeOut(duration: 0.22)) {
+            withAppAnimation(.easeOut(duration: 0.22)) {
                 iconScale = 1.0
                 iconOpacity = 1.0
             }
             // Halo expand + fade
-            withAnimation(.easeOut(duration: 0.9)) {
+            withAppAnimation(.easeOut(duration: 0.9)) {
                 haloScale = 2.2
                 haloOpacity = 0
             }
@@ -1405,7 +1399,7 @@ struct PostSessionPromptView: View {
             .padding(.horizontal, 12).padding(.vertical, 6)
             .background(Color.accent)
             .clipShape(Capsule())
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             Button { onDismiss() } label: {
                 Image(systemName: "xmark")
@@ -1415,7 +1409,7 @@ struct PostSessionPromptView: View {
                     .background(Color.fieldBg)
                     .clipShape(Circle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
@@ -1470,7 +1464,7 @@ struct WeeklyReportPromptBanner: View {
                     .background(Color(red: 0.247, green: 0.502, blue: 0.965))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
 
             Button { store.dismissWeeklyReportPrompt() } label: {
                 Image(systemName: "xmark")
@@ -1480,7 +1474,7 @@ struct WeeklyReportPromptBanner: View {
                     .background(Color.cardBg)
                     .clipShape(Circle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .help("Fermer")
             .accessibilityLabel("Fermer")
         }
