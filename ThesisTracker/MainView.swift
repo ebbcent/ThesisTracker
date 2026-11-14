@@ -176,6 +176,15 @@ struct MainView: View {
         .hidden()
     }
 
+    /// 5.19 — titre de fenêtre : la page, et le temps restant quand un bloc tourne.
+    private var windowTitle: String {
+        let snap = pomodoroController.timerSnapshot
+        guard snap.phase != .idle else { return selectedNav.rawValue }
+        let t = pomodoroController.formattedDuration(snap.remainingTime)
+        let mode = snap.phase.activeMode == .focus ? "bloc" : "pause"
+        return "\(selectedNav.rawValue) — \(mode) \(t)\(snap.phase.isPaused ? ", en pause" : "")"
+    }
+
     private func updateWindowTitle(from data: AppData) {
         let title = data.projects.first(where: { $0.id == data.activeProjectId })?.name ?? "Writing Process"
         NSApp.mainWindow?.title = title
@@ -378,7 +387,7 @@ struct MainView: View {
         }
         .appAnimation(.easeOut(duration: 0.20), value: showSidebar)
         .frame(minWidth: showSidebar ? 720 : 460, minHeight: 560)
-        .navigationTitle(selectedNav.rawValue)   // 5.18 : la fenêtre dit où l'on est
+        .navigationTitle(windowTitle)   // 5.18 : la fenêtre dit où l'on est ; 5.19 : + minuteur en cours
         .background(AppBackdrop().ignoresSafeArea())   // 5.16 : la barre latérale en verre réfracte le même fond
         .appGlassContainer()                          // 5.16 : verre rendu en commun (performance, fusion des formes)
         .preferredColorScheme(forceDarkMode ? .dark : nil)  // #28 — Slate theme
@@ -435,6 +444,7 @@ struct MainView: View {
         .onReceive(pomodoroController.$data)                                          { updateWeeklyPomodoroCount($0) }
         .onReceive(NotificationCenter.default.publisher(for: .showExport))            { _ in showExport = true }
         .onReceive(NotificationCenter.default.publisher(for: .navigateToDashboard))   { _ in withAppAnimation(.easeInOut(duration: 0.2)) { selectedNav = .dashboard } }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToTimer))   { _ in withoutAnimation { selectedNav = .timer } }
         .onReceive(NotificationCenter.default.publisher(for: .navigateToProfessor))   { _ in withAppAnimation(.easeInOut(duration: 0.2)) { selectedNav = .professor } }
         .onReceive(store.$showDailySummary) { show in
             // handled via overlay below
@@ -790,7 +800,7 @@ struct StatusBarView: View {
                         Image(systemName: "book.closed.fill")
                             .font(.system(size: 10))
                             .foregroundColor(.accentWarm.opacity(0.7))
-                        Text(chapter.name)
+                        Text(chapter.shortLabel)   // 5.19 : titres longs → « Ch. 4 »
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted)
                             .lineLimit(1)
@@ -897,7 +907,7 @@ struct StatusBarView: View {
         var parts: [String] = ["+\(store.formatCount(todayDelta))"]
 
         if let chapter = store.activeChapter {
-            parts.append(chapter.name)
+            parts.append(chapter.shortLabel)
             if chapter.goal > 0 {
                 let latest = store.chapterProgress
                 let pct = min(100, Int(Double(latest) / Double(chapter.goal) * 100))

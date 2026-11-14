@@ -228,6 +228,7 @@ struct DeadlineBoardView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("\(item.project.name) · \(item.chapter.name)")
                                 .font(.system(size: 14, weight: .semibold))
+                                .lineLimit(2)   // 5.19 : titres du plan, longs
                             // #24 — affiche la deadline effective (avec buffer si actif)
                             HStack(spacing: 6) {
                                 Text("Échéance : \(DataStore.formatDate(deadline))")
