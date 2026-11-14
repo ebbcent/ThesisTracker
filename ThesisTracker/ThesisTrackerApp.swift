@@ -277,12 +277,12 @@ struct ThesisTrackerApp: App {
                             .foregroundColor(iconColor)
                     }
                 } else {
-                    // 5.20 : même lecture que le cadran — icône de phase, chiffres à chasse fixe
-                    Image(systemName: pomodoroController.timerSnapshot.phase.isPaused ? "pause.circle.fill"
-                                      : (pomodoroController.timerSnapshot.phase.activeMode == .focus ? "timer" : "cup.and.saucer.fill"))
-                        .font(.system(size: 11))
-                    Text(pomodoroController.formattedDuration(pomodoroController.timerSnapshot.remainingTime))
-                        .font(.system(size: 12, weight: .semibold).monospacedDigit())
+                    // 5.21 : même style que le cadran — petit anneau de progression + chiffres arrondis
+                    let snap = pomodoroController.timerSnapshot
+                    let ratio = snap.totalDuration > 0 ? 1 - snap.remainingTime / snap.totalDuration : 0
+                    Image(nsImage: MenuBarRing.image(progress: ratio, paused: snap.phase.isPaused))
+                    Text(pomodoroController.formattedDuration(snap.remainingTime))
+                        .font(.system(size: 13, weight: .semibold, design: .rounded).monospacedDigit())
                 }
             }
             .help(store.currentStreak > 0 ? "Série : \(store.currentStreak) jours · Record : \(store.longestStreak) jours · ⌃⌥N pour saisie rapide" : "Writing Process · ⌃⌥N pour saisie rapide")
