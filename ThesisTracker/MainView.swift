@@ -790,6 +790,7 @@ struct StatusBarView: View {
                             .foregroundColor(pct >= 100 ? .accentGreen : .primary)
                     }
                 }
+                .help("\(chapter.name) : \(store.formatCount(latest)) sur \(store.formatCount(chapter.goal)) (\(pct) %)")   // 5.18
             }
 
             Spacer()

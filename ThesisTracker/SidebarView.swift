@@ -157,22 +157,7 @@ struct SidebarView: View {
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(.primary)
             Spacer()
-            if store.currentStreak > 0 {
-                HStack(spacing: 3) {
-                    Image(systemName: "flame.fill")
-                        .font(.system(size: 10, weight: .bold))
-                    Text("\(store.currentStreak)")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                }
-                .foregroundColor(Color.accentWarm)
-                .padding(.horizontal, 7)
-                .padding(.vertical, 3)
-                .background(
-                    Capsule()
-                        .fill(Color.accentWarm.opacity(0.12))
-                        .overlay(Capsule().stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
-                )
-            }
+            // 5.18 : série retirée ici (affichée une seule fois, dans la barre du haut)
             if let saveError = store.saveErrorMessage {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 11, weight: .semibold))
@@ -799,34 +784,7 @@ struct SidebarView: View {
 
     private var sidebarFooter: some View {
         VStack(spacing: 6) {
-            // Streak badges row
-            HStack(spacing: 4) {
-                Image(systemName: "flame.fill")
-                    .font(.system(size: 10))
-                    .foregroundColor(store.currentStreak > 0 ? .accentWarm : .labelMuted)
-                HStack(spacing: 4) {
-                    ForEach(DataStore.badgeMilestones, id: \.self) { threshold in
-                        let unlocked = store.longestStreak >= threshold
-                        Circle()
-                            .fill(unlocked ? badgeDotColor(threshold) : Color.labelMuted.opacity(0.18))
-                            .frame(width: 8, height: 8)
-                            .overlay(
-                                Circle().stroke(
-                                    unlocked ? badgeDotColor(threshold).opacity(0.4) : Color.clear,
-                                    lineWidth: 1
-                                )
-                            )
-                            .help(badgeTooltip(threshold, unlocked: unlocked))
-                    }
-                }
-                Spacer()
-                if store.currentStreak > 0 {
-                    Text("\(store.currentStreak) j")
-                        .font(.system(size: 10, weight: .semibold, design: .rounded))
-                        .foregroundColor(.accentWarm)
-                }
-            }
-            .padding(.horizontal, 12)
+            // 5.18 : rangée de série retirée (doublon de la barre du haut)
 
             // Mini Pomodoro session timeline
             let todaySessions = pomodoroController.timeline

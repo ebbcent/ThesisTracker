@@ -112,7 +112,7 @@ struct DailySessionCard: View {
         HStack(alignment: .center, spacing: 12) {
             // Chiffres gauche
             VStack(alignment: .leading, spacing: 3) {
-                Text("AUJOURD'HUI")
+                Text(store.data.weeklyGoal > 0 ? "AUJOURD'HUI · POUR LA SEMAINE" : "AUJOURD'HUI")   // 5.18
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1)
@@ -128,6 +128,10 @@ struct DailySessionCard: View {
                         Text("/ \(store.formatCount(smartGoal))")
                             .font(.system(size: 13))
                             .foregroundColor(.labelMuted)
+                            // 5.18 : dire ce que mesure ce chiffre (≠ objectif du jour, ≠ rythme d'échéance)
+                            .help(store.data.weeklyGoal > 0
+                                  ? "Ce qu'il reste à écrire aujourd'hui pour boucler l'objectif de la semaine"
+                                  : "Objectif du jour, avec rattrapage de la veille")
                     }
                 } else {
                     Text("—")

@@ -830,24 +830,7 @@ struct DashboardView: View {
 
             Spacer()
 
-            // Streak tag
-            if store.currentStreak > 0 {
-                HStack(spacing: 4) {
-                    Image(systemName: "flame.fill")
-                        .font(.system(size: 10, weight: .bold))
-                    Text("Série · \(store.currentStreak) j")
-                        .font(.system(size: 10.5, weight: .semibold))
-                }
-                .foregroundColor(.accentWarm)
-                .padding(.horizontal, 9).padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(Color.accentWarm.opacity(0.10))
-                        .overlay(Capsule().stroke(Color.accentWarm.opacity(0.22), lineWidth: 1))
-                )
-                .scaleEffect(streakPulse ? 1.12 : 1.0)
-                .appAnimation(Motion.celebrate, value: streakPulse)
-            }
+            // 5.18 : la série n'est plus répétée ici (elle est dans la barre du haut)
 
             Button { showDirectorReport = true } label: {
                 HStack(spacing: 5) {
@@ -1586,21 +1569,21 @@ struct DashboardView: View {
             GlassCard {
                 VStack(spacing: 0) {
                     ProgressBarView(
-                        label: "Aujourd'hui",
+                        label: "Objectif du jour",   // 5.18 : objectif du jour de la semaine (comme la barre du haut)
                         icon: "sun.max.fill",
                         value: store.dailyProgress,
-                        goal: store.data.dailyGoal,
+                        goal: store.effectiveDailyGoal,
                         color: Color.accent,
                         trackColor: Color.accent.opacity(0.12)
                     )
-                    .help(store.data.dailyGoal > 0
-                          ? "\(store.formatCount(store.dailyProgress)) / \(store.formatCount(store.data.dailyGoal)) \(store.data.useWordCount ? "mots" : "car.") · \(min(100, Int(Double(store.dailyProgress) / Double(store.data.dailyGoal) * 100)))% de l'objectif journalier"
+                    .help(store.effectiveDailyGoal > 0
+                          ? "\(store.formatCount(store.dailyProgress)) / \(store.formatCount(store.effectiveDailyGoal)) \(store.data.useWordCount ? "mots" : "car.") · \(min(100, Int(Double(store.dailyProgress) / Double(store.effectiveDailyGoal) * 100)))% de l'objectif du jour"
                           : "\(store.formatCount(store.dailyProgress)) \(store.data.useWordCount ? "mots" : "car.") aujourd'hui")
                     if let ddg = store.deadlineDailyGoal, store.deadlineDailyGoalDiffers {
                         HStack(spacing: 5) {
                             Image(systemName: "calendar.badge.exclamationmark")
                                 .font(.system(size: 10)).foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
-                            Text("Deadline : \(store.formatCount(ddg)) / jour pour finir le chapitre")
+                            Text(echeanceLabel(ddg))   // 5.18 : le but d'abord, l'effort ensuite
                                 .font(.system(size: 10)).foregroundColor(.labelMuted)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 5)
@@ -1809,6 +1792,19 @@ struct DashboardView: View {
         }
     }
 
+    /// 5.18 : « Échéance 27 novembre 2026 · 36 j de retard à ce rythme »
+    private func chapterDeadlineSubtitle(chapter: Chapter, projectId: UUID) -> String {
+        guard let deadline = chapter.deadline.flatMap(DataStore.parseDate) else { return "Sans échéance" }
+        var s = "Échéance \(DataStore.formatDate(deadline))"
+        if let eta = store.estimatedCompletionDate(for: chapter.id, in: projectId) {
+            let cal = Calendar.current
+            let late = cal.dateComponents([.day], from: cal.startOfDay(for: deadline), to: cal.startOfDay(for: eta)).day ?? 0
+            if late > 0 { s += " · \(late) j de retard à ce rythme" }
+            else if late < 0 { s += " · \(-late) j d'avance" }
+        }
+        return s
+    }
+
     @ViewBuilder
     private var planningSection: some View {
         if let project = activeProject, let chapter = activeChapter {
@@ -1825,7 +1821,7 @@ struct DashboardView: View {
                         planningRow(
                             title: "Fin chapitre",
                             value: store.estimatedCompletionDate(for: chapter.id, in: project.id).map(DataStore.formatDate(_:)) ?? "—",
-                            subtitle: chapter.deadline.flatMap(DataStore.parseDate).map { "Deadline \(DataStore.formatDate($0))" } ?? "Sans deadline"
+                            subtitle: chapterDeadlineSubtitle(chapter: chapter, projectId: project.id)
                         )
 
                         // Velocity section
@@ -1854,26 +1850,26 @@ struct DashboardView: View {
         return increments.reduce(0, +) / increments.count
     }
 
-    private var chapterRequiredVelocity: Int {
-        guard let chapter = activeChapter,
-              let project = activeProject,
-              let deadlineStr = chapter.deadline,
-              let deadline = DataStore.parseDate(deadlineStr) else { return 0 }
-        let cal = Calendar(identifier: .gregorian)
-        let daysLeft = cal.dateComponents([.day], from: Date(), to: deadline).day ?? 0
-        guard daysLeft > 0 else { return 0 }
-        let latest = chapter.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
-        let remaining = max(0, chapter.goal - latest)
-        guard remaining > 0 else { return 0 }
-        return Int(ceil(Double(remaining) / Double(daysLeft)))
-    }
+    // 5.18 : un seul calcul du rythme d'échéance, celui du DataStore (profil de rythme, jours d'écriture).
+    // Avant : un second calcul naïf ici (reste ÷ jours calendaires depuis l'heure courante) donnait un autre chiffre.
+    private var chapterRequiredVelocity: Int { store.deadlineDailyGoal ?? 0 }
 
     private var daysToChapterDeadline: Int? {
         guard let chapter = activeChapter,
               let deadlineStr = chapter.deadline,
               let deadline = DataStore.parseDate(deadlineStr) else { return nil }
-        let days = Calendar.current.dateComponents([.day], from: Date(), to: deadline).day ?? 0
+        let cal = Calendar.current
+        let days = cal.dateComponents([.day], from: cal.startOfDay(for: Date()), to: cal.startOfDay(for: deadline)).day ?? 0
         return days >= 0 ? days : nil
+    }
+
+    /// « Pour tenir le 27 novembre : 13 060 par jour (6 183 de plus qu'à ton rythme) »
+    private func echeanceLabel(_ perDay: Int) -> String {
+        let date = activeChapter?.deadline.flatMap(DataStore.parseDate).map { DataStore.formatDate($0) } ?? "l'échéance"
+        var s = "Pour tenir le \(date) : \(store.formatCount(perDay)) par jour"
+        let gap = perDay - currentVelocity
+        if currentVelocity > 0 && gap > 0 { s += " (\(store.formatCount(gap)) de plus qu'à ton rythme)" }
+        return s
     }
 
     @ViewBuilder
@@ -1907,7 +1903,7 @@ struct DashboardView: View {
 
                     // Required velocity
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Objectif deadline")
+                        Text("Rythme pour l'échéance")
                             .font(.system(size: 10))
                             .foregroundColor(.labelMuted)
                         Text(store.formatCount(req) + "/j")
@@ -2720,7 +2716,17 @@ private struct MiniBarChartView: View {
     let color: Color
     let goal: Int
 
-    private var maxVal: CGFloat { CGFloat(max(data.max() ?? 0, goal > 0 ? goal : 0, 1)) }
+    /// 5.18 : échelle plafonnée quand une journée hors norme (import, rattrapage) écraserait les autres.
+    /// Plafond = 2 × le 75e centile des jours non nuls (et au moins l'objectif) ; la barre dépassante
+    /// est pleine, marquée d'une encoche, valeur exacte au survol.
+    private var maxVal: CGFloat {
+        let peak = CGFloat(max(data.max() ?? 0, goal > 0 ? goal : 0, 1))
+        let nonZero = data.filter { $0 > 0 }.sorted()
+        guard nonZero.count >= 4 else { return peak }
+        let p75 = CGFloat(nonZero[Int(Double(nonZero.count - 1) * 0.75)])
+        let cap = max(p75 * 2, CGFloat(goal), 1)
+        return min(peak, cap)
+    }
 
     var body: some View {
         GeometryReader { geo in
@@ -2748,10 +2754,16 @@ private struct MiniBarChartView: View {
                                 .fill(
                                     reachedGoal ? Color.accentGreen :
                                     isToday ? color :
-                                    color.opacity(max(0.18, ratio * 0.80))
+                                    color.opacity(max(0.18, min(1, ratio) * 0.80))
                                 )
-                                .frame(height: max(2, geo.size.height * ratio))
+                                .frame(height: max(2, geo.size.height * min(1, ratio)))
+                                .overlay(alignment: .top) {
+                                    if ratio > 1 {   // hors échelle : encoche
+                                        Rectangle().fill(Color.cardBg).frame(height: 2).offset(y: 5)
+                                    }
+                                }
                         }
+                        .help(v > 0 ? "\(DataStore.formatNumber(v)) car." + (ratio > 1 ? " (hors échelle)" : "") : "Rien ce jour-là")
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
