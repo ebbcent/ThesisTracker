@@ -1571,13 +1571,13 @@ private struct MiniProgressRing: View {
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .appAnimation(Motion.progress, value: ratio)
-            if ratio > 0 {
-                Text("\(Int(ratio * 100))%")
-                    .font(.system(size: 5.5, weight: .bold))
-                    .foregroundColor(color)
-            }
+            // 5.18 : plus de pourcentage en 5,5 pt dans l'anneau (illisible) ; valeur au survol et pour VoiceOver
         }
         .frame(width: size, height: size)
+        .help("\(Int(min(ratio, 1) * 100)) %")
+        .accessibilityElement()
+        .accessibilityLabel("Avancement")
+        .accessibilityValue("\(Int(min(ratio, 1) * 100)) pour cent")
     }
 }
 

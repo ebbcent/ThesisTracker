@@ -80,6 +80,10 @@ struct ProgressBarView: View {
                 .frame(height: 3)
             }
         }
+        // 5.18 : VoiceOver lit « Objectif du jour, 3 200 sur 10 000, 32 pour cent »
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityValue(hasGoal ? "\(formatNumber(value)) sur \(formatNumber(goal)), \(percentage) pour cent" : formatNumber(value))
         .onAppear {
             guard hasGoal else { return }
             // Fast fill — no sluggish delay

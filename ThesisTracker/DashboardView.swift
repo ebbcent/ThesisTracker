@@ -61,6 +61,7 @@ struct DashboardView: View {
     @State private var isCustomizing: Bool = false
     // #16 — Mode compact
     @AppStorage("dashboardCompact") private var dashboardCompact: Bool = false
+    @State private var dashWidth: CGFloat = 1400   // 5.18 : largeur utile, pour passer en une colonne
 
     // Drag-and-drop
     @State private var draggingWidget: DashboardWidget? = nil
@@ -83,7 +84,11 @@ struct DashboardView: View {
             VStack(spacing: 16) {
                 headerView
 
-                HStack(alignment: .top, spacing: 16) {
+                // 5.18 : deux colonnes sur grand écran, une seule quand la fenêtre est étroite (MacBook, fenêtre réduite)
+                let columns = dashWidth < 900
+                    ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16))
+                    : AnyLayout(HStackLayout(alignment: .top, spacing: 16))
+                columns {
                     leftColumn
                     rightColumn
                     .sheet(isPresented: $showCustomizeSheet) {
@@ -94,6 +99,11 @@ struct DashboardView: View {
                 .environment(\.compactDashboard, dashboardCompact)
             }
             .padding(20)
+            .background(GeometryReader { g in
+                Color.clear
+                    .onAppear { dashWidth = g.size.width }
+                    .onChange(of: g.size.width) { _, w in dashWidth = w }
+            })
         }
         .onAppear {
             // Migration : ajouter les 3 widgets fixes en colonne gauche si absents
@@ -1256,6 +1266,7 @@ struct DashboardView: View {
                              ? DataStore.formatNumber(currentEntryTotal / 5)
                              : DataStore.formatNumber(currentEntryTotal))
                             .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .tracking(-0.8)   // 5.18 : grands chiffres resserrés
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: currentEntryTotal > 0 ? [.primary, .primary.opacity(0.7)] : [Color.labelMuted.opacity(0.4)],
@@ -1296,9 +1307,9 @@ struct DashboardView: View {
                                 Text("Nouveau record personnel !")
                                     .font(.system(size: 11, weight: .semibold))
                             }
-                            .foregroundColor(.yellow)
+                            .foregroundColor(.accentWarm)   // 5.18 : palette restreinte
                             .padding(.horizontal, 8).padding(.vertical, 3)
-                            .background(Capsule().fill(Color.yellow.opacity(0.12)))
+                            .background(Capsule().fill(Color.accentWarm.opacity(0.12)))
                             .transition(.scale(scale: 0.95).combined(with: .opacity))
                         }
                     } else if currentEntryNet < 0 {
@@ -1319,7 +1330,7 @@ struct DashboardView: View {
                     } else if currentEntryTotal == 0 {
                         Text(isToday ? "Aucune entrée pour aujourd'hui" : "Aucune entrée ce jour-là")
                             .font(.system(size: 11))
-                            .foregroundColor(.labelMuted.opacity(0.6))
+                            .foregroundColor(.labelMuted)   // 5.18 : contraste suffisant
                     }
 
                     // V5 — #6 : Dernière écriture il y a X jours
@@ -1579,7 +1590,7 @@ struct DashboardView: View {
                     if let ddg = store.deadlineDailyGoal, store.deadlineDailyGoalDiffers {
                         HStack(spacing: 5) {
                             Image(systemName: "calendar.badge.exclamationmark")
-                                .font(.system(size: 10)).foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
+                                .font(.system(size: 10)).foregroundColor(.accentWarm)   // 5.18 : avertissement, pas erreur
                             Text(echeanceLabel(ddg))   // 5.18 : le but d'abord, l'effort ensuite
                                 .font(.system(size: 10)).foregroundColor(.labelMuted)
                         }
@@ -1951,7 +1962,7 @@ struct DashboardView: View {
                 return "Tu es en avance. Continue à ce rythme !"
             } else {
                 let extra = req - vel
-                return "Il faut écrire \(store.formatCount(extra))/j de plus pour tenir l'échéance."
+                return "Pour tenir l'échéance : \(store.formatCount(extra)) par jour de plus qu'à ton rythme."
             }
         } else if let days = daysLeft {
             return "Plus que \(days) jour\(days > 1 ? "s" : "") avant l'échéance."
@@ -2553,12 +2564,14 @@ private struct WritingEntryInputCluster: View {
                 Text(savedConfirmation ? "Enregistré" : "Sauvegarder")
                     .font(.system(size: 12, weight: .semibold))
             }
-            .foregroundColor(savedConfirmation ? .white : .black)
+            .foregroundColor(savedConfirmation ? .white : (hasValue ? .black : .labelMuted))
             .padding(.horizontal, 14).padding(.vertical, 10)
             .background(
+                // 5.18 : désactivé = gris neutre (plus d'ambre « boueux » à demi-opacité)
                 RoundedRectangle(cornerRadius: 9)
-                    .fill(savedConfirmation ? Self.savedGradient : Self.saveGradient)
-                    .shadow(color: Color.accent.opacity(0.3), radius: 6, x: 0, y: 2)
+                    .fill(hasValue || savedConfirmation ? AnyShapeStyle(savedConfirmation ? Self.savedGradient : Self.saveGradient)
+                                                        : AnyShapeStyle(Color.fieldBg))
+                    .shadow(color: hasValue ? Color.accent.opacity(0.3) : .clear, radius: 6, x: 0, y: 2)
             )
         }
         .buttonStyle(.pressable)

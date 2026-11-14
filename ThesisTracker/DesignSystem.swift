@@ -266,3 +266,24 @@ struct HoverDragHandle: ViewModifier {
             }
     }
 }
+
+
+// MARK: - 5.18 Échelle typographique
+
+/// Six styles nommés pour les nouveaux écrans et les composants communs (les anciens écrans gardent
+/// leurs tailles fixes, ramenées à 10 pt minimum en 5.15). Polices système : optique et approche
+/// ajustées par macOS selon la taille.
+enum TypeScale {
+    /// Titre de page (« Tableau de bord »).
+    static let pageTitle = Font.system(size: 18, weight: .bold, design: .rounded)
+    /// Titre de section (« Progression »).
+    static let sectionTitle = Font.system(size: 12, weight: .semibold)
+    /// Texte courant.
+    static let body = Font.system(size: 13)
+    /// Légende, texte secondaire.
+    static let caption = Font.system(size: 11)
+    /// Chiffre dans une ligne (« 7 966 car./j »).
+    static let figure = Font.system(size: 13, weight: .bold).monospacedDigit()
+    /// Chiffre principal d'une carte (« 0 car. »).
+    static let heroFigure = Font.system(size: 24, weight: .bold, design: .rounded).monospacedDigit()
+}

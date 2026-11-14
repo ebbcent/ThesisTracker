@@ -121,6 +121,7 @@ struct DailySessionCard: View {
                     HStack(alignment: .firstTextBaseline, spacing: 5) {
                         Text(store.formatCount(progress))
                             .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .tracking(-0.4)   // 5.18
                             .foregroundColor(isGoalReached ? .accentGreen : .primary)
                             .contentTransition(.numericText())
                             .appAnimation(Motion.progress, value: progress)

@@ -164,10 +164,10 @@ struct SectionHeader: View {
     init(_ title: String) { self.title = title }
     var body: some View {
         HStack(spacing: 8) {
-            Text(title.uppercased())
-                .font(.system(size: 10, weight: .semibold))
+            // 5.18 : titre de section en casse normale (les capitales espacées partout écrasaient la hiérarchie)
+            Text(title)
+                .font(TypeScale.sectionTitle)
                 .foregroundColor(.labelMuted)
-                .kerning(1.2)
             Rectangle()
                 .fill(Color.cardBorder)
                 .frame(height: 1)
