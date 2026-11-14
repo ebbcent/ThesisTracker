@@ -129,11 +129,11 @@ struct GlassCard<Content: View>: View {
     var body: some View {
         content
             .padding(compact ? 10 : 16)
-            // 5.16 : verre d'Apple (réglage « Verre ») ; bordure fine seulement sans verre
-            .appGlass(in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            // 5.17 : cartes pleines (le contenu ne va pas sous verre : lisibilité, pas de verre sur verre)
+            .background(Color.cardBg, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(Color.cardBorder, lineWidth: GlassIsOn.value ? 0 : 1)
+                    .stroke(Color.cardBorder, lineWidth: 1)
             )
         // Suppression du .shadow(radius: 12) — il forçait un off-screen render
         // pass par carte (× 79 cartes sur le dashboard). Le contour 1px suffit
