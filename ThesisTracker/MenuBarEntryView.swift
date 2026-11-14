@@ -158,106 +158,191 @@ struct MenuBarEntryView: View {
 
     // MARK: - Pomodoro section
 
+    // 5.20 — même cadran et mêmes commandes que l'onglet Minuteur (5.19)
     private var pomodoroSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: "timer")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.accentWarm)
-                Text("Minuteur")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.primary)
-                Spacer()
-                if case .idle = pomodoroController.timerSnapshot.phase {
-                    EmptyView()
-                } else {
-                    Text(pomodoroController.formattedDuration(pomodoroController.timerSnapshot.remainingTime))
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(.accentWarm)
+        let snap = pomodoroController.timerSnapshot
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .center, spacing: 14) {
+                TimerDialView(
+                    title: snap.phase.activeMode?.displayName ?? (menuPendingBreak != nil ? "Pause" : "Prêt"),
+                    timeText: pomodoroController.formattedDuration(snap.remainingTime),
+                    progress: snap.phase == .idle ? 0 : menuProgress,
+                    accentColor: menuTint,
+                    size: 112,
+                    detail: "",
+                    isPaused: snap.phase.isPaused
+                )
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(menuDetail)
+                        .font(.system(size: 11, weight: .medium).monospacedDigit())
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Button(action: menuPrimaryAction) {
+                        Label(menuPrimaryTitle, systemImage: menuPrimaryIcon)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity, minHeight: 28)
+                            .background(Capsule().fill(menuPrimaryEnabled ? menuButtonTint : Color.labelMuted.opacity(0.35)))
+                            .contentShape(Capsule())
+                    }
+                    .buttonStyle(.pressable)
+                    .disabled(!menuPrimaryEnabled)
+
+                    HStack(spacing: 8) {
+                        menuCircleButton("stop.fill", help: "Arrêter le bloc", enabled: snap.phase != .idle) {
+                            pomodoroController.stopTimer()
+                        }
+                        menuCircleButton("forward.end.fill", help: "Passer la pause proposée", enabled: menuPendingBreak != nil) {
+                            pomodoroController.skipPendingPhase()
+                        }
+                        Spacer(minLength: 0)
+                        if snap.completedFocusCountInCycle > 0 {
+                            HStack(spacing: 3) {
+                                ForEach(0..<max(1, pomodoroController.data.settings.sessionsBeforeLongBreak), id: \.self) { i in
+                                    Circle()
+                                        .fill(i < snap.completedFocusCountInCycle ? menuTint : Color.glassBorder)
+                                        .frame(width: 6, height: 6)
+                                }
+                            }
+                            .help("\(snap.completedFocusCountInCycle) bloc(s) dans ce cycle")
+                        }
+                    }
                 }
             }
 
-            // 5.11 — intention de la session en cours
-            if pomodoroController.timerSnapshot.phase.activeMode == .focus,
-               let intention = pomodoroController.activeIntention {
+            // Intention du bloc en cours
+            if snap.phase.activeMode == .focus, let intention = pomodoroController.activeIntention {
                 Label(intention, systemImage: "scope")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                     .lineLimit(2)
             }
 
-            HStack(spacing: 6) {
-                if case .idle = pomodoroController.timerSnapshot.phase, let next = pomodoroController.pendingNextMode {
-                    Button(next == .focus ? "Démarrer la session" : "Démarrer la pause") {
-                        pomodoroController.startRecommendedSession()
-                    }
-                    .font(.system(size: 11, weight: .semibold))
-                    .lineLimit(1)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(Color.accentWarm.opacity(0.85))
-                    .clipShape(Capsule())
-                    .buttonStyle(.pressable)
-
-                    Button("Passer") {
-                        pomodoroController.skipPendingPhase()
-                    }
-                    .font(.system(size: 11))
-                    .lineLimit(1)
-                    .foregroundColor(.labelMuted)
-                    .buttonStyle(.pressable)
-                } else {
-                    // « Démarrer » uniquement quand le minuteur est inactif (sinon la session en cours serait perdue)
-                    if pomodoroController.timerSnapshot.phase == .idle {
-                        Button("Démarrer") {
-                            pomodoroController.startFocusSession()
+            // Durées rapides, au repos
+            if snap.phase == .idle && menuPendingBreak == nil {
+                let current = Int(pomodoroController.data.settings.focusDuration / 60)
+                HStack(spacing: 5) {
+                    ForEach([25, 45, 50, 90], id: \.self) { m in
+                        let on = m == current
+                        Button {
+                            pomodoroController.data.settings.focusDuration = TimeInterval(m * 60)
+                            pomodoroController.saveSettings()
+                        } label: {
+                            Text("\(m) min")
+                                .font(.system(size: 10, weight: on ? .semibold : .medium).monospacedDigit())
+                                .foregroundStyle(on ? Color.accent : Color.secondary)
+                                .padding(.horizontal, 8).padding(.vertical, 4)
+                                .background(Capsule().fill(on ? Color.accent.opacity(0.12) : Color.clear))
+                                .overlay(Capsule().stroke(on ? Color.accent.opacity(0.3) : Color.glassBorder, lineWidth: 1))
+                                .contentShape(Capsule())
                         }
-                        .font(.system(size: 11, weight: .semibold))
-                        .lineLimit(1)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Color.accentWarm.opacity(0.85))
-                        .clipShape(Capsule())
                         .buttonStyle(.pressable)
-                        .disabled(pomodoroController.isExternalFocusActive)
-                    }
-
-                    if pomodoroController.timerSnapshot.phase != .idle {
-                        Button(pomodoroController.timerSnapshot.phase.isPaused ? "Reprendre" : "Pause") {
-                            pomodoroController.pauseOrResume()
-                        }
-                        .font(.system(size: 11))
-                        .lineLimit(1)
-                        .foregroundColor(.labelMuted)
-                        .buttonStyle(.pressable)
-
-                        Button("Arrêter") {
-                            pomodoroController.stopTimer()
-                        }
-                        .font(.system(size: 11))
-                        .lineLimit(1)
-                        .foregroundColor(.labelMuted)
-                        .buttonStyle(.pressable)
+                        .accessibilityAddTraits(on ? .isSelected : [])
                     }
                 }
-
-                Spacer()
-
-                if pomodoroController.timerSnapshot.completedFocusCountInCycle > 0 {
-                    HStack(spacing: 2) {
-                        ForEach(0..<max(1, pomodoroController.data.settings.sessionsBeforeLongBreak), id: \.self) { i in
-                            Circle()
-                                .fill(i < pomodoroController.timerSnapshot.completedFocusCountInCycle
-                                      ? Color.accentWarm : Color.glassBorder)
-                                .frame(width: 6, height: 6)
-                        }
-                    }
-                }
+                .frame(maxWidth: .infinity)
+                .help("Durée des blocs de concentration")
             }
         }
-        .padding(.horizontal, 14).padding(.vertical, 10)
+        .padding(.horizontal, 14).padding(.vertical, 12)
+    }
+
+    private var menuPendingBreak: ActiveTimerMode? {
+        guard pomodoroController.timerSnapshot.phase == .idle,
+              let next = pomodoroController.pendingNextMode, next != .focus else { return nil }
+        return next
+    }
+
+    private var menuProgress: Double {
+        let snap = pomodoroController.timerSnapshot
+        guard snap.totalDuration > 0 else { return 0 }
+        return min(1, max(0, 1 - snap.remainingTime / snap.totalDuration))
+    }
+
+    private var menuTint: Color {
+        switch pomodoroController.timerSnapshot.phase.activeMode ?? menuPendingBreak {
+        case .shortBreak?: return CockpitTheme.success
+        case .longBreak?:  return CockpitTheme.glow
+        default:           return .accent
+        }
+    }
+
+    private var menuButtonTint: Color { menuTint }
+
+    private var menuPrimaryEnabled: Bool {
+        pomodoroController.timerSnapshot.phase != .idle || pomodoroController.canStartSession
+    }
+
+    private var menuPrimaryTitle: String {
+        switch pomodoroController.timerSnapshot.phase {
+        case .running: return "Pause"
+        case .paused:  return "Reprendre"
+        case .idle:    return menuPendingBreak != nil ? "Lancer la pause" : "Démarrer"
+        }
+    }
+
+    private var menuPrimaryIcon: String {
+        switch pomodoroController.timerSnapshot.phase {
+        case .running: return "pause.fill"
+        case .paused:  return "play.fill"
+        case .idle:    return menuPendingBreak != nil ? "cup.and.saucer.fill" : "play.fill"
+        }
+    }
+
+    private var menuDetail: String {
+        let snap = pomodoroController.timerSnapshot
+        let settings = pomodoroController.data.settings
+        switch snap.phase {
+        case .running:
+            guard let end = snap.expectedEndDate else { return "" }
+            return "Fin à " + end.formatted(date: .omitted, time: .shortened)
+        case .paused:
+            return "En pause"
+        case .idle:
+            if let b = menuPendingBreak {
+                let d = b == .longBreak ? settings.longBreakDuration : settings.shortBreakDuration
+                return "Pause proposée · \(Int(d / 60)) min"
+            }
+            if let ch = store.activeChapter { return "Bloc de \(Int(settings.focusDuration / 60)) min · \(ch.shortLabel)" }
+            return "Bloc de \(Int(settings.focusDuration / 60)) min"
+        }
+    }
+
+    private func menuPrimaryAction() {
+        switch pomodoroController.timerSnapshot.phase {
+        case .running, .paused:
+            pomodoroController.pauseOrResume()
+        case .idle:
+            if menuPendingBreak != nil {
+                pomodoroController.startRecommendedSession()
+            } else {
+                // Comme le raccourci du tableau de bord : bloc rattaché au chapitre actif
+                if let p = store.activeProject, let c = store.activeChapter {
+                    pomodoroController.selectedWritingProjectId = p.id
+                    pomodoroController.selectedWritingChapterId = c.id
+                }
+                pomodoroController.startFocusSession()
+            }
+        }
+    }
+
+    private func menuCircleButton(_ icon: String, help: String, enabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(Color.primary.opacity(0.8))
+                .frame(width: 26, height: 26)
+                .background(Circle().fill(Color.glassFill))
+                .overlay(Circle().stroke(Color.glassBorder, lineWidth: 1))
+                .contentShape(Circle())
+        }
+        .buttonStyle(.pressable)
+        .disabled(!enabled)
+        .help(help)
+        .accessibilityLabel(help)
     }
 
     // MARK: - Selectors
