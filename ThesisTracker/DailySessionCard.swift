@@ -56,7 +56,7 @@ struct DailySessionCard: View {
         }
         if isGoalReached  { return "Objectif atteint — excellente session !" }
         if progress == 0 && hasCatchUp { return "Tu n'as pas écrit hier. Un petit rattrapage aujourd'hui ?" }
-        if progress == 0  { return "Prêt à écrire ? Lance ta session !" }
+        if progress == 0  { return "Pas encore d'écriture aujourd'hui" }   // 5.18 : plus sobre
         let left = smartGoal - progress
         return "Plus que \(store.formatCount(left)) pour atteindre l'objectif."
     }

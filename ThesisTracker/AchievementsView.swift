@@ -273,7 +273,7 @@ struct AchievementsView: View {
         ))
         list.append(GeneralAchievement(
             id: "architect", icon: "ruler.fill", color: Color(red: 0.310, green: 0.275, blue: 0.898),
-            name: "Architecte", description: "10 chapitres avec deadline",
+            name: "Architecte", description: "10 chapitres avec échéance",
             isUnlocked: chaptersWithDeadline >= 10
         ))
         list.append(GeneralAchievement(

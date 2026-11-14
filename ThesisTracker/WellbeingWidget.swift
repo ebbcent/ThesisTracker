@@ -46,7 +46,7 @@ struct WellbeingWidget: View {
                     energySection
                 }
 
-                miniHistory
+                if !history.isEmpty { miniHistory }   // 5.18 : pas de bloc vide
 
                 actionsRow
             }
@@ -103,7 +103,7 @@ struct WellbeingWidget: View {
     private var restDayBanner: some View {
         HStack(spacing: 8) {
             Image(systemName: "moon.fill")
-                .foregroundColor(Color(red: 0.404, green: 0.224, blue: 0.718))
+                .foregroundColor(Color.labelMuted)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Jour de repos planifié")
                     .font(.system(size: 12, weight: .semibold))
@@ -113,7 +113,7 @@ struct WellbeingWidget: View {
             Spacer()
         }
         .padding(10)
-        .background(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.08))
+        .background(Color.labelMuted.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
@@ -151,7 +151,7 @@ struct WellbeingWidget: View {
     }
 
     private func barColor(energy: Int?, isRest: Bool) -> Color {
-        if isRest { return Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.55) }
+        if isRest { return Color.labelMuted.opacity(0.55) }
         guard let e = energy else { return Color.labelMuted.opacity(0.15) }
         return energyColor(e)
     }
@@ -167,9 +167,9 @@ struct WellbeingWidget: View {
                     Text(isRest ? "Annuler le repos" : "Jour de repos")
                         .font(.system(size: 11, weight: .semibold))
                 }
-                .foregroundColor(isRest ? .white : Color(red: 0.404, green: 0.224, blue: 0.718))
+                .foregroundColor(isRest ? .white : Color.labelMuted)
                 .padding(.horizontal, 10).padding(.vertical, 6)
-                .background(isRest ? Color(red: 0.404, green: 0.224, blue: 0.718) : Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
+                .background(isRest ? Color.labelMuted : Color.labelMuted.opacity(0.12))
                 .clipShape(Capsule())
             }
             .buttonStyle(.pressable)

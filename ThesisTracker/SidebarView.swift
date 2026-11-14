@@ -231,7 +231,7 @@ struct SidebarView: View {
         VStack(spacing: 0) {
             navGroup(
                 label: "Écriture",
-                items: [.dashboard, .overview, .deadlines, .kanban],
+                items: [.dashboard, .professor, .overview, .deadlines, .kanban],   // 5.18 : professeur à portée, pendant la séance
                 collapsed: $navEcritureCollapsed
             )
             navGroupDivider
@@ -243,7 +243,7 @@ struct SidebarView: View {
             navGroupDivider
             navGroup(
                 label: "Outils",
-                items: [.timer, .search, .achievements, .professor],
+                items: [.timer, .search, .achievements],
                 collapsed: $navOutilsCollapsed
             )
         }
@@ -260,10 +260,9 @@ struct SidebarView: View {
                     Image(systemName: collapsed.wrappedValue ? "chevron.right" : "chevron.down")
                         .font(.system(size: 7, weight: .bold))
                         .foregroundColor(.labelMuted.opacity(0.45))
-                    Text(label.uppercased())
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(.labelMuted.opacity(0.5))
-                        .kerning(1.0)
+                    Text(label.capitalized(with: Locale(identifier: "fr_FR")))   // 5.18 : en-tête discret, comme le Finder
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.labelMuted.opacity(0.75))
                     Spacer()
                 }
                 .contentShape(Rectangle())
@@ -306,64 +305,28 @@ struct SidebarView: View {
                 Text("PROJETS")
                     .font(.system(size: 10, weight: .bold)).foregroundColor(.labelMuted).kerning(1.0)
                 Spacer()
-                Button {
-                    withAppAnimation { compactMode.toggle() }
-                } label: {
-                    Image(systemName: compactMode ? "rectangle.compress.vertical" : "rectangle.expand.vertical")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(compactMode ? .accent : .labelMuted)
-                        .frame(width: 22, height: 22)
-                        .background(compactMode ? Color.accent.opacity(0.10) : Color.clear)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.pressable)
-                .help(compactMode ? "Vue détaillée" : "Vue compacte")
-                .accessibilityLabel(compactMode ? "Passer en vue détaillée" : "Passer en vue compacte")
-                Button {
-                    withAppAnimation { reviewFocusMode.toggle() }
-                } label: {
-                    Image(systemName: reviewFocusMode ? "person.fill.badge.plus" : "person.badge.plus")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(reviewFocusMode ? Color(hex: "#7C3AED") : .labelMuted)
-                        .frame(width: 22, height: 22)
-                        .background(reviewFocusMode ? Color(hex: "#7C3AED").opacity(0.10) : Color.clear)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.pressable)
-                .help(reviewFocusMode ? "Quitter le mode revues" : "Mode revues directeur")
-                .accessibilityLabel(reviewFocusMode ? "Quitter le mode revues" : "Activer le mode revues")
-                Button {
-                    withAppAnimation { store.data.sortProjectsAlphabetically.toggle(); store.save() }
-                } label: {
-                    Image(systemName: "textformat.abc")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(store.data.sortProjectsAlphabetically ? .accent : .labelMuted)
-                        .frame(width: 22, height: 22)
-                        .background(store.data.sortProjectsAlphabetically ? Color.accent.opacity(0.10) : Color.clear)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.pressable)
-                .help(store.data.sortProjectsAlphabetically ? "Ordre alphabétique (actif)" : "Trier A → Z")
-                .accessibilityLabel(store.data.sortProjectsAlphabetically ? "Tri alphabétique activé" : "Trier alphabétiquement")
-                Button {
-                    withAppAnimation {
-                        if expandedProjects.count >= sortedProjects.count {
-                            expandedProjects.removeAll()
-                        } else {
-                            expandedProjects = Set(sortedProjects.map(\.id))
+                // 5.18 : un seul menu « Affichage » au lieu de quatre icônes sans libellé
+                Menu {
+                    Toggle("Vue compacte", isOn: Binding(get: { compactMode }, set: { v in withAppAnimation { compactMode = v } }))
+                    Toggle("Mode revues du directeur", isOn: Binding(get: { reviewFocusMode }, set: { v in withAppAnimation { reviewFocusMode = v } }))
+                    Toggle("Trier les projets de A à Z", isOn: Binding(get: { store.data.sortProjectsAlphabetically },
+                                                                    set: { v in withAppAnimation { store.data.sortProjectsAlphabetically = v; store.save() } }))
+                    Divider()
+                    Button(expandedProjects.count >= sortedProjects.count ? "Tout replier" : "Tout déplier") {
+                        withAppAnimation {
+                            if expandedProjects.count >= sortedProjects.count { expandedProjects.removeAll() }
+                            else { expandedProjects = Set(sortedProjects.map(\.id)) }
                         }
                     }
                 } label: {
-                    Image(systemName: expandedProjects.count >= sortedProjects.count
-                          ? "chevron.up.chevron.down" : "chevron.down.chevron.up")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(.labelMuted)
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(compactMode || reviewFocusMode || store.data.sortProjectsAlphabetically ? .accent : .labelMuted)
                         .frame(width: 22, height: 22)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.pressable)
-                .help(expandedProjects.count >= sortedProjects.count ? "Tout replier" : "Tout déplier")
-                .accessibilityLabel(expandedProjects.count >= sortedProjects.count ? "Replier tous les projets" : "Déplier tous les projets")
+                .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                .help("Affichage de la liste")
+                .accessibilityLabel("Affichage de la liste des projets")
                 Button { editingFolderName = ""; showAddFolder = true } label: {
                     Image(systemName: "folder.badge.plus")
                         .font(.system(size: 11, weight: .semibold)).foregroundColor(.labelMuted)
@@ -1219,7 +1182,9 @@ struct FolderSidebarRow: View {
         return false
     }
 
-    var body: some View {
+    var body: some View { rowBody.modifier(RowHoverScope()) }   // 5.18 : actions de ligne au survol
+
+    @ViewBuilder private var rowBody: some View {
         VStack(spacing: 0) {
             folderHeader
             if folder.isExpanded || filterActive {
@@ -1345,7 +1310,7 @@ struct FolderSidebarRow: View {
                         .fill(Color.primary.opacity(0.07)))
             }
             .menuStyle(.borderlessButton).fixedSize()
-            .help("Options du dossier")
+            .help("Options du dossier").modifier(RevealOnRowHover())
             .accessibilityLabel("Options du dossier")
         }
         .padding(.horizontal, 8).padding(.vertical, 7)
@@ -1685,7 +1650,9 @@ struct ProjectSidebarRow: View {
         return "\(total) chapitre\(total > 1 ? "s" : "") · \(done) terminé\(done > 1 ? "s" : "")"
     }
 
-    var body: some View {
+    var body: some View { rowBody.modifier(RowHoverScope()) }   // 5.18 : actions de ligne au survol
+
+    @ViewBuilder private var rowBody: some View {
         VStack(spacing: 0) {
             // Project row header
             HStack(spacing: 8) {
@@ -1742,7 +1709,7 @@ struct ProjectSidebarRow: View {
                             .clipShape(RoundedRectangle(cornerRadius: 5))
                     }
                     .buttonStyle(.pressable)
-                    .help("Nouveau dossier dans \(project.name)")
+                    .help("Nouveau dossier dans \(project.name)").modifier(RevealOnRowHover())
                     .accessibilityLabel("Nouveau dossier")
 
                     Button(action: onAddChapter) {
@@ -1750,7 +1717,7 @@ struct ProjectSidebarRow: View {
                             .frame(width: 20, height: 20).background(Color.accent.opacity(0.10)).clipShape(RoundedRectangle(cornerRadius: 5))
                     }
                     .buttonStyle(.pressable)
-                    .help("Nouveau chapitre dans \(project.name)")
+                    .help("Nouveau chapitre dans \(project.name)").modifier(RevealOnRowHover())
                     .accessibilityLabel("Nouveau chapitre")
 
                     Menu {
@@ -1832,7 +1799,7 @@ struct ProjectSidebarRow: View {
                                 .fill(Color.primary.opacity(0.07)))
                     }
                     .menuStyle(.borderlessButton).fixedSize()
-                    .help("Options du projet")
+                    .help("Options du projet").modifier(RevealOnRowHover())
                     .accessibilityLabel("Options du projet")
                 }
             }
@@ -2134,7 +2101,9 @@ private struct ChapterFolderSidebarRow: View {
         return lines.joined(separator: "\n")
     }
 
-    var body: some View {
+    var body: some View { rowBody.modifier(RowHoverScope()) }   // 5.18 : actions de ligne au survol
+
+    @ViewBuilder private var rowBody: some View {
         if let folder = folder {
             VStack(spacing: 0) {
                 // Folder header
@@ -2218,7 +2187,7 @@ private struct ChapterFolderSidebarRow: View {
                             .background(RoundedRectangle(cornerRadius: 4).fill(Color.primary.opacity(0.07)))
                     }
                     .menuStyle(.borderlessButton).fixedSize()
-                    .help("Options du dossier")
+                    .help("Options du dossier").modifier(RevealOnRowHover())
                     .accessibilityLabel("Options du dossier")
                 }
                 .padding(.horizontal, 8).padding(.vertical, 6)
@@ -2425,7 +2394,9 @@ struct ChapterSidebarRow: View {
         }
     }
 
-    var body: some View {
+    var body: some View { rowBody.modifier(RowHoverScope()) }   // 5.18 : actions de ligne au survol
+
+    @ViewBuilder private var rowBody: some View {
         Button(action: handleTap) {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
@@ -2538,7 +2509,7 @@ struct ChapterSidebarRow: View {
                                 .foregroundColor(.labelMuted.opacity(0.7))
                         }
                         if !chapter.isCompleted, let deadline = chapter.deadline, let date = DataStore.parseDate(deadline) {
-                            Text("Deadline: " + DataStore.formatDate(date))
+                            Text("Échéance : " + DataStore.formatDate(date))
                                 .font(.system(size: 10, weight: .medium))
                                 .foregroundColor(.accentWarm.opacity(0.8))
                         }
@@ -2601,7 +2572,7 @@ struct ChapterSidebarRow: View {
                                     .fill(Color.primary.opacity(0.07)))
                         }
                         .menuStyle(.borderlessButton).fixedSize()
-                        .help("Options du chapitre")
+                        .help("Options du chapitre").modifier(RevealOnRowHover())
                         .accessibilityLabel("Options du chapitre")
                     }
                     .confirmationDialog(

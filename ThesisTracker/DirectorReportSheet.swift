@@ -230,7 +230,7 @@ struct DirectorReportSheet: View {
                     lines.append("    ⚠ Blocage en cours  : \(blocker.prefix(120))")
                 }
                 if let dl = chapter.deadline {
-                    lines.append("    Deadline            : \(dl)")
+                    lines.append("    Échéance            : \(dl)")
                 }
                 lines.append("")
             }

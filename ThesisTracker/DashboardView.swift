@@ -432,14 +432,8 @@ struct DashboardView: View {
                 )
                 .allowsHitTesting(false)
         )
-        // Drag handle visible au hover (toujours, pas seulement en mode customize)
-        .overlay(alignment: .topTrailing) {
-            Image(systemName: "line.3.horizontal")
-                .font(.system(size: 10, weight: .medium))
-                .foregroundColor(.labelMuted.opacity(0.45))
-                .padding(8)
-                .allowsHitTesting(false)
-        }
+        // 5.18 : poignée visible au survol ou en mode « Personnaliser » seulement
+        .modifier(HoverDragHandle(forceVisible: isCustomizing))
         // Drag source — on track le début/fin du drag pour activer les insertion zones
         .draggable(widget.rawValue) {
             dragPreview(for: widget)
@@ -839,12 +833,12 @@ struct DashboardView: View {
                     Text("Rapport")
                         .font(.system(size: 11, weight: .medium))
                 }
-                .foregroundColor(Color(hex: "#0369A1"))
+                .foregroundColor(.primary.opacity(0.85))   // 5.18 : plus de bleu isolé ; même style que les autres boutons d'en-tête
                 .padding(.horizontal, 9).padding(.vertical, 5)
                 .background(
                     RoundedRectangle(cornerRadius: 7)
-                        .fill(Color(hex: "#0369A1").opacity(0.09))
-                        .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color(hex: "#0369A1").opacity(0.22), lineWidth: 1))
+                        .fill(Color.glassFill)
+                        .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.cardBorder, lineWidth: 1))
                 )
             }
             .buttonStyle(.pressable)
@@ -1254,7 +1248,9 @@ struct DashboardView: View {
                 .appAnimation(.easeOut(duration: 0.15), value: isToday)
 
                 // ── Hero count ─────────────────────────────────
+                // 5.18 : le grand chiffre seulement quand il y a une entrée ; sinon, on va droit à la saisie
                 VStack(spacing: 4) {
+                    if currentEntryTotal > 0 {
                     HStack(alignment: .lastTextBaseline, spacing: 6) {
                         Text(store.data.useWordCount
                              ? DataStore.formatNumber(currentEntryTotal / 5)
@@ -1272,6 +1268,7 @@ struct DashboardView: View {
                             .font(.system(size: 15, weight: .regular))
                             .foregroundColor(.labelMuted)
                             .padding(.bottom, 6)
+                    }
                     }
 
                     // 5.12 — équivalent en pages de thèse
@@ -1338,7 +1335,7 @@ struct DashboardView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
+                .padding(.vertical, currentEntryTotal > 0 ? 16 : 6)
 
                 // ── Barre de progression objectif ──────────────
                 if store.effectiveDailyGoal > 0 && currentEntryDelta > 0 {
@@ -1954,10 +1951,10 @@ struct DashboardView: View {
                 return "Tu es en avance. Continue à ce rythme !"
             } else {
                 let extra = req - vel
-                return "Il faut écrire \(store.formatCount(extra))/j de plus pour tenir la deadline."
+                return "Il faut écrire \(store.formatCount(extra))/j de plus pour tenir l'échéance."
             }
         } else if let days = daysLeft {
-            return "Plus que \(days) jour\(days > 1 ? "s" : "") avant la deadline."
+            return "Plus que \(days) jour\(days > 1 ? "s" : "") avant l'échéance."
         }
         return nil
     }
@@ -2502,7 +2499,7 @@ private struct WritingEntryInputCluster: View {
                 .font(.system(size: 12))
             NativeNumericTextField(
                 text: $text,
-                placeholder: "ex: 15 340",
+                placeholder: "Total du chapitre (ex. 15 340)",   // 5.18 : on saisit le total, pas l'écrit du jour
                 onSubmit: { commit() }
             )
             .frame(maxWidth: .infinity)

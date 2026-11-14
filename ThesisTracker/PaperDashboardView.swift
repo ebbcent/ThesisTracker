@@ -276,7 +276,7 @@ struct PaperDashboardView: View {
             // Saisie principale
             HStack(spacing: 12) {
                 HStack(spacing: 8) {
-                    TextField("ex: 15 340", text: $inputText)
+                    TextField("Total du chapitre (ex. 15 340)", text: $inputText)
                         .font(.system(size: 22, weight: .light))
                         .foregroundColor(.primary)
                         .textFieldStyle(.plain)

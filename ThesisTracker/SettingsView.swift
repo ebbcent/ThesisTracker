@@ -163,8 +163,8 @@ struct SettingsView: View {
                                         Text("Buffer de sécurité")
                                             .font(.system(size: 13, weight: .medium))
                                         Text(deadlineBuffer == 0
-                                             ? "Deadlines affichées sans marge"
-                                             : "Deadlines avancées de \(deadlineBuffer) jour\(deadlineBuffer > 1 ? "s" : "")")
+                                             ? "Échéances affichées sans marge"
+                                             : "Échéances avancées de \(deadlineBuffer) jour\(deadlineBuffer > 1 ? "s" : "")")
                                             .font(.system(size: 11))
                                             .foregroundColor(.labelMuted)
                                     }

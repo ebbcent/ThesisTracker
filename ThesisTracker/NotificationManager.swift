@@ -233,12 +233,12 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
                           notifDate > today else { continue }
 
                     let content = UNMutableNotificationContent()
-                    content.title = "📅 Deadline approche — \(item.chapter.name)"
+                    content.title = "📅 Échéance proche — \(item.chapter.name)"
                     content.body = daysAhead == 1
-                        ? "Demain est la deadline pour « \(item.chapter.name) » (projet : \(item.project.name))"
+                        ? "Demain : échéance de « \(item.chapter.name) » (projet : \(item.project.name))"
                         : daysAhead == 7
-                        ? "⚡️ 1 semaine avant la deadline de « \(item.chapter.name) » (projet : \(item.project.name))"
-                        : "Dans \(daysAhead) jours : deadline de « \(item.chapter.name) » (projet : \(item.project.name))"
+                        ? "⚡️ 1 semaine avant l'échéance de « \(item.chapter.name) » (projet : \(item.project.name))"
+                        : "Dans \(daysAhead) jours : échéance de « \(item.chapter.name) » (projet : \(item.project.name))"
                     content.sound = .default
 
                     var comps = cal.dateComponents([.year, .month, .day], from: notifDate)
@@ -375,7 +375,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
                 let sincePart = item.daysSinceLastEntry >= 999
                     ? "Aucune écriture enregistrée"
                     : "Aucune écriture depuis \(item.daysSinceLastEntry) jour\(item.daysSinceLastEntry > 1 ? "s" : "")"
-                content.body = "\(sincePart) · Deadline dans \(item.daysUntilDeadline) jours (\(item.project.name))"
+                content.body = "\(sincePart) · Échéance dans \(item.daysUntilDeadline) jours (\(item.project.name))"
                 content.sound = .default
 
                 // Notif dans 1 heure
@@ -630,8 +630,8 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             : "\(DataStore.formatNumber(totalRequiredPerDay)) car./jour"
 
         let content = UNMutableNotificationContent()
-        content.title = "⚠️ Chevauchement de deadlines"
-        content.body  = "\(chapterNames) ont des deadlines cette semaine — rythme combiné requis : \(pace). Planifie tes sessions !"
+        content.title = "⚠️ Chevauchement d'échéances"
+        content.body  = "\(chapterNames) ont des échéances cette semaine — rythme combiné requis : \(pace). Planifie tes sessions !"
         content.sound = .default
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)
