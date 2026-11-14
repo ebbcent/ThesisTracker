@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 // MARK: - 5.19 Cadran du minuteur, modernisé
@@ -43,12 +44,17 @@ struct TimerDialView: View {
             VStack(spacing: size * 0.025) {
                 Text(title.uppercased())
                     .font(.system(size: max(10, size * 0.05), weight: .semibold, design: .rounded))
-                    .kerning(1.1)
+                    .kerning(size < 160 ? 0.4 : 1.1)
                     .foregroundStyle(accentColor)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .frame(maxWidth: size * 0.6)   // 5.21 : reste dans l'anneau (« CONCENTRATION » débordait à 112 pt)
                     .appAnimation(Motion.quick, value: title)
 
                 Text(timeText)
                     .font(.system(size: size * 0.2, weight: .semibold, design: .rounded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                     .monospacedDigit()
                     .kerning(-size * 0.004)
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme).opacity(isPaused ? 0.55 : 1))
@@ -82,5 +88,38 @@ struct TimerDialView: View {
         }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+}
+
+// MARK: - 5.21 Anneau de la barre des menus
+
+/// Petit anneau de progression pour l'icône de la barre des menus (image « modèle » :
+/// macOS la teinte en blanc ou en noir selon la barre, comme les icônes système).
+@MainActor
+enum MenuBarRing {
+    static func image(progress: Double, paused: Bool) -> NSImage {
+        let p = min(1, max(0, progress))
+        let view = ZStack {
+            Circle().stroke(Color.black.opacity(0.3), lineWidth: 1.8)
+            Circle()
+                .trim(from: 0, to: max(0.001, p))
+                .stroke(Color.black, style: StrokeStyle(lineWidth: 1.8, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            if paused {
+                HStack(spacing: 1.5) {
+                    Capsule().fill(Color.black).frame(width: 1.6, height: 5)
+                    Capsule().fill(Color.black).frame(width: 1.6, height: 5)
+                }
+            }
+        }
+        .frame(width: 14, height: 14)
+        .padding(1)
+
+        let renderer = ImageRenderer(content: view)
+        renderer.scale = NSScreen.main?.backingScaleFactor ?? 2
+        let img = renderer.nsImage ?? NSImage(systemSymbolName: "timer", accessibilityDescription: nil) ?? NSImage()
+        img.isTemplate = true
+        img.accessibilityDescription = paused ? "Minuteur en pause" : "Minuteur"
+        return img
     }
 }
