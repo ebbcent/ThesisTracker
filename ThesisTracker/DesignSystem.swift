@@ -121,15 +121,15 @@ enum GlassStyle: String, CaseIterable, Identifiable {
     var label: String {
         switch self {
         case .clear:   return "Verre clair"
-        case .regular: return "Verre standard"
+        case .regular: return "Verre"
         case .off:     return "Sans verre"
         }
     }
-    static let storageKey = "glassStyle"
+    static let storageKey = "glassStyle.v2"   // 5.17 : nouvelle clé (nouveau défaut : verre standard)
 }
 
 private struct AppGlassModifier<S: Shape>: ViewModifier {
-    @AppStorage(GlassStyle.storageKey) private var styleRaw: String = GlassStyle.clear.rawValue
+    @AppStorage(GlassStyle.storageKey) private var styleRaw: String = GlassStyle.regular.rawValue
     let shape: S
     let tint: Color?
     /// Surface flottante chargée de texte : jamais plus transparente que le verre standard.
@@ -137,7 +137,7 @@ private struct AppGlassModifier<S: Shape>: ViewModifier {
     let fallback: Color
 
     @ViewBuilder func body(content: Content) -> some View {
-        let style = GlassStyle(rawValue: styleRaw) ?? .clear
+        let style = GlassStyle(rawValue: styleRaw) ?? .regular
         if #available(macOS 26.0, *), style != .off {
             let base: Glass = (style == .clear && !legible) ? .clear : .regular
             content.glassEffect(tint.map { base.tint($0) } ?? base, in: shape)
@@ -169,46 +169,21 @@ extension View {
 struct GlassIsOn {
     static var value: Bool {
         guard #available(macOS 26.0, *) else { return false }
-        return (UserDefaults.standard.string(forKey: GlassStyle.storageKey) ?? GlassStyle.clear.rawValue) != GlassStyle.off.rawValue
+        return (UserDefaults.standard.string(forKey: GlassStyle.storageKey) ?? GlassStyle.regular.rawValue) != GlassStyle.off.rawValue
     }
 }
 
 /// Fond de la fenêtre : couleur de l'app et, avec le verre, deux halos très doux (immobiles)
 /// pour que le verre ait quelque chose à réfracter.
 struct AppBackdrop: View {
-    @AppStorage(GlassStyle.storageKey) private var styleRaw: String = GlassStyle.clear.rawValue
-    @Environment(\.colorScheme) private var scheme
-
-    var body: some View {
-        ZStack {
-            Color.appBg
-            if (GlassStyle(rawValue: styleRaw) ?? .clear) != .off {
-                GeometryReader { geo in
-                    let w = geo.size.width, h = geo.size.height
-                    let k: Double = scheme == .dark ? 0.10 : 0.14
-                    ZStack {
-                        Circle()
-                            .fill(Color.accentWarm.opacity(k))
-                            .frame(width: max(w, h) * 0.7)
-                            .position(x: w * 0.15, y: h * 0.1)
-                        Circle()
-                            .fill(Color(red: 0.376, green: 0.647, blue: 0.980).opacity(k * 0.8))
-                            .frame(width: max(w, h) * 0.6)
-                            .position(x: w * 0.9, y: h * 0.85)
-                    }
-                    .blur(radius: 120)
-                }
-                .allowsHitTesting(false)
-                .accessibilityHidden(true)
-            }
-        }
-    }
+    // 5.17 : fond uni. Les halos de la 5.16 teintaient la barre latérale en brun-orange à travers le verre.
+    var body: some View { Color.appBg }
 }
 
 // MARK: - Réglage « Verre »
 
 struct GlassSettingsSection: View {
-    @AppStorage(GlassStyle.storageKey) private var styleRaw: String = GlassStyle.clear.rawValue
+    @AppStorage(GlassStyle.storageKey) private var styleRaw: String = GlassStyle.regular.rawValue
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -234,7 +209,7 @@ struct GlassSettingsSection: View {
 
     private var verreNote: String {
         if #available(macOS 26.0, *) {
-            return "Verre d'Apple (Liquid Glass) sur la barre latérale, la barre du haut, les cartes et les boutons. La palette de commandes et la note rapide restent en verre standard pour la lisibilité. « Réduire la transparence » le rend dépoli."
+            return "Verre d'Apple (Liquid Glass) sur la barre latérale, la barre du haut et les boutons. Les cartes restent pleines, comme dans les apps d'Apple : le verre est réservé à la navigation et aux commandes, le contenu reste net. « Verre clair » est plus transparent ; « Réduire la transparence » le rend dépoli."
         }
         return "Le verre d'Apple demande macOS 26 ; sur cette version, matériaux translucides à la place."
     }
