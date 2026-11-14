@@ -1,5 +1,13 @@
 import SwiftUI
 
+// MARK: - 5.19 Cadran du minuteur, modernisé
+//
+// - Graduations : 60 traits fins autour de l'anneau ; ceux déjà écoulés prennent la couleur
+//   de la phase (on lit la progression d'un coup d'œil, comme une montre).
+// - Plus de halo ni de pulsation en boucle (une oscillation lente permanente fatigue l'œil
+//   et ignore « Réduire les animations ») : l'anneau avance, c'est tout.
+// - Chiffres arrondis, chasse fixe, transition numérique ; heure de fin sous le temps.
+
 struct TimerDialView: View {
     @Environment(\.colorScheme) private var colorScheme
     let title: String
@@ -7,55 +15,72 @@ struct TimerDialView: View {
     let progress: Double
     let accentColor: Color
     var size: CGFloat = 280
+    /// Ligne sous le temps (« fin à 15:42 », « en pause »). Vide : rien.
+    var detail: String = ""
+    var isPaused: Bool = false
 
-    @State private var pulseActive = false
-
-    private var strokeWidth: CGFloat { size * 0.075 }
-    private var titleSize: CGFloat  { size * 0.054 }
-    private var timeSize: CGFloat   { size * 0.20 }
+    private var ringWidth: CGFloat { max(4, size * 0.032) }
+    private var tickRadius: CGFloat { size / 2 - size * 0.025 }
+    private var ringInset: CGFloat { size * 0.09 }
 
     var body: some View {
         ZStack {
-            Circle()
-                .stroke(CockpitTheme.stroke(for: colorScheme), lineWidth: strokeWidth)
+            ticks
 
             Circle()
-                .trim(from: 0, to: max(0.02, min(1, progress)))
-                .stroke(accentColor, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+                .inset(by: ringInset)
+                .stroke(CockpitTheme.stroke(for: colorScheme).opacity(0.9), lineWidth: ringWidth)
+
+            Circle()
+                .inset(by: ringInset)
+                .trim(from: 0, to: max(0.001, min(1, progress)))
+                .stroke(accentColor.opacity(isPaused ? 0.45 : 1),
+                        style: StrokeStyle(lineWidth: ringWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-                .shadow(color: accentColor.opacity(0.45), radius: 10)
-                .appAnimation(.easeInOut(duration: 0.4), value: progress)
-                .appAnimation(.easeInOut(duration: 0.5), value: accentColor)
+                .appAnimation(.linear(duration: 0.9), value: progress)
+                .appAnimation(Motion.panel, value: accentColor)
 
-            if progress > 0 && progress < 1 {
-                Circle()
-                    .stroke(accentColor.opacity(0.10), lineWidth: strokeWidth * 1.7)
-                    .scaleEffect(pulseActive ? 1.05 : 1.0)
-                    .animation(
-                        .easeInOut(duration: 2.4).repeatForever(autoreverses: true),
-                        value: pulseActive
-                    )
-            }
-
-            VStack(spacing: size * 0.036) {
-                Text(title)
-                    .font(.system(size: titleSize, weight: .semibold, design: .rounded))
-                    .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
-                    .contentTransition(.numericText())
-                    .appAnimation(.easeInOut(duration: 0.25), value: title)
+            VStack(spacing: size * 0.025) {
+                Text(title.uppercased())
+                    .font(.system(size: max(10, size * 0.05), weight: .semibold, design: .rounded))
+                    .kerning(1.1)
+                    .foregroundStyle(accentColor)
+                    .appAnimation(Motion.quick, value: title)
 
                 Text(timeText)
-                    .font(.system(size: timeSize, weight: .heavy, design: .rounded))
+                    .font(.system(size: size * 0.2, weight: .semibold, design: .rounded))
                     .monospacedDigit()
-                    .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
+                    .kerning(-size * 0.004)
+                    .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme).opacity(isPaused ? 0.55 : 1))
                     .contentTransition(.numericText(countsDown: true))
                     .appAnimation(.linear(duration: 0.15), value: timeText)
+
+                Text(detail.isEmpty ? " " : detail)
+                    .font(.system(size: max(10, size * 0.046), weight: .medium).monospacedDigit())
+                    .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
             }
         }
         .frame(width: size, height: size)
-        .onAppear { pulseActive = progress > 0 && progress < 1 }
-        .onChange(of: progress) { _, newVal in
-            pulseActive = newVal > 0 && newVal < 1
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue("\(timeText) restantes\(detail.isEmpty ? "" : ", \(detail)")")
+    }
+
+    /// 60 graduations ; une sur cinq plus longue. Les graduations écoulées sont colorées.
+    private var ticks: some View {
+        let lit = Int((min(1, max(0, progress)) * 60).rounded(.down))
+        return ZStack {
+            ForEach(0..<60, id: \.self) { i in
+                let major = i % 5 == 0
+                Capsule()
+                    .fill(i < lit && progress > 0 ? accentColor.opacity(isPaused ? 0.4 : 0.85)
+                                                  : CockpitTheme.textTertiary(for: colorScheme).opacity(major ? 0.45 : 0.22))
+                    .frame(width: major ? 2 : 1.2, height: major ? size * 0.04 : size * 0.025)
+                    .offset(y: -tickRadius)
+                    .rotationEffect(.degrees(Double(i) * 6))
+            }
         }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }

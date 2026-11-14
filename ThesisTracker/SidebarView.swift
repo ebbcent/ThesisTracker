@@ -2425,6 +2425,8 @@ struct ChapterSidebarRow: View {
                         Text(chapter.name)
                             .font(.system(size: 12, weight: isActive ? .semibold : .regular))
                             .foregroundColor(.primary).lineLimit(1)
+                            .truncationMode(.tail)
+                            .help(chapter.name)   // 5.19 : titre complet au survol
                             .highPriorityGesture(TapGesture(count: 2).onEnded { renameDraft = chapter.name })
                     }
                     if chapter.notes != nil {

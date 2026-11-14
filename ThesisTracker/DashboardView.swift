@@ -811,6 +811,9 @@ struct DashboardView: View {
                                         .font(.system(size: 11, weight: .semibold))
                                         .foregroundColor(.secondary)
                                         .lineLimit(1)
+                                        .truncationMode(.tail)
+                                        .frame(maxWidth: 300, alignment: .leading)   // 5.19 : titres du plan, longs
+                                        .help(chapter.name)
                                     Image(systemName: "chevron.down")
                                         .font(.system(size: 7, weight: .semibold))
                                         .foregroundColor(.labelMuted.opacity(0.5))
@@ -835,6 +838,9 @@ struct DashboardView: View {
             Spacer()
 
             // 5.18 : la série n'est plus répétée ici (elle est dans la barre du haut)
+
+            // 5.19 — raccourci Pomodoro (lance un bloc sur le chapitre affiché)
+            PomodoroQuickControl(store: store)
 
             Button { showDirectorReport = true } label: {
                 HStack(spacing: 5) {
@@ -1478,7 +1484,9 @@ struct DashboardView: View {
                             Text(err)
                                 .font(.system(size: 10))
                                 .foregroundColor(.accentWarm)
-                                .lineLimit(1)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .help(err)
                         }
                         .transition(.opacity)
                     }
@@ -2345,7 +2353,7 @@ struct DashboardView: View {
                 Self.extractCount(from: url, useWordCount: useWordCount)
             }.value
             guard let count = result else {
-                importError = "textutil indisponible"
+                importError = "Impossible de lire « \(url.lastPathComponent) ». Formats lus : .docx, .doc, .odt, .rtf, .txt, .html (pour Pages : Fichier › Exporter › Word)."
                 return
             }
             inputText = "\(count)"

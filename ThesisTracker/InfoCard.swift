@@ -21,22 +21,19 @@ struct InfoCard<Content: View>: View {
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                 Spacer()
-                Capsule()
-                    .fill((emphasized ? CockpitTheme.glow : CockpitTheme.stroke(for: colorScheme)).opacity(0.9))
-                    .frame(width: emphasized ? 56 : 34, height: 6)
             }
             content
         }
-        .padding(20)
+        .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
+        // 5.19 : mêmes cartes que le reste de l'app (fond plein, filet), sans pastille décorative ni grande ombre
         .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(emphasized ? CockpitTheme.panelElevated(for: colorScheme) : CockpitTheme.panel(for: colorScheme))
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.cardBg)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(CockpitTheme.stroke(for: colorScheme), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.cardBorder, lineWidth: 1)
         )
-        .shadow(color: CockpitTheme.shadow(for: colorScheme).opacity(emphasized ? 1 : 0.7), radius: emphasized ? 20 : 10, y: 10)
     }
 }

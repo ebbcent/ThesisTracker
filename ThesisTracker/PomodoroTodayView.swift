@@ -26,31 +26,7 @@ struct PomodoroTodayView: View {
             }
             .padding(28)
         }
-        .background(
-            // Two RadialGradients approximate the previous "glow circles + blur(radius: 80/100)"
-            // look at ~5% of the GPU cost — blur with radius >40 forces multiple Gaussian
-            // passes per frame on Core Animation; radial gradients are essentially free.
-            ZStack {
-                LinearGradient(
-                    colors: [CockpitTheme.backgroundTop(for: colorScheme), CockpitTheme.backgroundBottom(for: colorScheme)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                RadialGradient(
-                    colors: [CockpitTheme.glow.opacity(0.10), .clear],
-                    center: UnitPoint(x: 0.85, y: 0.15),
-                    startRadius: 0,
-                    endRadius: 320
-                )
-                RadialGradient(
-                    colors: [CockpitTheme.accent.opacity(0.09), .clear],
-                    center: UnitPoint(x: 0.10, y: 0.85),
-                    startRadius: 0,
-                    endRadius: 280
-                )
-            }
-            .ignoresSafeArea()
-        )
+        .background(Color.appBg)   // 5.19 : fond uni, comme le reste de l'app
         .sheet(isPresented: $controller.isPresentingNoteEditor) {
             PomodoroSessionNoteSheet(store: store)
                 .environmentObject(controller)
@@ -63,7 +39,7 @@ struct PomodoroTodayView: View {
         HStack(alignment: .center, spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Aujourd'hui")
-                    .font(.system(size: 28, weight: .heavy, design: .rounded))
+                    .font(TypeScale.pageTitle)
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                 Text(controller.statusMessage)
                     .font(.system(size: 13, weight: .medium, design: .rounded))
@@ -76,7 +52,7 @@ struct PomodoroTodayView: View {
             }
             Spacer()
             HStack(spacing: 10) {
-                statusChip(title: "Streak", value: "\(controller.currentStreak) j")
+                statusChip(title: "Série", value: "\(controller.currentStreak) j")
                 statusChip(title: "Cycle", value: "\(controller.timerSnapshot.completedFocusCountInCycle)")
                 statusChip(title: "Catégorie", value: controller.categoryName(for: controller.selectedCategoryID))
                 statusChip(title: "Projet", value: controller.projectName(for: controller.selectedProjectID))
@@ -88,41 +64,161 @@ struct PomodoroTodayView: View {
 
     private var timerCard: some View {
         InfoCard(title: "Minuteur", systemImage: "timer", emphasized: true) {
-            VStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .center, spacing: 18) {
                 sessionCompletionBurst(dial: TimerDialView(
-                    title: controller.timerSnapshot.phase.activeMode?.displayName ?? "Inactif",
+                    title: controller.timerSnapshot.phase.activeMode?.displayName ?? (pendingBreak != nil ? "Pause proposée" : "Prêt"),
                     timeText: controller.formattedDuration(controller.timerSnapshot.remainingTime),
-                    progress: progress,
+                    progress: controller.timerSnapshot.phase == .idle ? 0 : progress,
                     accentColor: tintColor,
-                    size: 200
+                    size: 220,
+                    detail: dialDetail,
+                    isPaused: controller.timerSnapshot.phase.isPaused
                 ))
                 .frame(maxWidth: .infinity, alignment: .center)
 
-                HStack(spacing: 10) {
-                    categoryPicker
-                    projectPicker
+                // 5.19 : une commande principale qui suit l'état, et des commandes secondaires rondes
+                HStack(spacing: 12) {
+                    circleButton("stop.fill", help: "Arrêter le bloc", enabled: controller.timerSnapshot.phase != .idle) {
+                        controller.stopTimer()
+                    }
+                    Button(action: primaryAction) {
+                        Label(primaryTitle, systemImage: primaryIcon)
+                            .font(.system(size: 14, weight: .semibold))
+                            .labelStyle(.titleAndIcon)
+                            .foregroundStyle(.white)
+                            .frame(minWidth: 170, minHeight: 40)
+                            .background(Capsule().fill(primaryEnabled ? tintColorForButton : Color.labelMuted.opacity(0.35)))
+                            .contentShape(Capsule())
+                    }
+                    .buttonStyle(.pressable)
+                    .disabled(!primaryEnabled)
+                    .keyboardShortcut(.return, modifiers: [.command])
+                    .help("\(primaryTitle) (⌘↩)")
+                    circleButton("forward.end.fill", help: "Passer la pause proposée", enabled: pendingBreak != nil) {
+                        controller.skipPendingPhase()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+
+                if controller.timerSnapshot.phase == .idle && pendingBreak == nil {
+                    durationPresets
                 }
 
-                if hasWritingChapters {
-                    writingChapterPicker
-                }
-
-                PomodoroIntentionField()
-
-                HStack(spacing: 10) {
-                    Button("Démarrer") { controller.startFocusSession() }
-                        .buttonStyle(CockpitButtonStyle(prominent: true))
-                        .disabled(controller.timerSnapshot.phase != .idle || controller.isExternalFocusActive)
-                    Button(controller.timerSnapshot.phase.isPaused ? "Reprendre" : "Pause") { controller.pauseOrResume() }
-                        .buttonStyle(CockpitButtonStyle())
-                        .disabled(controller.timerSnapshot.phase == .idle)
-                    Button("Arrêter") { controller.stopTimer() }
-                        .buttonStyle(CockpitButtonStyle())
-                        .disabled(controller.timerSnapshot.phase == .idle)
-                    Spacer(minLength: 0)
+                VStack(spacing: 10) {
+                    HStack(spacing: 10) {
+                        categoryPicker
+                        projectPicker
+                    }
+                    if hasWritingChapters {
+                        writingChapterPicker
+                    }
+                    PomodoroIntentionField()
                 }
             }
         }
+    }
+
+    // MARK: - 5.19 Commandes du minuteur
+
+    private var pendingBreak: ActiveTimerMode? {
+        guard controller.timerSnapshot.phase == .idle,
+              let next = controller.pendingNextMode, next != .focus else { return nil }
+        return next
+    }
+
+    private var primaryEnabled: Bool {
+        switch controller.timerSnapshot.phase {
+        case .idle: return controller.canStartSession
+        default:    return true
+        }
+    }
+
+    private var primaryTitle: String {
+        switch controller.timerSnapshot.phase {
+        case .running: return "Pause"
+        case .paused:  return "Reprendre"
+        case .idle:    return pendingBreak != nil ? "Lancer la pause" : "Démarrer"
+        }
+    }
+
+    private var primaryIcon: String {
+        switch controller.timerSnapshot.phase {
+        case .running: return "pause.fill"
+        case .paused:  return "play.fill"
+        case .idle:    return pendingBreak != nil ? "cup.and.saucer.fill" : "play.fill"
+        }
+    }
+
+    private func primaryAction() {
+        switch controller.timerSnapshot.phase {
+        case .running, .paused: controller.pauseOrResume()
+        case .idle:
+            if pendingBreak != nil { controller.startRecommendedSession() } else { controller.startFocusSession() }
+        }
+    }
+
+    private var tintColorForButton: Color {
+        if let b = pendingBreak { return b == .longBreak ? CockpitTheme.glow : CockpitTheme.success }
+        return controller.timerSnapshot.phase == .idle ? Color.accent : tintColor
+    }
+
+    private var dialDetail: String {
+        let snap = controller.timerSnapshot
+        switch snap.phase {
+        case .running:
+            guard let end = snap.expectedEndDate else { return "" }
+            return "fin à " + end.formatted(date: .omitted, time: .shortened)
+        case .paused:
+            return "en pause"
+        case .idle:
+            if let b = pendingBreak {
+                let d = b == .longBreak ? controller.data.settings.longBreakDuration : controller.data.settings.shortBreakDuration
+                return "\(Int(d / 60)) min de pause"
+            }
+            let done = snap.completedFocusCountInCycle
+            return done > 0 ? "\(done) bloc\(done > 1 ? "s" : "") dans ce cycle" : ""
+        }
+    }
+
+    private func circleButton(_ icon: String, help: String, enabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
+                .frame(width: 36, height: 36)
+                .background(Circle().fill(CockpitTheme.overlayFill(for: colorScheme)))
+                .overlay(Circle().stroke(CockpitTheme.stroke(for: colorScheme), lineWidth: 1))
+                .contentShape(Circle())
+        }
+        .buttonStyle(.pressable)
+        .disabled(!enabled)
+        .help(help)
+        .accessibilityLabel(help)
+    }
+
+    private var durationPresets: some View {
+        let current = Int(controller.data.settings.focusDuration / 60)
+        return HStack(spacing: 6) {
+            ForEach([25, 45, 50, 90], id: \.self) { m in
+                let on = m == current
+                Button {
+                    controller.data.settings.focusDuration = TimeInterval(m * 60)
+                    controller.saveSettings()
+                } label: {
+                    Text("\(m) min")
+                        .font(.system(size: 11, weight: on ? .semibold : .medium).monospacedDigit())
+                        .foregroundStyle(on ? Color.accent : CockpitTheme.textSecondary(for: colorScheme))
+                        .padding(.horizontal, 10).padding(.vertical, 5)
+                        .background(Capsule().fill(on ? Color.accent.opacity(0.12) : Color.clear))
+                        .overlay(Capsule().stroke(on ? Color.accent.opacity(0.3) : CockpitTheme.stroke(for: colorScheme), lineWidth: 1))
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(.pressable)
+                .accessibilityAddTraits(on ? .isSelected : [])
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .help("Durée des blocs de concentration")
     }
 
     // MARK: - Right column
@@ -147,7 +243,7 @@ struct PomodoroTodayView: View {
                 compactMetric(title: "Concentration", value: "\(snap.focusMinutes) min", color: CockpitTheme.accent)
                 compactMetric(title: "Objectif restant", value: "\(snap.remainingDailyMinutesGoal) min", color: CockpitTheme.glow)
                 if todayWords > 0 {
-                    compactMetric(title: "Mots écrits", value: store.formatCountShort(todayWords), color: CockpitTheme.glow)
+                    compactMetric(title: store.data.useWordCount ? "Mots écrits" : "Signes écrits", value: store.formatCountShort(todayWords), color: CockpitTheme.glow)
                 }
             }
             if wordsGoal > 0 {
@@ -156,7 +252,7 @@ struct PomodoroTodayView: View {
                 let wordRatio = sessionTarget > 0 ? min(1.0, Double(todayWords) / Double(sessionTarget)) : 0
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text("Mots / objectif session")
+                        Text(store.data.useWordCount ? "Mots / objectif des blocs" : "Signes / objectif des blocs")
                             .font(.system(size: 11, weight: .medium, design: .rounded))
                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                         Spacer()
@@ -229,6 +325,13 @@ struct PomodoroTodayView: View {
     private var predictionsCard: some View {
         InfoCard(title: "Prédictions", systemImage: "sparkles") {
             let p = controller.prediction
+            // 5.19 : sans historique, une phrase plutôt que des « 0 % »
+            if p.probableWeekMinutes == 0 && p.bestFocusHours.isEmpty {
+                Text("Pas encore assez de blocs terminés pour une prévision. Elle apparaît après quelques jours de minuteur.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
             VStack(alignment: .leading, spacing: 8) {
                 predictionRow(label: "Productivité aujourd'hui", value: "\(p.probableTodayMinutes) min")
                 predictionRow(label: "Productivité cette semaine", value: "\(p.probableWeekMinutes) min")
@@ -241,14 +344,15 @@ struct PomodoroTodayView: View {
                     )
                 }
             }
+            }
         }
         .frame(maxWidth: .infinity)
     }
 
     private var dailyTimelineCard: some View {
-        InfoCard(title: "Timeline de la journée", systemImage: "calendar.day.timeline.left", emphasized: true) {
+        InfoCard(title: "Fil de la journée", systemImage: "calendar.day.timeline.left", emphasized: true) {
             if controller.selectedDayTimeline.isEmpty {
-                Text("Aucune session sur la journée sélectionnée.")
+                Text("Aucun bloc sur cette journée. Lance-en un avec « Démarrer » ou depuis le tableau de bord.")
                     .font(.system(size: 13))
                     .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
             } else {
@@ -288,26 +392,21 @@ struct PomodoroTodayView: View {
 
     // MARK: - Subviews helpers
 
+    /// 5.19 : fin de bloc = un sceau qui apparaît (léger rebond, absent si « Réduire les animations »),
+    /// au lieu d'étoiles qui jaillissaient de rien.
     private func sessionCompletionBurst(dial: TimerDialView) -> some View {
-        ZStack {
-            dial
+        dial.overlay(alignment: .top) {
             if controller.focusSessionJustCompleted {
-                ForEach(0..<8, id: \.self) { i in
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(CockpitTheme.glow)
-                        .offset(burstOffset(index: i, radius: 110))
-                        .scaleEffect(controller.focusSessionJustCompleted ? 1 : 0)
-                        .opacity(controller.focusSessionJustCompleted ? 0 : 1)
-                        .appAnimation(.easeOut(duration: 0.7).delay(Double(i) * 0.04), value: controller.focusSessionJustCompleted)
-                }
+                Label("Bloc terminé", systemImage: "checkmark.seal.fill")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(CockpitTheme.success)
+                    .padding(.horizontal, 10).padding(.vertical, 4)
+                    .background(Capsule().fill(CockpitTheme.success.opacity(0.12)))
+                    .offset(y: -6)
+                    .transition(Motion.reduce ? .opacity : .scale(scale: 0.9).combined(with: .opacity))
             }
         }
-    }
-
-    private func burstOffset(index: Int, radius: CGFloat) -> CGSize {
-        let angle = (Double(index) / 8.0) * 2 * .pi - .pi / 2
-        return CGSize(width: Darwin.cos(angle) * radius, height: Darwin.sin(angle) * radius)
+        .appAnimation(Motion.celebrate, value: controller.focusSessionJustCompleted)
     }
 
     private func compactMetric(title: String, value: String, color: Color) -> some View {
@@ -317,7 +416,7 @@ struct PomodoroTodayView: View {
                 .frame(width: 4, height: 32)
             VStack(alignment: .leading, spacing: 1) {
                 Text(value)
-                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .font(.system(size: 17, weight: .bold, design: .rounded).monospacedDigit())
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                 Text(title)
                     .font(.system(size: 10, weight: .semibold, design: .rounded))
@@ -347,8 +446,8 @@ struct PomodoroTodayView: View {
 
     private func statusChip(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(title.uppercased())
-                .font(.system(size: 10, weight: .bold, design: .rounded))
+            Text(title)   // 5.19 : casse normale, comme les titres de section
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
                 .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
             Text(value)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -377,7 +476,7 @@ struct PomodoroTodayView: View {
               let proj = store.data.projects.first(where: { $0.id == pid }),
               let ch   = proj.chapters.first(where: { $0.id == cid })
         else { return "Aucun" }
-        return "\(ch.name) · \(proj.name)"
+        return "\(ch.shortLabel) · \(proj.name)"
     }
 
     private var writingChapterPicker: some View {
@@ -406,11 +505,11 @@ struct PomodoroTodayView: View {
 
     private var categoryPicker: some View {
         PremiumMenuPicker(
-            title: "Categorie",
+            title: "Catégorie",
             value: controller.categoryName(for: controller.selectedCategoryID),
             icon: "tag",
             accent: CockpitTheme.warning,
-            items: [PremiumMenuItem(title: "Aucune categorie", action: { controller.selectedCategoryID = nil })] +
+            items: [PremiumMenuItem(title: "Aucune catégorie", action: { controller.selectedCategoryID = nil })] +
                 controller.data.categories.map { cat in PremiumMenuItem(title: cat.name, action: { controller.selectedCategoryID = cat.id }) }
         )
     }

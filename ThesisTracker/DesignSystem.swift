@@ -287,3 +287,18 @@ enum TypeScale {
     /// Chiffre principal d'une carte (« 0 car. »).
     static let heroFigure = Font.system(size: 24, weight: .bold, design: .rounded).monospacedDigit()
 }
+
+
+// MARK: - 5.19 Titres de chapitre longs
+
+extension Chapter {
+    /// Étiquette courte pour les endroits étroits (barre d'état, menus) :
+    /// « 4. La « Lingua… » » devient « Ch. 4 » ; un nom sans numéro reste tel quel.
+    var shortLabel: String {
+        let n = name.trimmingCharacters(in: .whitespaces)
+        guard let dot = n.firstIndex(of: "."), dot > n.startIndex,
+              n[n.startIndex..<dot].allSatisfy(\.isNumber),
+              n.distance(from: dot, to: n.endIndex) > 3 else { return n }
+        return "Ch. " + n[n.startIndex..<dot]
+    }
+}
