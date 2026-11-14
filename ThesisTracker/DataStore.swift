@@ -2768,7 +2768,7 @@ class DataStore: ObservableObject {
                     let latest = chapter.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
                     let progress = chapter.goal > 0 ? Double(latest) / Double(chapter.goal) : 0
                     if daysUntil > 0, daysUntil <= 30, progress < 0.7 {
-                        reasons.append("deadline dans \(daysUntil) j, \(Int(progress * 100))% atteint")
+                        reasons.append("échéance dans \(daysUntil) j, \(Int(progress * 100))% atteint")
                         score += 2
                     }
                 }
@@ -3936,7 +3936,7 @@ class DataStore: ObservableObject {
                 "UID:\(item.chapter.id.uuidString)@thesistracker",
                 "DTSTART;VALUE=DATE:\(fmt.string(from: effectiveDeadline))",
                 "DTEND;VALUE=DATE:\(fmt.string(from: endDate))",
-                "SUMMARY:[Deadline] \(item.chapter.name) — \(item.project.name)",
+                "SUMMARY:[Échéance] \(item.chapter.name) — \(item.project.name)",
                 "DESCRIPTION:Progression : \(progress)\\nProjet : \(item.project.name)",
                 "CATEGORIES:DEADLINE",
                 "STATUS:\(item.chapter.isCompleted ? "COMPLETED" : "CONFIRMED")",

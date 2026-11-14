@@ -130,7 +130,7 @@ struct OnboardingView: View {
                     .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
-                Text("Ton compagnon quotidien pour la rédaction de thèse.\nSuivi des progrès, Pomodoro, deadlines — tout au même endroit.")
+                Text("Ton compagnon quotidien pour la rédaction de thèse.\nSuivi des progrès, Pomodoro, échéances — tout au même endroit.")
                     .font(.system(size: 13))
                     .foregroundColor(.labelMuted)
                     .multilineTextAlignment(.center)

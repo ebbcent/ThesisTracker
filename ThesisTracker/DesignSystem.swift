@@ -214,3 +214,76 @@ struct GlassSettingsSection: View {
         return "Le verre d'Apple demande macOS 26 ; sur cette version, matériaux translucides à la place."
     }
 }
+
+
+// MARK: - 5.18 Actions de ligne visibles au survol
+
+private struct RowHoveredKey: EnvironmentKey { static let defaultValue = true }
+extension EnvironmentValues {
+    /// Vrai quand le pointeur survole la ligne (barre latérale) ; vrai par défaut hors d'une ligne.
+    var rowHovered: Bool {
+        get { self[RowHoveredKey.self] }
+        set { self[RowHoveredKey.self] = newValue }
+    }
+}
+
+/// Portée de survol d'une ligne : ses actions secondaires (+, …) n'apparaissent qu'au survol.
+struct RowHoverScope: ViewModifier {
+    @State private var hovering = false
+    func body(content: Content) -> some View {
+        content
+            .environment(\.rowHovered, hovering)
+            .onHover { hovering = $0 }
+    }
+}
+
+/// Action secondaire de ligne : invisible hors survol (toujours lue par VoiceOver).
+struct RevealOnRowHover: ViewModifier {
+    @Environment(\.rowHovered) private var hovered
+    func body(content: Content) -> some View {
+        content
+            .opacity(hovered ? 1 : 0)
+            .allowsHitTesting(hovered)
+            .animation(Motion.reduce ? nil : .easeOut(duration: 0.1), value: hovered)
+    }
+}
+
+/// Poignée de déplacement d'une carte du tableau de bord : visible au survol ou en mode « Personnaliser ».
+struct HoverDragHandle: ViewModifier {
+    var forceVisible: Bool
+    @State private var hovering = false
+    func body(content: Content) -> some View {
+        content
+            .onHover { hovering = $0 }
+            .overlay(alignment: .topTrailing) {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.labelMuted.opacity(0.6))
+                    .padding(8)
+                    .opacity(hovering || forceVisible ? 1 : 0)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+    }
+}
+
+
+// MARK: - 5.18 Échelle typographique
+
+/// Six styles nommés pour les nouveaux écrans et les composants communs (les anciens écrans gardent
+/// leurs tailles fixes, ramenées à 10 pt minimum en 5.15). Polices système : optique et approche
+/// ajustées par macOS selon la taille.
+enum TypeScale {
+    /// Titre de page (« Tableau de bord »).
+    static let pageTitle = Font.system(size: 18, weight: .bold, design: .rounded)
+    /// Titre de section (« Progression »).
+    static let sectionTitle = Font.system(size: 12, weight: .semibold)
+    /// Texte courant.
+    static let body = Font.system(size: 13)
+    /// Légende, texte secondaire.
+    static let caption = Font.system(size: 11)
+    /// Chiffre dans une ligne (« 7 966 car./j »).
+    static let figure = Font.system(size: 13, weight: .bold).monospacedDigit()
+    /// Chiffre principal d'une carte (« 0 car. »).
+    static let heroFigure = Font.system(size: 24, weight: .bold, design: .rounded).monospacedDigit()
+}

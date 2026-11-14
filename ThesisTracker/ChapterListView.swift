@@ -440,13 +440,13 @@ struct ChapterFormView: View {
                                placeholder: "ex: à relire, validé directeur, brouillon", text: $tagsText)
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Toggle("Ajouter une deadline", isOn: $hasDeadline)
+                    Toggle("Ajouter une échéance", isOn: $hasDeadline)
                         .toggleStyle(.switch)
                         .tint(.accent)
 
                     if hasDeadline {
                         HStack(spacing: 10) {
-                            Text("Deadline")
+                            Text("Échéance")
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.labelMuted)
                             CompactDatePicker(

@@ -86,7 +86,7 @@ struct DeadlineBoardView: View {
                 Text("Échéances")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                 Text(selectedTab == .chapitres
-                     ? "\(items.count) chapitre(s) avec deadline"
+                     ? "\(items.count) chapitre(s) avec échéance"
                      : selectedTab == .jalons
                          ? "\(store.allMilestonesSorted.count) jalon(s)"
                          : selectedTab == .next72h
@@ -116,7 +116,7 @@ struct DeadlineBoardView: View {
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
             }
             .buttonStyle(.pressable)
-            .help("Exporter les deadlines et jalons au format iCal (.ics)")
+            .help("Exporter les échéances et jalons au format iCal (.ics)")
 
             // Bouton ajouter jalon (tab Jalons uniquement)
             if selectedTab == .jalons && !store.data.projects.isEmpty {
@@ -230,7 +230,7 @@ struct DeadlineBoardView: View {
                                 .font(.system(size: 14, weight: .semibold))
                             // #24 — affiche la deadline effective (avec buffer si actif)
                             HStack(spacing: 6) {
-                                Text("Deadline : \(DataStore.formatDate(deadline))")
+                                Text("Échéance : \(DataStore.formatDate(deadline))")
                                     .font(.system(size: 12))
                                     .foregroundColor(.labelMuted)
                                 if store.deadlineBuffer > 0 {
@@ -705,7 +705,7 @@ struct DeadlineBoardView: View {
                 Image(systemName: "calendar.badge.exclamationmark")
                     .font(.system(size: 36))
                     .foregroundColor(.labelMuted)
-                Text("Aucune deadline pour l'instant")
+                Text("Aucune échéance pour l'instant")
                     .font(.system(size: 14))
                     .foregroundColor(.labelMuted)
             }

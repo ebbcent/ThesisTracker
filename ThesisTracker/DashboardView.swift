@@ -61,6 +61,7 @@ struct DashboardView: View {
     @State private var isCustomizing: Bool = false
     // #16 — Mode compact
     @AppStorage("dashboardCompact") private var dashboardCompact: Bool = false
+    @State private var dashWidth: CGFloat = 1400   // 5.18 : largeur utile, pour passer en une colonne
 
     // Drag-and-drop
     @State private var draggingWidget: DashboardWidget? = nil
@@ -83,7 +84,11 @@ struct DashboardView: View {
             VStack(spacing: 16) {
                 headerView
 
-                HStack(alignment: .top, spacing: 16) {
+                // 5.18 : deux colonnes sur grand écran, une seule quand la fenêtre est étroite (MacBook, fenêtre réduite)
+                let columns = dashWidth < 900
+                    ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16))
+                    : AnyLayout(HStackLayout(alignment: .top, spacing: 16))
+                columns {
                     leftColumn
                     rightColumn
                     .sheet(isPresented: $showCustomizeSheet) {
@@ -94,6 +99,11 @@ struct DashboardView: View {
                 .environment(\.compactDashboard, dashboardCompact)
             }
             .padding(20)
+            .background(GeometryReader { g in
+                Color.clear
+                    .onAppear { dashWidth = g.size.width }
+                    .onChange(of: g.size.width) { _, w in dashWidth = w }
+            })
         }
         .onAppear {
             // Migration : ajouter les 3 widgets fixes en colonne gauche si absents
@@ -432,14 +442,8 @@ struct DashboardView: View {
                 )
                 .allowsHitTesting(false)
         )
-        // Drag handle visible au hover (toujours, pas seulement en mode customize)
-        .overlay(alignment: .topTrailing) {
-            Image(systemName: "line.3.horizontal")
-                .font(.system(size: 10, weight: .medium))
-                .foregroundColor(.labelMuted.opacity(0.45))
-                .padding(8)
-                .allowsHitTesting(false)
-        }
+        // 5.18 : poignée visible au survol ou en mode « Personnaliser » seulement
+        .modifier(HoverDragHandle(forceVisible: isCustomizing))
         // Drag source — on track le début/fin du drag pour activer les insertion zones
         .draggable(widget.rawValue) {
             dragPreview(for: widget)
@@ -830,24 +834,7 @@ struct DashboardView: View {
 
             Spacer()
 
-            // Streak tag
-            if store.currentStreak > 0 {
-                HStack(spacing: 4) {
-                    Image(systemName: "flame.fill")
-                        .font(.system(size: 10, weight: .bold))
-                    Text("Série · \(store.currentStreak) j")
-                        .font(.system(size: 10.5, weight: .semibold))
-                }
-                .foregroundColor(.accentWarm)
-                .padding(.horizontal, 9).padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(Color.accentWarm.opacity(0.10))
-                        .overlay(Capsule().stroke(Color.accentWarm.opacity(0.22), lineWidth: 1))
-                )
-                .scaleEffect(streakPulse ? 1.12 : 1.0)
-                .appAnimation(Motion.celebrate, value: streakPulse)
-            }
+            // 5.18 : la série n'est plus répétée ici (elle est dans la barre du haut)
 
             Button { showDirectorReport = true } label: {
                 HStack(spacing: 5) {
@@ -856,12 +843,12 @@ struct DashboardView: View {
                     Text("Rapport")
                         .font(.system(size: 11, weight: .medium))
                 }
-                .foregroundColor(Color(hex: "#0369A1"))
+                .foregroundColor(.primary.opacity(0.85))   // 5.18 : plus de bleu isolé ; même style que les autres boutons d'en-tête
                 .padding(.horizontal, 9).padding(.vertical, 5)
                 .background(
                     RoundedRectangle(cornerRadius: 7)
-                        .fill(Color(hex: "#0369A1").opacity(0.09))
-                        .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color(hex: "#0369A1").opacity(0.22), lineWidth: 1))
+                        .fill(Color.glassFill)
+                        .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.cardBorder, lineWidth: 1))
                 )
             }
             .buttonStyle(.pressable)
@@ -1271,12 +1258,15 @@ struct DashboardView: View {
                 .appAnimation(.easeOut(duration: 0.15), value: isToday)
 
                 // ── Hero count ─────────────────────────────────
+                // 5.18 : le grand chiffre seulement quand il y a une entrée ; sinon, on va droit à la saisie
                 VStack(spacing: 4) {
+                    if currentEntryTotal > 0 {
                     HStack(alignment: .lastTextBaseline, spacing: 6) {
                         Text(store.data.useWordCount
                              ? DataStore.formatNumber(currentEntryTotal / 5)
                              : DataStore.formatNumber(currentEntryTotal))
                             .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .tracking(-0.8)   // 5.18 : grands chiffres resserrés
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: currentEntryTotal > 0 ? [.primary, .primary.opacity(0.7)] : [Color.labelMuted.opacity(0.4)],
@@ -1289,6 +1279,7 @@ struct DashboardView: View {
                             .font(.system(size: 15, weight: .regular))
                             .foregroundColor(.labelMuted)
                             .padding(.bottom, 6)
+                    }
                     }
 
                     // 5.12 — équivalent en pages de thèse
@@ -1316,9 +1307,9 @@ struct DashboardView: View {
                                 Text("Nouveau record personnel !")
                                     .font(.system(size: 11, weight: .semibold))
                             }
-                            .foregroundColor(.yellow)
+                            .foregroundColor(.accentWarm)   // 5.18 : palette restreinte
                             .padding(.horizontal, 8).padding(.vertical, 3)
-                            .background(Capsule().fill(Color.yellow.opacity(0.12)))
+                            .background(Capsule().fill(Color.accentWarm.opacity(0.12)))
                             .transition(.scale(scale: 0.95).combined(with: .opacity))
                         }
                     } else if currentEntryNet < 0 {
@@ -1339,7 +1330,7 @@ struct DashboardView: View {
                     } else if currentEntryTotal == 0 {
                         Text(isToday ? "Aucune entrée pour aujourd'hui" : "Aucune entrée ce jour-là")
                             .font(.system(size: 11))
-                            .foregroundColor(.labelMuted.opacity(0.6))
+                            .foregroundColor(.labelMuted)   // 5.18 : contraste suffisant
                     }
 
                     // V5 — #6 : Dernière écriture il y a X jours
@@ -1355,7 +1346,7 @@ struct DashboardView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
+                .padding(.vertical, currentEntryTotal > 0 ? 16 : 6)
 
                 // ── Barre de progression objectif ──────────────
                 if store.effectiveDailyGoal > 0 && currentEntryDelta > 0 {
@@ -1586,21 +1577,21 @@ struct DashboardView: View {
             GlassCard {
                 VStack(spacing: 0) {
                     ProgressBarView(
-                        label: "Aujourd'hui",
+                        label: "Objectif du jour",   // 5.18 : objectif du jour de la semaine (comme la barre du haut)
                         icon: "sun.max.fill",
                         value: store.dailyProgress,
-                        goal: store.data.dailyGoal,
+                        goal: store.effectiveDailyGoal,
                         color: Color.accent,
                         trackColor: Color.accent.opacity(0.12)
                     )
-                    .help(store.data.dailyGoal > 0
-                          ? "\(store.formatCount(store.dailyProgress)) / \(store.formatCount(store.data.dailyGoal)) \(store.data.useWordCount ? "mots" : "car.") · \(min(100, Int(Double(store.dailyProgress) / Double(store.data.dailyGoal) * 100)))% de l'objectif journalier"
+                    .help(store.effectiveDailyGoal > 0
+                          ? "\(store.formatCount(store.dailyProgress)) / \(store.formatCount(store.effectiveDailyGoal)) \(store.data.useWordCount ? "mots" : "car.") · \(min(100, Int(Double(store.dailyProgress) / Double(store.effectiveDailyGoal) * 100)))% de l'objectif du jour"
                           : "\(store.formatCount(store.dailyProgress)) \(store.data.useWordCount ? "mots" : "car.") aujourd'hui")
                     if let ddg = store.deadlineDailyGoal, store.deadlineDailyGoalDiffers {
                         HStack(spacing: 5) {
                             Image(systemName: "calendar.badge.exclamationmark")
-                                .font(.system(size: 10)).foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
-                            Text("Deadline : \(store.formatCount(ddg)) / jour pour finir le chapitre")
+                                .font(.system(size: 10)).foregroundColor(.accentWarm)   // 5.18 : avertissement, pas erreur
+                            Text(echeanceLabel(ddg))   // 5.18 : le but d'abord, l'effort ensuite
                                 .font(.system(size: 10)).foregroundColor(.labelMuted)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 5)
@@ -1809,6 +1800,19 @@ struct DashboardView: View {
         }
     }
 
+    /// 5.18 : « Échéance 27 novembre 2026 · 36 j de retard à ce rythme »
+    private func chapterDeadlineSubtitle(chapter: Chapter, projectId: UUID) -> String {
+        guard let deadline = chapter.deadline.flatMap(DataStore.parseDate) else { return "Sans échéance" }
+        var s = "Échéance \(DataStore.formatDate(deadline))"
+        if let eta = store.estimatedCompletionDate(for: chapter.id, in: projectId) {
+            let cal = Calendar.current
+            let late = cal.dateComponents([.day], from: cal.startOfDay(for: deadline), to: cal.startOfDay(for: eta)).day ?? 0
+            if late > 0 { s += " · \(late) j de retard à ce rythme" }
+            else if late < 0 { s += " · \(-late) j d'avance" }
+        }
+        return s
+    }
+
     @ViewBuilder
     private var planningSection: some View {
         if let project = activeProject, let chapter = activeChapter {
@@ -1825,7 +1829,7 @@ struct DashboardView: View {
                         planningRow(
                             title: "Fin chapitre",
                             value: store.estimatedCompletionDate(for: chapter.id, in: project.id).map(DataStore.formatDate(_:)) ?? "—",
-                            subtitle: chapter.deadline.flatMap(DataStore.parseDate).map { "Deadline \(DataStore.formatDate($0))" } ?? "Sans deadline"
+                            subtitle: chapterDeadlineSubtitle(chapter: chapter, projectId: project.id)
                         )
 
                         // Velocity section
@@ -1854,26 +1858,26 @@ struct DashboardView: View {
         return increments.reduce(0, +) / increments.count
     }
 
-    private var chapterRequiredVelocity: Int {
-        guard let chapter = activeChapter,
-              let project = activeProject,
-              let deadlineStr = chapter.deadline,
-              let deadline = DataStore.parseDate(deadlineStr) else { return 0 }
-        let cal = Calendar(identifier: .gregorian)
-        let daysLeft = cal.dateComponents([.day], from: Date(), to: deadline).day ?? 0
-        guard daysLeft > 0 else { return 0 }
-        let latest = chapter.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
-        let remaining = max(0, chapter.goal - latest)
-        guard remaining > 0 else { return 0 }
-        return Int(ceil(Double(remaining) / Double(daysLeft)))
-    }
+    // 5.18 : un seul calcul du rythme d'échéance, celui du DataStore (profil de rythme, jours d'écriture).
+    // Avant : un second calcul naïf ici (reste ÷ jours calendaires depuis l'heure courante) donnait un autre chiffre.
+    private var chapterRequiredVelocity: Int { store.deadlineDailyGoal ?? 0 }
 
     private var daysToChapterDeadline: Int? {
         guard let chapter = activeChapter,
               let deadlineStr = chapter.deadline,
               let deadline = DataStore.parseDate(deadlineStr) else { return nil }
-        let days = Calendar.current.dateComponents([.day], from: Date(), to: deadline).day ?? 0
+        let cal = Calendar.current
+        let days = cal.dateComponents([.day], from: cal.startOfDay(for: Date()), to: cal.startOfDay(for: deadline)).day ?? 0
         return days >= 0 ? days : nil
+    }
+
+    /// « Pour tenir le 27 novembre : 13 060 par jour (6 183 de plus qu'à ton rythme) »
+    private func echeanceLabel(_ perDay: Int) -> String {
+        let date = activeChapter?.deadline.flatMap(DataStore.parseDate).map { DataStore.formatDate($0) } ?? "l'échéance"
+        var s = "Pour tenir le \(date) : \(store.formatCount(perDay)) par jour"
+        let gap = perDay - currentVelocity
+        if currentVelocity > 0 && gap > 0 { s += " (\(store.formatCount(gap)) de plus qu'à ton rythme)" }
+        return s
     }
 
     @ViewBuilder
@@ -1907,7 +1911,7 @@ struct DashboardView: View {
 
                     // Required velocity
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Objectif deadline")
+                        Text("Rythme pour l'échéance")
                             .font(.system(size: 10))
                             .foregroundColor(.labelMuted)
                         Text(store.formatCount(req) + "/j")
@@ -1958,10 +1962,10 @@ struct DashboardView: View {
                 return "Tu es en avance. Continue à ce rythme !"
             } else {
                 let extra = req - vel
-                return "Il faut écrire \(store.formatCount(extra))/j de plus pour tenir la deadline."
+                return "Pour tenir l'échéance : \(store.formatCount(extra)) par jour de plus qu'à ton rythme."
             }
         } else if let days = daysLeft {
-            return "Plus que \(days) jour\(days > 1 ? "s" : "") avant la deadline."
+            return "Plus que \(days) jour\(days > 1 ? "s" : "") avant l'échéance."
         }
         return nil
     }
@@ -2506,7 +2510,7 @@ private struct WritingEntryInputCluster: View {
                 .font(.system(size: 12))
             NativeNumericTextField(
                 text: $text,
-                placeholder: "ex: 15 340",
+                placeholder: "Total du chapitre (ex. 15 340)",   // 5.18 : on saisit le total, pas l'écrit du jour
                 onSubmit: { commit() }
             )
             .frame(maxWidth: .infinity)
@@ -2560,12 +2564,14 @@ private struct WritingEntryInputCluster: View {
                 Text(savedConfirmation ? "Enregistré" : "Sauvegarder")
                     .font(.system(size: 12, weight: .semibold))
             }
-            .foregroundColor(savedConfirmation ? .white : .black)
+            .foregroundColor(savedConfirmation ? .white : (hasValue ? .black : .labelMuted))
             .padding(.horizontal, 14).padding(.vertical, 10)
             .background(
+                // 5.18 : désactivé = gris neutre (plus d'ambre « boueux » à demi-opacité)
                 RoundedRectangle(cornerRadius: 9)
-                    .fill(savedConfirmation ? Self.savedGradient : Self.saveGradient)
-                    .shadow(color: Color.accent.opacity(0.3), radius: 6, x: 0, y: 2)
+                    .fill(hasValue || savedConfirmation ? AnyShapeStyle(savedConfirmation ? Self.savedGradient : Self.saveGradient)
+                                                        : AnyShapeStyle(Color.fieldBg))
+                    .shadow(color: hasValue ? Color.accent.opacity(0.3) : .clear, radius: 6, x: 0, y: 2)
             )
         }
         .buttonStyle(.pressable)
@@ -2720,7 +2726,17 @@ private struct MiniBarChartView: View {
     let color: Color
     let goal: Int
 
-    private var maxVal: CGFloat { CGFloat(max(data.max() ?? 0, goal > 0 ? goal : 0, 1)) }
+    /// 5.18 : échelle plafonnée quand une journée hors norme (import, rattrapage) écraserait les autres.
+    /// Plafond = 2 × le 75e centile des jours non nuls (et au moins l'objectif) ; la barre dépassante
+    /// est pleine, marquée d'une encoche, valeur exacte au survol.
+    private var maxVal: CGFloat {
+        let peak = CGFloat(max(data.max() ?? 0, goal > 0 ? goal : 0, 1))
+        let nonZero = data.filter { $0 > 0 }.sorted()
+        guard nonZero.count >= 4 else { return peak }
+        let p75 = CGFloat(nonZero[Int(Double(nonZero.count - 1) * 0.75)])
+        let cap = max(p75 * 2, CGFloat(goal), 1)
+        return min(peak, cap)
+    }
 
     var body: some View {
         GeometryReader { geo in
@@ -2748,10 +2764,16 @@ private struct MiniBarChartView: View {
                                 .fill(
                                     reachedGoal ? Color.accentGreen :
                                     isToday ? color :
-                                    color.opacity(max(0.18, ratio * 0.80))
+                                    color.opacity(max(0.18, min(1, ratio) * 0.80))
                                 )
-                                .frame(height: max(2, geo.size.height * ratio))
+                                .frame(height: max(2, geo.size.height * min(1, ratio)))
+                                .overlay(alignment: .top) {
+                                    if ratio > 1 {   // hors échelle : encoche
+                                        Rectangle().fill(Color.cardBg).frame(height: 2).offset(y: 5)
+                                    }
+                                }
                         }
+                        .help(v > 0 ? "\(DataStore.formatNumber(v)) car." + (ratio > 1 ? " (hors échelle)" : "") : "Rien ce jour-là")
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

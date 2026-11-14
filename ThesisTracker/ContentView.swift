@@ -33,7 +33,7 @@ extension Color {
 
     static let cardBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
         trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            ? NSColor(red: 0.078, green: 0.071, blue: 0.063, alpha: 1)   // #141210
+            ? NSColor(red: 0.102, green: 0.094, blue: 0.086, alpha: 1)   // #1A1816 (5.18 : plus distinct du fond)
             : NSColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1)   // #FFFFFF
     }))
 
@@ -41,7 +41,7 @@ extension Color {
 
     static let fieldBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
         trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            ? NSColor(red: 0.102, green: 0.094, blue: 0.082, alpha: 1)   // #1a1815
+            ? NSColor(red: 0.137, green: 0.125, blue: 0.114, alpha: 1)   // #23201D (5.18 : champ distinct de sa carte)
             : NSColor(white: 0, alpha: 0.04)
     }))
 
@@ -164,10 +164,10 @@ struct SectionHeader: View {
     init(_ title: String) { self.title = title }
     var body: some View {
         HStack(spacing: 8) {
-            Text(title.uppercased())
-                .font(.system(size: 10, weight: .semibold))
+            // 5.18 : titre de section en casse normale (les capitales espacées partout écrasaient la hiérarchie)
+            Text(title)
+                .font(TypeScale.sectionTitle)
                 .foregroundColor(.labelMuted)
-                .kerning(1.2)
             Rectangle()
                 .fill(Color.cardBorder)
                 .frame(height: 1)

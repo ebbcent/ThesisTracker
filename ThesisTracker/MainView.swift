@@ -378,6 +378,7 @@ struct MainView: View {
         }
         .appAnimation(.easeOut(duration: 0.20), value: showSidebar)
         .frame(minWidth: showSidebar ? 720 : 460, minHeight: 560)
+        .navigationTitle(selectedNav.rawValue)   // 5.18 : la fenêtre dit où l'on est
         .background(AppBackdrop().ignoresSafeArea())   // 5.16 : la barre latérale en verre réfracte le même fond
         .appGlassContainer()                          // 5.16 : verre rendu en commun (performance, fusion des formes)
         .preferredColorScheme(forceDarkMode ? .dark : nil)  // #28 — Slate theme
@@ -635,10 +636,18 @@ struct MainView: View {
 
 struct StatusBarView: View {
     @ObservedObject var store: DataStore
+    /// 5.18 : pages, vitesse et hebdo affichés sur demande (chevron) ; série, aujourd'hui, chapitre toujours.
+    @AppStorage("statusBarExpanded") private var expanded = false
     @ObservedObject private var notifStore: AppNotificationStore = .shared
     @State private var syncRotation: Double = 0
     @State private var copiedFeedback: Bool = false
     @State private var showNotificationCenter: Bool = false
+
+    private func chapterHelp(_ chapter: Chapter) -> String {
+        let latest = store.latestTotal(for: chapter.id, in: store.data.activeProjectId ?? UUID())
+        let pct = chapter.goal > 0 ? min(100, Int(Double(latest) / Double(chapter.goal) * 100)) : 0
+        return "\(chapter.name) : \(store.formatCount(latest)) sur \(store.formatCount(chapter.goal)) (\(pct) %)"
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -691,8 +700,8 @@ struct StatusBarView: View {
                 }
             }
 
-            // 5.12 — pages de thèse rédigées
-            if let pages = store.pagesNumber(store.thesisWrittenChars, digits: 0), store.thesisWrittenChars > 0 {
+            // 5.12 — pages de thèse rédigées (5.18 : sur demande)
+            if expanded, let pages = store.pagesNumber(store.thesisWrittenChars, digits: 0), store.thesisWrittenChars > 0 {
                 sbItem {
                     HStack(spacing: 5) {
                         Image(systemName: "doc.text")
@@ -733,8 +742,8 @@ struct StatusBarView: View {
                 }
             }
 
-            // Velocity
-            sbItem {
+            // Velocity (5.18 : sur demande)
+            if expanded { sbItem {
                 HStack(spacing: 5) {
                     Image(systemName: "bolt.fill")
                         .font(.system(size: 10))
@@ -745,10 +754,10 @@ struct StatusBarView: View {
                     Text(store.formatCount(store.velocity14Days) + "/j")
                         .font(.system(size: 11, weight: .semibold))
                 }
-            }
+            } }
 
-            // Weekly
-            if store.data.weeklyGoal > 0 {
+            // Weekly (5.18 : sur demande)
+            if expanded && store.data.weeklyGoal > 0 {
                 sbItem {
                     let written = store.weeklyProgress
                     let goal = store.data.weeklyGoal
@@ -790,7 +799,20 @@ struct StatusBarView: View {
                             .foregroundColor(pct >= 100 ? .accentGreen : .primary)
                     }
                 }
+                .help(chapterHelp(chapter))   // 5.18
             }
+
+            // 5.18 : afficher / masquer les indicateurs secondaires
+            Button { withAppAnimation(Motion.quick) { expanded.toggle() } } label: {
+                Image(systemName: expanded ? "chevron.left" : "chevron.right")
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundColor(.labelMuted)
+                    .frame(width: 22, height: 33)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.pressable)
+            .help(expanded ? "Masquer pages, vitesse et hebdo" : "Afficher pages, vitesse et hebdo")
+            .accessibilityLabel(expanded ? "Masquer les indicateurs secondaires" : "Afficher les indicateurs secondaires")
 
             Spacer()
 

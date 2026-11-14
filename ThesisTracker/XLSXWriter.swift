@@ -77,7 +77,7 @@ enum XLSXWriter {
         </cp:coreProperties>
         """
 
-        let headers = ["Date", "Projet", "Chapitre", "Total caractères", "Caractères du jour", "Note", "Deadline"]
+        let headers = ["Date", "Projet", "Chapitre", "Total caractères", "Caractères du jour", "Note", "Échéance"]
         let allRows: [[Cell]] = [headers.map { Cell.text($0) }] + rows.map { row -> [Cell] in
             [
                 .text(row.date),
