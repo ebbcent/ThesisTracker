@@ -1128,3 +1128,32 @@ extension PomodoroAppController: PomodoroTimerEngineDelegate {
         }
     }
 }
+
+// MARK: - Sessions terminées sur l'iPhone, sans piloter le minuteur du Mac
+extension PomodoroAppController {
+    func applyHubSession(_ c: HubWritingCommand) async -> String? {
+        guard initialized, isStoreWritable, let storeURL else { return "attente: Données Pomodoro pas encore chargées." }
+        guard c.validate() == nil, let start = c.debut.flatMap(HubWritingCommand.iso),
+              let end = c.fin.flatMap(HubWritingCommand.iso), let seconds = c.seconds,
+              let planned = c.planned, let completed = c.completed else { return "Session invalide." }
+        if data.deletedIDs[c.id.uuidString] != nil { return "Cette session a été supprimée sur le Mac." }
+        if !data.sessions.contains(where: { $0.id == c.id }) {
+            data.sessions.append(PomodoroSessionRecord(id: c.id, startedAt: start, endedAt: end,
+                duration: seconds, plannedDuration: planned, kind: .focus,
+                completionState: completed ? .completed : .interrupted, categoryID: nil, projectID: nil,
+                note: "Depuis Clem Hub", createdAt: end, updatedAt: end,
+                writingProjectId: c.project, writingChapterId: c.chapter, intention: c.intention))
+            rebuildWorkBlocks()
+            scheduleSave()
+        }
+        await persist()
+        guard let bytes = try? Data(contentsOf: storeURL),
+              let object = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+              let sessions = object["sessions"] as? [[String: Any]],
+              sessions.contains(where: { ($0["id"] as? String)?.lowercased() == c.id.uuidString.lowercased() }) else {
+            // Pas d'accusé positif avant l'écriture effective. La commande reste sur disque.
+            return "attente: Enregistrement Pomodoro indisponible."
+        }
+        return nil
+    }
+}

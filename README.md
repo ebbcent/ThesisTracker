@@ -81,3 +81,6 @@ Onglet **Professeur** : séance avec le directeur virtuel (Pr L. Vandenbossche).
 - sur `main` ou sur un tag `v*` : publication dans **Releases**.
 
 Le contexte du projet et l'historique des fonctionnalités sont dans [`protocole_thesistracker.md`](protocole_thesistracker.md).
+
+## Écriture depuis Clem Hub (5.22)
+L’onglet Écriture du Hub peut transmettre un total cumulé et des sessions Pomodoro. Garder Writing Process ouvert sur un Mac et l’agent n8n à jour : l’app importe les commandes, puis confirme leur sauvegarde. Sans Mac disponible, elles restent en attente. Mettre les deux Mac en 5.22 avant de saisir depuis le Hub. Les saisies partent du total affiché lors de l’envoi ; si celui-ci a changé sur le Mac, l’app refuse le conflit et demande une nouvelle saisie.

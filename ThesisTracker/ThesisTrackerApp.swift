@@ -129,6 +129,7 @@ struct ThesisTrackerApp: App {
                 .background(WindowAccessor())
                 .task {
                     await pomodoroController.initializeIfNeeded()
+                    HubWritingBridge.shared.start(store: store, pomodoro: pomodoroController)
                     AppUpdater.shared.checkAutomaticallyIfDue()
                     pomodoroController.onSaveWordCount = { [weak store] wordCount in
                         guard let store else { return }
