@@ -224,3 +224,7 @@ Publication : chaque fusion dans `main` publie une version dans Releases. Si l'e
 - Ne pas ajouter de commentaires, docstrings ou gestion d'erreur inutiles
 - Mettre à jour ce fichier à chaque nouvelle implantation
 - Conserver la version V2 comme référence avant toute évolution majeure
+
+
+## 2026-11-15 — 5.22 : saisies et pomodoros depuis Clem Hub
+L’espace Écriture du Hub transmet des commandes immuables par n8n et l’agent du Mac dans `Writing Process/Hub/entrees`. L’app les valide et les intègre par ses propres méthodes de sauvegarde : totaux cumulatifs par chapitre (avec contrôle de la valeur de départ) et sessions Pomodoro liées au projet/chapitre. UUID stable pour les sessions, reçus de saisie dans `AppData.hubReceipts`, confirmation seulement après présence sur disque. Retours dans `Hub/retours`, capacité dans `Hub/pret.json`. L’app doit être ouverte sur un Mac ; autrement les commandes restent en attente. Aucun minuteur distant ne démarre sur le Mac. Les anciennes versions ne conservent pas hubReceipts : utiliser la 5.22 sur les deux Mac avant d’activer les saisies Hub. Tests : HubWritingBridgeTests.

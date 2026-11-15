@@ -983,6 +983,7 @@ struct ResearchEntry: Codable, Identifiable {
 // MARK: - Données globales
 
 struct AppData: Codable {
+    var hubReceipts: [String: String]? = nil // UUID des saisies Hub déjà intégrées
     var dailyGoal: Int = 500
     var weeklyGoal: Int = 3000
     var monthlyGoal: Int = 15000
@@ -1011,6 +1012,7 @@ struct AppData: Codable {
     var legacyActiveChapterId: UUID?
 
     enum CodingKeys: String, CodingKey {
+        case hubReceipts
         case dailyGoal, weeklyGoal, monthlyGoal, projects, activeProjectId
         case folders, sortProjectsAlphabetically, sortChaptersAlphabetically, useWordCount
         case pinnedDates, weeklyChallenges, researchEntries
@@ -1025,6 +1027,7 @@ struct AppData: Codable {
 extension AppData {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
+        hubReceipts = try? c.decodeIfPresent([String: String].self, forKey: .hubReceipts)
         dailyGoal                  = (try? c.decodeIfPresent(Int.self,                  forKey: .dailyGoal))                  ?? 500
         weeklyGoal                 = (try? c.decodeIfPresent(Int.self,                  forKey: .weeklyGoal))                 ?? 3000
         monthlyGoal                = (try? c.decodeIfPresent(Int.self,                  forKey: .monthlyGoal))                ?? 15000

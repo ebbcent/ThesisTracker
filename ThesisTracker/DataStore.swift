@@ -4752,3 +4752,28 @@ class DataStore: ObservableObject {
         return entries
     }
 }
+
+// MARK: - Écriture depuis Clem Hub (mutations par la file de sauvegarde habituelle)
+extension DataStore {
+    var hubDirectory: URL? { isLoaded && isUsingICloud ? activeFileURL.deletingLastPathComponent().appendingPathComponent("Hub") : nil }
+    func applyHubTotal(_ c: HubWritingCommand) -> String? {
+        guard isLoaded, isUsingICloud else { return "Le fichier iCloud doit être chargé sur le Mac." }
+        if data.hubReceipts?[c.id.uuidString] != nil { return nil }
+        guard c.validate() == nil, let date = c.date, let total = c.total,
+              let p = data.projects.firstIndex(where: { $0.id == c.project && !$0.isArchived }),
+              let chapter = data.projects[p].chapters.first(where: { $0.id == c.chapter && !$0.isArchived }) else { return "Saisie invalide." }
+        let current = chapter.entries.filter { $0.date <= date }.max { $0.date < $1.date }?.totalCount ?? 0
+        guard c.baseTotal == current else { return "Le compteur a changé sur le Mac. Actualise puis ressaisis le total." }
+        setTotalForDate(total, for: c.chapter, in: c.project, date: date, isCorrection: total < current)
+        if data.hubReceipts == nil { data.hubReceipts = [:] }
+        data.hubReceipts?[c.id.uuidString] = date
+        save()
+        return nil
+    }
+    func hubTotalIsOnDisk(_ id: UUID) -> Bool {
+        guard let bytes = try? Data(contentsOf: activeFileURL),
+              let object = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+              let receipts = object["hubReceipts"] as? [String: String] else { return false }
+        return receipts[id.uuidString] != nil
+    }
+}
