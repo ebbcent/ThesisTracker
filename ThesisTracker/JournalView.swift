@@ -17,11 +17,11 @@ struct JournalWidget: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                            .fill(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
+                            .fill(Color.semPurple.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "book.closed.fill")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(Color(red: 0.404, green: 0.224, blue: 0.718))
+                            .foregroundColor(Color.semPurple)
                     }
                     Text("Journal de bord")
                         .font(.system(size: 13, weight: .semibold))
@@ -39,7 +39,7 @@ struct JournalWidget: View {
                         .foregroundColor(.primary.opacity(0.85))
                         .lineLimit(3)
                         .padding(8)
-                        .background(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.06))
+                        .background(Color.semPurple.opacity(0.06))
                         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 } else if let last = entries.first {
                     Text("Dernière entrée — \(last.date.suffix(5))")
@@ -63,7 +63,7 @@ struct JournalWidget: View {
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)
-                    .background(Color(red: 0.404, green: 0.224, blue: 0.718))
+                    .background(Color.semPurple)
                     .clipShape(Capsule())
                 }
                 .buttonStyle(.pressable)
@@ -198,7 +198,7 @@ struct JournalSheet: View {
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 12).padding(.vertical, 10)
-                    .background(Color(red: 0.404, green: 0.224, blue: 0.718))
+                    .background(Color.semPurple)
                     .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 }
                 .buttonStyle(.pressable)

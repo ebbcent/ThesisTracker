@@ -16,7 +16,7 @@ struct SettingsView: View {
 
     // Thème couleur
     @State private var selectedAccentHex: String = "#F59E0B"
-    @State private var customColor: Color = Color(red: 0.961, green: 0.620, blue: 0.043)
+    @State private var customColor: Color = Color.semAmber
     @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
 
     private let accentPresets: [(name: String, hex: String)] = [
@@ -346,7 +346,7 @@ struct SettingsView: View {
                                     ZStack {
                                         Circle().fill(Color.orange.opacity(0.12)).frame(width: 34, height: 34)
                                         Image(systemName: "archivebox.fill")
-                                            .font(.system(size: 14)).foregroundColor(.orange)
+                                            .font(.system(size: 14)).foregroundColor(.semOrange)
                                     }
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Compacter les anciennes entrées")
@@ -362,7 +362,7 @@ struct SettingsView: View {
                                     Spacer()
                                     Button("Compacter") { showCompactConfirm = true }
                                         .font(.system(size: 12, weight: .medium))
-                                        .foregroundColor(.orange)
+                                        .foregroundColor(.semOrange)
                                         .padding(.horizontal, 10).padding(.vertical, 5)
                                         .background(Color.orange.opacity(0.1))
                                         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
@@ -713,7 +713,7 @@ struct SettingsView: View {
                                         ZStack {
                                             Circle().fill(Color.orange.opacity(0.12)).frame(width: 34, height: 34)
                                             Image(systemName: "flame.fill")
-                                                .font(.system(size: 14)).foregroundColor(.orange)
+                                                .font(.system(size: 14)).foregroundColor(.semOrange)
                                         }
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text("Alerte série en danger")
@@ -840,9 +840,9 @@ struct SettingsView: View {
                                     if permissionStatus == .denied {
                                         HStack(spacing: 10) {
                                             Image(systemName: "exclamationmark.triangle.fill")
-                                                .foregroundColor(.orange).font(.system(size: 13))
+                                                .foregroundColor(.semOrange).font(.system(size: 13))
                                             Text("Notifications refusées dans les Réglages Système")
-                                                .font(.system(size: 12)).foregroundColor(.orange)
+                                                .font(.system(size: 12)).foregroundColor(.semOrange)
                                             Spacer()
                                             Button("Ouvrir") { openSystemPrefs() }
                                                 .font(.system(size: 12, weight: .semibold))

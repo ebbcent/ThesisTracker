@@ -34,11 +34,12 @@ struct TilesDayChain: View {
     private static let letters = ["D", "L", "M", "M", "J", "V", "S"]
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 4) {
             ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                 cell(item)
             }
         }
+        .fixedSize()
         .accessibilityElement()
         .accessibilityLabel("Les \(days) derniers jours")
         .accessibilityValue("\(items.filter { $0.state == .written }.count) jours écrits")
@@ -65,7 +66,7 @@ struct TilesDayChain: View {
         return Text(letter)
             .font(.system(size: 10, weight: .bold))
             .foregroundColor(text)
-            .frame(width: 22, height: 22)
+            .frame(width: 20, height: 20)
             .background(Circle().fill(fill))
             .overlay(Circle().stroke(stroke, style: StrokeStyle(lineWidth: 1.5, dash: dashed ? [3, 3] : [])))
             .help("\(TilesDashboardView.dayMonth(item.date)) : \(help)")
@@ -206,69 +207,76 @@ struct TilesChapterList: View {
 
 struct TilesSlotContent: View {
     @ObservedObject var store: DataStore
+    @ObservedObject private var calendarService = WritingCalendarService.shared
 
-    private struct Upcoming { let slot: WritingSlot; let dayOffset: Int; let date: Date; let ongoing: Bool }
+    private struct Upcoming { let start: Date; let end: Date; let title: String; let fromCalendar: Bool }
 
+    /// Prochain créneau : le plus proche entre les créneaux réguliers et ceux lus dans le calendrier.
     private var upcoming: Upcoming? {
-        let cal = DataStore.gregorianCal
+        let cal = Calendar.current
         let now = Date()
         let today = cal.startOfDay(for: now)
-        let nowMinutes = cal.component(.hour, from: now) * 60 + cal.component(.minute, from: now)
+        var candidates: [Upcoming] = []
         for offset in 0..<8 {
-            guard let date = cal.date(byAdding: .day, value: offset, to: today) else { continue }
-            let weekday = cal.component(.weekday, from: date)
-            let candidates = store.writingSlots
-                .filter { $0.weekdays.contains(weekday) && $0.startTime != nil }
-                .sorted { $0.start < $1.start }
-            for slot in candidates {
-                guard let time = slot.startTime else { continue }
-                let startMinutes = time.hour * 60 + time.minute
-                if offset == 0 {
-                    if startMinutes + max(0, slot.durationMinutes) <= nowMinutes { continue }
-                    return Upcoming(slot: slot, dayOffset: 0, date: date, ongoing: startMinutes <= nowMinutes)
-                }
-                return Upcoming(slot: slot, dayOffset: offset, date: date, ongoing: false)
+            guard let day = cal.date(byAdding: .day, value: offset, to: today) else { continue }
+            let weekday = cal.component(.weekday, from: day)
+            for slot in store.writingSlots where slot.weekdays.contains(weekday) {
+                guard let time = slot.startTime,
+                      let start = cal.date(bySettingHour: time.hour, minute: time.minute, second: 0, of: day) else { continue }
+                let end = start.addingTimeInterval(Double(max(0, slot.durationMinutes)) * 60)
+                if end > now { candidates.append(Upcoming(start: start, end: end, title: slot.displayLabel, fromCalendar: false)) }
             }
         }
-        return nil
+        for event in calendarService.upcoming.prefix(20) {
+            candidates.append(Upcoming(start: event.start, end: event.end, title: event.title, fromCalendar: true))
+        }
+        return candidates.min { $0.start < $1.start }
     }
 
-    private func dayWord(_ up: Upcoming) -> String {
-        if up.ongoing { return "En ce moment" }
-        if up.dayOffset == 0 { return "Aujourd'hui" }
-        if up.dayOffset == 1 { return "Demain" }
+    private static let hour: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "fr_FR")
-        f.dateFormat = "EEEE"
-        let s = f.string(from: up.date)
+        f.dateFormat = "HH:mm"
+        return f
+    }()
+
+    private func dayWord(_ up: Upcoming) -> String {
+        let cal = Calendar.current
+        if up.start <= Date() { return "En ce moment" }
+        if cal.isDateInToday(up.start) { return "Aujourd'hui" }
+        if cal.isDateInTomorrow(up.start) { return "Demain" }
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "fr_FR")
+        f.dateFormat = "EEEE d"
+        let s = f.string(from: up.start)
         return s.prefix(1).uppercased() + s.dropFirst()
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 5) {
             Text("Prochain créneau")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(TilesTheme.green)
             if let up = upcoming {
-                Text("\(up.slot.start)–\(up.slot.endText)")
-                    .font(.system(size: 28, weight: .heavy).monospacedDigit())
+                Text("\(Self.hour.string(from: up.start))–\(Self.hour.string(from: up.end))")
+                    .font(.system(size: 26, weight: .heavy).monospacedDigit())
                     .tracking(-0.8)
                     .foregroundColor(TilesTheme.ink)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
-                Text("\(dayWord(up)) · \(up.slot.displayLabel)")
-                    .font(.system(size: 13))
+                Text("\(dayWord(up)) · \(up.title)" + (up.fromCalendar ? " · calendrier" : ""))
+                    .font(.system(size: 12))
                     .foregroundColor(TilesTheme.muted)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(2)
             } else {
                 Text("Aucun")
-                    .font(.system(size: 28, weight: .heavy))
+                    .font(.system(size: 26, weight: .heavy))
                     .tracking(-0.8)
                     .foregroundColor(TilesTheme.ink)
-                Text("Les créneaux d'écriture se règlent dans les Réglages.")
-                    .font(.system(size: 13))
+                Text("À régler dans Réglages › Créneaux d'écriture.")
+                    .font(.system(size: 12))
                     .foregroundColor(TilesTheme.muted)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(2)
             }
         }
         .accessibilityElement(children: .combine)
@@ -290,12 +298,12 @@ struct TilesSessionContent: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 5) {
             Text("Session")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(TilesTheme.blue)
             Text(isIdle ? "Prêt" : clock)
-                .font(.system(size: 28, weight: .heavy).monospacedDigit())
+                .font(.system(size: 22, weight: .heavy).monospacedDigit())
                 .tracking(-0.8)
                 .foregroundColor(TilesTheme.ink)
                 .contentTransition(.numericText())
@@ -317,6 +325,8 @@ struct AppLookRefresher: ViewModifier {
     @AppStorage("interfaceMode") private var interfaceMode: String = "VT"
     @AppStorage("tilesPaper") private var paper: Bool = true
     @AppStorage("tilesAccentHex") private var accentHex: String = AppLook.defaultAccentHex
+    @AppStorage("forceDarkMode") private var forceDark: Bool = false
+    @AppStorage("forceLightMode") private var forceLight: Bool = false
     @State private var token = 0
 
     func body(content: Content) -> some View {
@@ -325,6 +335,9 @@ struct AppLookRefresher: ViewModifier {
             .onChange(of: interfaceMode) { _, _ in redraw() }
             .onChange(of: paper) { _, _ in redraw() }
             .onChange(of: accentHex) { _, _ in redraw() }
+            .onChange(of: forceDark) { _, _ in AppLook.applyAppearance() }
+            .onChange(of: forceLight) { _, _ in AppLook.applyAppearance() }
+            .onAppear { AppLook.applyAppearance() }
     }
 
     private func redraw() {
@@ -337,9 +350,44 @@ struct AppLookRefresher: ViewModifier {
 
 struct TilesLookSettingsSection: View {
     @AppStorage("tilesPaper") private var paper: Bool = true
+    @AppStorage("forceDarkMode") private var forceDark: Bool = false
+    @AppStorage("forceLightMode") private var forceLight: Bool = false
+
+    /// 0 = système, 1 = clair, 2 = sombre.
+    private var appearance: Binding<Int> {
+        Binding(
+            get: { forceDark ? 2 : (forceLight ? 1 : 0) },
+            set: { value in
+                forceDark = value == 2
+                forceLight = value == 1
+                AppLook.applyAppearance()
+            }
+        )
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
+            Text("APPARENCE")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(.labelMuted)
+                .kerning(1.2)
+            VStack(alignment: .leading, spacing: 8) {
+                Picker("Apparence", selection: appearance) {
+                    Text("Système").tag(0)
+                    Text("Clair").tag(1)
+                    Text("Sombre").tag(2)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                Text("S'applique à toute l'app, quel que soit l'affichage. Le bouton soleil / lune de l'accueil Tuiles fait la même chose.")
+                    .font(.system(size: 11))
+                    .foregroundColor(.labelMuted)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(16)
+            .background(Color.cardBg, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .padding(.bottom, 10)
+
             Text("FOND (AFFICHAGE TUILES)")
                 .font(.system(size: 10, weight: .bold))
                 .foregroundColor(.labelMuted)

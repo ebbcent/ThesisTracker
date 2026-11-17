@@ -112,7 +112,7 @@ struct OverviewView: View {
             HStack(spacing: 12) {
                 MiniStatCard(label: "Total écrit", value: store.formatCountShort(totalCharsAllTime), unit: "", color: .accent)
                 MiniStatCard(label: "Aujourd'hui", value: store.formatCountShort(store.dailyProgress), unit: "", color: .accentWarm)
-                MiniStatCard(label: "Série actuelle", value: "\(store.currentStreak)", unit: "j", color: Color(red: 0.961, green: 0.455, blue: 0.114))
+                MiniStatCard(label: "Série actuelle", value: "\(store.currentStreak)", unit: "j", color: Color.semOrange)
                 MiniStatCard(label: "Chapitres finis", value: "\(completedChapters)", unit: "/\(totalChapters)", color: .accentGreen)
             }
             // #21 — Progression globale toutes thèses

@@ -202,6 +202,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.23** — Correctifs d'audit : saisie pomodoro, ⌘Z entre les deux Mac, alertes d'échéance, Kanban, minuit, recherche sans accents
 - **5.24** — Affichage « Tuiles » du tableau de bord (clair / sombre) et récap du mois
 - **5.25** — Tuiles, suite : barre latérale et barre du haut en panneaux flottants, boutons et cartes alignés, menu Modes, table des matières dans la barre latérale
+- **5.26** — Accueil corrigé d'après capture, clair / sombre fiabilisé, couleurs lisibles, créneaux depuis un calendrier, page « Récaps du mois » et notification mensuelle
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -263,3 +264,16 @@ Retour de Clem sur la 5.24 : « la version tuile est cool », poursuivre sur la 
 - Fond « Papier » (par défaut) ou « Neutre » : réglage « Fond (affichage Tuiles) », clé `tilesPaper` ; troisième variante de `appBg`, `sidebarBg`, `cardBg`, `fieldBg`, nouveau `trackBg`. `TilesTheme` suit maintenant la palette de l'app.
 - Arrondis uniformisés : 404 `cornerRadius` de 6 à 18 pt passent par `AppLook.r(origine, tuiles)` dans toutes les pages (sauf `MainView`, exports, présentation) ; valeur d'origine inchangée hors Tuiles.
 Toujours développé sans Xcode local : rendu à vérifier sur l'app.
+
+
+## 2026-11-17 — 5.26 : corrections d'après capture, calendrier, récaps
+Première capture de l'app par Clem (accueil Tuiles, sombre). Constats et demandes :
+- Tuile « Série » qui débordait sur ses voisines : toutes les petites tuiles ont une hauteur fixe (104) et sont rognées ; chaîne ramenée à 7 jours ; record dans le titre de la tuile.
+- « Novembre : 647 777 » : `currentCalendarMonthProgress` additionnait les totaux cumulés des saisies du mois ; il additionne maintenant ce qui a été écrit chaque jour (`dailyTotals()`). Corrige aussi le défi mensuel.
+- Clair / sombre : `AppLook.applyAppearance()` règle `NSApp.appearance` (toutes les fenêtres) en plus de `preferredColorScheme` ; réglage « Apparence » (Système, Clair, Sombre) dans les Réglages.
+- Couleurs lisibles dans les deux modes : couleurs de sens `Color.semAmber`, `semOrange`, `semRed`, `semPink`, `semPurple`, `semViolet`, `semBlue`, `semSky`, `semGreen`, `semYellow` (teinte foncée en clair, claire en sombre). Elles remplacent 172 couleurs écrites en dur et 17 couleurs système utilisées comme texte (orange, jaune, vert). Non touchés : exports, présentation, graphiques.
+- Raccourci Pomodoro dans l'en-tête de l'accueil Tuiles (`PomodoroQuickControl`).
+- Créneaux d'écriture depuis un calendrier (`WritingCalendar.swift`) : adresse .ics (https ou webcal) dans Réglages › Créneaux d'écriture, relue au lancement puis toutes les heures ; les événements dont le titre contient le mot-clé (« écriture » par défaut, sans accents ni casse) deviennent des créneaux, affichés dans les Réglages et dans la tuile « Prochain créneau ». Répétitions quotidiennes et hebdomadaires gérées ; lecture seule ; adresse et créneaux gardés sur ce Mac (UserDefaults), pas dans data.json. Pas de rappel système pour ces créneaux.
+- Page « Récaps du mois » (`NavItem.recaps`, groupe Analyse) : un récap par mois écoulé ayant des saisies, du plus récent au plus ancien ; les nouveaux s'y ajoutent seuls. Notification système une fois par mois, à la première ouverture après le 1er (`monthlyRecapLastNotified`).
+- `MainView` : l'aiguillage des pages est sorti du corps de la vue (`currentPage`).
+- Tests : `WritingCalendarTests`.

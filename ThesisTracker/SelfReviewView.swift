@@ -207,11 +207,11 @@ struct SelfReviewSheet: View {
 
     private func scoreColor(_ value: Int) -> Color {
         switch value {
-        case 1: return Color(red: 0.93, green: 0.26, blue: 0.26)
-        case 2: return Color(red: 0.95, green: 0.50, blue: 0.20)
-        case 3: return Color(red: 0.95, green: 0.75, blue: 0.20)
+        case 1: return Color.semRed
+        case 2: return Color.semOrange
+        case 3: return Color.semYellow
         case 4: return Color(red: 0.50, green: 0.75, blue: 0.30)
-        case 5: return Color(red: 0.22, green: 0.75, blue: 0.44)
+        case 5: return Color.semGreen
         default: return .labelMuted
         }
     }
@@ -230,11 +230,11 @@ struct PainfulChaptersWidget: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                            .fill(Color(red: 0.929, green: 0.329, blue: 0.329).opacity(0.12))
+                            .fill(Color.semRed.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "bandage.fill")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
+                            .foregroundColor(Color.semRed)
                     }
                     Text("Chapitres qui font mal")
                         .font(.system(size: 13, weight: .semibold))
@@ -287,9 +287,9 @@ struct PainfulChaptersWidget: View {
     private func severityColor(_ score: Int) -> Color {
         switch score {
         case 5: return Color(red: 0.85, green: 0.10, blue: 0.10)
-        case 4: return Color(red: 0.929, green: 0.329, blue: 0.329)
-        case 3: return Color(red: 0.95, green: 0.50, blue: 0.20)
-        default: return Color(red: 0.95, green: 0.75, blue: 0.20)
+        case 4: return Color.semRed
+        case 3: return Color.semOrange
+        default: return Color.semYellow
         }
     }
 }

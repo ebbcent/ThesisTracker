@@ -35,10 +35,10 @@ struct MenuBarEntryView: View {
                 if store.currentStreak > 0 {
                     HStack(spacing: 3) {
                         Image(systemName: "flame.fill")
-                            .font(.system(size: 10)).foregroundColor(Color(red: 0.961, green: 0.455, blue: 0.114))
+                            .font(.system(size: 10)).foregroundColor(Color.semOrange)
                         Text("\(store.currentStreak)j")
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(Color(red: 0.961, green: 0.455, blue: 0.114))
+                            .foregroundColor(Color.semOrange)
                     }
                 }
             }
@@ -409,7 +409,7 @@ struct MenuBarEntryView: View {
             if !isToday {
                 Label("Entrée passée", systemImage: "clock.arrow.circlepath")
                     .font(.system(size: 10))
-                    .foregroundColor(.orange)
+                    .foregroundColor(.semOrange)
             }
         }
     }

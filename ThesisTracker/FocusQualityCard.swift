@@ -25,7 +25,7 @@ enum FocusQualityLevel: Int, CaseIterable {
 
     var color: Color {
         switch self {
-        case .distracted: return Color(red: 0.929, green: 0.329, blue: 0.329)
+        case .distracted: return Color.semRed
         case .neutral:    return .accentWarm
         case .focused:    return .accentGreen
         }

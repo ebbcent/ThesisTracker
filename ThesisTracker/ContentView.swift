@@ -72,6 +72,14 @@ enum AppLook {
         return (ns(value), ns(value))
     }
 
+    /// 5.26 — clair forcé, sombre forcé ou apparence du système, pour toutes les fenêtres de l'app.
+    static func applyAppearance() {
+        let defaults = UserDefaults.standard
+        let name: NSAppearance.Name? = defaults.bool(forKey: "forceDarkMode") ? .darkAqua
+            : (defaults.bool(forKey: "forceLightMode") ? .aqua : nil)
+        NSApp.appearance = name.flatMap { NSAppearance(named: $0) }
+    }
+
     /// À appeler quand l'affichage, le fond ou l'accent change.
     static func refresh() {
         cached = compute()
@@ -195,6 +203,23 @@ extension Color {
             }
         }))
     }
+
+    // 5.26 — couleurs de sens (alerte, succès, repères) : une teinte foncée sur fond clair, une teinte
+    // claire sur fond sombre, pour rester lisibles comme texte dans les deux modes. Elles remplacent les
+    // mêmes couleurs écrites en dur dans les pages (pensées pour le seul mode sombre).
+    private static func sem(_ light: UInt32, _ dark: UInt32) -> Color {
+        adaptive(light: light, dark: dark, hcLight: light, hcDark: dark)
+    }
+    static let semAmber  = sem(0xA85D00, 0xF5A623)
+    static let semOrange = sem(0xC2410C, 0xF8843A)
+    static let semRed    = sem(0xBF2A22, 0xF36C6C)
+    static let semPink   = sem(0xBE185D, 0xF4619B)
+    static let semPurple = sem(0x6739B7, 0xB49CF2)
+    static let semViolet = sem(0x7C3AB8, 0xCB9DFB)
+    static let semBlue   = sem(0x1D4ED8, 0x6D9BF8)
+    static let semSky    = sem(0x0F6CB0, 0x62B4EE)
+    static let semGreen  = sem(0x15803D, 0x45C97A)
+    static let semYellow = sem(0x8A6A00, 0xF3C63A)
 
     // Palette chapitres (graphiques)
     static let chapterPalette: [Color] = [

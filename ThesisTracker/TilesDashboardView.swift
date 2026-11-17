@@ -172,6 +172,8 @@ struct TilesDashboardView: View {
                     .foregroundColor(TilesTheme.ink)
             }
             Spacer()
+            // 5.26 — raccourci Pomodoro : lance un bloc sur le chapitre actif (clic droit : durée, arrêt)
+            PomodoroQuickControl(store: store)
             headerButton(systemImage: "sidebar.left", help: showSidebar ? "Masquer la barre latérale" : "Afficher la barre latérale") {
                 withAppAnimation(Motion.panel) { showSidebar.toggle() }
             }
@@ -368,9 +370,11 @@ struct TilesDashboardView: View {
 
     private func tile<Content: View>(background: Color = TilesTheme.card, @ViewBuilder _ content: () -> Content) -> some View {
         content()
-            .frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            // 5.26 — hauteur fixe : toutes les tuiles s'alignent, rien ne déborde sur la voisine
+            .frame(maxWidth: .infinity, minHeight: 104, maxHeight: 104, alignment: .leading)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
+            .clipped()
             .background(RoundedRectangle(cornerRadius: TilesTheme.radius, style: .continuous).fill(background))
     }
 
@@ -410,17 +414,19 @@ struct TilesDashboardView: View {
     private var streakTile: some View {
         let streak = store.currentStreak
         return tile {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Série").font(.system(size: 13, weight: .semibold)).foregroundColor(TilesTheme.muted)
+            VStack(alignment: .leading, spacing: 7) {
+                Text("Série · record \(store.longestStreak) j")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(TilesTheme.muted)
+                    .lineLimit(1)
                 Text(streak > 1 ? "\(streak) jours" : "\(streak) jour")
                     .font(.system(size: 30, weight: .heavy))
                     .tracking(-1)
                     .foregroundColor(TilesTheme.ink)
-                TilesDayChain(store: store, days: 9)
-                Text("Record : \(store.longestStreak) jours")
-                    .font(.system(size: 13))
-                    .foregroundColor(TilesTheme.muted)
+                    .lineLimit(1)
+                TilesDayChain(store: store, days: 7)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .accessibilityElement(children: .combine)
     }
@@ -553,10 +559,10 @@ struct TilesDashboardView: View {
                         .font(.system(size: 20, weight: .heavy))
                         .tracking(-0.4)
                         .foregroundColor(TilesTheme.ink)
-                    Text("Notes, relectures, planification, saisie d'un autre jour. Retour ici par le menu Affichage.")
-                        .font(.system(size: 13))
+                    Text("Tous les widgets. Retour ici par le menu Affichage.")
+                        .font(.system(size: 12))
                         .foregroundColor(TilesTheme.muted)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .lineLimit(2)
                 }
             }
         }

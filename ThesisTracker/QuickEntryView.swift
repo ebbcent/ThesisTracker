@@ -172,7 +172,7 @@ struct QuickEntryView: View {
                     if targetIsYesterday {
                         Label("Saisie passée", systemImage: "clock.arrow.circlepath")
                             .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(.orange)
+                            .foregroundColor(.semOrange)
                     }
                     // Raccourci invisible ⌘Y → bascule la cible
                     Button("") {

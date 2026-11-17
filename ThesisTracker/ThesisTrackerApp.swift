@@ -131,6 +131,7 @@ struct ThesisTrackerApp: App {
                     await pomodoroController.initializeIfNeeded()
                     HubWritingBridge.shared.start(store: store, pomodoro: pomodoroController)
                     AppUpdater.shared.checkAutomaticallyIfDue()
+                    WritingCalendarService.shared.start()   // 5.26 — créneaux d'écriture depuis un calendrier
                     pomodoroController.onSaveWordCount = { [weak store] wordCount in
                         guard let store else { return }
                         guard let project = store.activeProject, let chapter = store.activeChapter else { return }
@@ -283,7 +284,7 @@ struct ThesisTrackerApp: App {
                     if store.currentStreak >= 2 {
                         Image(systemName: "flame.fill")
                             .font(.system(size: 10))
-                            .foregroundColor(Color(red: 0.961, green: 0.455, blue: 0.114))
+                            .foregroundColor(Color.semOrange)
                         Text("\(store.currentStreak)")
                             .font(.system(size: 11, weight: .bold))
                     }

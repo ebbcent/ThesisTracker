@@ -236,13 +236,13 @@ struct ProfessorView: View {
             if let error = session.errorMessage {
                 Text(error)
                     .font(.system(size: 11))
-                    .foregroundColor(.orange)
+                    .foregroundColor(.semOrange)
                     .textSelection(.enabled)
             }
             if let warning = session.journalWarning {
                 Text(warning)
                     .font(.system(size: 11))
-                    .foregroundColor(.orange)
+                    .foregroundColor(.semOrange)
             }
             if let attachment = session.pendingAttachment {
                 HStack(spacing: 6) {

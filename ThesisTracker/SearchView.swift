@@ -41,7 +41,7 @@ enum NoteSource: String {
         case .blockers:    return Color(red: 1.0, green: 0.45, blue: 0.35)
         case .nextStep:    return .accentGreen
         case .chapterName: return .accent
-        case .projectNote: return Color(red: 0.706, green: 0.502, blue: 0.984)
+        case .projectNote: return Color.semViolet
         }
     }
 }

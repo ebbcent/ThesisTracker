@@ -190,9 +190,9 @@ struct HistoryRow: View {
             Button(action: onDelete) {
                 Image(systemName: "trash")
                     .font(.system(size: 13))
-                    .foregroundColor(Color(red: 0.95, green: 0.35, blue: 0.35))
+                    .foregroundColor(Color.semRed)
                     .padding(8)
-                    .background(Color(red: 0.95, green: 0.35, blue: 0.35).opacity(0.10))
+                    .background(Color.semRed.opacity(0.10))
                     .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             }
             .buttonStyle(.pressable)

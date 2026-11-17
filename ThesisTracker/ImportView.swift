@@ -139,9 +139,9 @@ struct ImportView: View {
                 if let error = parseError {
                     HStack(spacing: 6) {
                         Image(systemName: "exclamationmark.triangle")
-                            .foregroundColor(.orange)
+                            .foregroundColor(.semOrange)
                         Text(error)
-                            .foregroundColor(.orange)
+                            .foregroundColor(.semOrange)
                     }
                     .font(.system(size: 12))
                 } else if !parsedEntries.isEmpty {

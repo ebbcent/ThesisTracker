@@ -26,11 +26,11 @@ struct DefenseNotesWidget: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                            .fill(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
+                            .fill(Color.semPurple.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "graduationcap.fill")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(Color(red: 0.404, green: 0.224, blue: 0.718))
+                            .foregroundColor(Color.semPurple)
                     }
                     Text("Notes de soutenance")
                         .font(.system(size: 13, weight: .semibold))
@@ -38,9 +38,9 @@ struct DefenseNotesWidget: View {
                     if totalNotes > 0 {
                         Text("\(totalNotes)")
                             .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(Color(red: 0.404, green: 0.224, blue: 0.718))
+                            .foregroundColor(Color.semPurple)
                             .padding(.horizontal, 6).padding(.vertical, 2)
-                            .background(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
+                            .background(Color.semPurple.opacity(0.12))
                             .clipShape(Capsule())
                     }
                 }
@@ -75,7 +75,7 @@ struct DefenseNotesWidget: View {
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)
-                    .background(Color(red: 0.404, green: 0.224, blue: 0.718))
+                    .background(Color.semPurple)
                     .clipShape(Capsule())
                 }
                 .buttonStyle(.pressable)
