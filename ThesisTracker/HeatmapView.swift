@@ -80,10 +80,10 @@ struct HeatmapView: View {
                     .foregroundColor(showSidebar ? .accent : .labelMuted)
                     .frame(width: 36, height: 36)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                             .fill(showSidebar ? Color.accent.opacity(0.15) : Color.glassFill)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                                     .stroke(showSidebar ? Color.accent.opacity(0.4) : Color.glassBorder, lineWidth: 1)
                             )
                     )
@@ -116,10 +116,10 @@ struct HeatmapView: View {
                 }
                 .padding(.horizontal, 12).padding(.vertical, 8)
                 .background(Color.glassFill)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
                     pngExportSuccess ? Color.accentGreen.opacity(0.4) : Color.glassBorder, lineWidth: 1))
-                .contentShape(RoundedRectangle(cornerRadius: 10))
+                .contentShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
             }
             .buttonStyle(.pressable)
             .appAnimation(.easeInOut(duration: 0.2), value: pngExportSuccess)
@@ -290,9 +290,9 @@ struct HeatmapView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                 .stroke(Color.cardBorder, lineWidth: 1)
         )
     }

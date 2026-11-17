@@ -154,8 +154,8 @@ struct ProjectFormView: View {
                         .frame(height: 60)
                         .padding(8)
                         .background(Color.fieldBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
                 }
 
                 if !isEditing {
@@ -185,8 +185,8 @@ struct ProjectFormView: View {
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 10)
                                     .background(isSelected ? Color.accent : Color.cardBg)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                                         .stroke(isSelected ? Color.accent : Color.cardBorder, lineWidth: 1))
                                 }
                                 .buttonStyle(.pressable)
@@ -234,8 +234,8 @@ struct ProjectFormView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
@@ -246,7 +246,7 @@ struct ProjectFormView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 22).padding(.vertical, 10)
                         .background(isValid ? Color.accent : Color.cardBorder)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                         .buttonStyle(.pressable)
                         .disabled(!isValid)
                         .keyboardShortcut(.return)
@@ -366,8 +366,8 @@ struct ChapterFormView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                 }
                 // V5 — Version de brouillon
                 HStack(spacing: 14) {
@@ -466,8 +466,8 @@ struct ChapterFormView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
@@ -486,8 +486,8 @@ struct ChapterFormView: View {
                             .foregroundColor(.accent)
                             .padding(.horizontal, 14).padding(.vertical, 10)
                             .background(Color.accent.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accent.opacity(0.2), lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.accent.opacity(0.2), lineWidth: 1))
                         }
                         .buttonStyle(.pressable)
                         .fixedSize()
@@ -501,7 +501,7 @@ struct ChapterFormView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 22).padding(.vertical, 10)
                         .background(isValid ? Color.accent : Color.cardBorder)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                         .buttonStyle(.pressable)
                         .disabled(!isValid)
                         .fixedSize()
@@ -609,8 +609,8 @@ struct DarkFormField: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(Color.cardBg)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                 .onSubmit { onSubmit?() }
         }
     }

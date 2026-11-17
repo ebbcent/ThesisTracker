@@ -146,8 +146,8 @@ struct ProfessorSettingsSection: View {
                         .textFieldStyle(.plain)
                         .font(.system(size: 12, design: .monospaced))
                         .padding(.horizontal, 10).padding(.vertical, 7)
-                        .background(RoundedRectangle(cornerRadius: 8).fill(Color.fieldBg))
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                        .background(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).fill(Color.fieldBg))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
                         .accessibilityLabel("Clé API Anthropic")
                     Button("Enregistrer") {
                         settings.saveKey(keyInput)
@@ -209,8 +209,8 @@ struct ProfessorSettingsSection: View {
             }
             .padding(16)
             .background(Color.cardBg)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(14, 20)).stroke(Color.cardBorder, lineWidth: 1))
         }
     }
 }

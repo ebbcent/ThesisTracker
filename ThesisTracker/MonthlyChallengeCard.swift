@@ -27,7 +27,7 @@ struct MonthlyChallengeCard: View {
                 // Header
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(ringColor.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: ratio >= 1.0 ? "trophy.fill" : "calendar.badge.clock")

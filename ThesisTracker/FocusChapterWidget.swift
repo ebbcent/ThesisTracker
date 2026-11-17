@@ -43,7 +43,7 @@ struct FocusChapterWidget: View {
                     // Header
                     HStack(spacing: 8) {
                         ZStack {
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                                 .fill(ringColor.opacity(0.12))
                                 .frame(width: 28, height: 28)
                             Image(systemName: "doc.text.fill")

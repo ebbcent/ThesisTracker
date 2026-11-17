@@ -251,8 +251,8 @@ struct TilesSlotContent: View {
                 .foregroundColor(TilesTheme.green)
             if let up = upcoming {
                 Text("\(up.slot.start)–\(up.slot.endText)")
-                    .font(.system(size: 40, weight: .heavy).monospacedDigit())
-                    .tracking(-1.5)
+                    .font(.system(size: 28, weight: .heavy).monospacedDigit())
+                    .tracking(-0.8)
                     .foregroundColor(TilesTheme.ink)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
@@ -262,8 +262,8 @@ struct TilesSlotContent: View {
                     .fixedSize(horizontal: false, vertical: true)
             } else {
                 Text("Aucun")
-                    .font(.system(size: 40, weight: .heavy))
-                    .tracking(-1.5)
+                    .font(.system(size: 28, weight: .heavy))
+                    .tracking(-0.8)
                     .foregroundColor(TilesTheme.ink)
                 Text("Les créneaux d'écriture se règlent dans les Réglages.")
                     .font(.system(size: 13))
@@ -295,8 +295,8 @@ struct TilesSessionContent: View {
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(TilesTheme.blue)
             Text(isIdle ? "Prêt" : clock)
-                .font(.system(size: 40, weight: .heavy).monospacedDigit())
-                .tracking(-1.5)
+                .font(.system(size: 28, weight: .heavy).monospacedDigit())
+                .tracking(-0.8)
                 .foregroundColor(TilesTheme.ink)
                 .contentTransition(.numericText())
             if let intention = controller.activeIntention, !isIdle {
@@ -315,14 +315,50 @@ struct TilesSessionContent: View {
 /// Quand l'affichage change, les couleurs de l'app sont relues et la fenêtre est redessinée.
 struct AppLookRefresher: ViewModifier {
     @AppStorage("interfaceMode") private var interfaceMode: String = "VT"
+    @AppStorage("tilesPaper") private var paper: Bool = true
+    @AppStorage("tilesAccentHex") private var accentHex: String = AppLook.defaultAccentHex
     @State private var token = 0
 
     func body(content: Content) -> some View {
         content
             .id(token)
-            .onChange(of: interfaceMode) { _, _ in
-                AppLook.refresh()
-                token += 1
+            .onChange(of: interfaceMode) { _, _ in redraw() }
+            .onChange(of: paper) { _, _ in redraw() }
+            .onChange(of: accentHex) { _, _ in redraw() }
+    }
+
+    private func redraw() {
+        AppLook.refresh()
+        token += 1
+    }
+}
+
+// MARK: Réglage du fond (Réglages)
+
+struct TilesLookSettingsSection: View {
+    @AppStorage("tilesPaper") private var paper: Bool = true
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("FOND (AFFICHAGE TUILES)")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(.labelMuted)
+                .kerning(1.2)
+            VStack(alignment: .leading, spacing: 8) {
+                Picker("Fond", selection: $paper) {
+                    Text("Papier").tag(true)
+                    Text("Neutre").tag(false)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                Text("« Papier » : fond et cartes légèrement chauds, comme une feuille. « Neutre » : blanc et gris clair. La couleur d'accent de l'affichage Tuiles se choisit dans « Couleur d'accent » ; elle est distincte de celle des affichages d'origine.")
+                    .font(.system(size: 11))
+                    .foregroundColor(.labelMuted)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+            .padding(16)
+            .background(Color.cardBg, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .onChange(of: paper) { _, _ in AppLook.refresh() }
     }
 }

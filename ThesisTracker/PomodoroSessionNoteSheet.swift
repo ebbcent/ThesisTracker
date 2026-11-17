@@ -27,15 +27,15 @@ struct PomodoroSessionNoteSheet: View {
                     }
                     .padding(.horizontal, 12).padding(.vertical, 8)
                     .background(Color.accentGreen.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accentGreen.opacity(0.25), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.accentGreen.opacity(0.25), lineWidth: 1))
                 }
             }
 
             TextEditor(text: $controller.noteDraft)
                 .frame(minHeight: 120)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                         .stroke(Color.primary.opacity(0.08), lineWidth: 1)
                 )
 
@@ -49,8 +49,8 @@ struct PomodoroSessionNoteSheet: View {
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(Color.primary.opacity(0.05))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.primary.opacity(0.08), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.primary.opacity(0.08), lineWidth: 1))
             }
 
             FocusQualityPicker(quality: $controller.focusQualityDraft)

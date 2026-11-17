@@ -46,7 +46,7 @@ struct SupervisorReviewCard: View {
     private var header: some View {
         HStack(spacing: 8) {
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                     .fill(stateColor.opacity(0.12))
                     .frame(width: 28, height: 28)
                 Image(systemName: chapter?.reviewState.icon ?? "tray")
@@ -172,7 +172,7 @@ struct SupervisorReviewCard: View {
                     .lineLimit(3)
                     .padding(8)
                     .background(stateColor.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
             } else {
                 Button { showNotesSheet = true } label: {
                     Label("Ajouter notes du feedback", systemImage: "text.bubble")
@@ -333,8 +333,8 @@ private struct ReceiveReviewSheet: View {
                 .frame(minHeight: 120)
                 .padding(8)
                 .background(Color.fieldBg)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
             HStack {
                 Button("Annuler") { dismiss() }
                     .buttonStyle(.pressable)
@@ -382,8 +382,8 @@ private struct ReviewNotesSheet: View {
                 .frame(minHeight: 200)
                 .padding(8)
                 .background(Color.fieldBg)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
             HStack {
                 Button("Annuler") { dismiss() }
                     .buttonStyle(.pressable)

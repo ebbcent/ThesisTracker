@@ -333,7 +333,7 @@ struct SidebarView: View {
                 Button { editingFolderName = ""; showAddFolder = true } label: {
                     Image(systemName: "folder.badge.plus")
                         .font(.system(size: 11, weight: .semibold)).foregroundColor(.labelMuted)
-                        .frame(width: 22, height: 22).clipShape(RoundedRectangle(cornerRadius: 6))
+                        .frame(width: 22, height: 22).clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 }
                 .buttonStyle(.pressable).help("Nouveau dossier")
                 .accessibilityLabel("Nouveau dossier")
@@ -341,7 +341,7 @@ struct SidebarView: View {
                     Image(systemName: "plus")
                         .font(.system(size: 11, weight: .semibold)).foregroundColor(.accent)
                         .frame(width: 22, height: 22)
-                        .background(Color.accent.opacity(0.10)).clipShape(RoundedRectangle(cornerRadius: 6))
+                        .background(Color.accent.opacity(0.10)).clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 }
                 .buttonStyle(.pressable).help("Nouveau projet")
                 .accessibilityLabel("Nouveau projet")
@@ -556,7 +556,7 @@ struct SidebarView: View {
                 Spacer()
             }
             .padding(.horizontal, 10).padding(.vertical, 6)
-            .background(RoundedRectangle(cornerRadius: 7).fill(Color.cardBg.opacity(0.7)))
+            .background(RoundedRectangle(cornerRadius: AppLook.r(7, 10)).fill(Color.cardBg.opacity(0.7)))
             .contentShape(Rectangle())
         }
         .buttonStyle(.pressable)
@@ -606,7 +606,7 @@ struct SidebarView: View {
                             .accessibilityLabel("Désépingler")
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
-                        .background(RoundedRectangle(cornerRadius: 6).fill(Color.accentWarm.opacity(0.06)))
+                        .background(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).fill(Color.accentWarm.opacity(0.06)))
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.pressable)
@@ -639,7 +639,7 @@ struct SidebarView: View {
                             .accessibilityLabel("Désépingler")
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
-                        .background(RoundedRectangle(cornerRadius: 6).fill(Color.accentWarm.opacity(0.04)))
+                        .background(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).fill(Color.accentWarm.opacity(0.04)))
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.pressable)
@@ -810,9 +810,9 @@ struct SidebarView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 30)
                     .background(Color.glassFill)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .stroke(archiveDropActive ? Color.accentWarm : Color.cardBorder,
                                     lineWidth: archiveDropActive ? 1.5 : 1)
                     )
@@ -1000,8 +1000,8 @@ struct FolderFormView: View {
                     Button("Annuler") { onCancel() }
                         .font(.system(size: 13, weight: .medium)).foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10).background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable).keyboardShortcut(.escape)
                     Spacer()
                     Button("Créer") {
@@ -1011,7 +1011,7 @@ struct FolderFormView: View {
                     .font(.system(size: 13, weight: .semibold)).foregroundColor(.white)
                     .padding(.horizontal, 22).padding(.vertical, 10)
                     .background(!name.trimmingCharacters(in: .whitespaces).isEmpty ? Color.accent : Color.cardBorder)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                     .buttonStyle(.pressable).disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                     .keyboardShortcut(.return)
                 }
@@ -1089,7 +1089,7 @@ private struct ArchivedChaptersPopover: View {
                                 .buttonStyle(.pressable)
                             }
                             .padding(.horizontal, 10).padding(.vertical, 6)
-                            .background(RoundedRectangle(cornerRadius: 6).fill(Color.cardBg.opacity(0.7)))
+                            .background(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).fill(Color.cardBg.opacity(0.7)))
                         }
                     }
                     .padding(8)
@@ -1240,8 +1240,8 @@ struct FolderSidebarRow: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .background(RoundedRectangle(cornerRadius: 8).fill(Color.accent.opacity(0.03)))
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+        .background(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).fill(Color.accent.opacity(0.03)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
         .sheet(isPresented: $showAddSubfolder) {
             FolderFormView(
                 name: $newSubfolderName,
@@ -1309,7 +1309,7 @@ struct FolderSidebarRow: View {
                     .font(.system(size: 10, weight: .medium))
                     .foregroundColor(.secondary)
                     .frame(width: 22, height: 22)
-                    .background(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    .background(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                         .fill(Color.primary.opacity(0.07)))
             }
             .menuStyle(.borderlessButton).fixedSize()
@@ -1318,11 +1318,11 @@ struct FolderSidebarRow: View {
         }
         .padding(.horizontal, 8).padding(.vertical, 7)
         .background(
-            RoundedRectangle(cornerRadius: 7)
+            RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                 .fill(isDropTarget ? Color.accent.opacity(0.18) : Color.clear)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 7)
+            RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                 .stroke(isDropTarget ? Color.accent : Color.clear, lineWidth: 1)
         )
         .draggable("pf:\(folder.id.uuidString)") {
@@ -1332,7 +1332,7 @@ struct FolderSidebarRow: View {
             }
             .padding(.horizontal, 12).padding(.vertical, 7)
             .background(Color.accent.opacity(0.85)).foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
         }
         .dropDestination(for: String.self) { items, _ in
             guard let raw = items.first else { return false }
@@ -1799,7 +1799,7 @@ struct ProjectSidebarRow: View {
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(.secondary)
                             .frame(width: 22, height: 22)
-                            .background(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .background(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                 .fill(Color.primary.opacity(0.07)))
                     }
                     .menuStyle(.borderlessButton).fixedSize()
@@ -1828,7 +1828,7 @@ struct ProjectSidebarRow: View {
                 }
                 .padding(.horizontal, 12).padding(.vertical, 7)
                 .background(Color.accent.opacity(0.85)).foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             }
             // Drop target : (a) réordonner les projets, (b) déplacer un (ou plusieurs) chapitres vers ce projet
             .dropDestination(for: String.self) { items, _ in
@@ -1898,7 +1898,7 @@ struct ProjectSidebarRow: View {
                                     }
                                     .padding(.horizontal, 10).padding(.vertical, 6)
                                     .background(Color.accentWarm.opacity(0.85)).foregroundColor(.white)
-                                    .clipShape(RoundedRectangle(cornerRadius: 7))
+                                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                                 }
                                 .dropDestination(for: String.self) { items, _ in
                                     guard let raw = items.first else { return false }
@@ -1950,7 +1950,7 @@ struct ProjectSidebarRow: View {
                                 }
                                 .padding(.horizontal, 10).padding(.vertical, 6)
                                 .background(Color.accent.opacity(0.85)).foregroundColor(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 7))
+                                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                             }
                         }
                         // Zone de drop : déplacer un dossier tout à la fin
@@ -2207,11 +2207,11 @@ private struct ChapterFolderSidebarRow: View {
                 }
                 .padding(.horizontal, 8).padding(.vertical, 6)
                 .background(
-                    RoundedRectangle(cornerRadius: 7)
+                    RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                         .fill(isDropTarget ? Color.accent.opacity(0.18) : Color.primary.opacity(0.03))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 7)
+                    RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                         .stroke(isDropTarget ? Color.accent : Color.clear, lineWidth: 1)
                 )
                 .help(folderTooltip)
@@ -2269,7 +2269,7 @@ private struct ChapterFolderSidebarRow: View {
                                 }
                                 .padding(.horizontal, 10).padding(.vertical, 6)
                                 .background(Color.accent.opacity(0.85)).foregroundColor(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 7))
+                                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                             }
                         }
                         // Chapitres directs
@@ -2307,7 +2307,7 @@ private struct ChapterFolderSidebarRow: View {
                                     }
                                     .padding(.horizontal, 10).padding(.vertical, 6)
                                     .background(Color.accentWarm.opacity(0.85)).foregroundColor(.white)
-                                    .clipShape(RoundedRectangle(cornerRadius: 7))
+                                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                                 }
                             }
                         }
@@ -2585,7 +2585,7 @@ struct ChapterSidebarRow: View {
                                 .font(.system(size: 10, weight: .medium))
                                 .foregroundColor(.secondary)
                                 .frame(width: 20, height: 20)
-                                .background(RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .background(RoundedRectangle(cornerRadius: AppLook.r(6, 10), style: .continuous)
                                     .fill(Color.primary.opacity(0.07)))
                         }
                         .menuStyle(.borderlessButton).fixedSize()
@@ -2611,8 +2611,8 @@ struct ChapterSidebarRow: View {
                 isMultiSelected ? Color.accentWarm.opacity(0.12)
                 : (isActive ? Color.accent.opacity(0.08) : Color.cardBg.opacity(0.7))
             )
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 8)
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                 .stroke(
                     isMultiSelected ? Color.accentWarm.opacity(0.55)
                     : (isActive ? Color.accent.opacity(0.25) : Color.cardBorder),

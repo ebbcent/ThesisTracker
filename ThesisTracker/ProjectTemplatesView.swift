@@ -131,7 +131,7 @@ struct ProjectTemplatePickerSheet: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8).fill(Color.accent.opacity(0.12)).frame(width: 32, height: 32)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12)).fill(Color.accent.opacity(0.12)).frame(width: 32, height: 32)
                         Image(systemName: template.icon).font(.system(size: 14)).foregroundColor(.accent)
                     }
                     Text(template.name)
@@ -153,8 +153,8 @@ struct ProjectTemplatePickerSheet: View {
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.cardBg)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
         }
         .buttonStyle(.pressable)
     }

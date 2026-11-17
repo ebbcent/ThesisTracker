@@ -65,7 +65,7 @@ struct AutoArchiveSuggestionBanner: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 10).padding(.vertical, 4)
                 .background(Color.accentWarm)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 .buttonStyle(.pressable)
 
                 Button("Ignorer") {
@@ -78,8 +78,8 @@ struct AutoArchiveSuggestionBanner: View {
         }
         .padding(12)
         .background(Color.accentWarm.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accentWarm.opacity(0.2), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.accentWarm.opacity(0.2), lineWidth: 1))
     }
 
     private func archiveProject(_ project: Project) {

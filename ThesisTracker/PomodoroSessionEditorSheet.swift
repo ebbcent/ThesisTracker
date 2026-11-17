@@ -56,7 +56,7 @@ struct PomodoroSessionEditorSheet: View {
             TextEditor(text: $note)
                 .frame(minHeight: 120)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    RoundedRectangle(cornerRadius: AppLook.r(10, 14), style: .continuous)
                         .strokeBorder(Color.secondary.opacity(0.2), lineWidth: 1)
                 )
 

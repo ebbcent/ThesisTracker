@@ -23,7 +23,7 @@ struct WellbeingWidget: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(red: 0.961, green: 0.620, blue: 0.043).opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "leaf.fill")
@@ -114,7 +114,7 @@ struct WellbeingWidget: View {
         }
         .padding(10)
         .background(Color.labelMuted.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
     }
 
     private var miniHistory: some View {

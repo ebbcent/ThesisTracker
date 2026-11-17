@@ -90,9 +90,9 @@ struct ProfessorView: View {
                     .foregroundColor(showSidebar ? .accentWarm : .labelMuted)
                     .frame(width: 28, height: 28)
                     .background(
-                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                             .fill(showSidebar ? Color.accentWarm.opacity(0.09) : Color.glassFill)
-                            .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                 .stroke(showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                     )
             }
@@ -215,10 +215,10 @@ struct ProfessorView: View {
             }
             .padding(12)
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)
                     .fill(isUser ? Color.accentWarm.opacity(0.08) : Color.cardBg)
             )
-            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)
                 .stroke(isUser ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
             if !isUser { Spacer(minLength: compact ? 30 : 80) }
         }
@@ -279,8 +279,8 @@ struct ProfessorView: View {
                     .focused($inputFocused)
                     .frame(minHeight: 44, maxHeight: 140)
                     .padding(6)
-                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.fieldBg))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                    .background(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).fill(Color.fieldBg))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                     .accessibilityLabel("Message au professeur")
 
                 if session.isSending {

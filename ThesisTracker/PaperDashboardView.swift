@@ -97,9 +97,9 @@ struct PaperDashboardView: View {
                     .foregroundColor(showSidebar ? .accent : .labelMuted)
                     .frame(width: 32, height: 32)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(showSidebar ? Color.accent.opacity(0.08) : Color.clear)
-                            .overlay(RoundedRectangle(cornerRadius: 8)
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                                 .stroke(Color.cardBorder.opacity(0.7), lineWidth: 1))
                     )
             }
@@ -133,9 +133,9 @@ struct PaperDashboardView: View {
                     .foregroundColor(.labelMuted)
                     .frame(width: 32, height: 32)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color.clear)
-                            .overlay(RoundedRectangle(cornerRadius: 8)
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                                 .stroke(Color.cardBorder.opacity(0.7), lineWidth: 1))
                     )
             }
@@ -287,9 +287,9 @@ struct PaperDashboardView: View {
                 }
                 .padding(.horizontal, 14).padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                         .fill(Color.fieldBg)
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                 )
                 .frame(maxWidth: .infinity)
 
@@ -303,7 +303,7 @@ struct PaperDashboardView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 16).padding(.vertical, 10)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                             .fill(savedConfirmation ? Color.accentGreen : Color.accent)
                             .shadow(color: (savedConfirmation ? Color.accentGreen : Color.accent).opacity(0.30),
                                     radius: 6, x: 0, y: 2)
@@ -451,7 +451,7 @@ struct PaperDashboardView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 6)
         .background(day.isToday ? Color.accent.opacity(0.06) : Color.clear)
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
     }
 
     // Reuse same WeekDayData logic
@@ -553,7 +553,7 @@ struct PaperDashboardView: View {
             .font(.system(size: 13, weight: .medium))
             .foregroundColor(.white)
             .padding(.horizontal, 20).padding(.vertical, 9)
-            .background(RoundedRectangle(cornerRadius: 9).fill(Color.accent))
+            .background(RoundedRectangle(cornerRadius: AppLook.r(9, 13)).fill(Color.accent))
             .buttonStyle(.pressable)
         }
         .frame(maxWidth: .infinity)

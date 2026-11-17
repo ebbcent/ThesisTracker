@@ -137,8 +137,8 @@ struct PomodoroIntentionField: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(Color.primary.opacity(0.05))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.primary.opacity(0.08), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.primary.opacity(0.08), lineWidth: 1))
         }
     }
 }

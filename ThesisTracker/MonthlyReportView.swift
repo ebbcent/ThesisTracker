@@ -16,7 +16,7 @@ struct MonthlyReportWidget: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(red: 0.300, green: 0.650, blue: 0.900).opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "calendar.badge.checkmark")
@@ -217,7 +217,7 @@ struct MonthlyReportSheet: View {
                         .frame(minHeight: 100)
                         .padding(6)
                         .background(Color.fieldBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                     Button {
                         store.updateMonthlyReportNotes(monthKey: r.monthKey, notes: notesDraft)
                     } label: {
@@ -252,8 +252,8 @@ struct MonthlyReportSheet: View {
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
     }
 
     private static let monthFmt: DateFormatter = {

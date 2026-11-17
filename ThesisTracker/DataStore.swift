@@ -3388,12 +3388,16 @@ class DataStore: ObservableObject {
     // MARK: - Accent color theme
 
     var accentColorHex: String {
-        get { UserDefaults.standard.string(forKey: "accentColorHex") ?? "#F59E0B" }
+        // 5.25 — l'apparence Tuiles a sa propre couleur d'accent (bleu d'encre par défaut)
+        get {
+            AppLook.tiles ? AppLook.tilesAccentHex
+                          : (UserDefaults.standard.string(forKey: "accentColorHex") ?? "#F59E0B")
+        }
     }
 
     func setAccentColor(hex: String) {
-        UserDefaults.standard.set(hex, forKey: "accentColorHex")
-        Color.refreshAccent()
+        UserDefaults.standard.set(hex, forKey: AppLook.tiles ? "tilesAccentHex" : "accentColorHex")
+        AppLook.refresh()
         objectWillChange.send()
     }
 

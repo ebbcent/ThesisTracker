@@ -473,9 +473,9 @@ private struct VolumeBadgeCard: View {
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                 .stroke(isUnlocked ? badge.color.opacity(0.25) : Color.cardBorder, lineWidth: 1)
         )
         .opacity(isUnlocked ? 1 : 0.55)
@@ -521,9 +521,9 @@ private struct BadgeCard: View {
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                 .stroke(isUnlocked ? badge.color.opacity(0.25) : Color.cardBorder, lineWidth: 1)
         )
         .opacity(isUnlocked ? 1 : 0.55)
@@ -548,7 +548,7 @@ private struct GeneralAchievementCard: View {
     var body: some View {
         HStack(spacing: 10) {
             ZStack {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                     .fill(achievement.isUnlocked ? achievement.color.opacity(0.15) : Color.primary.opacity(0.05))
                     .frame(width: 40, height: 40)
                 Image(systemName: achievement.isUnlocked ? achievement.icon : "lock.fill")
@@ -571,9 +571,9 @@ private struct GeneralAchievementCard: View {
         }
         .padding(12)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                 .stroke(achievement.isUnlocked ? achievement.color.opacity(0.2) : Color.cardBorder, lineWidth: 1)
         )
         .opacity(achievement.isUnlocked ? 1 : 0.55)
@@ -590,7 +590,7 @@ private struct CompletedChallengeCard: View {
     var body: some View {
         HStack(spacing: 10) {
             ZStack {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                     .fill(kindColor.opacity(0.15))
                     .frame(width: 40, height: 40)
                 Image(systemName: challenge.kind.icon)
@@ -617,9 +617,9 @@ private struct CompletedChallengeCard: View {
         }
         .padding(12)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                 .stroke(Color.accentGreen.opacity(0.25), lineWidth: 1)
         )
     }
@@ -691,8 +691,8 @@ private struct AchievementStatCard: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
     }
 }
 

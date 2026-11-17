@@ -64,7 +64,7 @@ struct PremiumMenuPicker: View {
                     .foregroundStyle(accent)
                     .frame(width: 24, height: 24)
                     .background(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous)
                             .fill(accent.opacity(colorScheme == .dark ? 0.18 : 0.12))
                     )
                 VStack(alignment: .leading, spacing: 2) {
@@ -85,11 +85,11 @@ struct PremiumMenuPicker: View {
             .padding(.vertical, 10)
             .fixedSize(horizontal: false, vertical: true)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(14, 20), style: .continuous)
                     .fill(CockpitTheme.overlayFill(for: colorScheme))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(14, 20), style: .continuous)
                     .stroke(CockpitTheme.stroke(for: colorScheme), lineWidth: 1)
             )
         }

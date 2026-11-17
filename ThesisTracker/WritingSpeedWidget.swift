@@ -12,7 +12,7 @@ struct WritingSpeedWidget: View {
             VStack(spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color.accent.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "speedometer")

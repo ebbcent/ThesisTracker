@@ -42,9 +42,41 @@ enum AppLook {
         tiles ? AnyShape(RoundedRectangle(cornerRadius: radius, style: .continuous)) : AnyShape(Rectangle())
     }
 
-    /// À appeler quand l'affichage change (menu Affichage, tuile « Tableau de bord complet »).
+    // 5.25 — fond « papier » (chaud) ou neutre, réglage « Fond » des Réglages
+    private static var paperCached: Bool = computePaper()
+    static var paper: Bool { paperCached }
+
+    private static func computePaper() -> Bool {
+        UserDefaults.standard.object(forKey: "tilesPaper") == nil ? true : UserDefaults.standard.bool(forKey: "tilesPaper")
+    }
+
+    // 5.25 — couleur d'accent de l'apparence Tuiles (réglage séparé de celui des affichages d'origine)
+    static let defaultAccentHex = "#1F3FD1"
+    private static var accentCached: (light: NSColor, dark: NSColor) = computeAccent()
+    static var tilesAccent: (light: NSColor, dark: NSColor) { accentCached }
+
+    static var tilesAccentHex: String {
+        UserDefaults.standard.string(forKey: "tilesAccentHex") ?? defaultAccentHex
+    }
+
+    private static func ns(_ v: UInt32) -> NSColor {
+        NSColor(srgbRed: CGFloat((v >> 16) & 0xFF) / 255, green: CGFloat((v >> 8) & 0xFF) / 255, blue: CGFloat(v & 0xFF) / 255, alpha: 1)
+    }
+
+    private static func computeAccent() -> (light: NSColor, dark: NSColor) {
+        let hex = tilesAccentHex.uppercased()
+        // Bleu d'encre par défaut : une teinte plus claire en sombre, pour rester lisible sur fond foncé.
+        if hex == defaultAccentHex { return (ns(0x1F3FD1), ns(0x5F7BFF)) }
+        let digits = hex.hasPrefix("#") ? String(hex.dropFirst()) : hex
+        guard digits.count == 6, let value = UInt32(digits, radix: 16) else { return (ns(0x1F3FD1), ns(0x5F7BFF)) }
+        return (ns(value), ns(value))
+    }
+
+    /// À appeler quand l'affichage, le fond ou l'accent change.
     static func refresh() {
         cached = compute()
+        paperCached = computePaper()
+        accentCached = computeAccent()
         Color.refreshAccent()
     }
 }
@@ -54,27 +86,35 @@ enum AppLook {
 extension Color {
 
     /// Couleur clair / sombre, avec une variante pour l'apparence Tuiles.
-    private static func look(classic: (light: UInt32, dark: UInt32), tiles: (light: UInt32, dark: UInt32)) -> Color {
+    private static func look(classic: (light: UInt32, dark: UInt32), tiles: (light: UInt32, dark: UInt32),
+                             paper: (light: UInt32, dark: UInt32)) -> Color {
         func ns(_ v: UInt32) -> NSColor {
             NSColor(srgbRed: CGFloat((v >> 16) & 0xFF) / 255, green: CGFloat((v >> 8) & 0xFF) / 255, blue: CGFloat(v & 0xFF) / 255, alpha: 1)
         }
         return Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
             let dark = trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            let pair = AppLook.tiles ? tiles : classic
+            let pair = AppLook.tiles ? (AppLook.paper ? paper : tiles) : classic
             return ns(dark ? pair.dark : pair.light)
         }))
     }
 
     // Fonds adaptatifs — palette warm-dark premium v3 ; variante Tuiles en 5.24
-    static let appBg     = look(classic: (0xF8F7F5, 0x0C0B0A), tiles: (0xF1EFEA, 0x0F0E10))
-    static let sidebarBg = look(classic: (0xF2F1EF, 0x0A0908), tiles: (0xE9E6DF, 0x151416))
-    static let cardBg    = look(classic: (0xFFFFFF, 0x1A1816), tiles: (0xFFFFFF, 0x1C1B1E))   // 5.18 : plus distinct du fond
+    // 5.25 : troisième variante, « papier » (fond et cartes légèrement chauds)
+    static let appBg     = look(classic: (0xF8F7F5, 0x0C0B0A), tiles: (0xF1EFEA, 0x0F0E10), paper: (0xEAE5DA, 0x11100F))
+    static let sidebarBg = look(classic: (0xF2F1EF, 0x0A0908), tiles: (0xE9E6DF, 0x151416), paper: (0xE3DDD0, 0x171614))
+    static let cardBg    = look(classic: (0xFFFFFF, 0x1A1816), tiles: (0xFFFFFF, 0x1C1B1E), paper: (0xFBF9F4, 0x1B1A18))   // 5.18 : plus distinct du fond
+    /// Fond des jauges et des anneaux (partie non remplie).
+    static let trackBg   = look(classic: (0xE8E4E2, 0x272320), tiles: (0xE3DFD6, 0x333136), paper: (0xE4DDCF, 0x302E2A))
 
     static let cardBorder = adaptive(light: 0xE8E4E2, dark: 0x272320, hcLight: 0x8A8480, hcDark: 0x8C847C,
                                      tilesLight: 0xE9E5DD, tilesDark: 0x2A282C)   // 5.15 : contraste renforcé
 
     static let fieldBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
         let dark = trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        if AppLook.tiles, AppLook.paper {
+            return dark ? NSColor(srgbRed: 0.149, green: 0.141, blue: 0.133, alpha: 1)   // #262422
+                        : NSColor(srgbRed: 0.945, green: 0.925, blue: 0.882, alpha: 1)   // #F1ECE1
+        }
         if AppLook.tiles {
             return dark ? NSColor(srgbRed: 0.157, green: 0.149, blue: 0.165, alpha: 1)   // #28262A
                         : NSColor(srgbRed: 0.945, green: 0.937, blue: 0.918, alpha: 1)   // #F1EFEA
@@ -113,8 +153,23 @@ extension Color {
     // 5.15 — accents adaptatifs : inchangés en mode sombre ; plus soutenus en mode clair, où ils servent
     // aussi de couleur de texte (l'ambre #F59E0B sur blanc ne contrastait qu'à ≈ 2:1) ; encore plus nets
     // avec « Augmenter le contraste » (Réglages système › Accessibilité › Affichage).
-    static let accentWarm  = adaptive(light: 0xD97706, dark: 0xF59E0B, hcLight: 0xB45309, hcDark: 0xFBBF24,
-                                      tilesLight: 0x1F3FD1, tilesDark: 0x5F7BFF)  // ambre principal ; bleu d'encre en Tuiles
+    // ambre principal ; en Tuiles (5.25) : la couleur d'accent choisie dans les Réglages
+    static let accentWarm = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
+        func ns(_ v: UInt32) -> NSColor {
+            NSColor(srgbRed: CGFloat((v >> 16) & 0xFF) / 255, green: CGFloat((v >> 8) & 0xFF) / 255, blue: CGFloat(v & 0xFF) / 255, alpha: 1)
+        }
+        let match = trait.bestMatch(from: [.aqua, .darkAqua, .accessibilityHighContrastAqua, .accessibilityHighContrastDarkAqua])
+        if AppLook.tiles {
+            let dark = match == .darkAqua || match == .accessibilityHighContrastDarkAqua
+            return dark ? AppLook.tilesAccent.dark : AppLook.tilesAccent.light
+        }
+        switch match {
+        case .darkAqua?: return ns(0xF59E0B)
+        case .accessibilityHighContrastAqua?: return ns(0xB45309)
+        case .accessibilityHighContrastDarkAqua?: return ns(0xFBBF24)
+        default: return ns(0xD97706)
+        }
+    }))
     static let accentGold  = adaptive(light: 0xEA580C, dark: 0xEA580C, hcLight: 0xC2410C, hcDark: 0xFB923C)  // orange profond
     static let accentGreen = adaptive(light: 0x16A34A, dark: 0x22C55E, hcLight: 0x15803D, hcDark: 0x4ADE80)  // succès
     static let accentRose  = adaptive(light: 0xE11D48, dark: 0xF43F5E, hcLight: 0xBE123C, hcDark: 0xFB7185)  // alertes

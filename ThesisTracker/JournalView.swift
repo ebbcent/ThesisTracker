@@ -16,7 +16,7 @@ struct JournalWidget: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "book.closed.fill")
@@ -40,7 +40,7 @@ struct JournalWidget: View {
                         .lineLimit(3)
                         .padding(8)
                         .background(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 } else if let last = entries.first {
                     Text("Dernière entrée — \(last.date.suffix(5))")
                         .font(.system(size: 10))
@@ -187,7 +187,7 @@ struct JournalSheet: View {
                     .frame(minHeight: 60, maxHeight: 90)
                     .padding(6)
                     .background(Color.fieldBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 Button {
                     _ = store.addJournalEntry(content: newEntryText)
                     newEntryText = ""
@@ -199,7 +199,7 @@ struct JournalSheet: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 12).padding(.vertical, 10)
                     .background(Color(red: 0.404, green: 0.224, blue: 0.718))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 }
                 .buttonStyle(.pressable)
                 .disabled(newEntryText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -297,7 +297,7 @@ struct JournalSheet: View {
                     .frame(minHeight: 80)
                     .padding(6)
                     .background(Color.fieldBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 Button("Enregistrer") {
                     store.updateJournalEntry(entry.id, content: editingText)
                     editingId = nil

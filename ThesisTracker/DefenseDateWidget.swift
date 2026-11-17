@@ -96,7 +96,7 @@ struct DefenseDateWidget: View {
     private var header: some View {
         HStack(spacing: 8) {
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                     .fill(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
                     .frame(width: 28, height: 28)
                 Image(systemName: "graduationcap.circle.fill")
@@ -142,7 +142,7 @@ struct DefenseDateWidget: View {
         }
         .padding(8)
         .background(color.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
     }
 
     private func targetBanner(_ target: Date) -> some View {
@@ -172,6 +172,6 @@ struct DefenseDateWidget: View {
         }
         .padding(10)
         .background((onTrack ? Color.accentGreen : Color(red: 0.929, green: 0.329, blue: 0.329)).opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
     }
 }

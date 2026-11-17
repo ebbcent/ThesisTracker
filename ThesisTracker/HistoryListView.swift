@@ -88,9 +88,9 @@ struct HistoryListView: View {
                     .foregroundColor(showSidebar ? .accent : .labelMuted)
                     .frame(width: 36, height: 36)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                             .fill(showSidebar ? Color.accent.opacity(0.10) : Color.glassFill)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
                                 showSidebar ? Color.accent.opacity(0.30) : Color.cardBorder, lineWidth: 1))
                     )
             }

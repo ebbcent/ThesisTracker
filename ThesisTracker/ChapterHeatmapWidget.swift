@@ -15,7 +15,7 @@ struct ChapterHeatmapWidget: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(red: 0.300, green: 0.650, blue: 0.900).opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "square.grid.3x3.fill")
