@@ -84,8 +84,9 @@ struct MainView: View {
     @State private var showSidebar: Bool = true
     @State private var selectedNav: NavItem = .dashboard
     @AppStorage("sidebarWidth") private var sidebarWidthStored: Double = 280
-    @AppStorage("interfaceMode") private var interfaceMode: String = "VA"
+    @AppStorage("interfaceMode") private var interfaceMode: String = "VT"   // 5.24 : Tuiles par défaut
     @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
+    @AppStorage("forceLightMode") private var forceLightMode: Bool = false  // 5.24 : clair forcé
     @AppStorage("onboardingComplete") private var onboardingComplete: Bool = false
     // #40 — Raccourcis configurables
     @AppStorage("shortcutFocusKey")  private var shortcutFocusKey:  String = "i"
@@ -353,6 +354,8 @@ struct MainView: View {
                         case .dashboard:
                             if interfaceMode == "VD" {
                                 PaperDashboardView(store: store, showSidebar: $showSidebar)
+                            } else if interfaceMode == "VT" {
+                                TilesDashboardView(store: store, showSidebar: $showSidebar)   // 5.24
                             } else {
                                 DashboardView(store: store, showSidebar: $showSidebar)
                             }
@@ -390,7 +393,7 @@ struct MainView: View {
         .navigationTitle(windowTitle)   // 5.18 : la fenêtre dit où l'on est ; 5.19 : + minuteur en cours
         .background(AppBackdrop().ignoresSafeArea())   // 5.16 : la barre latérale en verre réfracte le même fond
         .appGlassContainer()                          // 5.16 : verre rendu en commun (performance, fusion des formes)
-        .preferredColorScheme(forceDarkMode ? .dark : nil)  // #28 — Slate theme
+        .preferredColorScheme(forceDarkMode ? .dark : (forceLightMode ? .light : nil))  // #28 — Slate theme
         .onAppear {
             liveSidebarWidth = CGFloat(sidebarWidthStored)
             if !onboardingComplete && store.data.projects.isEmpty {

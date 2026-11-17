@@ -198,6 +198,9 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.19** — Pomodoro modernisé et raccourci au tableau de bord, titres de chapitre du plan, 15 améliorations
 - **5.20** — Minuteur de la barre des menus aligné sur celui de l'app
 - **5.21** — Barre des menus : texte du cadran qui ne déborde plus, anneau et chiffres arrondis
+- **5.22** — Saisies et pomodoros depuis Clem Hub
+- **5.23** — Correctifs d'audit : saisie pomodoro, ⌘Z entre les deux Mac, alertes d'échéance, Kanban, minuit, recherche sans accents
+- **5.24** — Affichage « Tuiles » du tableau de bord (clair / sombre) et récap du mois
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -228,3 +231,16 @@ Publication : chaque fusion dans `main` publie une version dans Releases. Si l'e
 
 ## 2026-11-15 — 5.22 : saisies et pomodoros depuis Clem Hub
 L’espace Écriture du Hub transmet des commandes immuables par n8n et l’agent du Mac dans `Writing Process/Hub/entrees`. L’app les valide et les intègre par ses propres méthodes de sauvegarde : totaux cumulatifs par chapitre (avec contrôle de la valeur de départ) et sessions Pomodoro liées au projet/chapitre. UUID stable pour les sessions, reçus de saisie dans `AppData.hubReceipts`, confirmation seulement après présence sur disque. Retours dans `Hub/retours`, capacité dans `Hub/pret.json`. L’app doit être ouverte sur un Mac ; autrement les commandes restent en attente. Aucun minuteur distant ne démarre sur le Mac. Les anciennes versions ne conservent pas hubReceipts : utiliser la 5.22 sur les deux Mac avant d’activer les saisies Hub. Tests : HubWritingBridgeTests.
+
+
+## 2026-11-17 — 5.23 : correctifs d'audit
+Audit complet du code (fonctions et verre). Corrigé : la saisie « signes écrits » en fin de pomodoro part du dernier total connu (`latestTotal`) au lieu de zéro, libellé selon l'unité ; les photos d'état de ⌘Z sont abandonnées quand des données de l'autre Mac, du Hub ou d'une restauration sont adoptées (`dropSnapshotUndo`) ; `chaptersWithDeadlines` ignore les chapitres et projets archivés ; l'alerte de rythme utilise `requiredPacePerDay` ; « 10 000 » accepté dans les objectifs des Réglages ; le Kanban passe par `setChapterStatus` et ignore les archivés ; les chiffres du jour se recalculent à minuit (`NSCalendarDayChanged`) ; un fichier mal nommé ne bloque plus la file du Hub ; palette et barre latérale cherchent sans accents ni casse ; objectif du jour effectif dans la barre des menus, la saisie rapide et le titre ; confirmation avant de supprimer un projet ; textes français (« Série », « Échéance »).
+Reste de l'audit, non traité : modes accessibles seulement par raccourci (Sanctuaire, Sprint, Mode panne, Aujourd'hui, Présentation) à mettre dans les menus ; Table des matières absente de la barre latérale ; objectif du jour encore lu dans `data.dailyGoal` par le Calendrier, les Graphiques et le mode Focus ; notifications d'échéance non coupées par le réglage des rappels.
+
+## 2026-11-17 — 5.24 : affichage « Tuiles » et récap du mois
+Demande de Clem après maquettes : tuiles claires, option sombre, style récent d'Apple, sans perdre aucune fonctionnalité. Ajout pur, rien n'est retiré :
+- `TilesDashboardView.swift` : troisième affichage du tableau de bord (`interfaceMode == "VT"`, menu Affichage ⌥⌘3, valeur par défaut des nouvelles installations et des Mac qui n'avaient jamais changé d'affichage). Grande tuile du chapitre en cours (titre en serif, total, feuillets de 1 500 signes, barre), tuiles Récap, Jour, Semaine, Mois (mois civil), Série, Échéance, Soutenance, et une tuile « Tableau de bord complet » qui revient à la version actuelle (VA). Saisie dans une capsule de verre en bas (`safeAreaInset`, le contenu défile dessous) ; ⌘S et ⌘N fonctionnent. Couleurs propres (`TilesTheme`), adaptatives clair / sombre.
+- Clair / sombre : bouton soleil / lune dans l'en-tête des Tuiles (`forceDarkMode`, nouveau `forceLightMode`) ; le réglage « Forcer le mode sombre » des Réglages reste et reprend la main.
+- `MonthlyRecapView.swift` : récap du mois écoulé en cinq écrans (couverture, total et feuillets avec part de l'objectif mensuel, calendrier des jours écrits et série, chapitre du mois et meilleur jour, résumé en quatre chiffres enregistrable en image). Ouvert une fois à la première ouverture du mois dans l'affichage Tuiles (`monthlyRecapLastSeen`), et depuis la tuile « Récap du mois ». Chiffres tirés de `dailyTotals()`.
+- Tests : `TilesAndRecapTests`.
+À vérifier sur l'app réelle : rendu des tuiles et de la capsule de verre en clair et en sombre (développé sans Xcode local, compilé par la CI).

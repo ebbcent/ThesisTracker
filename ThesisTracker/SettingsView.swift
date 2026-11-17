@@ -483,6 +483,10 @@ struct SettingsView: View {
                                     Spacer()
                                     Toggle("", isOn: $forceDarkMode)
                                         .toggleStyle(.switch).labelsHidden()
+                                        // 5.24 — ce réglage reprend la main sur le bouton clair/sombre des Tuiles
+                                        .onChange(of: forceDarkMode) { _, _ in
+                                            UserDefaults.standard.set(false, forKey: "forceLightMode")
+                                        }
                                         .tint(Color(hex: "#6B8EF0"))
                                 }
                                 .padding(14)

@@ -109,7 +109,7 @@ private struct WindowAccessor: NSViewRepresentable {
 struct ThesisTrackerApp: App {
     @StateObject private var store = DataStore()
     @StateObject private var pomodoroController = PomodoroAppController()
-    @AppStorage("interfaceMode") private var interfaceMode: String = "VA"
+    @AppStorage("interfaceMode") private var interfaceMode: String = "VT"
     // #48 — hotkey globale configurable pour le mode focus : lue directement
     // dans UserDefaults ("globalFocusKey") par GlobalHotKeys.
 
@@ -232,6 +232,12 @@ struct ThesisTrackerApp: App {
                     interfaceMode = "VD"
                 }
                 .keyboardShortcut("2", modifiers: [.command, .option])
+
+                // 5.24 — troisième affichage du tableau de bord
+                Button(interfaceMode == "VT" ? "✓ Tuiles (VT)" : "  Tuiles (VT)") {
+                    interfaceMode = "VT"
+                }
+                .keyboardShortcut("3", modifiers: [.command, .option])
 
                 Divider()
 
