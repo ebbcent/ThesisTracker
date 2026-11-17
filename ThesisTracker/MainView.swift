@@ -87,6 +87,20 @@ struct MainView: View {
     @AppStorage("interfaceMode") private var interfaceMode: String = "VT"   // 5.24 : Tuiles par défaut
     @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
     @AppStorage("forceLightMode") private var forceLightMode: Bool = false  // 5.24 : clair forcé
+    /// Sorti du corps de la vue en 5.24 (expression principale trop lourde à typer).
+    private func handleAppear() {
+        liveSidebarWidth = CGFloat(sidebarWidthStored)
+        if !onboardingComplete && store.data.projects.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.4) { showOnboarding = true }
+        }
+        // Le bilan mensuel est généré uniquement après que load() ait peuplé les
+        // projets — garde interne dans `checkAndGenerateMonthlyReport`. Délai
+        // pour laisser load() async finir d'abord.
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.5) {
+            store.checkAndGenerateMonthlyReport()
+        }
+    }
+
     /// Tableau de bord selon l'affichage choisi (VA, VD, ou VT depuis la 5.24).
     /// Sorti du corps de la vue : l'expression principale devenait trop lourde à typer.
     @ViewBuilder private var dashboardPage: some View {
@@ -406,18 +420,7 @@ struct MainView: View {
         .appGlassContainer()                          // 5.16 : verre rendu en commun (performance, fusion des formes)
         .preferredColorScheme(preferredScheme)  // #28 — Slate theme ; 5.24 : clair forcé
         .modifier(AppLookRefresher())           // 5.24 — changer d'affichage redessine toute l'app
-        .onAppear {
-            liveSidebarWidth = CGFloat(sidebarWidthStored)
-            if !onboardingComplete && store.data.projects.isEmpty {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { showOnboarding = true }
-            }
-            // Le bilan mensuel est généré uniquement après que load() ait peuplé les
-            // projets — garde interne dans `checkAndGenerateMonthlyReport`. Délai
-            // pour laisser load() async finir d'abord.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                store.checkAndGenerateMonthlyReport()
-            }
-        }
+        .onAppear(perform: handleAppear)
         .sheet(isPresented: $showOnboarding) {
             OnboardingView(store: store, isPresented: $showOnboarding)
                 .onDisappear { onboardingComplete = true }
