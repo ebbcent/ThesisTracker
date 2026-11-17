@@ -309,3 +309,20 @@ struct TilesSessionContent: View {
         }
     }
 }
+
+// MARK: Changement d'apparence (Tuiles ↔ affichages d'origine)
+
+/// Quand l'affichage change, les couleurs de l'app sont relues et la fenêtre est redessinée.
+struct AppLookRefresher: ViewModifier {
+    @AppStorage("interfaceMode") private var interfaceMode: String = "VT"
+    @State private var token = 0
+
+    func body(content: Content) -> some View {
+        content
+            .id(token)
+            .onChange(of: interfaceMode) { _, _ in
+                AppLook.refresh()
+                token += 1
+            }
+    }
+}

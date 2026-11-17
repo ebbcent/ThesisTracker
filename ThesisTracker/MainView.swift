@@ -87,7 +87,11 @@ struct MainView: View {
     @AppStorage("interfaceMode") private var interfaceMode: String = "VT"   // 5.24 : Tuiles par défaut
     @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
     @AppStorage("forceLightMode") private var forceLightMode: Bool = false  // 5.24 : clair forcé
-    @State private var appLookToken = 0
+    /// 5.24 — sombre forcé, clair forcé, ou apparence du système.
+    private var preferredScheme: ColorScheme? {
+        if forceDarkMode { return .dark }
+        return forceLightMode ? .light : nil
+    }
     @AppStorage("onboardingComplete") private var onboardingComplete: Bool = false
     // #40 — Raccourcis configurables
     @AppStorage("shortcutFocusKey")  private var shortcutFocusKey:  String = "i"
@@ -394,13 +398,8 @@ struct MainView: View {
         .navigationTitle(windowTitle)   // 5.18 : la fenêtre dit où l'on est ; 5.19 : + minuteur en cours
         .background(AppBackdrop().ignoresSafeArea())   // 5.16 : la barre latérale en verre réfracte le même fond
         .appGlassContainer()                          // 5.16 : verre rendu en commun (performance, fusion des formes)
-        .preferredColorScheme(forceDarkMode ? .dark : (forceLightMode ? .light : nil))
-        // 5.24 — changer d'affichage change l'apparence de toute l'app : couleurs relues, vues redessinées
-        .id(appLookToken)
-        .onChange(of: interfaceMode) { _, _ in
-            AppLook.refresh()
-            appLookToken += 1
-        }  // #28 — Slate theme
+        .preferredColorScheme(preferredScheme)  // #28 — Slate theme ; 5.24 : clair forcé
+        .modifier(AppLookRefresher())           // 5.24 — changer d'affichage redessine toute l'app
         .onAppear {
             liveSidebarWidth = CGFloat(sidebarWidthStored)
             if !onboardingComplete && store.data.projects.isEmpty {
