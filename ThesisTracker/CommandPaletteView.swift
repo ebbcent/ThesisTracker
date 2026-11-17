@@ -137,7 +137,7 @@ struct CommandPaletteView: View {
                                     Button(action: result.action) {
                                         HStack(spacing: 12) {
                                             ZStack {
-                                                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                                RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                                     .fill(Color.accent.opacity(0.12))
                                                     .frame(width: 28, height: 28)
                                                 Image(systemName: result.icon)
@@ -162,7 +162,7 @@ struct CommandPaletteView: View {
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 8)
                                         .background(
-                                            RoundedRectangle(cornerRadius: 8)
+                                            RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                                                 .fill(i == selectedIndex ? Color.accent.opacity(0.10) : Color.clear)
                                         )
                                         .contentShape(Rectangle())
@@ -191,10 +191,10 @@ struct CommandPaletteView: View {
                 }
             }
             .frame(width: 520)
-            .appGlass(in: RoundedRectangle(cornerRadius: 16, style: .continuous), legible: true)   // 5.16 : verre standard (lisibilité)
+            .appGlass(in: RoundedRectangle(cornerRadius: AppLook.r(16, 22), style: .continuous), legible: true)   // 5.16 : verre standard (lisibilité)
             .shadow(color: .black.opacity(0.22), radius: 18, x: 0, y: 8)
             .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(16, 22), style: .continuous)
                     .stroke(Color.cardBorder, lineWidth: 1)
             )
             .offset(y: -80)

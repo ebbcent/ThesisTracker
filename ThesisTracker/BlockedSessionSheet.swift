@@ -107,7 +107,7 @@ struct BlockedSessionSheet: View {
         Button(action: action) {
             HStack(alignment: .top, spacing: 12) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                         .fill(color.opacity(0.12))
                         .frame(width: 38, height: 38)
                     Image(systemName: icon)
@@ -130,8 +130,8 @@ struct BlockedSessionSheet: View {
             }
             .padding(14)
             .background(Color.cardBg)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
             .contentShape(Rectangle())
         }
         .buttonStyle(.pressable)
@@ -147,7 +147,7 @@ struct BlockedSessionSheet: View {
                 .frame(minHeight: 100)
                 .padding(8)
                 .background(Color.fieldBg)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             HStack {
                 Spacer()
                 Button {

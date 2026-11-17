@@ -12,15 +12,16 @@ struct CockpitButtonStyle: ButtonStyle {
             .foregroundStyle(prominent ? Color.white : CockpitTheme.textPrimary(for: colorScheme))
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
+            // 5.25 — en Tuiles : pastille, sans liseré ni ombre
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(12, 19), style: .continuous)
                     .fill(background(configuration: configuration))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(border(configuration: configuration), lineWidth: 1)
+                RoundedRectangle(cornerRadius: AppLook.r(12, 19), style: .continuous)
+                    .stroke(AppLook.tiles && prominent ? Color.clear : border(configuration: configuration), lineWidth: 1)
             )
-            .shadow(color: CockpitTheme.shadow(for: colorScheme).opacity(prominent ? 0.9 : 0.35), radius: prominent ? 10 : 4, y: 6)
+            .shadow(color: CockpitTheme.shadow(for: colorScheme).opacity(AppLook.tiles ? 0 : (prominent ? 0.9 : 0.35)), radius: prominent ? 10 : 4, y: 6)
             .scaleEffect(configuration.isPressed ? 0.985 : 1)
             .appAnimation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
@@ -63,7 +64,7 @@ struct PremiumMenuPicker: View {
                     .foregroundStyle(accent)
                     .frame(width: 24, height: 24)
                     .background(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous)
                             .fill(accent.opacity(colorScheme == .dark ? 0.18 : 0.12))
                     )
                 VStack(alignment: .leading, spacing: 2) {
@@ -84,11 +85,11 @@ struct PremiumMenuPicker: View {
             .padding(.vertical, 10)
             .fixedSize(horizontal: false, vertical: true)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(14, 20), style: .continuous)
                     .fill(CockpitTheme.overlayFill(for: colorScheme))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(14, 20), style: .continuous)
                     .stroke(CockpitTheme.stroke(for: colorScheme), lineWidth: 1)
             )
         }

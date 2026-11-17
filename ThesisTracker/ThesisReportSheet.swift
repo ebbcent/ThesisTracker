@@ -61,10 +61,10 @@ struct ThesisReportSheet: View {
                 .foregroundColor(copied ? .accentGreen : .white)
                 .padding(.horizontal, 14).padding(.vertical, 8)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                         .fill(copied ? Color.accentGreen.opacity(0.15) : Color.accent)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 10)
+                            RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                                 .stroke(copied ? Color.accentGreen.opacity(0.4) : Color.clear, lineWidth: 1)
                         )
                 )

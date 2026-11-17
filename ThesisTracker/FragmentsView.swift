@@ -14,7 +14,7 @@ struct FragmentsWidget: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(red: 0.961, green: 0.620, blue: 0.043).opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "scribble.variable")
@@ -38,7 +38,7 @@ struct FragmentsWidget: View {
                         .font(.system(size: 12))
                         .padding(7)
                         .background(Color.fieldBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 7))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                     Button(action: addFragment) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 18))

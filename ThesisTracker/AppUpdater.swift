@@ -335,8 +335,8 @@ struct UpdatesSettingsSection: View {
                             .textFieldStyle(.plain)
                             .font(.system(size: 12, design: .monospaced))
                             .padding(.horizontal, 10).padding(.vertical, 7)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(Color.fieldBg))
-                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                            .background(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).fill(Color.fieldBg))
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
                             .accessibilityLabel("Clé GitHub")
                         Button("Enregistrer") {
                             updater.saveToken(tokenInput)
@@ -354,8 +354,8 @@ struct UpdatesSettingsSection: View {
             }
             .padding(16)
             .background(Color.cardBg)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(14, 20)).stroke(Color.cardBorder, lineWidth: 1))
         }
     }
 
@@ -381,16 +381,31 @@ struct UpdatesSettingsSection: View {
 struct AccentPillButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
-    func makeBody(configuration: Configuration) -> some View {
+    @ViewBuilder func makeBody(configuration: Configuration) -> some View {
+        if AppLook.tiles {
+            // 5.25 — en Tuiles : pastille pleine, comme les boutons de l'accueil
+            configuration.label
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(AppLook.onAccent)
+                .padding(.horizontal, 16).padding(.vertical, 7)
+                .background(Capsule().fill(Color.accentWarm.opacity(configuration.isPressed ? 0.85 : 1)))
+                .scaleEffect(configuration.isPressed && !Motion.reduce ? 0.97 : 1)
+                .opacity(isEnabled ? 1 : 0.45)
+        } else {
+            classicBody(configuration: configuration)
+        }
+    }
+
+    private func classicBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 12, weight: .semibold))
             .foregroundColor(.accentWarm)
             .padding(.horizontal, 12).padding(.vertical, 6)
             // 5.16 : verre teinté d'ambre (réglage « Verre ») ; resserrement à l'appui
-            .appGlass(in: RoundedRectangle(cornerRadius: 8, style: .continuous),
+            .appGlass(in: RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous),
                       tint: Color.accentWarm.opacity(configuration.isPressed ? 0.30 : 0.16),
                       fallback: Color.accentWarm.opacity(configuration.isPressed ? 0.20 : 0.10))
-            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(Color.accentWarm.opacity(GlassIsOn.value ? 0.2 : 0.35), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous).stroke(Color.accentWarm.opacity(GlassIsOn.value ? 0.2 : 0.35), lineWidth: 1))
             .scaleEffect(configuration.isPressed && !Motion.reduce ? 0.97 : 1)
             .opacity(isEnabled ? 1 : 0.45)
     }

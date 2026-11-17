@@ -206,8 +206,8 @@ struct FocusWritingView: View {
                         }
                         .padding(.horizontal, 16).padding(.vertical, 12)
                         .background(Color.white.opacity(0.07))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(12, 18)).stroke(
                             fieldFocused ? Color.accent.opacity(0.6) : Color.white.opacity(0.12), lineWidth: 1))
                         .frame(maxWidth: 260)
 
@@ -223,9 +223,9 @@ struct FocusWritingView: View {
                             .background(
                                 Group {
                                     if savedConfirmation {
-                                        RoundedRectangle(cornerRadius: 12).fill(Color.accentGreen)
+                                        RoundedRectangle(cornerRadius: AppLook.r(12, 18)).fill(Color.accentGreen)
                                     } else {
-                                        RoundedRectangle(cornerRadius: 12)
+                                        RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                                             .fill(LinearGradient(colors: [.accent, .accentWarm],
                                                                  startPoint: .topLeading, endPoint: .bottomTrailing))
                                     }
@@ -305,8 +305,8 @@ struct FocusWritingView: View {
                     }
                     .padding(.horizontal, 14).padding(.vertical, 9)
                     .background(Color.white.opacity(0.05))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
                         noteFocused ? Color.white.opacity(0.2) : Color.white.opacity(0.07), lineWidth: 1))
                     .frame(maxWidth: 480)
 
@@ -348,8 +348,8 @@ struct FocusWritingView: View {
                             }
                             .padding(.horizontal, 14).padding(.vertical, 9)
                             .background(Color.yellow.opacity(0.06))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(
+                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
                                 Color.yellow.opacity(ideaFocused ? 0.3 : 0.12), lineWidth: 1))
                         }
                         .frame(maxWidth: 480)

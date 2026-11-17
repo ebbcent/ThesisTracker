@@ -72,9 +72,9 @@ struct DeadlineBoardView: View {
                     .foregroundColor(showSidebar ? .accent : .labelMuted)
                     .frame(width: 36, height: 36)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                             .fill(showSidebar ? Color.accent.opacity(0.10) : Color.glassFill)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
                                 showSidebar ? Color.accent.opacity(0.30) : Color.cardBorder, lineWidth: 1))
                     )
             }
@@ -112,8 +112,8 @@ struct DeadlineBoardView: View {
                 .foregroundColor(.labelMuted)
                 .padding(.horizontal, 10).padding(.vertical, 7)
                 .background(Color.cardBg)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
             }
             .buttonStyle(.pressable)
             .help("Exporter les échéances et jalons au format iCal (.ics)")
@@ -137,7 +137,7 @@ struct DeadlineBoardView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 12).padding(.vertical, 7)
                     .background(Color.accent)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 }
                 .menuStyle(.borderlessButton)
                 .fixedSize()
@@ -156,8 +156,8 @@ struct DeadlineBoardView: View {
             tabButton("Critique",  icon: "exclamationmark.triangle.fill", tab: .critique)
         }
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
     }
 
     private func tabButton(_ label: String, icon: String, tab: Tab) -> some View {
@@ -174,8 +174,8 @@ struct DeadlineBoardView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 9)
             .background(selectedTab == tab ? Color.accent.opacity(0.10) : Color.clear)
-            .clipShape(RoundedRectangle(cornerRadius: 9))
-            .contentShape(RoundedRectangle(cornerRadius: 9))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(9, 13)))
+            .contentShape(RoundedRectangle(cornerRadius: AppLook.r(9, 13)))
         }
         .buttonStyle(.pressable)
     }
@@ -903,8 +903,8 @@ extension DeadlineBoardView {
                     ganttBody
                 }
                 .background(Color.cardBg)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(14, 20)).stroke(Color.cardBorder, lineWidth: 1))
             }
         }
     }
@@ -1344,8 +1344,8 @@ struct MilestoneFormView: View {
                     .padding(14)
                 }
                 .background(Color.cardBg)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(14, 20)).stroke(Color.cardBorder, lineWidth: 1))
 
                 // Boutons
                 HStack(spacing: 12) {
@@ -1354,8 +1354,8 @@ struct MilestoneFormView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
@@ -1366,7 +1366,7 @@ struct MilestoneFormView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 22).padding(.vertical, 10)
                         .background(title.trimmingCharacters(in: .whitespaces).isEmpty ? Color.accent.opacity(0.4) : Color.accent)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                         .buttonStyle(.pressable)
                         .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
                         .keyboardShortcut(.return)

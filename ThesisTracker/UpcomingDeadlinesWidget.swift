@@ -14,7 +14,7 @@ struct UpcomingDeadlinesWidget: View {
             VStack(spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(hex: "#DC2626").opacity(0.10))
                             .frame(width: 28, height: 28)
                         Image(systemName: "flag.checkered")

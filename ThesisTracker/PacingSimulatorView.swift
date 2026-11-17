@@ -31,8 +31,8 @@ struct PacingSimulatorView: View {
         }
         .padding(12)
         .background(Color.fieldBg)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14), style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14), style: .continuous).stroke(Color.cardBorder, lineWidth: 1))
     }
 
     // MARK: Profils

@@ -365,10 +365,10 @@ struct PomodoroTodayView: View {
                                 .frame(width: 52, alignment: .leading)
                             GeometryReader { proxy in
                                 ZStack(alignment: .leading) {
-                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous)
                                         .fill(CockpitTheme.overlayFill(for: colorScheme))
                                         .frame(height: 28)
-                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous)
                                         .fill(Color(hex: segment.colorHex).opacity(0.85))
                                         .frame(width: max(40, proxy.size.width * CGFloat(min(segment.durationHours / 6, 1))), height: 28)
                                     Text(segment.title)
@@ -427,7 +427,7 @@ struct PomodoroTodayView: View {
         .padding(.vertical, 8)
         .padding(.horizontal, 10)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)
                 .fill(CockpitTheme.overlayFill(for: colorScheme))
         )
     }
@@ -457,11 +457,11 @@ struct PomodoroTodayView: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 7)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)
                 .fill(CockpitTheme.panel(for: colorScheme))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)
                 .stroke(CockpitTheme.stroke(for: colorScheme), lineWidth: 1)
         )
     }

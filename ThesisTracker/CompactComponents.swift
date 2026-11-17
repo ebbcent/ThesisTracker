@@ -217,9 +217,9 @@ struct CompactDatePicker: View {
             .accessibilityLabel("Jour suivant")
         }
         .background(Color.glassFill)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous)
                 .stroke(Color.glassBorder, lineWidth: 1)
         )
     }
@@ -246,7 +246,7 @@ struct CompactDatePicker: View {
                         .foregroundColor(.labelMuted)
                         .frame(width: 26, height: 26)
                         .background(Color.glassFill)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 }
                 .buttonStyle(.pressable)
                 .help("Mois précédent")
@@ -264,7 +264,7 @@ struct CompactDatePicker: View {
                         .foregroundColor(canGoNextMonth ? .labelMuted : .labelMuted.opacity(0.25))
                         .frame(width: 26, height: 26)
                         .background(Color.glassFill)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 }
                 .buttonStyle(.pressable)
                 .disabled(!canGoNextMonth)
@@ -351,7 +351,7 @@ struct CompactDatePicker: View {
                     : isToday  ? Color.accent.opacity(0.12)
                     : Color.clear
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
         }
         .buttonStyle(.pressable)
         .disabled(disabled)
@@ -508,9 +508,9 @@ struct CompactDropdownPicker: View {
             }
             .padding(.horizontal, 12).padding(.vertical, 8)
             .background(Color.glassFill)
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14), style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(10, 14), style: .continuous)
                     .stroke(Color.glassBorder, lineWidth: 1)
             )
         }
@@ -540,7 +540,7 @@ struct CompactDropdownPicker: View {
                         }
                         .padding(.horizontal, 12).padding(.vertical, 9)
                         .background(item.id == selectedId ? iconColor.opacity(0.08) : Color.clear)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                     }
                     .buttonStyle(.pressable)
                 }

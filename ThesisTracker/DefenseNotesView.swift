@@ -25,7 +25,7 @@ struct DefenseNotesWidget: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "graduationcap.fill")
@@ -217,7 +217,7 @@ struct DefenseNotesSheet: View {
                         .frame(minHeight: 60)
                         .padding(6)
                         .background(Color.fieldBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                     HStack(spacing: 6) {
                         Button("Annuler") { editingNoteId = nil }
                             .buttonStyle(.pressable).font(.system(size: 11)).foregroundColor(.labelMuted)
@@ -283,7 +283,7 @@ struct DefenseNotesSheet: View {
                     .font(.system(size: 12))
                     .padding(8)
                     .background(Color.fieldBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 Button(action: addNote) {
                     Text("Ajouter")
                         .font(.system(size: 11, weight: .semibold))

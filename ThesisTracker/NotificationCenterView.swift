@@ -43,7 +43,7 @@ struct NotificationCenterView: View {
         }
         .sheetFrame(width: 360, height: 500)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20), style: .continuous))
     }
 
     // MARK: - Header
@@ -214,7 +214,7 @@ struct NotificationRow: View {
             // Category icon + unread dot
             ZStack(alignment: .topTrailing) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    RoundedRectangle(cornerRadius: AppLook.r(9, 13), style: .continuous)
                         .fill(notif.category.color.opacity(0.12))
                         .frame(width: 34, height: 34)
                     Image(systemName: notif.category.icon)

@@ -62,7 +62,7 @@ struct SelfReviewSheet: View {
                         .frame(minHeight: 80)
                         .padding(6)
                         .background(Color.fieldBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 }
                 .padding(20)
             }
@@ -107,7 +107,7 @@ struct SelfReviewSheet: View {
         }
         .padding(10)
         .background(Color.labelMuted.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
     }
 
     private func criterionRow(_ c: Criterion) -> some View {
@@ -147,8 +147,8 @@ struct SelfReviewSheet: View {
         }
         .padding(10)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
     }
 
     private var footer: some View {
@@ -229,7 +229,7 @@ struct PainfulChaptersWidget: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(red: 0.929, green: 0.329, blue: 0.329).opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "bandage.fill")
@@ -271,7 +271,7 @@ struct PainfulChaptersWidget: View {
                             }
                             .padding(8)
                             .background(severityColor(p.score).opacity(0.06))
-                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                         }
                         if painful.count > 3 {
                             Text("+ \(painful.count - 3) autre\(painful.count - 3 > 1 ? "s" : "")")

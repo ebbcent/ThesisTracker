@@ -45,7 +45,7 @@ struct DailyQuoteWidget: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(hex: "#0F766E").opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "quote.bubble.fill")

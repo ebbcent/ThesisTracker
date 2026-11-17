@@ -103,8 +103,8 @@ struct ImportView: View {
                     }
                     .frame(height: 130)
                     .background(Color.cardBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                     .onChange(of: pastedText) { _, _ in parseText() }
                 }
 
@@ -157,8 +157,8 @@ struct ImportView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
 
                     Spacer()
@@ -175,9 +175,9 @@ struct ImportView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 20).padding(.vertical, 10)
                         .background(canImport ? Color.accent : (importDone ? Color.accentGreen : Color.cardBorder))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                         .shadow(color: canImport ? Color.accent.opacity(0.30) : .clear, radius: 6, x: 0, y: 3)
-                        .contentShape(RoundedRectangle(cornerRadius: 10))
+                        .contentShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                     }
                     .buttonStyle(.pressable)
                     .disabled(!canImport)
@@ -243,8 +243,8 @@ struct ImportView: View {
                 .frame(maxHeight: 160)
             }
             .background(Color.cardBg)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
         }
     }
 
@@ -260,8 +260,8 @@ struct ImportView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10).padding(.vertical, 6)
                 .background(Color.cardBg)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
         }
     }
 

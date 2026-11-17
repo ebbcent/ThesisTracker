@@ -435,7 +435,7 @@ struct DashboardView: View {
             }
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                 .stroke(
                     isDropTarget ? Color.accent : (isCustomizing ? Color.accent.opacity(0.25) : Color.clear),
                     lineWidth: isDropTarget ? 2 : 1.5
@@ -536,8 +536,8 @@ struct DashboardView: View {
         }
         .padding(.horizontal, 12).padding(.vertical, 8)
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
         .shadow(color: .black.opacity(0.18), radius: 8, x: 0, y: 3)
     }
 
@@ -586,7 +586,7 @@ struct DashboardView: View {
 
         ZStack {
             if isDragging {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                     .strokeBorder(
                         isActive ? Color.accent : Color.labelMuted.opacity(0.18),
                         style: StrokeStyle(lineWidth: isActive ? 2 : 1, dash: isActive ? [] : [4, 3])
@@ -683,7 +683,7 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 28)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                 .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
                 .foregroundColor(.labelMuted.opacity(0.18))
         )
@@ -747,9 +747,9 @@ struct DashboardView: View {
                     .foregroundColor(showSidebar ? .accentWarm : .labelMuted)
                     .frame(width: 28, height: 28)
                     .background(
-                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                             .fill(showSidebar ? Color.accentWarm.opacity(0.09) : Color.glassFill)
-                            .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous).stroke(
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous).stroke(
                                 showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                     )
             }
@@ -852,9 +852,9 @@ struct DashboardView: View {
                 .foregroundColor(.primary.opacity(0.85))   // 5.18 : plus de bleu isolé ; même style que les autres boutons d'en-tête
                 .padding(.horizontal, 9).padding(.vertical, 5)
                 .background(
-                    RoundedRectangle(cornerRadius: 7)
+                    RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                         .fill(Color.glassFill)
-                        .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.cardBorder, lineWidth: 1))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10)).stroke(Color.cardBorder, lineWidth: 1))
                 )
             }
             .buttonStyle(.pressable)
@@ -875,9 +875,9 @@ struct DashboardView: View {
                     .foregroundColor(dashboardCompact ? .accent : .labelMuted)
                     .frame(width: 28, height: 28)
                     .background(
-                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                             .fill(dashboardCompact ? Color.accent.opacity(0.09) : Color.glassFill)
-                            .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous).stroke(
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous).stroke(
                                 dashboardCompact ? Color.accent.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                     )
             }
@@ -891,9 +891,9 @@ struct DashboardView: View {
                     .foregroundColor(.labelMuted)
                     .frame(width: 28, height: 28)
                     .background(
-                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                             .fill(Color.glassFill)
-                            .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous).stroke(Color.cardBorder, lineWidth: 1))
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous).stroke(Color.cardBorder, lineWidth: 1))
                     )
             }
             .buttonStyle(.pressable)
@@ -981,8 +981,8 @@ struct DashboardView: View {
                                         .foregroundColor(idx > 0 ? .secondary : .labelMuted.opacity(0.3))
                                         .frame(width: 22, height: 22)
                                         .background(Color.glassFill)
-                                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.cardBorder, lineWidth: 1))
+                                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color.cardBorder, lineWidth: 1))
                                 }
                                 .buttonStyle(.pressable)
                                 .disabled(idx <= 0)
@@ -997,8 +997,8 @@ struct DashboardView: View {
                                         .foregroundColor(idx < chapters.count - 1 ? .secondary : .labelMuted.opacity(0.3))
                                         .frame(width: 22, height: 22)
                                         .background(Color.glassFill)
-                                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.cardBorder, lineWidth: 1))
+                                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color.cardBorder, lineWidth: 1))
                                 }
                                 .buttonStyle(.pressable)
                                 .disabled(idx >= chapters.count - 1)
@@ -1017,8 +1017,8 @@ struct DashboardView: View {
                                     .foregroundColor(showChapterNotes ? .accentWarm : .labelMuted)
                                     .frame(width: 28, height: 28)
                                     .background(showChapterNotes ? Color.accentWarm.opacity(0.10) : Color.glassFill)
-                                    .clipShape(RoundedRectangle(cornerRadius: 7))
-                                    .overlay(RoundedRectangle(cornerRadius: 7).stroke(
+                                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10)).stroke(
                                         showChapterNotes ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                             }
                             .buttonStyle(.pressable)
@@ -1157,8 +1157,8 @@ struct DashboardView: View {
                                     .frame(minHeight: 72, maxHeight: 160)
                                     .padding(8)
                                     .background(Color.fieldBg)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
                                     .onChange(of: notesPlanText)    { _, v in scheduleNotesSave(chapter: chapter, project: project) }
                                     .onChange(of: notesIdeasText)   { _, v in scheduleNotesSave(chapter: chapter, project: project) }
                                     .onChange(of: notesBlockersText) { _, v in scheduleNotesSave(chapter: chapter, project: project) }
@@ -1251,8 +1251,8 @@ struct DashboardView: View {
                                 .foregroundColor(Color(red: 1, green: 0.35, blue: 0.35))
                                 .frame(width: 28, height: 28)
                                 .background(Color.red.opacity(0.08))
-                                .clipShape(RoundedRectangle(cornerRadius: 7))
-                                .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.red.opacity(0.18), lineWidth: 1))
+                                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                                .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10)).stroke(Color.red.opacity(0.18), lineWidth: 1))
                         }
                         .buttonStyle(.pressable)
                         .transition(.scale(scale: 0.95).combined(with: .opacity))
@@ -1408,8 +1408,8 @@ struct DashboardView: View {
                     }
                     .padding(9)
                     .background(Color.accentWarm.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentWarm.opacity(0.2), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accentWarm.opacity(0.2), lineWidth: 1))
                     .padding(.top, 10)
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
@@ -1522,7 +1522,7 @@ struct DashboardView: View {
             return true
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppLook.r(16, 22))
                 .stroke(Color.accent, lineWidth: 2)
                 .opacity(isFileDropTarget ? 1 : 0)
                 .appAnimation(.easeInOut(duration: 0.15), value: isFileDropTarget)
@@ -1604,8 +1604,8 @@ struct DashboardView: View {
                         }
                         .padding(.horizontal, 8).padding(.vertical, 5)
                         .background(Color(red: 0.929, green: 0.329, blue: 0.329).opacity(0.07))
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(red: 0.929, green: 0.329, blue: 0.329).opacity(0.15), lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color(red: 0.929, green: 0.329, blue: 0.329).opacity(0.15), lineWidth: 1))
                         .padding(.top, 4)
                     } else if store.adaptedDailyGoalDiffers {
                         HStack(spacing: 5) {
@@ -1616,8 +1616,8 @@ struct DashboardView: View {
                         }
                         .padding(.horizontal, 8).padding(.vertical, 5)
                         .background(Color.accentWarm.opacity(0.07))
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.accentWarm.opacity(0.15), lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color.accentWarm.opacity(0.15), lineWidth: 1))
                         .padding(.top, 8)
                     }
 
@@ -1958,7 +1958,7 @@ struct DashboardView: View {
                 .background(
                     (vel > 0 && req > 0 && vel >= req ? Color.accentGreen : Color.accentWarm).opacity(0.07)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
             }
         }
     }
@@ -2099,9 +2099,9 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8).padding(.horizontal, 4)
         .background(day.isToday ? Color.accent.opacity(0.08) : Color.clear)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
         .overlay(day.isToday
-            ? RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.25), lineWidth: 1)
+            ? RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accent.opacity(0.25), lineWidth: 1)
             : nil)
     }
 
@@ -2244,7 +2244,7 @@ struct DashboardView: View {
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 20).padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: 10).fill(Color.accent)
+                .background(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).fill(Color.accent)
                     .shadow(color: Color.accent.opacity(0.35), radius: 8, x: 0, y: 3))
                 .buttonStyle(.pressable)
             }
@@ -2550,9 +2550,9 @@ private struct WritingEntryInputCluster: View {
         }
         .padding(.horizontal, 12).padding(.vertical, 10)
         .background(
-            RoundedRectangle(cornerRadius: 9)
+            RoundedRectangle(cornerRadius: AppLook.r(9, 13))
                 .fill(isDictating ? Color.accent.opacity(0.08) : Color.fieldBg)
-                .overlay(RoundedRectangle(cornerRadius: 9)
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(9, 13))
                     .stroke(isDictating ? Color.accent : Color.cardBorder, lineWidth: isDictating ? 1.5 : 1))
         )
         .appAnimation(.easeInOut(duration: 0.2), value: isDictating)
@@ -2576,7 +2576,7 @@ private struct WritingEntryInputCluster: View {
             .padding(.horizontal, 14).padding(.vertical, 10)
             .background(
                 // 5.18 : désactivé = gris neutre (plus d'ambre « boueux » à demi-opacité)
-                RoundedRectangle(cornerRadius: 9)
+                RoundedRectangle(cornerRadius: AppLook.r(9, 13))
                     .fill(hasValue || savedConfirmation ? AnyShapeStyle(savedConfirmation ? Self.savedGradient : Self.saveGradient)
                                                         : AnyShapeStyle(Color.fieldBg))
                     .shadow(color: hasValue ? Color.accent.opacity(0.3) : .clear, radius: 6, x: 0, y: 2)
@@ -2805,7 +2805,7 @@ private struct StatMiniCard: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 7)
+                    RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                         .fill(iconBg)
                         .frame(width: 26, height: 26)
                     Image(systemName: icon)
@@ -2835,8 +2835,8 @@ private struct StatMiniCard: View {
         }
         .padding(12)
         .background(Color.fieldBg)
-        .clipShape(RoundedRectangle(cornerRadius: 9))
-        .overlay(RoundedRectangle(cornerRadius: 9).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(9, 13)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(9, 13)).stroke(Color.cardBorder, lineWidth: 1))
     }
 }
 
@@ -2926,8 +2926,8 @@ struct DashboardCustomizeSheet: View {
                                 .foregroundColor(.accent)
                                 .padding(.horizontal, 10).padding(.vertical, 5)
                                 .background(Color.accent.opacity(0.08))
-                                .clipShape(RoundedRectangle(cornerRadius: 7))
-                                .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.accent.opacity(0.18), lineWidth: 1))
+                                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                                .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10)).stroke(Color.accent.opacity(0.18), lineWidth: 1))
                             }
                             .buttonStyle(.pressable)
                             .help("Appliquer le profil « \(profile.name) »")
@@ -2974,7 +2974,7 @@ struct DashboardCustomizeSheet: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 20).padding(.vertical, 9)
                     .background(Color.accent)
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(9, 13)))
                     .buttonStyle(.pressable)
                 }
                 .padding(20)
@@ -3012,8 +3012,8 @@ struct DashboardCustomizeSheet: View {
                 if widget != items.last { Divider() }
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
     }
 
     private func activeWidgetRow(_ widget: DashboardView.DashboardWidget) -> some View {
@@ -3103,8 +3103,8 @@ struct DashboardCustomizeSheet: View {
                 if widget != availableItems.last { Divider() }
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder.opacity(0.5), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder.opacity(0.5), lineWidth: 1))
     }
 
     private var availableItems: [DashboardView.DashboardWidget] {

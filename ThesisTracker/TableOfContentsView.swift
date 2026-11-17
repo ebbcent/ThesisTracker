@@ -22,9 +22,9 @@ struct TableOfContentsView: View {
                             .foregroundColor(showSidebar ? .accentWarm : .labelMuted)
                             .frame(width: 28, height: 28)
                             .background(
-                                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                     .fill(showSidebar ? Color.accentWarm.opacity(0.09) : Color.glassFill)
-                                    .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                         .stroke(showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                             )
                     }
@@ -52,8 +52,8 @@ struct TableOfContentsView: View {
                         .foregroundColor(.accent)
                         .padding(.horizontal, 10).padding(.vertical, 5)
                         .background(Color.accent.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.2), lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accent.opacity(0.2), lineWidth: 1))
                     }
                     .buttonStyle(.pressable)
                 }
@@ -101,7 +101,7 @@ struct TableOfContentsView: View {
                 } label: {
                     HStack(spacing: 10) {
                         ZStack {
-                            RoundedRectangle(cornerRadius: 6).fill(Color.accent.opacity(0.12)).frame(width: 26, height: 26)
+                            RoundedRectangle(cornerRadius: AppLook.r(6, 10)).fill(Color.accent.opacity(0.12)).frame(width: 26, height: 26)
                             Image(systemName: "folder.fill").font(.system(size: 11)).foregroundColor(.accent)
                         }
                         VStack(alignment: .leading, spacing: 2) {
@@ -266,7 +266,7 @@ private struct ExportTextSheet: View {
                     }
                     .foregroundColor(.accent)
                     .padding(.horizontal, 10).padding(.vertical, 5)
-                    .background(Color.accent.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7))
+                    .background(Color.accent.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                 }
                 .buttonStyle(.pressable)
                 Button { dismiss() } label: {

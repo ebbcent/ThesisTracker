@@ -20,8 +20,8 @@ struct PomodoroTimerTabView: View {
                         .foregroundColor(.labelMuted)
                         .frame(width: 32, height: 32)
                         .background(Color.glassFill)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.glassBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.glassBorder, lineWidth: 1))
                 }
                 .buttonStyle(.pressable)
                 .padding(.leading, 16)
@@ -38,8 +38,8 @@ struct PomodoroTimerTabView: View {
                 }
                 .padding(4)
                 .background(Color.glassFill)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.glassBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.glassBorder, lineWidth: 1))
 
                 Spacer()
 
@@ -96,7 +96,7 @@ struct PomodoroTimerTabView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(isSelected ? Color.accent : Color.clear)
-            .clipShape(RoundedRectangle(cornerRadius: 7))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
         }
         .buttonStyle(.pressable)
     }

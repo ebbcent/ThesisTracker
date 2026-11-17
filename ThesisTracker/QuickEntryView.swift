@@ -122,11 +122,11 @@ struct QuickEntryView: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(16, 22), style: .continuous)
                 .fill(Color.cardBg)
                 .shadow(color: .black.opacity(0.18), radius: 10, x: 0, y: 4)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    RoundedRectangle(cornerRadius: AppLook.r(16, 22), style: .continuous)
                         .stroke(Color.cardBorder, lineWidth: 1)
                 )
 

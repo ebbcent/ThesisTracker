@@ -246,6 +246,15 @@ struct ThesisTrackerApp: App {
                 }
                 .keyboardShortcut("t", modifiers: [.command, .option])
             }
+            // 5.25 — les modes n'étaient accessibles que par des raccourcis non affichés
+            CommandMenu("Modes") {
+                Button("Écriture immersive  (⇧⌘I)") { NotificationCenter.default.post(name: .showFocusWriting, object: nil) }
+                Button("Sprint d'écriture  (⇧⌘T)") { NotificationCenter.default.post(name: .showWritingSprint, object: nil) }
+                Divider()
+                Button("Aujourd'hui  (⇧⌘J)") { NotificationCenter.default.post(name: .showTodayMode, object: nil) }
+                Button("Mode panne  (⇧⌘D)") { NotificationCenter.default.post(name: .showBlockedSession, object: nil) }
+                Button("Sanctuaire  (⌥⇧⌘K)") { NotificationCenter.default.post(name: .showSanctuary, object: nil) }
+            }
         }
 
         // ── Réglages (⌘,) ────────────────────────────────

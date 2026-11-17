@@ -28,12 +28,12 @@ struct InfoCard<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         // 5.19 : mêmes cartes que le reste de l'app (fond plein, filet), sans pastille décorative ni grande ombre
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(14, 22), style: .continuous)
                 .fill(Color.cardBg)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(Color.cardBorder, lineWidth: 1)
+            RoundedRectangle(cornerRadius: AppLook.r(14, 22), style: .continuous)
+                .stroke(AppLook.hairline, lineWidth: 1)
         )
     }
 }

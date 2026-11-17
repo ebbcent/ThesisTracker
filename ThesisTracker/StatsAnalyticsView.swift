@@ -52,9 +52,9 @@ struct StatsAnalyticsView: View {
                             .foregroundColor(showSidebar ? .accentWarm : .labelMuted)
                             .frame(width: 28, height: 28)
                             .background(
-                                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                     .fill(showSidebar ? Color.accentWarm.opacity(0.09) : Color.glassFill)
-                                    .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                         .stroke(showSidebar ? Color.accentWarm.opacity(0.25) : Color.cardBorder, lineWidth: 1))
                             )
                     }
@@ -497,7 +497,7 @@ struct StatsAnalyticsView: View {
                         }
                         .padding(10)
                         .background(Color.accentWarm.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
 
                         // Mini histogramme 6h–24h
                         let workHours = Array(6...23)
@@ -763,7 +763,7 @@ struct StatsAnalyticsView: View {
                         .foregroundColor(Color(red: 0.95, green: 0.35, blue: 0.35))
                         .padding(8)
                         .background(Color(red: 0.95, green: 0.35, blue: 0.35).opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 7))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                     }
                 }
             }
@@ -796,7 +796,7 @@ struct StatsAnalyticsView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(spacing: 8) {
                         ZStack {
-                            RoundedRectangle(cornerRadius: 8).fill(Color.accent.opacity(0.12)).frame(width: 28, height: 28)
+                            RoundedRectangle(cornerRadius: AppLook.r(8, 12)).fill(Color.accent.opacity(0.12)).frame(width: 28, height: 28)
                             Image(systemName: "calendar.badge.clock").font(.system(size: 12, weight: .semibold)).foregroundColor(.accent)
                         }
                         VStack(alignment: .leading, spacing: 1) {
@@ -1069,7 +1069,7 @@ struct StatsAnalyticsView: View {
                         }
                         .padding(8)
                         .background(Color.accentWarm.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 7))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                     }
                 }
             }
@@ -1121,9 +1121,9 @@ struct StatsAnalyticsView: View {
                                         }
                                         .padding(.horizontal, 8).padding(.vertical, 5)
                                         .background(
-                                            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                            RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                                 .fill(Color.glassFill)
-                                                .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                                .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                                     .stroke(Color.cardBorder, lineWidth: 0.5))
                                         )
                                     }
@@ -1240,10 +1240,10 @@ struct StatsAnalyticsView: View {
         }
         .padding(.horizontal, 8).padding(.vertical, 5)
         .background(
-            RoundedRectangle(cornerRadius: 7, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                 .fill(Color.glassFill)
                 .shadow(color: .black.opacity(0.12), radius: 4, y: 2)
-                .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                     .stroke(Color.cardBorder, lineWidth: 0.5))
         )
     }

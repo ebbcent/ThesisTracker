@@ -153,9 +153,9 @@ struct CalendarView: View {
                     .font(.system(size: 15, weight: .medium))
                     .foregroundColor(showSidebar ? .accent : .labelMuted)
                     .frame(width: 36, height: 36)
-                    .background(RoundedRectangle(cornerRadius: 10)
+                    .background(RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                         .fill(showSidebar ? Color.accent.opacity(0.15) : Color.glassFill)
-                        .overlay(RoundedRectangle(cornerRadius: 10)
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                             .stroke(showSidebar ? Color.accent.opacity(0.4) : Color.glassBorder, lineWidth: 1)))
             }
             .buttonStyle(.pressable)
@@ -177,8 +177,8 @@ struct CalendarView: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 12, weight: .semibold)).foregroundColor(.labelMuted)
                         .frame(width: 30, height: 30)
-                        .background(Color.glassFill).clipShape(RoundedRectangle(cornerRadius: 8))
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.glassBorder, lineWidth: 1))
+                        .background(Color.glassFill).clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.glassBorder, lineWidth: 1))
                 }
                 .buttonStyle(.pressable)
                 .help("Mois précédent")
@@ -194,8 +194,8 @@ struct CalendarView: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .semibold)).foregroundColor(.labelMuted)
                         .frame(width: 30, height: 30)
-                        .background(Color.glassFill).clipShape(RoundedRectangle(cornerRadius: 8))
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.glassBorder, lineWidth: 1))
+                        .background(Color.glassFill).clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.glassBorder, lineWidth: 1))
                 }
                 .buttonStyle(.pressable)
                 .disabled(!canGoForward)
@@ -308,7 +308,7 @@ struct CalendarView: View {
 
                 // Pastille + total
                 ZStack {
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: AppLook.r(6, 10))
                         .fill(isFuture ? Color.clear : cellColor(level, reached: reached))
                         .frame(height: 28)
                     if chars > 0 && !isFuture {
@@ -331,8 +331,8 @@ struct CalendarView: View {
                     ? Color.accent.opacity(0.12)
                     : (hoveredDateStr == ds ? Color.white.opacity(0.05) : Color.clear)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .overlay(RoundedRectangle(cornerRadius: 10)
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                 .stroke(isSelected ? Color.accent.opacity(0.35) : (isToday ? Color.accent.opacity(0.20) : Color.clear), lineWidth: 1))
             .overlay(alignment: .topTrailing) {
                 if isPinned {
@@ -342,7 +342,7 @@ struct CalendarView: View {
                         .padding(.top, 3).padding(.trailing, 3)
                 }
             }
-            .contentShape(RoundedRectangle(cornerRadius: 10))
+            .contentShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
         }
         .buttonStyle(.pressable)
         .onHover { hovering in
@@ -504,8 +504,8 @@ struct CalendarView: View {
                     }
                     .padding(.horizontal, 10).padding(.vertical, 8)
                     .background(Color.accent.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.18), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accent.opacity(0.18), lineWidth: 1))
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
 

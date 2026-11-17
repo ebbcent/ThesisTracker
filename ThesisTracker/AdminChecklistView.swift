@@ -22,7 +22,7 @@ struct AdminChecklistWidget: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(red: 0.300, green: 0.650, blue: 0.900).opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "tray.full.fill")
@@ -295,7 +295,7 @@ private struct AddAdminTaskSheet: View {
                     .font(.system(size: 12))
                     .padding(8)
                     .background(Color.fieldBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             }
             Toggle(isOn: $hasDueDate) {
                 Text("Échéance").font(.system(size: 12))
@@ -314,7 +314,7 @@ private struct AddAdminTaskSheet: View {
                     .frame(minHeight: 60)
                     .padding(6)
                     .background(Color.fieldBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             }
             HStack {
                 Button("Annuler") { dismiss() }

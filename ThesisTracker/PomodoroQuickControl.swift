@@ -72,9 +72,9 @@ struct PomodoroQuickControl: View {
             .accessibilityLabel("Options du minuteur")
         }
         .background(
-            RoundedRectangle(cornerRadius: 7, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                 .fill(isActive ? tint.opacity(0.09) : Color.glassFill)
-                .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                     .stroke(isActive ? tint.opacity(0.28) : Color.cardBorder, lineWidth: 1))
         )
         .contextMenu { menuItems }

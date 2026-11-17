@@ -17,7 +17,7 @@ struct ResearchTimeCard: View {
                 HStack {
                     HStack(spacing: 8) {
                         ZStack {
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                                 .fill(Color(hex: "#0F766E").opacity(0.12))
                                 .frame(width: 28, height: 28)
                             Image(systemName: "brain.head.profile")
@@ -217,8 +217,8 @@ struct ResearchLogSheet: View {
                             .font(.system(size: 13))
                             .padding(10)
                             .background(Color.fieldBg)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
                     }
 
                     // Projet / Chapitre (optionnel)
@@ -267,7 +267,7 @@ struct ResearchLogSheet: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 18).padding(.vertical, 8)
                     .background(totalMinutes > 0 ? Color.accent : Color.accent.opacity(0.4))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                     .buttonStyle(.pressable)
                     .disabled(totalMinutes == 0)
             }
@@ -307,9 +307,9 @@ struct ResearchLogSheet: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
             .background(isSelected ? Color(hex: type.color).opacity(0.10) : Color.fieldBg)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                     .stroke(isSelected ? Color(hex: type.color).opacity(0.35) : Color.cardBorder, lineWidth: 1)
             )
         }

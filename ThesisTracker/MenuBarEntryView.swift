@@ -387,8 +387,8 @@ struct MenuBarEntryView: View {
             }
             .padding(.horizontal, 10).padding(.vertical, 7)
             .background(Color.glassFill)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.glassBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.glassBorder, lineWidth: 1))
         }
     }
 

@@ -294,8 +294,8 @@ private struct SaveCheckpointSheet: View {
                     .font(.system(size: 12))
                     .padding(8)
                     .background(Color.fieldBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
             }
             Text("Le plan, les idées, les blockers, la prochaine action et le compteur courant seront figés.")
                 .font(.system(size: 10))
@@ -340,7 +340,7 @@ struct CheckpointsWidget: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color.accent.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "bookmark.fill")

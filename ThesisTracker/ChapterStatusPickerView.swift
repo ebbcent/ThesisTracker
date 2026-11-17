@@ -107,7 +107,7 @@ struct ChapterStatusPickerView: View {
         }
         .frame(width: 340)
         .background(Color(NSColor.windowBackgroundColor))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20)))
     }
 
     private func select(_ status: ChapterStatus) {
@@ -132,7 +132,7 @@ private struct StatusOptionCard: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(cardColor.opacity(isSelected ? 0.25 : 0.12))
                             .frame(width: 34, height: 34)
                         Image(systemName: status.icon)
@@ -161,12 +161,12 @@ private struct StatusOptionCard: View {
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                     .fill(isSelected
                           ? cardColor.opacity(0.10)
                           : (isHovered ? Color.primary.opacity(0.04) : Color.primary.opacity(0.02)))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                             .stroke(isSelected ? cardColor.opacity(0.5) : Color.primary.opacity(0.08), lineWidth: isSelected ? 1.5 : 1)
                     )
             )

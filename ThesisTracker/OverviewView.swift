@@ -48,9 +48,9 @@ struct OverviewView: View {
                     .foregroundColor(showSidebar ? .accent : .labelMuted)
                     .frame(width: 36, height: 36)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                             .fill(showSidebar ? Color.accent.opacity(0.10) : Color.glassFill)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
                                 showSidebar ? Color.accent.opacity(0.30) : Color.cardBorder, lineWidth: 1))
                     )
             }
@@ -79,9 +79,9 @@ struct OverviewView: View {
                     .foregroundColor(.accentWarm)
                     .padding(.horizontal, 12).padding(.vertical, 7)
                     .background(Color.accentWarm.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
-                    .contentShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
+                    .contentShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 }
                 .buttonStyle(.pressable)
 
@@ -96,9 +96,9 @@ struct OverviewView: View {
                     .foregroundColor(.accent)
                     .padding(.horizontal, 12).padding(.vertical, 7)
                     .background(Color.accent.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accent.opacity(0.25), lineWidth: 1))
-                    .contentShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accent.opacity(0.25), lineWidth: 1))
+                    .contentShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 }
                 .buttonStyle(.pressable)
             }
@@ -336,8 +336,8 @@ struct OverviewView: View {
                         }
                         .padding(.horizontal, 14).padding(.vertical, 10)
                         .background(Color.glassFill)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                     }
                     .buttonStyle(.pressable)
 
@@ -389,7 +389,7 @@ struct OverviewView: View {
                 // En-tête projet
                 HStack(spacing: 10) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color.accent.opacity(0.12))
                             .frame(width: 34, height: 34)
                         Image(systemName: "folder.fill")

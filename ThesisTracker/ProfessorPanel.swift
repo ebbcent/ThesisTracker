@@ -94,9 +94,9 @@ struct ProfessorQuickButton: View {
                     .foregroundColor(.accentWarm)
                     .frame(width: size, height: size)
                     .background(
-                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                             .fill(Color.accentWarm.opacity(0.09))
-                            .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                 .stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
                     )
                 if session.isSending {

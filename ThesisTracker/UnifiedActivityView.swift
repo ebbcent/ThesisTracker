@@ -44,9 +44,9 @@ struct UnifiedActivityView: View {
             }
             .padding(3)
             .background(Color.glassFill)
-            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(9, 13), style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(9, 13), style: .continuous)
                     .stroke(Color.cardBorder, lineWidth: 1)
             )
             .padding(.trailing, 20)
@@ -65,7 +65,7 @@ struct UnifiedActivityView: View {
                 .foregroundColor(selected ? .white : .labelMuted)
                 .frame(width: 30, height: 26)
                 .background(selected ? Color.accent : Color.clear)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10), style: .continuous))
         }
         .buttonStyle(.pressable)
         .help(tooltip)

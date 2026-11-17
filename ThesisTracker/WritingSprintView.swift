@@ -161,12 +161,12 @@ struct WritingSprintView: View {
                                 .foregroundColor(durationMinutes == min ? .black : .white.opacity(0.6))
                                 .padding(.horizontal, 16).padding(.vertical, 8)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                                         .fill(durationMinutes == min
                                               ? Color.accent
                                               : Color.white.opacity(0.08))
                                 )
-                                .contentShape(RoundedRectangle(cornerRadius: 10))
+                                .contentShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                         }
                         .buttonStyle(.pressable)
                         .appAnimation(.easeInOut(duration: 0.15), value: durationMinutes)
@@ -197,9 +197,9 @@ struct WritingSprintView: View {
                 }
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 .background(Color.white.opacity(0.07))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                         .stroke(targetFocused ? Color.accent.opacity(0.5) : Color.white.opacity(0.12),
                                 lineWidth: 1)
                 )
@@ -216,12 +216,12 @@ struct WritingSprintView: View {
                 .foregroundColor(.black)
                 .padding(.horizontal, 32).padding(.vertical, 14)
                 .background(
-                    RoundedRectangle(cornerRadius: 14)
+                    RoundedRectangle(cornerRadius: AppLook.r(14, 20))
                         .fill(LinearGradient(colors: [.accent, .accentWarm],
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing))
                 )
-                .contentShape(RoundedRectangle(cornerRadius: 14))
+                .contentShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20)))
             }
             .buttonStyle(.pressable)
         }
@@ -302,12 +302,12 @@ struct WritingSprintView: View {
                     .foregroundColor(.black)
                     .padding(.horizontal, 22).padding(.vertical, 12)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                             .fill(LinearGradient(colors: [.accent, .accentWarm],
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing))
                     )
-                    .contentShape(RoundedRectangle(cornerRadius: 12))
+                    .contentShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
                 }
                 .buttonStyle(.pressable)
 
@@ -321,12 +321,12 @@ struct WritingSprintView: View {
                     .foregroundColor(.white.opacity(0.55))
                     .padding(.horizontal, 18).padding(.vertical, 12)
                     .background(Color.white.opacity(0.07))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                             .stroke(Color.white.opacity(0.1), lineWidth: 1)
                     )
-                    .contentShape(RoundedRectangle(cornerRadius: 12))
+                    .contentShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
                 }
                 .buttonStyle(.pressable)
             }
@@ -368,12 +368,12 @@ struct WritingSprintView: View {
                     .foregroundColor(.black)
                     .padding(.horizontal, 24).padding(.vertical, 12)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                             .fill(LinearGradient(colors: [.accent, .accentWarm],
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing))
                     )
-                    .contentShape(RoundedRectangle(cornerRadius: 12))
+                    .contentShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
                 }
                 .buttonStyle(.pressable)
 
@@ -383,9 +383,9 @@ struct WritingSprintView: View {
                         .foregroundColor(.white.opacity(0.45))
                         .padding(.horizontal, 16).padding(.vertical, 12)
                         .background(Color.white.opacity(0.07))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                 }

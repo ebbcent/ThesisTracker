@@ -20,6 +20,7 @@ struct SettingsView: View {
     @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
 
     private let accentPresets: [(name: String, hex: String)] = [
+        ("Encre",    "#1F3FD1"),   // 5.25 — accent par défaut de l'apparence Tuiles
         ("Amber",    "#F59E0B"),
         ("Slate",    "#6B8EF0"),
         ("Indigo",   "#6366F1"),
@@ -226,8 +227,8 @@ struct SettingsView: View {
                                                 .frame(width: 80)
                                                 .padding(.horizontal, 8).padding(.vertical, 5)
                                                 .background(Color.fieldBg)
-                                                .clipShape(RoundedRectangle(cornerRadius: 7))
-                                                .overlay(RoundedRectangle(cornerRadius: 7)
+                                                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                                                .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                                                     .stroke(Color.cardBorder, lineWidth: 1))
                                                 Text(useWordCount ? "mots" : "car.")
                                                     .font(.system(size: 11)).foregroundColor(.labelMuted)
@@ -299,7 +300,7 @@ struct SettingsView: View {
                                         .foregroundColor(.accent)
                                         .padding(.horizontal, 10).padding(.vertical, 5)
                                         .background(Color.accent.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerRadius: 7))
+                                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                                         .buttonStyle(.pressable)
                                 }
                                 .padding(14)
@@ -332,7 +333,7 @@ struct SettingsView: View {
                                             .foregroundColor(.blue)
                                             .padding(.horizontal, 10).padding(.vertical, 5)
                                             .background(Color.blue.opacity(0.1))
-                                            .clipShape(RoundedRectangle(cornerRadius: 7))
+                                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                                             .buttonStyle(.pressable)
                                     }
                                 }
@@ -364,7 +365,7 @@ struct SettingsView: View {
                                         .foregroundColor(.orange)
                                         .padding(.horizontal, 10).padding(.vertical, 5)
                                         .background(Color.orange.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerRadius: 7))
+                                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                                         .buttonStyle(.pressable)
                                 }
                                 .padding(14)
@@ -441,6 +442,9 @@ struct SettingsView: View {
 
                         // ── Verre (5.16) ──────────────────────────────
                         GlassSettingsSection()
+
+                        // ── Fond de l'apparence Tuiles (5.25) ─────────
+                        TilesLookSettingsSection()
 
                         // ── Professeur (5.13) ──────────────────────────
                         ProfessorSettingsSection()
@@ -601,8 +605,8 @@ struct SettingsView: View {
                                             .frame(width: 48)
                                             .padding(.horizontal, 8).padding(.vertical, 6)
                                             .background(Color.fieldBg)
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
                                         Text("/ sem.")
                                             .font(.system(size: 12)).foregroundColor(.labelMuted)
                                     }
@@ -887,8 +891,8 @@ struct SettingsView: View {
                                                             .foregroundColor(isOn ? .white : .labelMuted)
                                                             .frame(width: 34, height: 24)
                                                             .background(isOn ? Color.accent : Color.fieldBg)
-                                                            .clipShape(RoundedRectangle(cornerRadius: 6))
-                                                            .overlay(RoundedRectangle(cornerRadius: 6)
+                                                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                                                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10))
                                                                 .stroke(isOn ? Color.accent : Color.cardBorder, lineWidth: 1))
                                                     }
                                                     .buttonStyle(.pressable)
@@ -952,8 +956,8 @@ struct SettingsView: View {
                             .foregroundColor(.labelMuted)
                             .padding(.horizontal, 18).padding(.vertical, 9)
                             .background(Color.cardBg)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
                             .buttonStyle(.pressable)
                             .keyboardShortcut(.escape)
 
@@ -964,7 +968,7 @@ struct SettingsView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 22).padding(.vertical, 9)
                             .background(Color.accent)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                             .buttonStyle(.pressable)
                             .keyboardShortcut(.return)
                     }
@@ -1040,8 +1044,8 @@ struct SettingsView: View {
                 .kerning(1.2)
             content()
                 .background(Color.cardBg)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20)))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(14, 20)).stroke(Color.cardBorder, lineWidth: 1))
         }
     }
 
@@ -1140,8 +1144,8 @@ struct SettingsView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 6).padding(.vertical, 4)
                     .background(Color.fieldBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.cardBorder, lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color.cardBorder, lineWidth: 1))
                     .onChange(of: keyBinding.wrappedValue) { _, new in
                         // Garder seulement 1 caractère minuscule
                         let filtered = String(new.lowercased().filter { $0.isLetter || $0.isNumber }.prefix(1))
@@ -1187,8 +1191,8 @@ struct GoalRow: View {
                     .frame(width: 76)
                     .padding(.horizontal, 10).padding(.vertical, 7)
                     .background(Color.fieldBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cardBorder, lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
                 Text(useWordCount ? "mots" : "car.")
                     .font(.system(size: 12)).foregroundColor(.labelMuted)
                     .frame(width: 30)

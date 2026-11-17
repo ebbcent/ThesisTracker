@@ -110,7 +110,7 @@ struct CooldownSheet: View {
                 .frame(minHeight: 60)
                 .padding(6)
                 .background(Color.fieldBg)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             if focusStep == index {
                 Button {
                     withAppAnimation { focusStep += 1 }

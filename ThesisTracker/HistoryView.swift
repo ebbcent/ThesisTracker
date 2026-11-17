@@ -193,7 +193,7 @@ struct HistoryRow: View {
                     .foregroundColor(Color(red: 0.95, green: 0.35, blue: 0.35))
                     .padding(8)
                     .background(Color(red: 0.95, green: 0.35, blue: 0.35).opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             }
             .buttonStyle(.pressable)
             .help("Supprimer")
@@ -201,8 +201,8 @@ struct HistoryRow: View {
         }
         .padding(14)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
     }
 
     private func formatNumber(_ n: Int) -> String {

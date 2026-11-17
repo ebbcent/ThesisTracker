@@ -240,11 +240,11 @@ private struct KanbanColumn: View {
         }
         .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                 .fill(isDropTarget ? status.color.opacity(0.08) : Color.cardBg.opacity(0.5))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18))
                 .stroke(isDropTarget ? status.color.opacity(0.35) : Color.cardBorder, lineWidth: isDropTarget ? 1.5 : 1)
         )
         .appAnimation(.easeInOut(duration: 0.15), value: isDropTarget)
@@ -321,9 +321,9 @@ private struct KanbanCard: View {
         }
         .padding(10)
         .background(Color.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                 .stroke(chapter.isCompleted ? Color.accentGreen.opacity(0.25) : Color.cardBorder, lineWidth: 1)
         )
     }

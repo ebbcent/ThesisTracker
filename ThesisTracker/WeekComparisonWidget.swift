@@ -17,7 +17,7 @@ struct WeekComparisonWidget: View {
             VStack(spacing: 12) {
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                             .fill(Color(hex: "#6366F1").opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "chart.bar.doc.horizontal")

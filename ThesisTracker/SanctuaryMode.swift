@@ -114,7 +114,7 @@ struct SanctuaryModeView: View {
                 .padding(16)
                 .frame(maxWidth: 400)
                 .background(Color.white.opacity(0.05))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
             } else {
                 Text("Aucun chapitre sélectionné.")
                     .foregroundColor(.white.opacity(0.5))
@@ -221,7 +221,7 @@ struct SanctuaryModeView: View {
                     .foregroundColor(.white)
                     .padding(10)
                     .background(Color.white.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 Button {
                     let trimmed = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !trimmed.isEmpty {

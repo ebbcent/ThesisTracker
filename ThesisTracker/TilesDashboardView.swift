@@ -21,18 +21,19 @@ enum TilesTheme {
         }))
     }
 
-    static let bg     = dynamic(0xF1EFEA, 0x0F0E10)
-    static let card   = dynamic(0xFFFFFF, 0x1C1B1E)
-    static let ink    = dynamic(0x1A1917, 0xF2EFE8)
-    static let muted  = dynamic(0x615C53, 0xA9A398)
-    static let line   = dynamic(0xE3DFD6, 0x333136)
-    static let blue   = dynamic(0x1F3FD1, 0x8FA3FF)
-    static let onBlue = dynamic(0xFFFFFF, 0x0F0E10)
+    // 5.25 — le fond, les cartes et l'accent suivent la palette de l'app (fond papier, accent choisi)
+    static var bg: Color { .appBg }
+    static var card: Color { .cardBg }
+    static let ink    = dynamic(0x1B1A17, 0xF0EDE6)
+    static var muted: Color { .labelMuted }
+    static var line: Color { .trackBg }
+    static var blue: Color { .accentWarm }
+    static let onBlue = Color.white
     static let red    = dynamic(0xB3261E, 0xFF8A7A)
     static let green  = dynamic(0x1F6B45, 0x7FD3A5)
     static let gold   = dynamic(0x8A5A00, 0xF0C36A)
 
-    static let radius: CGFloat = 28
+    static let radius: CGFloat = 22
     /// Un feuillet = 1 500 signes.
     static let sheetSize = 1500
 }
@@ -100,35 +101,40 @@ struct TilesDashboardView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 14) {
                 header
+                // 5.25 — d'abord le chapitre actif, seul ; le reste vient ensuite, en plus petit
                 if let project, let chapter {
                     heroCard(project: project, chapter: chapter)
                 } else {
                     emptyCard
                 }
-                if let project {
-                    TilesChapterList(store: store, project: project) { picked in
-                        select(chapter: picked.id, in: project.id)
-                    }
-                }
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 270, maximum: 560), spacing: 18)], spacing: 18) {
-                    recapTile
+                sectionLabel("Aujourd'hui")
+                LazyVGrid(columns: gridColumns, spacing: 14) {
                     ringTile(title: "Jour", value: store.dailyProgress, goal: store.effectiveDailyGoal, color: TilesTheme.blue)
                     ringTile(title: "Semaine", value: store.weeklyProgress, goal: store.data.weeklyGoal, color: TilesTheme.green)
                     ringTile(title: MonthlyRecap.monthName(Date()).capitalized, value: store.currentCalendarMonthProgress,
                              goal: store.data.monthlyGoal, color: TilesTheme.gold)
                     streakTile
-                    deadlineTile
-                    defenseTile
                     tile { TilesSessionContent(store: store) }
                     tile { TilesSlotContent(store: store) }
+                }
+                if let project {
+                    sectionLabel("Projet")
+                    TilesChapterList(store: store, project: project) { picked in
+                        select(chapter: picked.id, in: project.id)
+                    }
+                }
+                LazyVGrid(columns: gridColumns, spacing: 14) {
+                    deadlineTile
+                    defenseTile
+                    recapTile
                     classicTile
                 }
             }
-            .padding(.horizontal, 28)
-            .padding(.top, 24)
-            .padding(.bottom, 24)
+            .padding(.horizontal, 24)
+            .padding(.top, 18)
+            .padding(.bottom, 20)
             .frame(maxWidth: 1180)
             .frame(maxWidth: .infinity)
         }
@@ -142,6 +148,16 @@ struct TilesDashboardView: View {
         .onReceive(NotificationCenter.default.publisher(for: .dashboardFocusInput)) { _ in inputFocused = true }
     }
 
+    private var gridColumns: [GridItem] { [GridItem(.adaptive(minimum: 215, maximum: 420), spacing: 14)] }
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 13, weight: .bold))
+            .foregroundColor(TilesTheme.muted)
+            .padding(.top, 6)
+            .padding(.leading, 4)
+    }
+
     // MARK: En-tête
 
     private var header: some View {
@@ -151,8 +167,8 @@ struct TilesDashboardView: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(TilesTheme.muted)
                 Text("Aujourd'hui")
-                    .font(.system(size: 36, weight: .heavy))
-                    .tracking(-1)
+                    .font(.system(size: 26, weight: .heavy))
+                    .tracking(-0.6)
                     .foregroundColor(TilesTheme.ink)
             }
             Spacer()
@@ -173,7 +189,7 @@ struct TilesDashboardView: View {
             Image(systemName: systemImage)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(TilesTheme.ink)
-                .frame(width: 38, height: 38)
+                .frame(width: 34, height: 34)
                 .appGlass(in: Circle(), fallback: TilesTheme.card)
         }
         .buttonStyle(.pressable)
@@ -187,60 +203,99 @@ struct TilesDashboardView: View {
         let parts = TilesChapterTitle(chapter.name)
         let latest = store.latestTotal(for: chapter.id, in: project.id)
         let ratio = chapter.goal > 0 ? min(1, Double(latest) / Double(chapter.goal)) : 0
-        return VStack(alignment: .leading, spacing: 18) {
+        return VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline) {
                 chapterMenu(project: project, chapter: chapter, parts: parts)
                 Spacer()
                 if let info = deadlineInfo(chapter.deadline) {
                     Text(info.text)
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(TilesTheme.red)
                 }
             }
-            VStack(alignment: .leading, spacing: 6) {
-                Text(parts.title)
-                    .font(.system(size: 36, weight: .regular, design: .serif))
-                    .tracking(-0.5)
-                    .foregroundColor(TilesTheme.ink)
-                    .fixedSize(horizontal: false, vertical: true)
-                if let subtitle = parts.subtitle {
-                    Text(subtitle)
-                        .font(.system(size: 18, design: .serif).italic())
-                        .foregroundColor(TilesTheme.muted)
+            HStack(alignment: .bottom, spacing: 20) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(parts.title)
+                        .font(.system(size: 26, weight: .regular, design: .serif))
+                        .tracking(-0.3)
+                        .foregroundColor(TilesTheme.ink)
+                        .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
+                    if let subtitle = parts.subtitle {
+                        Text(subtitle)
+                            .font(.system(size: 14, design: .serif).italic())
+                            .foregroundColor(TilesTheme.muted)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
-            }
-            HStack(alignment: .lastTextBaseline, spacing: 16) {
-                Text(num(latest))
-                    .font(.system(size: 80, weight: .heavy).monospacedDigit())
-                    .tracking(-3)
-                    .foregroundColor(TilesTheme.ink)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-                    .contentTransition(.numericText())
-                    .appAnimation(Motion.progress, value: latest)
-                Spacer(minLength: 0)
-                Text(heroCaption(latest: latest, goal: chapter.goal))
-                    .font(.system(size: 14))
-                    .foregroundColor(TilesTheme.muted)
-                    .multilineTextAlignment(.trailing)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .trailing, spacing: 0) {
+                    Text(num(latest))
+                        .font(.system(size: 50, weight: .heavy).monospacedDigit())
+                        .tracking(-1.8)
+                        .foregroundColor(TilesTheme.ink)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .contentTransition(.numericText())
+                        .appAnimation(Motion.progress, value: latest)
+                    Text(heroCaption(latest: latest, goal: chapter.goal))
+                        .font(.system(size: 12))
+                        .foregroundColor(TilesTheme.muted)
+                        .lineLimit(1)
+                }
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(TilesTheme.line)
                     Capsule().fill(TilesTheme.blue)
-                        .frame(width: max(ratio > 0 ? 16 : 0, geo.size.width * ratio))
+                        .frame(width: max(ratio > 0 ? 10 : 0, geo.size.width * ratio))
                         .appAnimation(Motion.progress, value: ratio)
                 }
             }
-            .frame(height: 16)
+            .frame(height: 10)
             .accessibilityElement()
             .accessibilityLabel("Progression du chapitre")
             .accessibilityValue("\(Int(ratio * 100)) %")
+            chapterFacts(project: project, chapter: chapter, latest: latest)
         }
-        .padding(.horizontal, 32)
-        .padding(.vertical, 30)
-        .background(RoundedRectangle(cornerRadius: 32, style: .continuous).fill(TilesTheme.card))
+        .padding(.horizontal, 24)
+        .padding(.vertical, 20)
+        .background(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(TilesTheme.card))
+    }
+
+    /// Les chiffres du chapitre actif, et seulement eux.
+    private func chapterFacts(project: Project, chapter: Chapter, latest: Int) -> some View {
+        let today = chapter.increment(for: DataStore.today)
+        let remaining = max(0, chapter.goal - latest)
+        let pace = store.requiredPacePerDay(for: chapter, in: project)
+        let deadline = deadlineInfo(chapter.deadline)
+        let lastEntry = (chapter.entries.max(by: { $0.date < $1.date })?.date).flatMap(DataStore.parseDate)
+        return LazyVGrid(columns: [GridItem(.adaptive(minimum: 132), spacing: 12, alignment: .topLeading)],
+                         alignment: .leading, spacing: 12) {
+            fact("Aujourd'hui", (today < 0 ? "−" : "+") + num(abs(today)), color: TilesTheme.blue)
+            fact("Reste", chapter.goal > 0 ? num(remaining) : "—")
+            fact("Échéance", deadline?.short ?? "—", color: deadline == nil ? TilesTheme.ink : TilesTheme.red)
+            fact("Par jour", pace.map { num($0) } ?? "—")
+            fact("Avancement", chapter.goal > 0 ? "\(Int((Double(latest) / Double(chapter.goal) * 100).rounded())) %" : "—")
+            fact("Dernière saisie", lastEntry.map(Self.dayMonth) ?? "—")
+        }
+        .padding(.top, 2)
+    }
+
+    private func fact(_ label: String, _ value: String, color: Color = TilesTheme.ink) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(label)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(TilesTheme.muted)
+            Text(value)
+                .font(.system(size: 17, weight: .bold).monospacedDigit())
+                .foregroundColor(color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
     }
 
     private func heroCaption(latest: Int, goal: Int) -> String {
@@ -313,31 +368,31 @@ struct TilesDashboardView: View {
 
     private func tile<Content: View>(background: Color = TilesTheme.card, @ViewBuilder _ content: () -> Content) -> some View {
         content()
-            .frame(maxWidth: .infinity, minHeight: 118, alignment: .leading)
-            .padding(.horizontal, 26)
-            .padding(.vertical, 24)
+            .frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
             .background(RoundedRectangle(cornerRadius: TilesTheme.radius, style: .continuous).fill(background))
     }
 
     private func ringTile(title: String, value: Int, goal: Int, color: Color) -> some View {
         let ratio = goal > 0 ? min(1, max(0, Double(value) / Double(goal))) : 0
         return tile {
-            HStack(spacing: 20) {
+            HStack(spacing: 14) {
                 ZStack {
-                    Circle().stroke(TilesTheme.line, lineWidth: 12)
+                    Circle().stroke(TilesTheme.line, lineWidth: 9)
                     Circle()
                         .trim(from: 0, to: ratio)
-                        .stroke(color, style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                        .stroke(color, style: StrokeStyle(lineWidth: 9, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .appAnimation(Motion.progress, value: ratio)
                 }
-                .frame(width: 92, height: 92)
+                .frame(width: 62, height: 62)
                 .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.system(size: 13, weight: .semibold)).foregroundColor(color)
                     Text(num(value))
-                        .font(.system(size: 32, weight: .heavy).monospacedDigit())
-                        .tracking(-1)
+                        .font(.system(size: 24, weight: .heavy).monospacedDigit())
+                        .tracking(-0.6)
                         .foregroundColor(TilesTheme.ink)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
@@ -358,8 +413,8 @@ struct TilesDashboardView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Série").font(.system(size: 13, weight: .semibold)).foregroundColor(TilesTheme.muted)
                 Text(streak > 1 ? "\(streak) jours" : "\(streak) jour")
-                    .font(.system(size: 52, weight: .heavy))
-                    .tracking(-2)
+                    .font(.system(size: 30, weight: .heavy))
+                    .tracking(-1)
                     .foregroundColor(TilesTheme.ink)
                 TilesDayChain(store: store, days: 9)
                 Text("Record : \(store.longestStreak) jours")
@@ -384,8 +439,8 @@ struct TilesDashboardView: View {
                         .foregroundColor(TilesTheme.red)
                         .lineLimit(1)
                     Text(info.short)
-                        .font(.system(size: 52, weight: .heavy))
-                        .tracking(-2)
+                        .font(.system(size: 30, weight: .heavy))
+                        .tracking(-1)
                         .foregroundColor(TilesTheme.ink)
                     Text(deadlineCaption(for: next.chapter, in: next.project))
                         .font(.system(size: 13))
@@ -394,8 +449,8 @@ struct TilesDashboardView: View {
                 } else {
                     Text("Échéance").font(.system(size: 13, weight: .semibold)).foregroundColor(TilesTheme.muted)
                     Text("Aucune")
-                        .font(.system(size: 52, weight: .heavy))
-                        .tracking(-2)
+                        .font(.system(size: 30, weight: .heavy))
+                        .tracking(-1)
                         .foregroundColor(TilesTheme.ink)
                     Text("Aucune échéance à venir.")
                         .font(.system(size: 13))
@@ -424,8 +479,8 @@ struct TilesDashboardView: View {
                     let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()),
                                                                to: Calendar.current.startOfDay(for: date)).day ?? 0
                     Text(days >= 0 ? "\(days) jours" : "Passée")
-                        .font(.system(size: 52, weight: .heavy))
-                        .tracking(-2)
+                        .font(.system(size: 30, weight: .heavy))
+                        .tracking(-1)
                         .foregroundColor(TilesTheme.bg)
                     Text(Self.fullDate(date) + (thesisPercent.map { " · \($0) % des chapitres écrits" } ?? ""))
                         .font(.system(size: 13))
@@ -433,8 +488,8 @@ struct TilesDashboardView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 } else {
                     Text("À définir")
-                        .font(.system(size: 52, weight: .heavy))
-                        .tracking(-2)
+                        .font(.system(size: 30, weight: .heavy))
+                        .tracking(-1)
                         .foregroundColor(TilesTheme.bg)
                     Text("La date se règle dans le tableau de bord complet.")
                         .font(.system(size: 13))
@@ -463,8 +518,8 @@ struct TilesDashboardView: View {
                     Text("Récap du mois")
                         .font(.system(size: 13, weight: .semibold))
                     Text(r.monthName.capitalized)
-                        .font(.system(size: 52, weight: .regular, design: .serif))
-                        .tracking(-1.5)
+                        .font(.system(size: 30, weight: .regular, design: .serif))
+                        .tracking(-0.6)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
                     HStack {
@@ -495,8 +550,8 @@ struct TilesDashboardView: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(TilesTheme.muted)
                     Text("Tous les widgets")
-                        .font(.system(size: 28, weight: .heavy))
-                        .tracking(-0.8)
+                        .font(.system(size: 20, weight: .heavy))
+                        .tracking(-0.4)
                         .foregroundColor(TilesTheme.ink)
                     Text("Notes, relectures, planification, saisie d'un autre jour. Retour ici par le menu Affichage.")
                         .font(.system(size: 13))

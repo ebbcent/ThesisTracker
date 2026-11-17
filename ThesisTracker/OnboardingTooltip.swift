@@ -106,11 +106,11 @@ struct OnboardingTooltipBubble: View {
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)
                 .fill(Color.glassFill)
                 .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)
                         .stroke(Color.accent.opacity(0.3), lineWidth: 1)
                 )
         )
