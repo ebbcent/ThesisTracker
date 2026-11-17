@@ -107,6 +107,11 @@ struct TilesDashboardView: View {
                 } else {
                     emptyCard
                 }
+                if let project {
+                    TilesChapterList(store: store, project: project) { picked in
+                        select(chapter: picked.id, in: project.id)
+                    }
+                }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 270, maximum: 560), spacing: 18)], spacing: 18) {
                     recapTile
                     ringTile(title: "Jour", value: store.dailyProgress, goal: store.effectiveDailyGoal, color: TilesTheme.blue)
@@ -116,6 +121,8 @@ struct TilesDashboardView: View {
                     streakTile
                     deadlineTile
                     defenseTile
+                    tile { TilesSessionContent(store: store) }
+                    tile { TilesSlotContent(store: store) }
                     classicTile
                 }
             }
@@ -246,6 +253,10 @@ struct TilesDashboardView: View {
             } else {
                 s += " · \(done) feuillets"
             }
+            // Format de page réglé autrement que le feuillet : on donne aussi les pages.
+            if let cpp = store.charsPerPage, cpp != TilesTheme.sheetSize, let pages = store.pagesLabel(latest) {
+                s += " · " + pages
+            }
         }
         return s
     }
@@ -343,7 +354,6 @@ struct TilesDashboardView: View {
 
     private var streakTile: some View {
         let streak = store.currentStreak
-        let week = store.lastSevenDaysTotals
         return tile {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Série").font(.system(size: 13, weight: .semibold)).foregroundColor(TilesTheme.muted)
@@ -351,12 +361,7 @@ struct TilesDashboardView: View {
                     .font(.system(size: 52, weight: .heavy))
                     .tracking(-2)
                     .foregroundColor(TilesTheme.ink)
-                HStack(spacing: 6) {
-                    ForEach(Array(week.enumerated()), id: \.offset) { _, value in
-                        Capsule().fill(value > 0 ? TilesTheme.ink : TilesTheme.line).frame(height: 10)
-                    }
-                }
-                .accessibilityHidden(true)
+                TilesDayChain(store: store, days: 9)
                 Text("Record : \(store.longestStreak) jours")
                     .font(.system(size: 13))
                     .foregroundColor(TilesTheme.muted)
