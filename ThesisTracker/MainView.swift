@@ -87,6 +87,18 @@ struct MainView: View {
     @AppStorage("interfaceMode") private var interfaceMode: String = "VT"   // 5.24 : Tuiles par défaut
     @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
     @AppStorage("forceLightMode") private var forceLightMode: Bool = false  // 5.24 : clair forcé
+    /// Tableau de bord selon l'affichage choisi (VA, VD, ou VT depuis la 5.24).
+    /// Sorti du corps de la vue : l'expression principale devenait trop lourde à typer.
+    @ViewBuilder private var dashboardPage: some View {
+        if interfaceMode == "VD" {
+            PaperDashboardView(store: store, showSidebar: $showSidebar)
+        } else if interfaceMode == "VT" {
+            TilesDashboardView(store: store, showSidebar: $showSidebar)
+        } else {
+            DashboardView(store: store, showSidebar: $showSidebar)
+        }
+    }
+
     /// 5.24 — sombre forcé, clair forcé, ou apparence du système.
     private var preferredScheme: ColorScheme? {
         if forceDarkMode { return .dark }
@@ -357,13 +369,7 @@ struct MainView: View {
                         case .overview:
                             OverviewView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
                         case .dashboard:
-                            if interfaceMode == "VD" {
-                                PaperDashboardView(store: store, showSidebar: $showSidebar)
-                            } else if interfaceMode == "VT" {
-                                TilesDashboardView(store: store, showSidebar: $showSidebar)   // 5.24
-                            } else {
-                                DashboardView(store: store, showSidebar: $showSidebar)
-                            }
+                            dashboardPage
                         case .deadlines:
                             DeadlineBoardView(store: store, showSidebar: $showSidebar)
                         case .search:
