@@ -297,9 +297,9 @@ struct QuickEntryView: View {
                 .padding(.vertical, 4)
 
                 // Progress bar si objectif défini
-                if store.data.dailyGoal > 0 {
+                if store.effectiveDailyGoal > 0 {
                     let total = store.dailyProgress
-                    let ratio = min(1.0, Double(total) / Double(store.data.dailyGoal))
+                    let ratio = min(1.0, Double(total) / Double(store.effectiveDailyGoal))
                     let color: Color = ratio >= 1 ? .accentGreen : .accent
                     VStack(alignment: .leading, spacing: 3) {
                         GeometryReader { geo in
@@ -311,7 +311,7 @@ struct QuickEntryView: View {
                             }
                         }
                         .frame(height: 4)
-                        Text(goalContextLabel(total: total, goal: store.data.dailyGoal))
+                        Text(goalContextLabel(total: total, goal: store.effectiveDailyGoal))
                             .font(.system(size: 10))
                             .foregroundColor(.labelMuted.opacity(0.75))
                     }

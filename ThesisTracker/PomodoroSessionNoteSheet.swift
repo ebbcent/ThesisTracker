@@ -43,7 +43,7 @@ struct PomodoroSessionNoteSheet: View {
                 Image(systemName: "text.word.spacing")
                     .foregroundStyle(.secondary)
                     .font(.system(size: 14))
-                TextField("Mots écrits (optionnel)", text: $controller.wordCountDraft)
+                TextField(store.data.useWordCount ? "Mots écrits (optionnel)" : "Signes écrits (optionnel)", text: $controller.wordCountDraft)
                     .textFieldStyle(.plain)
                     .font(.system(size: 14))
                     .padding(.horizontal, 10)

@@ -537,7 +537,7 @@ struct StatsAnalyticsView: View {
                 let stats = store.velocityStats14Days
                 guard stats.avg > 0 else {
                     return AnyView(
-                        Text("Velocity insuffisante pour projeter")
+                        Text("Rythme insuffisant pour projeter")
                             .font(.system(size: 11)).foregroundColor(.labelMuted)
                             .frame(maxWidth: .infinity)
                     )
@@ -588,7 +588,7 @@ struct StatsAnalyticsView: View {
 
                         HStack(spacing: 4) {
                             Image(systemName: "info.circle").font(.system(size: 10))
-                            Text("Basé sur \(store.formatCount(remaining)) \(store.data.useWordCount ? "mots" : "car.") restants · velocity 14j")
+                            Text("Basé sur \(store.formatCount(remaining)) restants · rythme sur 14 j")
                                 .font(.system(size: 10))
                         }
                         .foregroundColor(.labelMuted.opacity(0.7))

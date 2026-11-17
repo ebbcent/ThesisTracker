@@ -23,13 +23,13 @@ struct CommandPaletteView: View {
     }
 
     private var results: [PaletteResult] {
-        let q = query.lowercased().trimmingCharacters(in: .whitespaces)
+        let q = query.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).trimmingCharacters(in: .whitespaces)   // 5.23 — sans accents ni casse
 
         var items: [PaletteResult] = []
 
         // Navigation items
         for nav in NavItem.allCases {
-            if q.isEmpty || nav.rawValue.lowercased().contains(q) {
+            if q.isEmpty || nav.rawValue.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(q) {
                 let navCopy = nav
                 items.append(PaletteResult(
                     icon: nav.icon,
@@ -44,8 +44,8 @@ struct CommandPaletteView: View {
         let isProjectMode = q.hasPrefix(">")
         let projectQuery = isProjectMode ? String(q.dropFirst()).trimmingCharacters(in: .whitespaces) : q
         for project in store.data.projects {
-            let matches = projectQuery.isEmpty || project.name.lowercased().contains(projectQuery)
-            if isProjectMode ? matches : (q.isEmpty || project.name.lowercased().contains(q)) {
+            let matches = projectQuery.isEmpty || project.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(projectQuery)
+            if isProjectMode ? matches : (q.isEmpty || project.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(q)) {
                 let projCopy = project
                 let total = project.chapters.reduce(0) { acc, ch in
                     acc + (ch.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0)
@@ -70,7 +70,7 @@ struct CommandPaletteView: View {
         // Chapters
         for project in store.data.projects {
             for chapter in project.chapters {
-                if !q.isEmpty && (chapter.name.lowercased().contains(q) || project.name.lowercased().contains(q)) {
+                if !q.isEmpty && (chapter.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(q) || project.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(q)) {
                     let projCopy = project
                     let chapCopy = chapter
                     items.append(PaletteResult(

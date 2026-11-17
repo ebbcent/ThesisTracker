@@ -37,8 +37,9 @@ struct KanbanView: View {
     @State private var addingChapterForStatus: KanbanStatus? = nil
 
     private var allChapters: [(project: Project, chapter: Chapter)] {
-        store.data.projects.flatMap { project in
-            project.chapters.map { (project, $0) }
+        // 5.23 — sans les projets et chapitres archivés
+        store.data.projects.filter { !$0.isArchived }.flatMap { project in
+            project.chapters.filter { !$0.isArchived }.map { (project, $0) }
         }
     }
 
@@ -47,7 +48,9 @@ struct KanbanView: View {
     }
 
     private func kanbanStatus(for chapter: Chapter) -> KanbanStatus {
-        if chapter.isCompleted { return .done }
+        if chapter.isCompleted || chapter.status == .termine { return .done }
+        // 5.23 — le statut du chapitre décide de la colonne (« Plan » = à faire)
+        if let status = chapter.status { return status == .plan ? .todo : .inProgress }
         // "In progress" if it has any entries
         let hasEntries = chapter.entries.contains { $0.totalCount > 0 }
         return hasEntries ? .inProgress : .todo
@@ -141,16 +144,16 @@ struct KanbanView: View {
     private func applyDrop(chapterId: UUID, newStatus: KanbanStatus) {
         guard let projIdx = store.data.projects.firstIndex(where: { $0.chapters.contains { $0.id == chapterId } }),
               let chapIdx = store.data.projects[projIdx].chapters.firstIndex(where: { $0.id == chapterId }) else { return }
+        // 5.23 — passe par le statut du chapitre (journal, barre latérale et tableau cohérents)
+        let projectId = store.data.projects[projIdx].id
+        let current = store.data.projects[projIdx].chapters[chapIdx].status
+        let status: ChapterStatus
         switch newStatus {
-        case .todo:
-            // Clear entries? No — just unmark as completed
-            store.data.projects[projIdx].chapters[chapIdx].isCompleted = false
-        case .inProgress:
-            store.data.projects[projIdx].chapters[chapIdx].isCompleted = false
-        case .done:
-            store.data.projects[projIdx].chapters[chapIdx].isCompleted = true
+        case .todo:       status = .plan
+        case .inProgress: status = current == .revision ? .revision : .redaction
+        case .done:       status = .termine
         }
-        store.save()
+        store.setChapterStatus(status, for: chapterId, in: projectId)
     }
 }
 

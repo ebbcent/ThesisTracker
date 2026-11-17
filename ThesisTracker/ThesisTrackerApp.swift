@@ -135,8 +135,11 @@ struct ThesisTrackerApp: App {
                         guard let store else { return }
                         guard let project = store.activeProject, let chapter = store.activeChapter else { return }
                         let today = DataStore.today
-                        let current = chapter.entryForDate(today)?.totalCount ?? 0
-                        store.setTotalForDate(current + wordCount, for: chapter.id, in: project.id, date: today)
+                        // 5.23 — part du dernier total connu (les saisies sont cumulatives), pas de zéro
+                        // quand rien n'a encore été saisi aujourd'hui ; en mode « mots », 1 mot = 5 signes.
+                        let current = store.latestTotal(for: chapter.id, in: project.id)
+                        let added = store.data.useWordCount ? wordCount * 5 : wordCount
+                        store.setTotalForDate(current + added, for: chapter.id, in: project.id, date: today)
                     }
                     setupGlobalHotkey(store: store, pomodoroController: pomodoroController)
                     // 5.11 — créneaux d'écriture : « Démarrer » depuis le rappel

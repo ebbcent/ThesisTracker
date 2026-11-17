@@ -249,6 +249,12 @@ class DataStore: ObservableObject {
         trackAppOpen()
         validateDataIntegrity()
         startWatchingFile()
+        // 5.23 — à minuit, les chiffres « aujourd'hui », « cette semaine » et la série se recalculent
+        NotificationCenter.default.addObserver(forName: .NSCalendarDayChanged, object: nil, queue: .main) { [weak self] _ in
+            guard let self else { return }
+            self.dataVersion += 1
+            self.objectWillChange.send()
+        }
         NotificationCenter.default.addObserver(
             self, selector: #selector(appDidBecomeActive),
             name: NSApplication.didBecomeActiveNotification, object: nil
@@ -501,6 +507,7 @@ class DataStore: ObservableObject {
         }
         markLoaded()
         data = decoded
+        dropSnapshotUndo()
         dataVersion += 1
         migrateLocalGoalSettingsIfNeeded()
     }
@@ -638,7 +645,7 @@ class DataStore: ObservableObject {
             self.objectWillChange.send()
 
             let todayTotal = self.dailyProgress
-            let goal       = max(1, self.data.dailyGoal)
+            let goal       = max(1, self.effectiveDailyGoal)
             NSApp.mainWindow?.title = todayTotal > 0
                 ? "Writing Process — +\(self.formatCount(todayTotal)) aujourd'hui"
                 : "Writing Process"
@@ -672,6 +679,7 @@ class DataStore: ObservableObject {
     /// a été saisi pendant l'écriture.
     private func integrateMerged(_ merged: AppData, mergedBytes: Data, mineBytes: Data) {
         guard let current = try? DataStore.sharedEncoder.encode(data) else { return }
+        dropSnapshotUndo()
         if current == mineBytes {
             data = merged
         } else if let rebased = DataSync.merge(base: mineBytes, mine: current, theirs: mergedBytes),
@@ -3208,6 +3216,15 @@ class DataStore: ObservableObject {
         canUndo = true; canRedo = false
     }
 
+    /// 5.23 — des données venues d'ailleurs (autre Mac, Clem Hub, restauration) viennent d'être adoptées :
+    /// les photos d'état d'avant ne les contiennent pas, les annuler les effacerait.
+    private func dropSnapshotUndo() {
+        undoStack.removeAll { $0.snapshotBefore != nil }
+        redoStack.removeAll { $0.snapshotBefore != nil }
+        canUndo = !undoStack.isEmpty
+        canRedo = !redoStack.isEmpty
+    }
+
     /// Libellé de la prochaine annulation (menu Édition).
     var undoLabel: String? { undoStack.last?.label }
     var redoLabel: String? { redoStack.last?.label }
@@ -3757,9 +3774,9 @@ class DataStore: ObservableObject {
 
     var chaptersWithDeadlines: [(project: Project, chapter: Chapter)] {
         if let c = _chaptersWithDeadlinesCache, c.version == dataVersion { return c.items }
-        let items = data.projects.flatMap { project in
+        let items = data.projects.filter { !$0.isArchived }.flatMap { project in
             project.chapters.compactMap { chapter -> (project: Project, chapter: Chapter)? in
-                chapter.deadline == nil || chapter.isCompleted ? nil : (project, chapter)
+                chapter.deadline == nil || chapter.isCompleted || chapter.isArchived ? nil : (project, chapter)
             }
         }
         .sorted { lhs, rhs in
@@ -3784,12 +3801,8 @@ class DataStore: ObservableObject {
             guard let etaDate = estimatedCompletionDate(for: item.chapter.id, in: item.project.id) else { continue }
             guard etaDate > deadlineDate else { continue }
 
-            // Calcule la velocity nécessaire
-            let latest = item.chapter.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
-            let remaining = max(0, item.chapter.goal - latest)
-            let daysLeft = cal.dateComponents([.day], from: today, to: deadlineDate).day ?? 1
-            guard daysLeft > 0, remaining > 0 else { continue }
-            let required = Int(ceil(Double(remaining) / Double(daysLeft)))
+            // 5.23 — même calcul que partout ailleurs (marge, profil de rythme, calendrier d'écriture)
+            guard let required = requiredPacePerDay(for: item.chapter, in: item.project) else { continue }
 
             // Velocity actuelle (7 derniers jours)
             var increments: [Int] = []
@@ -4147,6 +4160,7 @@ class DataStore: ObservableObject {
         let jsonData = try Data(contentsOf: url)
         var decoded = try DataStore.decodeAppData(jsonData).data
         applyLegacyMigration(&decoded)
+        dropSnapshotUndo()
         data = decoded
         dataVersion += 1
         // Restauration volontaire : autorise de nouveau l'écriture.
@@ -4313,6 +4327,7 @@ class DataStore: ObservableObject {
     func resolveConflict(keepLocal: Bool) {
         guard let conflict = pendingConflict else { return }
         pendingConflict = nil
+        dropSnapshotUndo()
         let chosen = keepLocal ? conflict.localData : conflict.iCloudData
         // Write the SAME encoded bytes to BOTH files so the next launch sees
         // identical data + matching mod dates → no spurious re-conflict.
@@ -4431,7 +4446,7 @@ class DataStore: ObservableObject {
             }
         if !overdueChapters.isEmpty {
             score -= min(30, overdueChapters.count * 15)
-            details.append("\(overdueChapters.count) deadline\(overdueChapters.count > 1 ? "s" : "") dépassée\(overdueChapters.count > 1 ? "s" : "")")
+            details.append("\(overdueChapters.count) échéance\(overdueChapters.count > 1 ? "s" : "") dépassée\(overdueChapters.count > 1 ? "s" : "")")
         }
 
         // 3. Rythme insuffisant pour deadlines à venir (J-30)

@@ -281,7 +281,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
 
                 let content = UNMutableNotificationContent()
                 content.title = "⚠️ Retard — \(item.chapterName)"
-                content.body = "À ton rythme : fin le \(Self.shortDate(item.etaDate)) · Deadline : \(Self.shortDate(item.deadline)) (+\(daysLate)j). Besoin de +\(DataStore.formatNumber(needed)) \(unit)/jour."
+                content.body = "À ton rythme : fin le \(Self.shortDate(item.etaDate)) · Échéance : \(Self.shortDate(item.deadline)) (+\(daysLate)j). Besoin de +\(DataStore.formatNumber(needed)) \(unit)/jour."
                 content.sound = .default
 
                 // Demain matin à 8h
@@ -505,7 +505,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
                     content.body  = "Jalon « \(item.milestoneName) » (\(item.projectName)) · \(daysText)"
                     content.sound = level.days <= 7 ? .defaultCritical : .default
 
-                    let useHour = level.days == customDay ? item.reminderHour : item.reminderHour
+                    let useHour = item.reminderHour
                     var comps = cal.dateComponents([.year, .month, .day], from: notifDate)
                     comps.hour = useHour; comps.minute = 0
                     let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
