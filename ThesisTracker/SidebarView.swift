@@ -929,7 +929,7 @@ private struct NavItemRow: View {
             HStack(spacing: 0) {
                 // Left accent bar
                 RoundedRectangle(cornerRadius: 1.5)
-                    .fill(isSelected
+                    .fill(isSelected && !AppLook.tiles   // 5.24 : en Tuiles, la ligne choisie est une pastille pleine
                           ? LinearGradient(colors: [.accentWarm, .accentGold], startPoint: .top, endPoint: .bottom)
                           : LinearGradient(colors: [Color.clear], startPoint: .top, endPoint: .bottom))
                     .frame(width: 3, height: 16)
@@ -940,10 +940,10 @@ private struct NavItemRow: View {
                     Image(systemName: item.icon)
                         .font(.system(size: 12, weight: .medium))
                         .frame(width: 16)
-                        .foregroundColor(isSelected ? .accentWarm : (isHovering ? .primary.opacity(0.7) : .labelMuted.opacity(0.7)))
+                        .foregroundColor(isSelected ? (AppLook.tiles ? TilesTheme.onBlue : .accentWarm) : (isHovering ? .primary.opacity(0.7) : .labelMuted.opacity(0.7)))
                     Text(item.rawValue)
                         .font(.system(size: 12.5, weight: isSelected ? .semibold : .regular))
-                        .foregroundColor(isSelected ? .primary : (isHovering ? .primary.opacity(0.85) : .secondary.opacity(0.75)))
+                        .foregroundColor(isSelected ? (AppLook.tiles ? TilesTheme.onBlue : .primary) : (isHovering ? .primary.opacity(0.85) : .secondary.opacity(0.75)))
                     Spacer()
                     if isHovering, let hint = item.shortcutHint {
                         Text(hint)
@@ -957,10 +957,10 @@ private struct NavItemRow: View {
                 }
                 .padding(.horizontal, 9).padding(.vertical, 7)
                 .background(
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    RoundedRectangle(cornerRadius: AppLook.tiles ? 12 : 7, style: .continuous)
                         .fill(
                             isSelected
-                                ? Color.accentWarm.opacity(0.08)
+                                ? Color.accentWarm.opacity(AppLook.tiles ? 1 : 0.08)
                                 : isHovering ? Color.glassFill : Color.clear
                         )
                 )
