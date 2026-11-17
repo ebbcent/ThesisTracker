@@ -212,7 +212,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 5.22;
+				MARKETING_VERSION = 5.24;
 				PRODUCT_BUNDLE_IDENTIFIER = com.writingprocess.appTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -230,7 +230,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 5.22;
+				MARKETING_VERSION = 5.24;
 				PRODUCT_BUNDLE_IDENTIFIER = com.writingprocess.appTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -382,7 +382,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 5.22;
+				MARKETING_VERSION = 5.24;
 				PRODUCT_BUNDLE_IDENTIFIER = com.writingprocess.app;
 				PRODUCT_NAME = "Writing Process";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -422,7 +422,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 5.22;
+				MARKETING_VERSION = 5.24;
 				PRODUCT_BUNDLE_IDENTIFIER = com.writingprocess.app;
 				PRODUCT_NAME = "Writing Process";
 				PROVISIONING_PROFILE_SPECIFIER = "";

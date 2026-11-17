@@ -66,7 +66,7 @@ final class HubWritingBridge {
             try fm.createDirectory(at: output, withIntermediateDirectories: true)
             try JSONSerialization.data(withJSONObject: ["version": 1, "t": ISO8601DateFormatter().string(from: .now)])
                 .write(to: root.appendingPathComponent("pret.json"), options: .atomic)
-            let files = try fm.contentsOfDirectory(at: input, includingPropertiesForKeys: nil).filter { $0.pathExtension == "json" && !fm.fileExists(atPath: output.appendingPathComponent($0.lastPathComponent.lowercased()).path) }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+            let files = try fm.contentsOfDirectory(at: input, includingPropertiesForKeys: nil).filter { $0.pathExtension == "json" && UUID(uuidString: $0.deletingPathExtension().lastPathComponent) != nil && !fm.fileExists(atPath: output.appendingPathComponent($0.lastPathComponent.lowercased()).path) }.sorted { $0.lastPathComponent < $1.lastPathComponent }
             for file in files.prefix(20) {
                 guard UUID(uuidString: file.deletingPathExtension().lastPathComponent) != nil else { continue }
                 let bytes = try Data(contentsOf: file)

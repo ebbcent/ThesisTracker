@@ -111,7 +111,7 @@ struct MenuBarEntryView: View {
                     }
 
                     // Progress aujourd'hui
-                    if store.data.dailyGoal > 0 {
+                    if store.effectiveDailyGoal > 0 {
                         progressBar
                     }
 
@@ -490,7 +490,7 @@ struct MenuBarEntryView: View {
     // MARK: - Progress
 
     private var progressBar: some View {
-        let goal = store.data.dailyGoal
+        let goal = store.effectiveDailyGoal
         let ratio = min(1.0, Double(todayProgress) / Double(goal))
         let color: Color = ratio >= 1 ? .accentGreen : .accent
         return VStack(alignment: .leading, spacing: 4) {

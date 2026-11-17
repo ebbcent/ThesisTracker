@@ -14,38 +14,64 @@ extension Color {
     }
 }
 
+// MARK: - 5.24 Apparence de l'app : « Tuiles » ou d'origine
+//
+// Quand l'affichage Tuiles (VT) est choisi, toute l'app prend ses couleurs (fond, cartes, barre
+// latérale, accent bleu, cartes plus rondes et sans liseré). Avec VA ou VD, la palette d'origine
+// revient telle quelle. Valeur mise en cache : les couleurs sont lues des milliers de fois par image.
+
+enum AppLook {
+    private static var cached: Bool = compute()
+    static var tiles: Bool { cached }
+
+    private static func compute() -> Bool {
+        (UserDefaults.standard.string(forKey: "interfaceMode") ?? "VT") == "VT"
+    }
+
+    /// À appeler quand l'affichage change (menu Affichage, tuile « Tableau de bord complet »).
+    static func refresh() {
+        cached = compute()
+        Color.refreshAccent()
+    }
+}
+
 // MARK: - Palette sombre premium (adaptative light / dark)
 
 extension Color {
 
-    // Fonds adaptatifs — palette warm-dark premium v3
-    static let appBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            ? NSColor(red: 0.047, green: 0.043, blue: 0.039, alpha: 1)   // #0c0b0a
-            : NSColor(red: 0.973, green: 0.969, blue: 0.961, alpha: 1)   // #F8F7F5
-    }))
+    /// Couleur clair / sombre, avec une variante pour l'apparence Tuiles.
+    private static func look(classic: (light: UInt32, dark: UInt32), tiles: (light: UInt32, dark: UInt32)) -> Color {
+        func ns(_ v: UInt32) -> NSColor {
+            NSColor(srgbRed: CGFloat((v >> 16) & 0xFF) / 255, green: CGFloat((v >> 8) & 0xFF) / 255, blue: CGFloat(v & 0xFF) / 255, alpha: 1)
+        }
+        return Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
+            let dark = trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+            let pair = AppLook.tiles ? tiles : classic
+            return ns(dark ? pair.dark : pair.light)
+        }))
+    }
 
-    static let sidebarBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            ? NSColor(red: 0.039, green: 0.035, blue: 0.031, alpha: 1)   // #0a0908
-            : NSColor(red: 0.949, green: 0.945, blue: 0.937, alpha: 1)   // #F2F1EF
-    }))
+    // Fonds adaptatifs — palette warm-dark premium v3 ; variante Tuiles en 5.24
+    static let appBg     = look(classic: (0xF8F7F5, 0x0C0B0A), tiles: (0xF1EFEA, 0x0F0E10))
+    static let sidebarBg = look(classic: (0xF2F1EF, 0x0A0908), tiles: (0xE9E6DF, 0x151416))
+    static let cardBg    = look(classic: (0xFFFFFF, 0x1A1816), tiles: (0xFFFFFF, 0x1C1B1E))   // 5.18 : plus distinct du fond
 
-    static let cardBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            ? NSColor(red: 0.102, green: 0.094, blue: 0.086, alpha: 1)   // #1A1816 (5.18 : plus distinct du fond)
-            : NSColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1)   // #FFFFFF
-    }))
-
-    static let cardBorder = adaptive(light: 0xE8E4E2, dark: 0x272320, hcLight: 0x8A8480, hcDark: 0x8C847C)   // 5.15 : contraste renforcé
+    static let cardBorder = adaptive(light: 0xE8E4E2, dark: 0x272320, hcLight: 0x8A8480, hcDark: 0x8C847C,
+                                     tilesLight: 0xE9E5DD, tilesDark: 0x2A282C)   // 5.15 : contraste renforcé
 
     static let fieldBg = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-        trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        let dark = trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        if AppLook.tiles {
+            return dark ? NSColor(srgbRed: 0.157, green: 0.149, blue: 0.165, alpha: 1)   // #28262A
+                        : NSColor(srgbRed: 0.945, green: 0.937, blue: 0.918, alpha: 1)   // #F1EFEA
+        }
+        return dark
             ? NSColor(red: 0.137, green: 0.125, blue: 0.114, alpha: 1)   // #23201D (5.18 : champ distinct de sa carte)
             : NSColor(white: 0, alpha: 0.04)
     }))
 
-    static let labelMuted = adaptive(light: 0x6B6660, dark: 0xA09890, hcLight: 0x3F3B37, hcDark: 0xD6CFC8)   // 5.15 : contraste renforcé
+    static let labelMuted = adaptive(light: 0x6B6660, dark: 0xA09890, hcLight: 0x3F3B37, hcDark: 0xD6CFC8,
+                                     tilesLight: 0x615C53, tilesDark: 0xA9A398)   // 5.15 : contraste renforcé
 
     static let glassFill = Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
         trait.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? NSColor(white: 1, alpha: 0.05) : NSColor(white: 0, alpha: 0.04)
@@ -62,6 +88,7 @@ extension Color {
     static var accent: Color { _accentCache }
 
     private static func computeAccent() -> Color {
+        if AppLook.tiles { return accentWarm }   // 5.24 : bleu d'encre de l'apparence Tuiles
         let hex = UserDefaults.standard.string(forKey: "accentColorHex") ?? "#F59E0B"
         return Color(hex: hex)
     }
@@ -72,18 +99,26 @@ extension Color {
     // 5.15 — accents adaptatifs : inchangés en mode sombre ; plus soutenus en mode clair, où ils servent
     // aussi de couleur de texte (l'ambre #F59E0B sur blanc ne contrastait qu'à ≈ 2:1) ; encore plus nets
     // avec « Augmenter le contraste » (Réglages système › Accessibilité › Affichage).
-    static let accentWarm  = adaptive(light: 0xD97706, dark: 0xF59E0B, hcLight: 0xB45309, hcDark: 0xFBBF24)  // ambre principal
+    static let accentWarm  = adaptive(light: 0xD97706, dark: 0xF59E0B, hcLight: 0xB45309, hcDark: 0xFBBF24,
+                                      tilesLight: 0x1F3FD1, tilesDark: 0x8FA3FF)  // ambre principal ; bleu d'encre en Tuiles
     static let accentGold  = adaptive(light: 0xEA580C, dark: 0xEA580C, hcLight: 0xC2410C, hcDark: 0xFB923C)  // orange profond
     static let accentGreen = adaptive(light: 0x16A34A, dark: 0x22C55E, hcLight: 0x15803D, hcDark: 0x4ADE80)  // succès
     static let accentRose  = adaptive(light: 0xE11D48, dark: 0xF43F5E, hcLight: 0xBE123C, hcDark: 0xFB7185)  // alertes
 
     /// Couleur dynamique : clair, sombre, et variantes « Augmenter le contraste ».
-    static func adaptive(light: UInt32, dark: UInt32, hcLight: UInt32, hcDark: UInt32) -> Color {
+    static func adaptive(light: UInt32, dark: UInt32, hcLight: UInt32, hcDark: UInt32,
+                         tilesLight: UInt32? = nil, tilesDark: UInt32? = nil) -> Color {
         func ns(_ v: UInt32) -> NSColor {
             NSColor(srgbRed: CGFloat((v >> 16) & 0xFF) / 255, green: CGFloat((v >> 8) & 0xFF) / 255, blue: CGFloat(v & 0xFF) / 255, alpha: 1)
         }
         return Color(nsColor: NSColor(name: nil, dynamicProvider: { trait in
-            switch trait.bestMatch(from: [.aqua, .darkAqua, .accessibilityHighContrastAqua, .accessibilityHighContrastDarkAqua]) {
+            let match = trait.bestMatch(from: [.aqua, .darkAqua, .accessibilityHighContrastAqua, .accessibilityHighContrastDarkAqua])
+            // 5.24 — apparence Tuiles (hors « Augmenter le contraste », qui garde ses variantes)
+            if AppLook.tiles, let tilesLight, let tilesDark {
+                if match == .darkAqua { return ns(tilesDark) }
+                if match == .aqua { return ns(tilesLight) }
+            }
+            switch match {
             case .darkAqua?: return ns(dark)
             case .accessibilityHighContrastAqua?: return ns(hcLight)
             case .accessibilityHighContrastDarkAqua?: return ns(hcDark)
@@ -127,13 +162,16 @@ struct GlassCard<Content: View>: View {
     init(@ViewBuilder content: () -> Content) { self.content = content() }
 
     var body: some View {
+        // 5.24 — apparence Tuiles : cartes plus rondes, plus aérées, sans liseré
+        let tiles = AppLook.tiles
+        let radius: CGFloat = tiles ? 22 : 12
         content
-            .padding(compact ? 10 : 16)
+            .padding(compact ? 10 : (tiles ? 20 : 16))
             // 5.17 : cartes pleines (le contenu ne va pas sous verre : lisibilité, pas de verre sur verre)
-            .background(Color.cardBg, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .background(Color.cardBg, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(Color.cardBorder, lineWidth: 1)
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .stroke(tiles ? Color.clear : Color.cardBorder, lineWidth: 1)
             )
         // Suppression du .shadow(radius: 12) — il forçait un off-screen render
         // pass par carte (× 79 cartes sur le dashboard). Le contour 1px suffit

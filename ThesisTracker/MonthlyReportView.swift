@@ -206,7 +206,7 @@ struct MonthlyReportSheet: View {
                         if let best = r.bestDay {
                             statTile(label: "Meilleur jour", value: best)
                         }
-                        statTile(label: "Streak fin de mois", value: "\(r.streakAtMonthEnd) j")
+                        statTile(label: "Série en fin de mois", value: "\(r.streakAtMonthEnd) j")
                     }
                     Divider()
                     Text("RÉFLEXION LIBRE")

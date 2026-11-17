@@ -47,11 +47,11 @@ struct SidebarView: View {
     }
 
     // Filtre live de la sidebar
-    private var normalizedFilter: String { sidebarFilter.trimmingCharacters(in: .whitespaces).lowercased() }
+    private var normalizedFilter: String { sidebarFilter.trimmingCharacters(in: .whitespaces).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current) }
     private var filterActive: Bool { !normalizedFilter.isEmpty }
     private func textMatches(_ text: String) -> Bool {
         guard filterActive else { return true }
-        return text.lowercased().contains(normalizedFilter)
+        return text.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter)
     }
     private func projectMatchesFilter(_ project: Project) -> Bool {
         guard filterActive else { return true }
@@ -775,10 +775,10 @@ struct SidebarView: View {
             }
 
             HStack(spacing: 8) {
-                footerIconButton(systemImage: "square.and.arrow.down", color: .accentWarm, help: "Importer des donnees") {
+                footerIconButton(systemImage: "square.and.arrow.down", color: .accentWarm, help: "Importer des données") {
                     showImport = true
                 }
-                footerIconButton(systemImage: "square.and.arrow.up", color: .accentGold, help: "Exporter des donnees") {
+                footerIconButton(systemImage: "square.and.arrow.up", color: .accentGold, help: "Exporter des données") {
                     showExport = true
                 }
                 archiveFooterIcon
@@ -929,7 +929,7 @@ private struct NavItemRow: View {
             HStack(spacing: 0) {
                 // Left accent bar
                 RoundedRectangle(cornerRadius: 1.5)
-                    .fill(isSelected
+                    .fill(isSelected && !AppLook.tiles   // 5.24 : en Tuiles, la ligne choisie est une pastille pleine
                           ? LinearGradient(colors: [.accentWarm, .accentGold], startPoint: .top, endPoint: .bottom)
                           : LinearGradient(colors: [Color.clear], startPoint: .top, endPoint: .bottom))
                     .frame(width: 3, height: 16)
@@ -940,10 +940,10 @@ private struct NavItemRow: View {
                     Image(systemName: item.icon)
                         .font(.system(size: 12, weight: .medium))
                         .frame(width: 16)
-                        .foregroundColor(isSelected ? .accentWarm : (isHovering ? .primary.opacity(0.7) : .labelMuted.opacity(0.7)))
+                        .foregroundColor(isSelected ? (AppLook.tiles ? TilesTheme.onBlue : .accentWarm) : (isHovering ? .primary.opacity(0.7) : .labelMuted.opacity(0.7)))
                     Text(item.rawValue)
                         .font(.system(size: 12.5, weight: isSelected ? .semibold : .regular))
-                        .foregroundColor(isSelected ? .primary : (isHovering ? .primary.opacity(0.85) : .secondary.opacity(0.75)))
+                        .foregroundColor(isSelected ? (AppLook.tiles ? TilesTheme.onBlue : .primary) : (isHovering ? .primary.opacity(0.85) : .secondary.opacity(0.75)))
                     Spacer()
                     if isHovering, let hint = item.shortcutHint {
                         Text(hint)
@@ -957,10 +957,10 @@ private struct NavItemRow: View {
                 }
                 .padding(.horizontal, 9).padding(.vertical, 7)
                 .background(
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    RoundedRectangle(cornerRadius: AppLook.tiles ? 12 : 7, style: .continuous)
                         .fill(
                             isSelected
-                                ? Color.accentWarm.opacity(0.08)
+                                ? Color.accentWarm.opacity(AppLook.tiles ? 1 : 0.08)
                                 : isHovering ? Color.glassFill : Color.clear
                         )
                 )
@@ -1126,11 +1126,11 @@ struct FolderSidebarRow: View {
     @State private var showAddSubfolder: Bool = false
     @State private var newSubfolderName: String = ""
 
-    private var normalizedFilter: String { sidebarFilter.trimmingCharacters(in: .whitespaces).lowercased() }
+    private var normalizedFilter: String { sidebarFilter.trimmingCharacters(in: .whitespaces).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current) }
     private var filterActive: Bool { !normalizedFilter.isEmpty }
     private func textMatches(_ text: String) -> Bool {
         guard filterActive else { return true }
-        return text.lowercased().contains(normalizedFilter)
+        return text.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter)
     }
     private func projectMatchesFilter(_ p: Project) -> Bool {
         guard filterActive else { return true }
@@ -1597,26 +1597,27 @@ struct ProjectSidebarRow: View {
     let onChapterHistory: (Chapter) -> Void
     let onEditChapter: (Chapter) -> Void
 
+    @State private var showDeleteProjectConfirm = false
     @State private var dropTargetChapterId: UUID? = nil
     @State private var showAddChapterFolder: Bool = false
     @State private var newChapterFolderName: String = ""
     @State private var renameDraft: String? = nil
 
     private var isActive: Bool { store.data.activeProjectId == project.id }
-    private var normalizedFilter: String { sidebarFilter.trimmingCharacters(in: .whitespaces).lowercased() }
+    private var normalizedFilter: String { sidebarFilter.trimmingCharacters(in: .whitespaces).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current) }
     private var filterActive: Bool { !normalizedFilter.isEmpty }
     private func chapterMatchesFilter(_ chapter: Chapter) -> Bool {
         guard filterActive else { return true }
-        if chapter.name.lowercased().contains(normalizedFilter) { return true }
+        if chapter.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter) { return true }
         if let folderId = chapter.chapterFolderId,
            let folder = project.chapterFolders.first(where: { $0.id == folderId }),
-           folder.name.lowercased().contains(normalizedFilter) { return true }
+           folder.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter) { return true }
         return false
     }
     private func chapterFolderMatchesFilter(_ folder: ChapterFolder) -> Bool {
         guard filterActive else { return true }
-        if folder.name.lowercased().contains(normalizedFilter) { return true }
-        if project.chapters.contains(where: { $0.chapterFolderId == folder.id && $0.name.lowercased().contains(normalizedFilter) }) {
+        if folder.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter) { return true }
+        if project.chapters.contains(where: { $0.chapterFolderId == folder.id && $0.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter) }) {
             return true
         }
         // Récurse dans les sous-dossiers
@@ -1789,7 +1790,7 @@ struct ProjectSidebarRow: View {
                         Divider()
                         Button("Archiver") { store.archiveProject(project.id) }
                         Divider()
-                        Button("Supprimer", role: .destructive) { store.deleteProject(id: project.id) }
+                        Button("Supprimer…", role: .destructive) { showDeleteProjectConfirm = true }   // 5.23 — confirmation
                     } label: {
                         Image(systemName: "ellipsis")
                             .font(.system(size: 10, weight: .medium))
@@ -1801,6 +1802,17 @@ struct ProjectSidebarRow: View {
                     .menuStyle(.borderlessButton).fixedSize()
                     .help("Options du projet").modifier(RevealOnRowHover())
                     .accessibilityLabel("Options du projet")
+                    .confirmationDialog(
+                        "Supprimer « \(project.name) » ?",
+                        isPresented: $showDeleteProjectConfirm, titleVisibility: .visible
+                    ) {
+                        Button("Supprimer le projet et ses \(project.chapters.count) chapitres", role: .destructive) {
+                            store.deleteProject(id: project.id)
+                        }
+                        Button("Annuler", role: .cancel) {}
+                    } message: {
+                        Text("Le projet, ses chapitres et toutes leurs saisies seront supprimés. ⌘Z permet de revenir en arrière tant que l'app reste ouverte.")
+                    }
                 }
             }
             .padding(.horizontal, 8).padding(.vertical, 7)
@@ -1989,7 +2001,7 @@ private struct ChapterFolderSidebarRow: View {
     @State private var showAddSubfolder: Bool = false
     @State private var newSubfolderName: String = ""
 
-    private var normalizedFilter: String { sidebarFilter.trimmingCharacters(in: .whitespaces).lowercased() }
+    private var normalizedFilter: String { sidebarFilter.trimmingCharacters(in: .whitespaces).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current) }
     private var filterActive: Bool { !normalizedFilter.isEmpty }
     private var project: Project? { store.data.projects.first(where: { $0.id == projectId }) }
     private var folder: ChapterFolder? { project?.chapterFolders.first(where: { $0.id == folderId }) }
@@ -1997,17 +2009,17 @@ private struct ChapterFolderSidebarRow: View {
         let all = (project?.chapters ?? []).filter { $0.chapterFolderId == folderId && !$0.isArchived }
         guard filterActive else { return all }
         // Si le nom du dossier matche, montrer tous ses chapitres ; sinon filtrer par nom de chapitre
-        if folder?.name.lowercased().contains(normalizedFilter) == true { return all }
-        return all.filter { $0.name.lowercased().contains(normalizedFilter) }
+        if folder?.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter) == true { return all }
+        return all.filter { $0.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter) }
     }
     private var visibleSubfolders: [ChapterFolder] {
         store.childChapterFolders(of: folderId, in: projectId).filter { subfolderMatchesFilter($0) }
     }
     private func subfolderMatchesFilter(_ f: ChapterFolder) -> Bool {
         guard filterActive else { return true }
-        if f.name.lowercased().contains(normalizedFilter) { return true }
+        if f.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter) { return true }
         let hasChapter = (project?.chapters ?? []).contains {
-            $0.chapterFolderId == f.id && !$0.isArchived && $0.name.lowercased().contains(normalizedFilter)
+            $0.chapterFolderId == f.id && !$0.isArchived && $0.name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current).contains(normalizedFilter)
         }
         if hasChapter { return true }
         return store.childChapterFolders(of: f.id, in: projectId).contains { subfolderMatchesFilter($0) }

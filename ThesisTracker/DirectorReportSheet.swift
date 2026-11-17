@@ -174,7 +174,7 @@ struct DirectorReportSheet: View {
             lines.append("• Thèse rédigée : ≈ \(pages) pages (\(calibration))")
         }
         lines.append("• Jours actifs  : \(activeDays)")
-        lines.append("• Streak actuel : \(store.currentStreak) jour\(store.currentStreak > 1 ? "s" : "")")
+        lines.append("• Série actuelle : \(store.currentStreak) jour\(store.currentStreak > 1 ? "s" : "")")
 
         // Recherche sur la période
         let researchEntries = store.data.researchEntries.filter { $0.date >= startStr && $0.date <= endStr }

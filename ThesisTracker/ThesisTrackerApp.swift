@@ -109,7 +109,7 @@ private struct WindowAccessor: NSViewRepresentable {
 struct ThesisTrackerApp: App {
     @StateObject private var store = DataStore()
     @StateObject private var pomodoroController = PomodoroAppController()
-    @AppStorage("interfaceMode") private var interfaceMode: String = "VA"
+    @AppStorage("interfaceMode") private var interfaceMode: String = "VT"
     // #48 — hotkey globale configurable pour le mode focus : lue directement
     // dans UserDefaults ("globalFocusKey") par GlobalHotKeys.
 
@@ -135,8 +135,11 @@ struct ThesisTrackerApp: App {
                         guard let store else { return }
                         guard let project = store.activeProject, let chapter = store.activeChapter else { return }
                         let today = DataStore.today
-                        let current = chapter.entryForDate(today)?.totalCount ?? 0
-                        store.setTotalForDate(current + wordCount, for: chapter.id, in: project.id, date: today)
+                        // 5.23 — part du dernier total connu (les saisies sont cumulatives), pas de zéro
+                        // quand rien n'a encore été saisi aujourd'hui ; en mode « mots », 1 mot = 5 signes.
+                        let current = store.latestTotal(for: chapter.id, in: project.id)
+                        let added = store.data.useWordCount ? wordCount * 5 : wordCount
+                        store.setTotalForDate(current + added, for: chapter.id, in: project.id, date: today)
                     }
                     setupGlobalHotkey(store: store, pomodoroController: pomodoroController)
                     // 5.11 — créneaux d'écriture : « Démarrer » depuis le rappel
@@ -229,6 +232,12 @@ struct ThesisTrackerApp: App {
                     interfaceMode = "VD"
                 }
                 .keyboardShortcut("2", modifiers: [.command, .option])
+
+                // 5.24 — troisième affichage du tableau de bord
+                Button(interfaceMode == "VT" ? "✓ Tuiles (VT)" : "  Tuiles (VT)") {
+                    interfaceMode = "VT"
+                }
+                .keyboardShortcut("3", modifiers: [.command, .option])
 
                 Divider()
 

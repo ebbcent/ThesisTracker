@@ -58,11 +58,11 @@ struct AchievementsView: View {
                 HStack(spacing: 12) {
                     AchievementStatCard(
                         icon: "flame.fill", iconColor: Color(red: 0.961, green: 0.455, blue: 0.114),
-                        value: "\(store.currentStreak)", unit: "jours", label: "Streak actuel"
+                        value: "\(store.currentStreak)", unit: "jours", label: "Série actuelle"
                     )
                     AchievementStatCard(
                         icon: "trophy.fill", iconColor: Color(red: 1.0, green: 0.84, blue: 0.0),
-                        value: "\(store.longestStreak)", unit: "jours", label: "Meilleur streak"
+                        value: "\(store.longestStreak)", unit: "jours", label: "Meilleure série"
                     )
                     AchievementStatCard(
                         icon: "pencil.and.list.clipboard", iconColor: .accent,
@@ -639,7 +639,7 @@ private struct CompletedChallengeCard: View {
         switch challenge.kind {
         case .words:             return "Volume d'écriture"
         case .daysWritten:       return "Régularité"
-        case .streak:            return "Streak"
+        case .streak:            return "Série"
         case .sessions:          return "Sessions Pomodoro"
         case .chapterCompletion: return "Chapitres terminés"
         case .chaptersAdvanced:  return "Chapitres avancés"
@@ -651,7 +651,7 @@ private struct CompletedChallengeCard: View {
         switch challenge.kind {
         case .words:             return "\(challenge.target.formatted()) \(unit)"
         case .daysWritten:       return "\(challenge.target) jour\(challenge.target > 1 ? "s" : "") écrits"
-        case .streak:            return "Streak de \(challenge.target) jours"
+        case .streak:            return "Série de \(challenge.target) jours"
         case .sessions:          return "\(challenge.target) sessions"
         case .chapterCompletion: return "\(challenge.target) chapitre\(challenge.target > 1 ? "s" : "") terminé\(challenge.target > 1 ? "s" : "")"
         case .chaptersAdvanced:  return "\(challenge.target) chapitre\(challenge.target > 1 ? "s" : "") fait\(challenge.target > 1 ? "s" : "") avancer"

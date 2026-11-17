@@ -93,7 +93,7 @@ struct SettingsView: View {
                 // ── En-tête (fixe) ───────────────────────────────────────
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Paramètres")
+                        Text("Réglages")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                             .foregroundColor(.primary)
                         Text("Objectifs · Apparence · Comportement")
@@ -483,6 +483,10 @@ struct SettingsView: View {
                                     Spacer()
                                     Toggle("", isOn: $forceDarkMode)
                                         .toggleStyle(.switch).labelsHidden()
+                                        // 5.24 — ce réglage reprend la main sur le bouton clair/sombre des Tuiles
+                                        .onChange(of: forceDarkMode) { _, _ in
+                                            UserDefaults.standard.set(false, forKey: "forceLightMode")
+                                        }
                                         .tint(Color(hex: "#6B8EF0"))
                                 }
                                 .padding(14)
@@ -1066,7 +1070,8 @@ struct SettingsView: View {
         // Objectif variable par jour
         if weekdayGoalsEnabled {
             store.weekdayGoals = Dictionary(uniqueKeysWithValues: wdGoalTexts.compactMap { wd, text in
-                guard let v = Int(text.trimmingCharacters(in: .whitespaces)), v > 0 else { return nil }
+                let v = parseGoal(text)
+                guard v > 0 else { return nil }
                 return (wd, v)
             })
         } else {
@@ -1109,7 +1114,8 @@ struct SettingsView: View {
     }
 
     private func parseGoal(_ text: String) -> Int {
-        Int(text.trimmingCharacters(in: .whitespaces)) ?? 0
+        // 5.23 — « 10 000 » (espace, espace insécable ou fine) est un nombre valide
+        Int(text.filter { !$0.isWhitespace && $0 != "\u{00A0}" && $0 != "\u{202F}" }) ?? 0
     }
 
     // #40 — Ligne de raccourci configurable

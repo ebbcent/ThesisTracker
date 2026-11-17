@@ -282,7 +282,7 @@ struct HeatmapView: View {
                     .font(.system(size: 11, weight: .semibold, design: .monospaced))
                     .foregroundColor(.accent)
             } else {
-                Text("Aucune ecriture")
+                Text("Aucune écriture")
                     .font(.system(size: 11))
                     .foregroundColor(.labelMuted)
             }
