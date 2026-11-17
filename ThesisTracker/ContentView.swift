@@ -28,6 +28,20 @@ enum AppLook {
         (UserDefaults.standard.string(forKey: "interfaceMode") ?? "VT") == "VT"
     }
 
+    /// Rayon de coin selon l'apparence (d'origine, Tuiles).
+    static func r(_ classic: CGFloat, _ tilesRadius: CGFloat) -> CGFloat { tiles ? tilesRadius : classic }
+
+    /// Liseré des cartes et des champs : absent en Tuiles.
+    static var hairline: Color { tiles ? .clear : .cardBorder }
+
+    /// Texte posé sur la couleur d'accent.
+    static var onAccent: Color { .white }
+
+    /// Panneau flottant arrondi en Tuiles (5.25), rectangle plein sinon.
+    static func panelShape(_ radius: CGFloat) -> AnyShape {
+        tiles ? AnyShape(RoundedRectangle(cornerRadius: radius, style: .continuous)) : AnyShape(Rectangle())
+    }
+
     /// À appeler quand l'affichage change (menu Affichage, tuile « Tableau de bord complet »).
     static func refresh() {
         cached = compute()
@@ -100,7 +114,7 @@ extension Color {
     // aussi de couleur de texte (l'ambre #F59E0B sur blanc ne contrastait qu'à ≈ 2:1) ; encore plus nets
     // avec « Augmenter le contraste » (Réglages système › Accessibilité › Affichage).
     static let accentWarm  = adaptive(light: 0xD97706, dark: 0xF59E0B, hcLight: 0xB45309, hcDark: 0xFBBF24,
-                                      tilesLight: 0x1F3FD1, tilesDark: 0x8FA3FF)  // ambre principal ; bleu d'encre en Tuiles
+                                      tilesLight: 0x1F3FD1, tilesDark: 0x5F7BFF)  // ambre principal ; bleu d'encre en Tuiles
     static let accentGold  = adaptive(light: 0xEA580C, dark: 0xEA580C, hcLight: 0xC2410C, hcDark: 0xFB923C)  // orange profond
     static let accentGreen = adaptive(light: 0x16A34A, dark: 0x22C55E, hcLight: 0x15803D, hcDark: 0x4ADE80)  // succès
     static let accentRose  = adaptive(light: 0xE11D48, dark: 0xF43F5E, hcLight: 0xBE123C, hcDark: 0xFB7185)  // alertes
@@ -203,11 +217,12 @@ struct SectionHeader: View {
     var body: some View {
         HStack(spacing: 8) {
             // 5.18 : titre de section en casse normale (les capitales espacées partout écrasaient la hiérarchie)
+            // 5.25 — en Tuiles : titre de section net, sans filet
             Text(title)
-                .font(TypeScale.sectionTitle)
-                .foregroundColor(.labelMuted)
+                .font(AppLook.tiles ? .system(size: 15, weight: .bold) : TypeScale.sectionTitle)
+                .foregroundColor(AppLook.tiles ? .primary : .labelMuted)
             Rectangle()
-                .fill(Color.cardBorder)
+                .fill(AppLook.hairline)
                 .frame(height: 1)
         }
     }

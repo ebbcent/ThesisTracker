@@ -201,6 +201,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.22** — Saisies et pomodoros depuis Clem Hub
 - **5.23** — Correctifs d'audit : saisie pomodoro, ⌘Z entre les deux Mac, alertes d'échéance, Kanban, minuit, recherche sans accents
 - **5.24** — Affichage « Tuiles » du tableau de bord (clair / sombre) et récap du mois
+- **5.25** — Tuiles, suite : barre latérale et barre du haut en panneaux flottants, boutons et cartes alignés, menu Modes, table des matières dans la barre latérale
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -246,3 +247,15 @@ Demande de Clem après maquettes : tuiles claires, option sombre, style récent 
 - Apparence de toute l'app (`AppLook`, dans `ContentView.swift`) : quand l'affichage Tuiles est choisi, la palette centrale change pour toutes les pages (fond, cartes, barre latérale, champs, texte secondaire), l'accent devient le bleu d'encre (`accentWarm` et `Color.accent` ; la couleur d'accent des Réglages ne s'applique qu'aux affichages VA et VD), `GlassCard` passe à un rayon de 22 sans liseré, et la ligne choisie de la barre latérale devient une pastille pleine. Avec VA ou VD, la palette d'origine revient telle quelle. Changer d'affichage redessine la fenêtre (`appLookToken`). Non couvert : les rayons et couleurs écrits en dur dans les pages (ambre des accomplissements, exports, etc.).
 - Tests : `TilesAndRecapTests`.
 À vérifier sur l'app réelle : rendu des tuiles et de la capsule de verre en clair et en sombre (développé sans Xcode local, compilé par la CI).
+
+
+## 2026-11-17 — 5.25 : Tuiles, suite (barre latérale et reste de l'app)
+Retour de Clem sur la 5.24 : « la version tuile est cool », poursuivre sur la barre latérale et le reste. Uniquement en apparence Tuiles ; VA et VD inchangés.
+- `AppLook` : aides `r(_:_:)` (rayon selon l'apparence), `hairline` (liseré absent en Tuiles), `onAccent`, `panelShape(_:)` (panneau arrondi en Tuiles, rectangle sinon).
+- Barre latérale : panneau de verre flottant arrondi (rayon 24, marge de 10), titre plus net, champ de filtre en pastille sans liseré, lignes un peu plus hautes, projet actif plus marqué, boutons du pied arrondis. Structure et contenu inchangés.
+- Barre du haut (`StatusBarView`) : barre flottante arrondie.
+- Styles communs : `InfoCard` (rayon 22, sans liseré), `AccentPillButtonStyle` (pastille pleine), `CockpitButtonStyle` (pastille, sans ombre), `SectionHeader` (titre net, sans filet).
+- Accent sombre des Tuiles : `#5F7BFF` au lieu de `#8FA3FF`, pour que le texte blanc posé dessus reste lisible (≈ 3,7:1).
+- Menu « Modes » : Écriture immersive, Sprint, Aujourd'hui, Mode panne, Sanctuaire (ils n'étaient accessibles que par des raccourcis non affichés ; les notifications `showTodayMode`, `showBlockedSession`, `showSanctuary` étaient écoutées mais jamais émises).
+- « Table des matières » ajoutée au groupe Écriture de la barre latérale.
+Toujours développé sans Xcode local : rendu à vérifier sur l'app.

@@ -122,7 +122,10 @@ struct SidebarView: View {
             Divider()
             sidebarFooter
         }
-        .appGlass(in: Rectangle(), fallback: .sidebarBg)   // 5.16 : verre d'Apple (5.15 : matériau de barre latérale)
+        // 5.25 — en Tuiles : panneau de verre flottant, arrondi, détaché des bords
+        .clipShape(AppLook.panelShape(24))
+        .appGlass(in: AppLook.panelShape(24), fallback: .sidebarBg)   // 5.16 : verre d'Apple (5.15 : matériau de barre latérale)
+        .padding(AppLook.tiles ? 10 : 0)
         .background(navigationShortcuts)
         .onAppear {
             if let id = store.data.activeProjectId { expandedProjects.insert(id) }
@@ -146,7 +149,7 @@ struct SidebarView: View {
     private var sidebarHeader: some View {
         HStack(spacing: 9) {
             ZStack {
-                RoundedRectangle(cornerRadius: 7)
+                RoundedRectangle(cornerRadius: AppLook.r(7, 9), style: .continuous)
                     .fill(LinearGradient(colors: [.accent, .accentWarm], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 26, height: 26)
                 Image(systemName: "text.book.closed.fill")
@@ -154,7 +157,7 @@ struct SidebarView: View {
                     .font(.system(size: 11, weight: .semibold))
             }
             Text("Writing Process")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: AppLook.tiles ? 15 : 13, weight: AppLook.tiles ? .bold : .semibold))
                 .foregroundColor(.primary)
             Spacer()
             // 5.18 : série retirée ici (affichée une seule fois, dans la barre du haut)
@@ -189,8 +192,8 @@ struct SidebarView: View {
                     .foregroundColor(.labelMuted)
                     .frame(width: 26, height: 26)
                     .background(Color.glassFill)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.cardBorder, lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 13), style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 13), style: .continuous).stroke(AppLook.hairline, lineWidth: 1))
             }
             .buttonStyle(.pressable)
             .help("Masquer la barre latérale")
@@ -231,7 +234,7 @@ struct SidebarView: View {
         VStack(spacing: 0) {
             navGroup(
                 label: "Écriture",
-                items: [.dashboard, .professor, .overview, .deadlines, .kanban],   // 5.18 : professeur à portée, pendant la séance
+                items: [.dashboard, .professor, .overview, .tableOfContents, .deadlines, .kanban],   // 5.18 : professeur à portée ; 5.25 : table des matières
                 collapsed: $navEcritureCollapsed
             )
             navGroupDivider
@@ -365,10 +368,10 @@ struct SidebarView: View {
                     .accessibilityLabel("Effacer le filtre")
                 }
             }
-            .padding(.horizontal, 10).padding(.vertical, 6)
+            .padding(.horizontal, 10).padding(.vertical, AppLook.tiles ? 8 : 6)
             .background(Color.fieldBg)
-            .clipShape(RoundedRectangle(cornerRadius: 7))
-            .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 17), style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 17), style: .continuous).stroke(AppLook.hairline, lineWidth: 1))
             .padding(.horizontal, 14).padding(.bottom, 8)
 
             VStack(spacing: 4) {
@@ -903,10 +906,10 @@ struct SidebarView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 30)
                 .background(Color.glassFill)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 15), style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.cardBorder, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: AppLook.r(8, 15), style: .continuous)
+                        .stroke(AppLook.hairline, lineWidth: 1)
                 )
                 .contentShape(Rectangle())
         }
@@ -942,7 +945,7 @@ private struct NavItemRow: View {
                         .frame(width: 16)
                         .foregroundColor(isSelected ? (AppLook.tiles ? TilesTheme.onBlue : .accentWarm) : (isHovering ? .primary.opacity(0.7) : .labelMuted.opacity(0.7)))
                     Text(item.rawValue)
-                        .font(.system(size: 12.5, weight: isSelected ? .semibold : .regular))
+                        .font(.system(size: AppLook.tiles ? 13 : 12.5, weight: isSelected ? .semibold : .regular))
                         .foregroundColor(isSelected ? (AppLook.tiles ? TilesTheme.onBlue : .primary) : (isHovering ? .primary.opacity(0.85) : .secondary.opacity(0.75)))
                     Spacer()
                     if isHovering, let hint = item.shortcutHint {
@@ -955,7 +958,7 @@ private struct NavItemRow: View {
                             .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .trailing)))
                     }
                 }
-                .padding(.horizontal, 9).padding(.vertical, 7)
+                .padding(.horizontal, 9).padding(.vertical, AppLook.tiles ? 8 : 7)
                 .background(
                     RoundedRectangle(cornerRadius: AppLook.tiles ? 12 : 7, style: .continuous)
                         .fill(
@@ -1816,7 +1819,7 @@ struct ProjectSidebarRow: View {
                 }
             }
             .padding(.horizontal, 8).padding(.vertical, 7)
-            .background(RoundedRectangle(cornerRadius: 8).fill(isActive ? Color.accent.opacity(0.06) : Color.clear))
+            .background(RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous).fill(isActive ? Color.accent.opacity(AppLook.tiles ? 0.10 : 0.06) : Color.clear))
             // Drag source pour le projet
             .draggable(project.id.uuidString) {
                 HStack(spacing: 6) {

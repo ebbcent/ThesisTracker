@@ -12,15 +12,16 @@ struct CockpitButtonStyle: ButtonStyle {
             .foregroundStyle(prominent ? Color.white : CockpitTheme.textPrimary(for: colorScheme))
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
+            // 5.25 — en Tuiles : pastille, sans liseré ni ombre
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: AppLook.r(12, 19), style: .continuous)
                     .fill(background(configuration: configuration))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(border(configuration: configuration), lineWidth: 1)
+                RoundedRectangle(cornerRadius: AppLook.r(12, 19), style: .continuous)
+                    .stroke(AppLook.tiles && prominent ? Color.clear : border(configuration: configuration), lineWidth: 1)
             )
-            .shadow(color: CockpitTheme.shadow(for: colorScheme).opacity(prominent ? 0.9 : 0.35), radius: prominent ? 10 : 4, y: 6)
+            .shadow(color: CockpitTheme.shadow(for: colorScheme).opacity(AppLook.tiles ? 0 : (prominent ? 0.9 : 0.35)), radius: prominent ? 10 : 4, y: 6)
             .scaleEffect(configuration.isPressed ? 0.985 : 1)
             .appAnimation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }

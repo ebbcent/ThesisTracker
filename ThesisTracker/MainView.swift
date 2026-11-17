@@ -917,7 +917,12 @@ struct StatusBarView: View {
             }
         }
         .frame(height: 33)
-        .appGlass(in: Rectangle(), fallback: .sidebarBg)   // 5.16 : verre (5.15 : matériau de barre)
+        // 5.25 — en Tuiles : barre flottante arrondie
+        .clipShape(AppLook.panelShape(16))
+        .appGlass(in: AppLook.panelShape(16), fallback: .sidebarBg)   // 5.16 : verre (5.15 : matériau de barre)
+        .padding(.horizontal, AppLook.tiles ? 12 : 0)
+        .padding(.top, AppLook.tiles ? 10 : 0)
+        .padding(.bottom, AppLook.tiles ? 6 : 0)
     }
 
     private func copyDailySummary() {

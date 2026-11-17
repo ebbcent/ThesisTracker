@@ -381,7 +381,22 @@ struct UpdatesSettingsSection: View {
 struct AccentPillButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
-    func makeBody(configuration: Configuration) -> some View {
+    @ViewBuilder func makeBody(configuration: Configuration) -> some View {
+        if AppLook.tiles {
+            // 5.25 — en Tuiles : pastille pleine, comme les boutons de l'accueil
+            configuration.label
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(AppLook.onAccent)
+                .padding(.horizontal, 16).padding(.vertical, 7)
+                .background(Capsule().fill(Color.accentWarm.opacity(configuration.isPressed ? 0.85 : 1)))
+                .scaleEffect(configuration.isPressed && !Motion.reduce ? 0.97 : 1)
+                .opacity(isEnabled ? 1 : 0.45)
+        } else {
+            classicBody(configuration: configuration)
+        }
+    }
+
+    private func classicBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 12, weight: .semibold))
             .foregroundColor(.accentWarm)
