@@ -168,6 +168,9 @@ struct AchievementsView: View {
                     }
                 }
 
+                // 5.30 — records et accomplissements à progression (manuscrit, objectifs, régularité, concentration)
+                AchievementFamiliesSection(store: store)
+
             }
             .padding(28)
         }

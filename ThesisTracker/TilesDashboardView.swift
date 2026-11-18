@@ -75,6 +75,7 @@ struct TilesDashboardView: View {
     @AppStorage("forceLightMode") private var forceLightMode: Bool = false
     @AppStorage("monthlyRecapLastSeen") private var recapLastSeen: String = ""
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var pomodoroController: PomodoroAppController
 
     @State private var inputText: String = ""
     @State private var savedFlash = false
@@ -130,6 +131,7 @@ struct TilesDashboardView: View {
                     deadlineTile
                     defenseTile
                     recapTile
+                    nextBadgeTile
                     classicTile
                 }
             }
@@ -548,6 +550,17 @@ struct TilesDashboardView: View {
         .help("Ouvrir le récap de \(r.monthName)")
     }
 
+    /// 5.30 — accomplissement le plus proche ; ouvre la page Accomplissements.
+    private var nextBadgeTile: some View {
+        Button {
+            NotificationCenter.default.post(name: .showAchievements, object: nil)
+        } label: {
+            tile { TilesNextBadgeContent(store: store) }
+        }
+        .buttonStyle(.pressable)
+        .help("Ouvrir les accomplissements")
+    }
+
     private var classicTile: some View {
         Button { interfaceMode = "VA" } label: {
             tile {
@@ -627,6 +640,7 @@ struct TilesDashboardView: View {
             store.setTotalForDate(count, for: chapter.id, in: project.id, date: DataStore.today)
         }
         inputText = ""
+        AchievementCatalog.announceNew(store: store, sessions: pomodoroController.data.sessions)   // 5.30
         withAppAnimation(Motion.quick) { savedFlash = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             withAppAnimation(Motion.quick) { savedFlash = false }

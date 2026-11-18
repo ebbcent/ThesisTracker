@@ -133,6 +133,7 @@ struct MainView: View {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.5) {
             store.checkAndGenerateMonthlyReport()
             MonthlyRecap.notifyIfDue(store: store)   // 5.26 — récap du mois écoulé : une notification par mois
+            AchievementCatalog.announceNew(store: store, sessions: pomodoroController.data.sessions)   // 5.30
         }
     }
 
