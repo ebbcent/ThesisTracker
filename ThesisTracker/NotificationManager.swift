@@ -72,6 +72,15 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: nil))
     }
 
+    /// 5.30 — accomplissement nouvellement gagné.
+    func sendAchievementUnlocked(name: String, detail: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "Accomplissement gagné : \(name)"
+        content.body = detail + ". À retrouver dans « Accomplissements »."
+        content.sound = .default
+        center.add(UNNotificationRequest(identifier: "achievement-\(name)", content: content, trigger: nil))
+    }
+
     /// 5.26 — récap du mois écoulé disponible : notification immédiate, une fois par mois.
     func sendMonthlyRecapReady(monthName: String, summary: String) {
         let content = UNMutableNotificationContent()

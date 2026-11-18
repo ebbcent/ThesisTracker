@@ -206,6 +206,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.27** — Réglages réparés, police et tailles uniformisées, commandes à la couleur d'accent
 - **5.28** — Barre latérale : noms de projets et titres de chapitres lisibles, badges sur leur ligne
 - **5.29** — Barre latérale Tuiles : rail d'icônes et chapitre épinglé ; saisie sous la carte du chapitre
+- **5.30** — Accomplissements à progression, records, prochain badge sur l'accueil
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -306,3 +307,14 @@ Après la 5.28, capture de Clem : « 33 % » et « Hist. » affichés une lettre
 - Accueil Tuiles : `entryBar` en ligne, entre la carte du chapitre et « Aujourd'hui », à la place de la capsule flottante du bas.
 - Correctif : pourcentage et « Hist. » ne peuvent plus être écrasés (`fixedSize`), pour la vue normale des affichages d'origine.
 Affichages VA et VD : barre latérale inchangée.
+
+
+## 2026-11-18 — 5.30 : accomplissements à progression, records, prochain badge
+Demande de Clem : ajouter des accomplissements, des défis, des badges (« je te fais confiance, réfléchis avant de lancer »). État des lieux d'abord : la page avait déjà 8 badges de série, 8 de volume, 16 accomplissements généraux (gagné / pas gagné) et un défi par semaine sur un calendrier de 52. Rien n'est retiré.
+- `AchievementCatalog.swift` : 21 accomplissements à progression (« 7 / 10 »), en quatre familles. Manuscrit : quart, moitié, trois quarts, complet, premier jet, trois premiers jets, échéance tenue, soumis au directeur. Objectifs tenus : 10 / 50 / 100 objectifs du jour, une et dix semaines à l'objectif, un mois à l'objectif. Régularité : semaine de travail (lundi au vendredi), sept sur sept, reprise après deux semaines d'arrêt (une, trois). Concentration : 10 / 50 / 200 blocs terminés, journée de quatre blocs, 25 heures.
+- Choix : tout est calculé à partir des données existantes (saisies, objectifs, relectures, sessions du minuteur) ; aucun champ ajouté à data.json. Les reprises sont récompensées, une série cassée n'est pas punie.
+- Section « Records » : meilleur jour, meilleure semaine, meilleur mois, mois le plus régulier, plus longue série, avec leurs dates.
+- Page Accomplissements : `AchievementFamiliesSection` sous les sections existantes. Accueil Tuiles : tuile « Prochain badge » (le plus proche du but), qui ouvre la page.
+- Notification à chaque accomplissement nouvellement gagné (`announceNew`, au plus deux à la fois ; liste mémorisée sur le Mac, clé `achievementsSeen` ; la première fois, ceux déjà gagnés sont mémorisés sans notification).
+- Tests : `AchievementCatalogTests`.
+Non fait, volontairement : pas de nouveaux types de défis hebdomadaires (le calendrier de 52 existe et il faudrait un champ de données pour un défi choisi).
