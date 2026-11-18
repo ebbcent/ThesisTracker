@@ -82,9 +82,7 @@ struct SidebarView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         Color.clear.frame(height: 1).id("__sidebar_top__")
                         // Navigation section
-                        navSection
-
-                        sectionDivider
+                        sidebarTopSection
 
                         // Projets section
                         projectSection
@@ -125,7 +123,9 @@ struct SidebarView: View {
         // 5.25 — en Tuiles : panneau de verre flottant, arrondi, détaché des bords
         .clipShape(AppLook.panelShape(24))
         .appGlass(in: AppLook.panelShape(24), fallback: .sidebarBg)   // 5.16 : verre d'Apple (5.15 : matériau de barre latérale)
-        .padding(AppLook.tiles ? 10 : 0)
+        .padding(.vertical, AppLook.tiles ? 10 : 0)
+        .padding(.trailing, AppLook.tiles ? 10 : 0)
+        .padding(.leading, AppLook.tiles ? 8 : 0)
         .background(navigationShortcuts)
         .onAppear {
             if let id = store.data.activeProjectId { expandedProjects.insert(id) }
@@ -141,6 +141,21 @@ struct SidebarView: View {
             FolderFormView(name: $editingFolderName, title: "Nouveau dossier",
                 onSave: { store.addFolder(name: editingFolderName); editingFolderName = ""; showAddFolder = false },
                 onCancel: { editingFolderName = ""; showAddFolder = false })
+        }
+    }
+
+    /// Haut du panneau : la liste des pages (affichages d'origine), ou le chapitre épinglé (Tuiles, 5.29).
+    @ViewBuilder private var sidebarTopSection: some View {
+        if AppLook.tiles {
+            TilesPinnedChapterCard(store: store) { chapter, projectId in
+                historyItem = ChapterEditItem(chapter: chapter, projectId: projectId)
+            }
+            .padding(.horizontal, 10)
+            .padding(.top, 10)
+            .padding(.bottom, 4)
+        } else {
+            navSection
+            sectionDivider
         }
     }
 
@@ -2361,7 +2376,9 @@ struct ChapterSidebarRow: View {
     @State private var showDeleteConfirm = false
     @State private var showStatusPicker = false   // V3.2
     @State private var renameDraft: String? = nil
-    @AppStorage("sidebarCompactMode") private var compactMode: Bool = false
+    @AppStorage("sidebarCompactMode") private var compactStored: Bool = false
+    /// 5.29 — en apparence Tuiles, les lignes de chapitre sont toujours compactes.
+    private var compactMode: Bool { compactStored || AppLook.tiles }
 
     private var isMultiSelected: Bool { selection?.isSelected(chapter.id) ?? false }
 
@@ -2457,7 +2474,9 @@ struct ChapterSidebarRow: View {
                             Text("\(percentage)%")
                                 .font(.system(size: AppLook.fs(11), weight: .medium))
                                 .foregroundColor(statusColor)
+                                .lineLimit(1)
                         }
+                        .fixedSize()   // 5.29 : le pourcentage ne peut plus être écrasé à un chiffre par ligne
                     }
                 }
 
@@ -2511,6 +2530,7 @@ struct ChapterSidebarRow: View {
                     HStack(spacing: 8) {
                         Button("Hist.") { onHistory() }
                             .font(.system(size: AppLook.fs(10))).foregroundColor(.accent).buttonStyle(.pressable)
+                            .fixedSize()   // 5.29 : idem pour « Hist. »
                         Menu {
                             Button("Modifier") { onEdit() }
                             Button("Statut du chapitre…") { showStatusPicker = true }  // V3.2

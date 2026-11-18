@@ -136,6 +136,15 @@ struct MainView: View {
         }
     }
 
+    /// 5.29 — rail d'icônes des pages, en apparence Tuiles (visible même barre latérale masquée).
+    @ViewBuilder private var navRail: some View {
+        if AppLook.tiles {
+            TilesNavRail(selectedNav: $selectedNav)
+                .padding(.leading, 10)
+                .padding(.vertical, 10)
+        }
+    }
+
     /// Tableau de bord selon l'affichage choisi (VA, VD, ou VT depuis la 5.24).
     /// Sorti du corps de la vue : l'expression principale devenait trop lourde à typer.
     @ViewBuilder private var dashboardPage: some View {
@@ -389,6 +398,7 @@ struct MainView: View {
 
     var body: some View {
         HStack(spacing: 0) {
+            navRail
             if showSidebar {
                 SidebarView(
                     store: store,
