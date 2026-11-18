@@ -72,7 +72,7 @@ struct WidgetLibraryView: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text("Bibliothèque de widgets")
-                    .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                 Text(subtitleForContext)
                     .font(.system(size: 12)).foregroundColor(.labelMuted)
             }

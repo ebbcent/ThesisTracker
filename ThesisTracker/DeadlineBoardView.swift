@@ -84,7 +84,7 @@ struct DeadlineBoardView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Échéances")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                 Text(selectedTab == .chapitres
                      ? "\(items.count) chapitre\(items.count > 1 ? "s" : "") avec échéance"
                      : selectedTab == .jalons
@@ -256,7 +256,7 @@ struct DeadlineBoardView: View {
                                         .font(.system(size: AppLook.fs(10)))
                                     let paceStr = store.data.useWordCount
                                         ? "\(DataStore.formatNumber(pace / 5)) mots/jour"
-                                        : "\(DataStore.formatNumber(pace)) car./jour"
+                                        : "\(DataStore.formatNumber(pace)) signes/jour"
                                     Text(item.chapter.pacing?.profile.map { "Rythme \($0.label) : \(paceStr) aujourd'hui" }
                                          ?? "Il faut \(paceStr) pour finir à temps")
                                         .font(.system(size: AppLook.fs(11)))
@@ -287,6 +287,7 @@ struct DeadlineBoardView: View {
                     // 5.12 — simulateur de rythme du chapitre
                     if !item.chapter.isCompleted, item.chapter.goal > 0, item.chapter.deadline != nil {
                         pacingToggle(for: item.chapter)
+                        postponeRow(chapter: item.chapter, projectId: item.project.id)   // 5.34
                         if expandedPacing.contains(item.chapter.id) {
                             PacingSimulatorView(store: store, chapter: item.chapter, projectId: item.project.id)
                                 .padding(.top, 8)
@@ -314,11 +315,54 @@ struct DeadlineBoardView: View {
                 Image(systemName: open ? "chevron.up" : "chevron.down")
                     .font(.system(size: AppLook.fs(10), weight: .semibold))
             }
-            .foregroundColor(.accentWarm)
+            .foregroundColor(AppLook.tiles ? .primary : .accentWarm)
+            // 5.34 — un vrai bouton (c'était un lien discret)
+            .padding(.horizontal, AppLook.tiles ? 12 : 0)
+            .frame(height: AppLook.tiles ? 28 : nil)
+            .overlay(Capsule().stroke(AppLook.tiles ? Color.cardBorder : Color.clear, lineWidth: 1))
+            .contentShape(Capsule())
         }
         .buttonStyle(.pressable)
         .padding(.top, 8)
         .padding(.leading, 32)
+    }
+
+    // 5.34 — une échéance dépassée ne reste plus en tête sans issue : on la reporte en un clic
+    // (ou on coche le chapitre, à gauche, pour la clore).
+    @ViewBuilder
+    private func postponeRow(chapter: Chapter, projectId: UUID) -> some View {
+        let today = Calendar.current.startOfDay(for: Date())
+        if !chapter.isCompleted, let date = chapter.deadline.flatMap(DataStore.parseDate), date < today {
+            HStack(spacing: 8) {
+                Text("Échéance dépassée :")
+                    .font(.system(size: AppLook.fs(11)))
+                    .foregroundColor(.labelMuted)
+                postponeButton("Reporter d'une semaine", days: 7, chapterId: chapter.id, projectId: projectId)
+                postponeButton("d'un mois", days: 30, chapterId: chapter.id, projectId: projectId)
+            }
+            .padding(.top, 8)
+            .padding(.leading, 32)
+        }
+    }
+
+    private func postponeButton(_ title: String, days: Int, chapterId: UUID, projectId: UUID) -> some View {
+        Button {
+            guard let p = store.data.projects.firstIndex(where: { $0.id == projectId }),
+                  let c = store.data.projects[p].chapters.firstIndex(where: { $0.id == chapterId }),
+                  let target = Calendar.current.date(byAdding: .day, value: days, to: Date()) else { return }
+            store.data.projects[p].chapters[c].deadline = DataStore.dateString(from: target)
+            store.save()
+        } label: {
+            Text(title)
+                .font(.system(size: AppLook.fs(11), weight: .medium))
+                .foregroundColor(.primary)
+                .padding(.horizontal, 12)
+                .frame(height: 28)
+                .overlay(Capsule().stroke(Color.cardBorder, lineWidth: 1))
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.pressable)
+        .help("Nouvelle échéance : dans \(days) jours à compter d'aujourd'hui")
     }
 
     private func pagesSuffix(latest: Int, goal: Int) -> String {

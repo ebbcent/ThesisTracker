@@ -60,7 +60,7 @@ struct OverviewView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Vue d'ensemble")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                 Text("\(activeProjects.count) projet(s) · \(totalChapters) chapitre(s)")
                     .font(.system(size: 12))
                     .foregroundColor(.labelMuted)

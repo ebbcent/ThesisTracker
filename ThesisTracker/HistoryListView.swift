@@ -100,7 +100,7 @@ struct HistoryListView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Historique")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                     .foregroundColor(.primary)
                 if let project = selectedProject, let chapter = selectedChapter {
                     Text("\(project.name) · \(chapter.name)")

@@ -164,6 +164,7 @@ struct ProfessorView: View {
                             .font(.system(size: 12))
                             .foregroundColor(.labelMuted)
                             .padding(.top, 8)
+                        starterQuestions   // 5.34 : de quoi démarrer sans page blanche
                     }
                     ForEach(session.turns) { turn in
                         bubble(turn).id(turn.id)
@@ -227,6 +228,42 @@ struct ProfessorView: View {
     private func markdown(_ text: String) -> AttributedString {
         (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
             ?? AttributedString(text)
+    }
+
+    // MARK: Questions de départ (5.34)
+
+    private static let starters: [String] = [
+        "Où en suis-je par rapport à mes échéances ? Que dois-je faire en priorité cette semaine ?",
+        "Aide-moi à préparer ma séance d'écriture d'aujourd'hui sur le chapitre en cours.",
+        "Fais le point sur mon rythme du mois : ce qui tient, ce qui décroche.",
+        "Quelles questions un jury poserait-il sur le chapitre en cours ?"
+    ]
+
+    private var starterQuestions: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Pour commencer")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.labelMuted)
+                .padding(.top, 10)
+            ForEach(Self.starters, id: \.self) { question in
+                Button {
+                    session.draft = question
+                    inputFocused = true
+                } label: {
+                    Text(question)
+                        .font(.system(size: 13))
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: 620, alignment: .leading)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(RoundedRectangle(cornerRadius: AppLook.r(10, 16), style: .continuous).fill(Color.cardBg))
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.pressable)
+                .help("Placer cette question dans la zone de saisie (rien n'est envoyé)")
+            }
+        }
     }
 
     // MARK: Saisie

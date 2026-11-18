@@ -47,7 +47,7 @@ struct AchievementsView: View {
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Accomplissements")
-                            .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
+                            .font(TypeScale.pageTitle)
                         Text("Progression et badges")
                             .font(.system(size: 12)).foregroundColor(.labelMuted)
                     }

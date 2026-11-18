@@ -401,7 +401,7 @@ struct ChartView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Graphiques")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                     .foregroundColor(.primary)
                 Text(selectedProject.map { "Projet : \($0.name)" } ?? "Vue globale")
                     .font(.system(size: 12))

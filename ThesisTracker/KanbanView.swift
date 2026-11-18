@@ -69,7 +69,7 @@ struct KanbanView: View {
                     .accessibilityLabel("Afficher la barre latérale")
                 }
                 Text("Kanban")
-                    .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                 Spacer()
                 Text("\(allChapters.count) chapitres")
                     .font(.system(size: 12)).foregroundColor(.labelMuted)
