@@ -6,7 +6,8 @@ enum CockpitTheme {
     static func backgroundBottom(for scheme: ColorScheme) -> Color { Color.appBg }
     static func panel(for scheme: ColorScheme) -> Color { Color.cardBg }
     static func panelElevated(for scheme: ColorScheme) -> Color {
-        scheme == .dark
+        if AppLook.tiles { return Color.fieldBg }   // 5.34 : même fond de champ que le reste de l'app
+        return scheme == .dark
             ? Color(red: 0.118, green: 0.106, blue: 0.094)   // #1E1B18
             : Color(red: 0.953, green: 0.949, blue: 0.941)   // #F3F2F0
     }
@@ -19,10 +20,10 @@ enum CockpitTheme {
     }
 
     // Semantic accent colors mapped to warm palette
-    static let glow    = Color(red: 0.04, green: 0.52, blue: 1.00)  // blue (long break)
+    static var glow: Color { AppLook.tiles ? Color.semBlue : Color(red: 0.04, green: 0.52, blue: 1.00) }  // blue (long break) ; 5.34 : palette lisible en Tuiles
     static let accent  = Color.accentWarm                            // amber (focus)
     static let success = Color.accentGreen                           // green (short break)
-    static let warning = Color(red: 1.0, green: 0.72, blue: 0.18)   // yellow
+    static var warning: Color { AppLook.tiles ? Color.semYellow : Color(red: 1.0, green: 0.72, blue: 0.18) }   // yellow
 
     static func textPrimary(for scheme: ColorScheme) -> Color { .primary }
     static func textSecondary(for scheme: ColorScheme) -> Color { .secondary }
