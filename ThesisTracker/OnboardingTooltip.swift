@@ -106,8 +106,7 @@ struct OnboardingTooltipBubble: View {
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
         .background(
-            RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)
-                .fill(Color.glassFill)
+            FloatingSurface(radius: 12)   // 5.27 : verre en Tuiles (le fond d'origine était presque transparent)
                 .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
                 .overlay(
                     RoundedRectangle(cornerRadius: AppLook.r(12, 18), style: .continuous)

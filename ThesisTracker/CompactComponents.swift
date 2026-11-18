@@ -198,7 +198,7 @@ struct CompactDatePicker: View {
             .buttonStyle(.pressable)
             .popover(isPresented: $isOpen, arrowEdge: .bottom) {
                 popoverContent
-                    .background(Color.cardBg)
+                    .background(AppLook.popoverBackground)
                     .darkPopoverAppearance()
             }
 
@@ -547,7 +547,7 @@ struct CompactDropdownPicker: View {
             }
             .padding(6)
             .frame(minWidth: 200, maxWidth: 280)
-            .background(Color.cardBg)
+            .background(AppLook.popoverBackground)
             .darkPopoverAppearance()
         }
     }

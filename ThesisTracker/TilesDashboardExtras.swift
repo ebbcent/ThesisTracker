@@ -411,3 +411,25 @@ struct TilesLookSettingsSection: View {
         .onChange(of: paper) { _, _ in AppLook.refresh() }
     }
 }
+
+// MARK: - 5.27 Surface flottante : verre en Tuiles, carte pleine sinon
+
+/// Fond des éléments qui flottent au-dessus du contenu (bandeaux, bulles, saisie rapide, barres d'onglets).
+/// En apparence Tuiles : verre d'Apple, dépoli pour rester lisible. Sinon : la carte pleine d'origine.
+struct FloatingSurface: View {
+    var radius: CGFloat
+
+    var body: some View {
+        if AppLook.tiles {
+            Color.clear
+                .appGlass(in: RoundedRectangle(cornerRadius: radius + 6, style: .continuous), legible: true, fallback: .cardBg)
+        } else {
+            RoundedRectangle(cornerRadius: radius, style: .continuous).fill(Color.cardBg)
+        }
+    }
+}
+
+extension AppLook {
+    /// Fond d'un popover : laissé au matériau du système en Tuiles (verre), carte pleine sinon.
+    static var popoverBackground: Color { tiles ? .clear : .cardBg }
+}

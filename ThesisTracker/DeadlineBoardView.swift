@@ -155,9 +155,9 @@ struct DeadlineBoardView: View {
             tabButton("72h",       icon: "clock.badge.exclamationmark",  tab: .next72h)
             tabButton("Critique",  icon: "exclamationmark.triangle.fill", tab: .critique)
         }
-        .background(Color.cardBg)
+        .background(FloatingSurface(radius: 10))   // 5.27 : verre en Tuiles
         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(AppLook.hairline, lineWidth: 1))
     }
 
     private func tabButton(_ label: String, icon: String, tab: Tab) -> some View {

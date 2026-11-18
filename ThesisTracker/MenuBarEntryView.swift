@@ -154,7 +154,7 @@ struct MenuBarEntryView: View {
         }
         .frame(width: 300)
         .tint(Color.accent)   // 5.27
-        .background(Color(nsColor: .windowBackgroundColor))
+        .background(AppLook.tiles ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color(nsColor: .windowBackgroundColor)))   // 5.27
     }
 
     // MARK: - Pomodoro section

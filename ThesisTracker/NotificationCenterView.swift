@@ -42,7 +42,7 @@ struct NotificationCenterView: View {
             content
         }
         .sheetFrame(width: 360, height: 500)
-        .background(Color.cardBg)
+        .background(AppLook.popoverBackground)   // 5.27
         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20), style: .continuous))
     }
 

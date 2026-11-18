@@ -37,9 +37,9 @@ struct PomodoroTimerTabView: View {
                     }
                 }
                 .padding(4)
-                .background(Color.glassFill)
+                .background(FloatingSurface(radius: 10))   // 5.27 : verre en Tuiles
                 .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.glassBorder, lineWidth: 1))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(AppLook.tiles ? Color.clear : Color.glassBorder, lineWidth: 1))
 
                 Spacer()
 

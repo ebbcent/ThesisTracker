@@ -357,8 +357,7 @@ struct MainView: View {
         .padding(16)
         .frame(maxWidth: 500)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.16), radius: 8, x: 0, y: 3)
         )
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.orange.opacity(0.30), lineWidth: 1))
@@ -1109,8 +1108,7 @@ struct WeeklySummaryOverlay: View {
                 .padding(18)
                 .frame(width: 440)
                 .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.cardBg)
+                    FloatingSurface(radius: 18)   // 5.27 : verre en Tuiles
                         .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: -2)
                 )
                 .overlay(
@@ -1224,8 +1222,7 @@ struct DailySummaryOverlay: View {
                 .padding(18)
                 .frame(width: 420)
                 .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.cardBg)
+                    FloatingSurface(radius: 18)   // 5.27 : verre en Tuiles
                         .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: -2)
                 )
                 .overlay(
@@ -1410,8 +1407,7 @@ struct MilestoneToastView: View {
         .padding(.vertical, 14)
         .frame(maxWidth: 380)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: 3)
         )
         .overlay(
@@ -1483,8 +1479,7 @@ struct PostSessionPromptView: View {
         .padding(.vertical, 14)
         .frame(maxWidth: 400)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: 3)
         )
         .overlay(
@@ -1547,8 +1542,7 @@ struct WeeklyReportPromptBanner: View {
         .padding(.horizontal, 18).padding(.vertical, 14)
         .frame(maxWidth: 440)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: 3)
         )
         .overlay(RoundedRectangle(cornerRadius: 16)

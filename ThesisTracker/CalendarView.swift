@@ -410,7 +410,7 @@ struct CalendarView: View {
         }
         .padding(12)
         .frame(minWidth: 180, maxWidth: 260)
-        .background(Color.cardBg)
+        .background(AppLook.popoverBackground)
         .darkPopoverAppearance()
     }
 

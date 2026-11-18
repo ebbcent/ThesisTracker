@@ -122,8 +122,7 @@ struct QuickEntryView: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: AppLook.r(16, 22), style: .continuous)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.18), radius: 10, x: 0, y: 4)
                 .overlay(
                     RoundedRectangle(cornerRadius: AppLook.r(16, 22), style: .continuous)
