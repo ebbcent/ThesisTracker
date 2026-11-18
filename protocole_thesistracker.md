@@ -210,6 +210,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.31** — Correctifs constatés à l'écran : onglets masqués par le verre, ligne de chapitre, records sans imports
 - **5.32** — Premier lot des 100 améliorations vues à l'écran : chiffres lisibles, colonne élargie, libellés, saisie, accomplissements en grille
 - **5.33** — Maquette validée codée (profondeur des cartes, accent réservé à l'action, arbre en lignes simples, barre du haut, tuile Série) ; une seule date de fin estimée ; graphiques sans imports ; défis de série atteignables
+- **5.34** — Titre de page unique, report d'une échéance dépassée, bouton de rythme, questions de départ du Professeur
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -357,3 +358,10 @@ Maquette validée par Clem (« code-la »), puis second lot de la liste.
 - Défis de la semaine : une cible de série (10, 14, 21, 30 jours) est ramenée à ce qui reste atteignable d'ici dimanche ; le défi « volume » ne compte plus les imports.
 Aucune fonctionnalité retirée, aucun champ ajouté aux données (deux réglages locaux : `challengeTargetAdjustedWeeks`).
 Reste : en-têtes de page à unifier, pages Échéances, Minuteur, Widgets et Professeur, vérification à l'écran du mode clair, des Réglages et des fenêtres secondaires.
+
+
+## 2026-11-18 — 5.34 : en-têtes et pages Échéances, Professeur
+- Titre de page : `TypeScale.pageTitle` partout (Échéances, Vue d'ensemble, Kanban, Recherche, Accomplissements, Widgets, Graphiques, Historique) ; en Tuiles, le même corps que « Aujourd'hui ».
+- Échéances : sous une échéance dépassée, « Reporter d'une semaine » et « d'un mois » (la coche à gauche sert à clore) ; « Choisir un rythme » devient un bouton ; « signes/jour ».
+- Professeur : quatre questions de départ sur la page vide (elles remplissent la saisie, rien n'est envoyé).
+Reste : style du Minuteur et grille des widgets (à faire après les avoir revus à l'écran), vérification du mode clair, des Réglages et des fenêtres secondaires.
