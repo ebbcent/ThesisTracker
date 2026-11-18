@@ -2678,8 +2678,6 @@ struct ChapterSidebarRow: View {
 
     // MARK: - Milestone dots (feature #69)
 
-    /// Trois petits ronds (25 % / 50 % / 75 %) remplis en bronze / argent / or selon la progression
-    @ViewBuilder
     /// 5.28 — note, tags, hors total, terminé, relecture, statut : regroupés pour tenir sur une ligne à eux.
     private var hasChapterBadges: Bool {
         chapter.notes != nil || !chapter.customTags.isEmpty || !chapter.countsInThesisTotal || chapter.isCompleted
@@ -2732,6 +2730,8 @@ struct ChapterSidebarRow: View {
         }
     }
 
+    /// Trois petits ronds (25 % / 50 % / 75 %) remplis en bronze / argent / or selon la progression
+    @ViewBuilder
     private var milestoneDots: some View {
         if !chapter.isCompleted && goal > 0 && percentage >= 25 {
             HStack(spacing: 2) {
