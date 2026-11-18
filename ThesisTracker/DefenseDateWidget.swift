@@ -20,11 +20,11 @@ struct DefenseDateWidget: View {
                 projectionRow(label: "Rythme 60 jours",
                               subtitle: "Sur la durée — réaliste",
                               proj: projections.last60,
-                              color: Color(red: 0.300, green: 0.650, blue: 0.900))
+                              color: Color.semSky)
                 projectionRow(label: "Rythme 30 jours",
                               subtitle: "Récent — momentum actuel",
                               proj: projections.last30,
-                              color: Color(red: 0.961, green: 0.620, blue: 0.043))
+                              color: Color.semAmber)
                 projectionRow(label: "Rythme idéal",
                               subtitle: "Si tu tiens ton objectif quotidien",
                               proj: projections.ideal,
@@ -65,7 +65,7 @@ struct DefenseDateWidget: View {
                         }
                         .buttonStyle(.pressable)
                         .font(.system(size: 11))
-                        .foregroundColor(Color(red: 0.93, green: 0.26, blue: 0.26))
+                        .foregroundColor(Color.semRed)
                     }
                     Spacer()
                     Button("Annuler") { showTargetEditor = false }
@@ -97,11 +97,11 @@ struct DefenseDateWidget: View {
         HStack(spacing: 8) {
             ZStack {
                 RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                    .fill(Color(red: 0.404, green: 0.224, blue: 0.718).opacity(0.12))
+                    .fill(Color.semPurple.opacity(0.12))
                     .frame(width: 28, height: 28)
                 Image(systemName: "graduationcap.circle.fill")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(Color(red: 0.404, green: 0.224, blue: 0.718))
+                    .foregroundColor(Color.semPurple)
             }
             Text("Soutenance — projection")
                 .font(.system(size: 13, weight: .semibold))
@@ -156,7 +156,7 @@ struct DefenseDateWidget: View {
 
         return HStack(spacing: 8) {
             Image(systemName: onTrack ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                .foregroundColor(onTrack ? .accentGreen : Color(red: 0.929, green: 0.329, blue: 0.329))
+                .foregroundColor(onTrack ? .accentGreen : Color.semRed)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Cible : \(DataStore.formatDate(target)) (\(days >= 0 ? "dans " : "il y a ")\(abs(days)) j)")
                     .font(.system(size: 11, weight: .semibold))
@@ -171,7 +171,7 @@ struct DefenseDateWidget: View {
             Spacer()
         }
         .padding(10)
-        .background((onTrack ? Color.accentGreen : Color(red: 0.929, green: 0.329, blue: 0.329)).opacity(0.08))
+        .background((onTrack ? Color.accentGreen : Color.semRed).opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
     }
 }

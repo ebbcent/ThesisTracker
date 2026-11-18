@@ -15,11 +15,11 @@ struct FragmentsWidget: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                            .fill(Color(red: 0.961, green: 0.620, blue: 0.043).opacity(0.12))
+                            .fill(Color.semAmber.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "scribble.variable")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(Color(red: 0.961, green: 0.620, blue: 0.043))
+                            .foregroundColor(Color.semAmber)
                     }
                     Text("Carnet de fragments")
                         .font(.system(size: 13, weight: .semibold))
@@ -42,7 +42,7 @@ struct FragmentsWidget: View {
                     Button(action: addFragment) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 18))
-                            .foregroundColor(Color(red: 0.961, green: 0.620, blue: 0.043))
+                            .foregroundColor(Color.semAmber)
                     }
                     .buttonStyle(.pressable)
                     .disabled(quickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -55,7 +55,7 @@ struct FragmentsWidget: View {
                         ForEach(active.prefix(3)) { fragment in
                             HStack(spacing: 6) {
                                 Circle()
-                                    .fill(Color(red: 0.961, green: 0.620, blue: 0.043))
+                                    .fill(Color.semAmber)
                                     .frame(width: 4, height: 4)
                                 Text(fragment.content)
                                     .font(.system(size: 11))
@@ -76,7 +76,7 @@ struct FragmentsWidget: View {
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 10).padding(.vertical, 6)
-                        .background(Color(red: 0.961, green: 0.620, blue: 0.043))
+                        .background(Color.semAmber)
                         .clipShape(Capsule())
                 }
                 .buttonStyle(.pressable)
@@ -163,7 +163,7 @@ struct FragmentsSheet: View {
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 5)
-                    .background(Color(red: 0.961, green: 0.620, blue: 0.043))
+                    .background(Color.semAmber)
                     .clipShape(Capsule())
             }
             .buttonStyle(.pressable)

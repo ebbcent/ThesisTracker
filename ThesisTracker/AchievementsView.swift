@@ -13,13 +13,13 @@ struct BadgeDefinition {
 extension BadgeDefinition {
     static let all: [BadgeDefinition] = [
         BadgeDefinition(threshold: 3,   name: "Étincelle",    icon: "flame",         color: .accent,                                                           description: "3 jours consécutifs"),
-        BadgeDefinition(threshold: 7,   name: "Régulier",     icon: "flame.fill",    color: Color(red: 0.961, green: 0.620, blue: 0.043),                      description: "7 jours consécutifs"),
-        BadgeDefinition(threshold: 14,  name: "Persévérant",  icon: "star.fill",     color: Color(red: 0.961, green: 0.455, blue: 0.114),                      description: "14 jours consécutifs"),
-        BadgeDefinition(threshold: 30,  name: "Acharné",      icon: "bolt.fill",     color: Color(red: 0.929, green: 0.329, blue: 0.329),                      description: "30 jours consécutifs"),
-        BadgeDefinition(threshold: 60,  name: "Légende",      icon: "crown.fill",    color: Color(red: 0.749, green: 0.318, blue: 0.918),                      description: "60 jours consécutifs"),
-        BadgeDefinition(threshold: 100, name: "Immortel",     icon: "trophy.fill",   color: Color(red: 1.0, green: 0.55, blue: 0.1),                           description: "100 jours consécutifs"),
-        BadgeDefinition(threshold: 200, name: "Titan",        icon: "shield.fill",   color: Color(red: 0.310, green: 0.275, blue: 0.898),                      description: "200 jours consécutifs"),
-        BadgeDefinition(threshold: 365, name: "Année pleine", icon: "rosette",       color: Color(red: 0.918, green: 0.118, blue: 0.388),                      description: "365 jours consécutifs"),
+        BadgeDefinition(threshold: 7,   name: "Régulier",     icon: "flame.fill",    color: Color.semAmber,                      description: "7 jours consécutifs"),
+        BadgeDefinition(threshold: 14,  name: "Persévérant",  icon: "star.fill",     color: Color.semOrange,                      description: "14 jours consécutifs"),
+        BadgeDefinition(threshold: 30,  name: "Acharné",      icon: "bolt.fill",     color: Color.semRed,                      description: "30 jours consécutifs"),
+        BadgeDefinition(threshold: 60,  name: "Légende",      icon: "crown.fill",    color: Color.semViolet,                      description: "60 jours consécutifs"),
+        BadgeDefinition(threshold: 100, name: "Immortel",     icon: "trophy.fill",   color: Color.semOrange,                           description: "100 jours consécutifs"),
+        BadgeDefinition(threshold: 200, name: "Titan",        icon: "shield.fill",   color: Color.semPurple,                      description: "200 jours consécutifs"),
+        BadgeDefinition(threshold: 365, name: "Année pleine", icon: "rosette",       color: Color.semPink,                      description: "365 jours consécutifs"),
     ]
 }
 
@@ -57,7 +57,7 @@ struct AchievementsView: View {
                 // Key stats row
                 HStack(spacing: 12) {
                     AchievementStatCard(
-                        icon: "flame.fill", iconColor: Color(red: 0.961, green: 0.455, blue: 0.114),
+                        icon: "flame.fill", iconColor: Color.semOrange,
                         value: "\(store.currentStreak)", unit: "jours", label: "Série actuelle"
                     )
                     AchievementStatCard(
@@ -81,7 +81,7 @@ struct AchievementsView: View {
 
                 // Badge grid
                 VStack(alignment: .leading, spacing: 12) {
-                    sectionHeader("BADGES DE STREAK", icon: "flame.fill", color: Color(red: 0.961, green: 0.455, blue: 0.114))
+                    sectionHeader("BADGES DE STREAK", icon: "flame.fill", color: Color.semOrange)
 
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 14)], spacing: 14) {
                         ForEach(BadgeDefinition.all, id: \.threshold) { badge in
@@ -92,7 +92,7 @@ struct AchievementsView: View {
 
                 // Volume badges (V5)
                 VStack(alignment: .leading, spacing: 12) {
-                    sectionHeader("BADGES DE VOLUME", icon: "text.word.spacing", color: Color(red: 0.706, green: 0.502, blue: 0.984))
+                    sectionHeader("BADGES DE VOLUME", icon: "text.word.spacing", color: Color.semViolet)
                     let totalWritten = store.totalCharsEverWritten
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 14)], spacing: 14) {
                         ForEach(VolumeBadgeDefinition.all, id: \.threshold) { badge in
@@ -234,12 +234,12 @@ struct AchievementsView: View {
             isUnlocked: totalChapters >= 10
         ))
         list.append(GeneralAchievement(
-            id: "marathon", icon: "figure.run", color: Color(red: 0.929, green: 0.329, blue: 0.329),
+            id: "marathon", icon: "figure.run", color: Color.semRed,
             name: "Marathon", description: "Écrire 10\u{202F}000 \(unit) en une journée",
             isUnlocked: hasWrittenInOneDay(threshold: 10_000)
         ))
         list.append(GeneralAchievement(
-            id: "centurion", icon: "crown.fill", color: Color(red: 0.749, green: 0.318, blue: 0.918),
+            id: "centurion", icon: "crown.fill", color: Color.semViolet,
             name: "Centurion", description: "100 jours d'écriture au total",
             isUnlocked: totalDaysWritten >= 100
         ))
@@ -247,32 +247,32 @@ struct AchievementsView: View {
         // — Nouveaux accomplissements —
 
         list.append(GeneralAchievement(
-            id: "early_bird", icon: "sunrise.fill", color: Color(red: 0.961, green: 0.620, blue: 0.043),
+            id: "early_bird", icon: "sunrise.fill", color: Color.semAmber,
             name: "Lève-tôt", description: "Écrire avant 8 h du matin",
             isUnlocked: hasEntrySavedAt(hourPredicate: { $0 < 8 })
         ))
         list.append(GeneralAchievement(
-            id: "night_owl", icon: "moon.stars.fill", color: Color(red: 0.404, green: 0.224, blue: 0.718),
+            id: "night_owl", icon: "moon.stars.fill", color: Color.semPurple,
             name: "Couche-tard", description: "Écrire après 23 h",
             isUnlocked: hasEntrySavedAt(hourPredicate: { $0 >= 23 })
         ))
         list.append(GeneralAchievement(
-            id: "weekend_warrior", icon: "sun.horizon.fill", color: Color(red: 0.300, green: 0.650, blue: 0.900),
+            id: "weekend_warrior", icon: "sun.horizon.fill", color: Color.semSky,
             name: "Week-end warrior", description: "Écrire 4 jours de week-end",
             isUnlocked: weekendDaysWritten >= 4
         ))
         list.append(GeneralAchievement(
-            id: "sprinter", icon: "hare.fill", color: Color(red: 0.918, green: 0.408, blue: 0.122),
+            id: "sprinter", icon: "hare.fill", color: Color.semOrange,
             name: "Sprinter", description: "5\u{202F}000 \(unit) en une journée",
             isUnlocked: hasWrittenInOneDay(threshold: 5_000)
         ))
         list.append(GeneralAchievement(
-            id: "versatile", icon: "rectangle.3.group.fill", color: Color(red: 0.220, green: 0.600, blue: 0.900),
+            id: "versatile", icon: "rectangle.3.group.fill", color: Color.semSky,
             name: "Polyvalent", description: "Avancer 3 chapitres le même jour",
             isUnlocked: maxChaptersWrittenSameDay >= 3
         ))
         list.append(GeneralAchievement(
-            id: "architect", icon: "ruler.fill", color: Color(red: 0.310, green: 0.275, blue: 0.898),
+            id: "architect", icon: "ruler.fill", color: Color.semPurple,
             name: "Architecte", description: "10 chapitres avec échéance",
             isUnlocked: chaptersWithDeadline >= 10
         ))
@@ -282,17 +282,17 @@ struct AchievementsView: View {
             isUnlocked: completedChapters >= 5
         ))
         list.append(GeneralAchievement(
-            id: "monthly_regular", icon: "calendar.badge.checkmark", color: Color(red: 0.580, green: 0.400, blue: 0.900),
+            id: "monthly_regular", icon: "calendar.badge.checkmark", color: Color.semViolet,
             name: "Mois régulier", description: "Écrire 20 jours dans un mois",
             isUnlocked: bestMonthDaysWritten >= 20
         ))
         list.append(GeneralAchievement(
-            id: "year_productive", icon: "calendar.circle.fill", color: Color(red: 0.918, green: 0.118, blue: 0.388),
+            id: "year_productive", icon: "calendar.circle.fill", color: Color.semPink,
             name: "Année productive", description: "200 jours d'écriture au total",
             isUnlocked: totalDaysWritten >= 200
         ))
         list.append(GeneralAchievement(
-            id: "project_completed", icon: "trophy.circle.fill", color: Color(red: 1.0, green: 0.55, blue: 0.1),
+            id: "project_completed", icon: "trophy.circle.fill", color: Color.semOrange,
             name: "Projet bouclé", description: "Terminer tous les chapitres d'un projet",
             isUnlocked: hasCompletedAllChaptersInAProject
         ))
@@ -414,13 +414,13 @@ struct VolumeBadgeDefinition {
 
     static let all: [VolumeBadgeDefinition] = [
         VolumeBadgeDefinition(threshold:     10_000, name: "Première plume",  icon: "pencil.tip",                color: Color(red: 0.400, green: 0.750, blue: 0.500), description: "10 000 caractères écrits"),
-        VolumeBadgeDefinition(threshold:     50_000, name: "Scripteur",       icon: "pencil.and.list.clipboard", color: Color(red: 0.300, green: 0.650, blue: 0.900), description: "50 000 caractères écrits"),
-        VolumeBadgeDefinition(threshold:    100_000, name: "Centurion",       icon: "seal.fill",                 color: Color(red: 0.961, green: 0.620, blue: 0.043), description: "100 000 caractères écrits"),
-        VolumeBadgeDefinition(threshold:    250_000, name: "Prolifique",      icon: "sparkles",                  color: Color(red: 0.929, green: 0.329, blue: 0.329), description: "250 000 caractères écrits"),
-        VolumeBadgeDefinition(threshold:    500_000, name: "Demi-million",    icon: "crown.fill",                color: Color(red: 0.749, green: 0.318, blue: 0.918), description: "500 000 caractères écrits"),
-        VolumeBadgeDefinition(threshold:  1_000_000, name: "Millionnaire",    icon: "trophy.fill",               color: Color(red: 1.000, green: 0.843, blue: 0.000), description: "1 000 000 caractères écrits"),
-        VolumeBadgeDefinition(threshold:  2_000_000, name: "Plume d'or",      icon: "medal.fill",                color: Color(red: 0.918, green: 0.408, blue: 0.122), description: "2 000 000 caractères écrits"),
-        VolumeBadgeDefinition(threshold:  5_000_000, name: "Mythique",        icon: "laurel.leading",            color: Color(red: 0.404, green: 0.224, blue: 0.718), description: "5 000 000 caractères écrits"),
+        VolumeBadgeDefinition(threshold:     50_000, name: "Scripteur",       icon: "pencil.and.list.clipboard", color: Color.semSky, description: "50 000 caractères écrits"),
+        VolumeBadgeDefinition(threshold:    100_000, name: "Centurion",       icon: "seal.fill",                 color: Color.semAmber, description: "100 000 caractères écrits"),
+        VolumeBadgeDefinition(threshold:    250_000, name: "Prolifique",      icon: "sparkles",                  color: Color.semRed, description: "250 000 caractères écrits"),
+        VolumeBadgeDefinition(threshold:    500_000, name: "Demi-million",    icon: "crown.fill",                color: Color.semViolet, description: "500 000 caractères écrits"),
+        VolumeBadgeDefinition(threshold:  1_000_000, name: "Millionnaire",    icon: "trophy.fill",               color: Color.semYellow, description: "1 000 000 caractères écrits"),
+        VolumeBadgeDefinition(threshold:  2_000_000, name: "Plume d'or",      icon: "medal.fill",                color: Color.semOrange, description: "2 000 000 caractères écrits"),
+        VolumeBadgeDefinition(threshold:  5_000_000, name: "Mythique",        icon: "laurel.leading",            color: Color.semPurple, description: "5 000 000 caractères écrits"),
     ]
 }
 
@@ -627,11 +627,11 @@ private struct CompletedChallengeCard: View {
     private var kindColor: Color {
         switch challenge.kind {
         case .words:             return .accent
-        case .daysWritten:       return Color(red: 0.580, green: 0.400, blue: 0.900)
-        case .streak:            return Color(red: 0.961, green: 0.455, blue: 0.114)
-        case .sessions:          return Color(red: 0.220, green: 0.600, blue: 0.900)
+        case .daysWritten:       return Color.semViolet
+        case .streak:            return Color.semOrange
+        case .sessions:          return Color.semSky
         case .chapterCompletion: return .accentGreen
-        case .chaptersAdvanced:  return Color(red: 0.300, green: 0.650, blue: 0.900)
+        case .chaptersAdvanced:  return Color.semSky
         }
     }
 

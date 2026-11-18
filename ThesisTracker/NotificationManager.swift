@@ -72,6 +72,17 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: nil))
     }
 
+    /// 5.26 — récap du mois écoulé disponible : notification immédiate, une fois par mois.
+    func sendMonthlyRecapReady(monthName: String, summary: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "Ton récap de \(monthName) est prêt"
+        content.body = summary + " À retrouver dans « Récaps du mois »."
+        content.sound = .default
+        let identifier = "monthly-recap"
+        center.removeDeliveredNotifications(withIdentifiers: [identifier])
+        center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: nil))
+    }
+
     /// `setNotificationCategories` remplace TOUTES les catégories : on les cumule ici.
     private var registeredCategories: [String: UNNotificationCategory] = [:]
 

@@ -1238,7 +1238,7 @@ struct DashboardView: View {
                     if !isToday {
                         Label("Passé", systemImage: "clock.arrow.circlepath")
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(.orange)
+                            .foregroundColor(.semOrange)
                             .padding(.horizontal, 8).padding(.vertical, 3)
                             .background(Capsule().fill(Color.orange.opacity(0.12))
                                 .overlay(Capsule().stroke(Color.orange.opacity(0.20), lineWidth: 1)))
@@ -1603,9 +1603,9 @@ struct DashboardView: View {
                                 .font(.system(size: 10)).foregroundColor(.labelMuted)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 5)
-                        .background(Color(red: 0.929, green: 0.329, blue: 0.329).opacity(0.07))
+                        .background(Color.semRed.opacity(0.07))
                         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color(red: 0.929, green: 0.329, blue: 0.329).opacity(0.15), lineWidth: 1))
+                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color.semRed.opacity(0.15), lineWidth: 1))
                         .padding(.top, 4)
                     } else if store.adaptedDailyGoalDiffers {
                         HStack(spacing: 5) {
@@ -1936,7 +1936,7 @@ struct DashboardView: View {
                             .foregroundColor(.labelMuted)
                         Text("\(days) j")
                             .font(.system(size: 13, weight: .bold))
-                            .foregroundColor(days < 7 ? Color(red: 0.929, green: 0.329, blue: 0.329) : .primary)
+                            .foregroundColor(days < 7 ? Color.semRed : .primary)
                     }
                 }
 
@@ -2148,7 +2148,7 @@ struct DashboardView: View {
                         Divider().padding(.vertical, 9)
                         insightRow(
                             icon: "chart.line.uptrend.xyaxis",
-                            color: Color(red: 0.706, green: 0.502, blue: 0.984),
+                            color: Color.semViolet,
                             title: "Moy. 30j actifs",
                             value: insightAvg30 > 0 ? store.formatCount(insightAvg30) : "—",
                             subtitle: "\(insightActiveDays30) jours actifs"
@@ -3034,7 +3034,7 @@ struct DashboardCustomizeSheet: View {
             } label: {
                 Image(systemName: "minus.circle.fill")
                     .font(.system(size: 14))
-                    .foregroundColor(Color(red: 0.93, green: 0.26, blue: 0.26).opacity(0.7))
+                    .foregroundColor(Color.semRed.opacity(0.7))
             }
             .buttonStyle(.pressable)
             .help("Retirer du tableau de bord")

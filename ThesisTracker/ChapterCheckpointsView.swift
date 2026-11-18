@@ -194,7 +194,7 @@ struct ChapterCheckpointsSheet: View {
                     if let blockers = checkpoint.notesBlockers, !blockers.isEmpty {
                         Label("Blockers", systemImage: "exclamationmark.triangle")
                             .font(.system(size: 10))
-                            .foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
+                            .foregroundColor(Color.semRed)
                     }
                 }
             }
@@ -230,8 +230,8 @@ struct ChapterCheckpointsSheet: View {
     private func triggerColor(_ trigger: ChapterCheckpoint.Trigger) -> Color {
         switch trigger {
         case .manual:         return .accent
-        case .beforeReview:   return Color(red: 0.95, green: 0.60, blue: 0.15)
-        case .afterAddressed: return Color(red: 0.22, green: 0.75, blue: 0.44)
+        case .beforeReview:   return Color.semOrange
+        case .afterAddressed: return Color.semGreen
         }
     }
 

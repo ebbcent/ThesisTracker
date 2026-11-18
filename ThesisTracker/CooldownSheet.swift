@@ -137,12 +137,12 @@ struct CooldownSheet: View {
             VStack(alignment: .leading, spacing: 6) {
                 if !accomplishment.isEmpty {
                     Label { Text("Journal : \(accomplishment)").font(.system(size: 11)) } icon: {
-                        Image(systemName: "book.closed.fill").foregroundColor(Color(red: 0.404, green: 0.224, blue: 0.718))
+                        Image(systemName: "book.closed.fill").foregroundColor(Color.semPurple)
                     }
                 }
                 if !blocker.isEmpty {
                     Label { Text("Blockers du chapitre : \(blocker)").font(.system(size: 11)) } icon: {
-                        Image(systemName: "exclamationmark.triangle").foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
+                        Image(systemName: "exclamationmark.triangle").foregroundColor(Color.semRed)
                     }
                 }
                 if !nextAction.isEmpty {

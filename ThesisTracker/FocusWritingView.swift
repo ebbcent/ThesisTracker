@@ -327,7 +327,7 @@ struct FocusWritingView: View {
                                     Button(action: saveIdea) {
                                         Text("Capturer")
                                             .font(.system(size: 11, weight: .semibold))
-                                            .foregroundColor(.yellow)
+                                            .foregroundColor(.semYellow)
                                             .padding(.horizontal, 10).padding(.vertical, 4)
                                             .background(Color.yellow.opacity(0.15))
                                             .clipShape(Capsule())

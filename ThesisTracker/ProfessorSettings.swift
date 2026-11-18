@@ -199,7 +199,7 @@ struct ProfessorSettingsSection: View {
                     if !settings.folderExists {
                         Text("Dossier introuvable sur ce Mac.")
                             .font(.system(size: 11))
-                            .foregroundColor(.orange)
+                            .foregroundColor(.semOrange)
                     }
                     Text("Le professeur lit ce dossier sans le modifier ; il écrit seulement dans « Échanges app/ ».")
                         .font(.system(size: 11))

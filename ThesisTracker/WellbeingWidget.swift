@@ -24,11 +24,11 @@ struct WellbeingWidget: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                            .fill(Color(red: 0.961, green: 0.620, blue: 0.043).opacity(0.12))
+                            .fill(Color.semAmber.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "leaf.fill")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(Color(red: 0.961, green: 0.620, blue: 0.043))
+                            .foregroundColor(Color.semAmber)
                     }
                     Text("Énergie & repos")
                         .font(.system(size: 13, weight: .semibold))
@@ -189,11 +189,11 @@ struct WellbeingWidget: View {
 
     private func energyColor(_ level: Int) -> Color {
         switch level {
-        case 1: return Color(red: 0.93, green: 0.26, blue: 0.26)
-        case 2: return Color(red: 0.95, green: 0.50, blue: 0.20)
-        case 3: return Color(red: 0.95, green: 0.75, blue: 0.20)
+        case 1: return Color.semRed
+        case 2: return Color.semOrange
+        case 3: return Color.semYellow
         case 4: return Color(red: 0.50, green: 0.75, blue: 0.30)
-        case 5: return Color(red: 0.22, green: 0.75, blue: 0.44)
+        case 5: return Color.semGreen
         default: return .labelMuted
         }
     }

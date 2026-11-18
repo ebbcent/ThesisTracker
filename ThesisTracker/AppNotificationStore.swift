@@ -26,11 +26,11 @@ enum AppNotificationCategory: String, Codable, CaseIterable {
     var color: Color {
         switch self {
         case .deadline:  return .orange
-        case .streak:    return Color(red: 0.961, green: 0.620, blue: 0.043)
+        case .streak:    return Color.semAmber
         case .progress:  return Color.accentGreen
         case .reminder:  return Color.accent
-        case .milestone: return Color(red: 0.749, green: 0.318, blue: 0.918)
-        case .report:    return Color(red: 0.247, green: 0.502, blue: 0.965)
+        case .milestone: return Color.semViolet
+        case .report:    return Color.semBlue
         }
     }
 

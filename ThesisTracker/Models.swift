@@ -146,9 +146,9 @@ enum SupervisorReviewState: String, Codable, CaseIterable, Identifiable {
     var color: Color {
         switch self {
         case .notSent:   return Color(red: 0.5, green: 0.5, blue: 0.55)
-        case .sent:      return Color(red: 0.95, green: 0.60, blue: 0.15)
-        case .received:  return Color(red: 0.25, green: 0.55, blue: 0.95)
-        case .addressed: return Color(red: 0.22, green: 0.75, blue: 0.44)
+        case .sent:      return Color.semOrange
+        case .received:  return Color.semBlue
+        case .addressed: return Color.semGreen
         }
     }
 }
@@ -223,10 +223,10 @@ enum MilestoneStatus: String, Codable, CaseIterable, Identifiable {
     var color: Color {
         switch self {
         case .pending:   return Color(red: 0.5, green: 0.5, blue: 0.55)
-        case .submitted: return Color(red: 0.25, green: 0.55, blue: 0.95)
-        case .inReview:  return Color(red: 0.95, green: 0.60, blue: 0.15)
-        case .validated: return Color(red: 0.22, green: 0.75, blue: 0.44)
-        case .rejected:  return Color(red: 0.93, green: 0.26, blue: 0.26)
+        case .submitted: return Color.semBlue
+        case .inReview:  return Color.semOrange
+        case .validated: return Color.semGreen
+        case .rejected:  return Color.semRed
         }
     }
 
@@ -828,10 +828,10 @@ struct AdminTask: Codable, Identifiable {
         }
         var color: Color {
             switch self {
-            case .form:          return Color(red: 0.25, green: 0.55, blue: 0.95)
-            case .meeting:       return Color(red: 0.404, green: 0.224, blue: 0.718)
-            case .milestone:     return Color(red: 0.929, green: 0.329, blue: 0.329)
-            case .authorization: return Color(red: 0.22, green: 0.75, blue: 0.44)
+            case .form:          return Color.semBlue
+            case .meeting:       return Color.semPurple
+            case .milestone:     return Color.semRed
+            case .authorization: return Color.semGreen
             case .other:         return .labelMuted
             }
         }
@@ -916,8 +916,8 @@ struct DefenseNote: Codable, Identifiable {
         }
         var color: Color {
             switch self {
-            case .point:    return Color(red: 0.22, green: 0.75, blue: 0.44)
-            case .question: return Color(red: 0.25, green: 0.55, blue: 0.95)
+            case .point:    return Color.semGreen
+            case .question: return Color.semBlue
             case .counter:  return Color(red: 0.93, green: 0.40, blue: 0.20)
             }
         }

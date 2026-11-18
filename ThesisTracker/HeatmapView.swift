@@ -482,7 +482,7 @@ struct HeatmapSnapshotView: View {
         let val = totals[str] ?? 0
         if val == 0 { return Color.white.opacity(0.06) }
         let ratio = intensity(for: date)
-        return Color(red: 0.247, green: 0.502, blue: 0.965).opacity(0.2 + 0.8 * ratio)
+        return Color.semBlue.opacity(0.2 + 0.8 * ratio)
     }
 
     var body: some View {

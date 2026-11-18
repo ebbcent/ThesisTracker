@@ -55,6 +55,10 @@ struct WritingSlotsSettingsView: View {
             .buttonStyle(.pressable)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(14)
+
+            // 5.26 — créneaux lus dans un calendrier (adresse .ics)
+            Divider().padding(.leading, 14)
+            WritingCalendarSettingsRow()
         }
     }
 

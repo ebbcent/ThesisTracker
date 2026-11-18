@@ -17,11 +17,11 @@ struct MonthlyReportWidget: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                            .fill(Color(red: 0.300, green: 0.650, blue: 0.900).opacity(0.12))
+                            .fill(Color.semSky.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "calendar.badge.checkmark")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(Color(red: 0.300, green: 0.650, blue: 0.900))
+                            .foregroundColor(Color.semSky)
                     }
                     Text("Bilans mensuels")
                         .font(.system(size: 13, weight: .semibold))
@@ -52,7 +52,7 @@ struct MonthlyReportWidget: View {
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 10).padding(.vertical, 6)
-                        .background(Color(red: 0.300, green: 0.650, blue: 0.900))
+                        .background(Color.semSky)
                         .clipShape(Capsule())
                 }
                 .buttonStyle(.pressable)

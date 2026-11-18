@@ -672,9 +672,9 @@ struct DeadlineBoardView: View {
         switch days {
         case ..<0:    return Color(red: 0.929, green: 0.259, blue: 0.259)
         case 0...2:   return Color(red: 0.961, green: 0.329, blue: 0.184)
-        case 3...7:   return Color(red: 0.961, green: 0.620, blue: 0.043)
+        case 3...7:   return Color.semAmber
         case 8...14:  return Color(red: 0.898, green: 0.773, blue: 0.118)
-        default:      return Color(red: 0.220, green: 0.753, blue: 0.439)
+        default:      return Color.semGreen
         }
     }
 

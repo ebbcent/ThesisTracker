@@ -16,11 +16,11 @@ struct ChapterHeatmapWidget: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                            .fill(Color(red: 0.300, green: 0.650, blue: 0.900).opacity(0.12))
+                            .fill(Color.semSky.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "square.grid.3x3.fill")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(Color(red: 0.300, green: 0.650, blue: 0.900))
+                            .foregroundColor(Color.semSky)
                     }
                     Text("Heatmap par chapitre")
                         .font(.system(size: 13, weight: .semibold))
@@ -112,7 +112,7 @@ struct ChapterHeatmapWidget: View {
     }
 
     fileprivate func heatColor(level: Int) -> Color {
-        let base = Color(red: 0.300, green: 0.650, blue: 0.900)
+        let base = Color.semSky
         switch level {
         case 0: return Color.labelMuted.opacity(0.10)
         case 1: return base.opacity(0.25)
@@ -214,7 +214,7 @@ struct ChapterHeatmapSheet: View {
     }
 
     private func heatColor(value: Int, goal: Int) -> Color {
-        let base = Color(red: 0.300, green: 0.650, blue: 0.900)
+        let base = Color.semSky
         if value <= 0 { return Color.labelMuted.opacity(0.10) }
         let ratio = goal > 0 ? Double(value) / Double(goal) * 7.0 : Double(value) / 1500.0
         if ratio >= 1.0 { return base }

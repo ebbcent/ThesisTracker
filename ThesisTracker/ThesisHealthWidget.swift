@@ -133,7 +133,7 @@ struct ThesisHealthWidget: View {
         switch health.status {
         case .good:     return .accentGreen
         case .warning:  return .accentWarm
-        case .critical: return Color(red: 0.929, green: 0.329, blue: 0.329)
+        case .critical: return Color.semRed
         }
     }
 

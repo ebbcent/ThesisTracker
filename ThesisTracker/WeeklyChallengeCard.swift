@@ -32,9 +32,9 @@ struct WeeklyChallengeCard: View {
                     if let c = challenge, c.isCompleted {
                         Label("Relevé", systemImage: "checkmark.circle.fill")
                             .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(Color(red: 0.220, green: 0.753, blue: 0.439))
+                            .foregroundColor(Color.semGreen)
                             .padding(.horizontal, 7).padding(.vertical, 3)
-                            .background(Color(red: 0.220, green: 0.753, blue: 0.439).opacity(0.12))
+                            .background(Color.semGreen.opacity(0.12))
                             .clipShape(Capsule())
                     }
                 }
@@ -95,14 +95,14 @@ struct WeeklyChallengeCard: View {
 
     private var challengeColor: Color {
         guard let c = challenge else { return .accent }
-        if c.isCompleted { return Color(red: 0.220, green: 0.753, blue: 0.439) }
+        if c.isCompleted { return Color.semGreen }
         switch c.kind {
         case .words:             return .accent
-        case .streak:            return Color(red: 0.961, green: 0.455, blue: 0.114)
-        case .sessions:          return Color(red: 0.220, green: 0.600, blue: 0.900)
-        case .daysWritten:       return Color(red: 0.580, green: 0.400, blue: 0.900)
+        case .streak:            return Color.semOrange
+        case .sessions:          return Color.semSky
+        case .daysWritten:       return Color.semViolet
         case .chapterCompletion: return .accentGreen
-        case .chaptersAdvanced:  return Color(red: 0.300, green: 0.650, blue: 0.900)
+        case .chaptersAdvanced:  return Color.semSky
         }
     }
 

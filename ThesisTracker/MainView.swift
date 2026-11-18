@@ -34,6 +34,7 @@ enum NavItem: String, CaseIterable, Identifiable {
     case tableOfContents = "Table des matières"
     case widgets        = "Bibliothèque de widgets"
     case professor      = "Professeur"            // 5.13
+    case recaps         = "Récaps du mois"        // 5.26
 
     var id: String { rawValue }
 
@@ -54,6 +55,7 @@ enum NavItem: String, CaseIterable, Identifiable {
         case .tableOfContents:   return "list.bullet.rectangle"
         case .widgets:           return "square.grid.3x3.square"
         case .professor:         return "graduationcap.fill"
+        case .recaps:            return "rectangle.stack.fill"
         }
     }
 
@@ -74,6 +76,7 @@ enum NavItem: String, CaseIterable, Identifiable {
         case .tableOfContents:  return nil
         case .widgets:          return nil
         case .professor:        return nil
+        case .recaps:           return nil
         }
     }
 }
@@ -87,6 +90,37 @@ struct MainView: View {
     @AppStorage("interfaceMode") private var interfaceMode: String = "VT"   // 5.24 : Tuiles par défaut
     @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
     @AppStorage("forceLightMode") private var forceLightMode: Bool = false  // 5.24 : clair forcé
+    /// 5.26 — page affichée, sortie du corps de la vue (expression principale trop lourde à typer).
+    @ViewBuilder private var currentPage: some View {
+        switch selectedNav {
+        case .overview:
+            OverviewView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
+        case .dashboard:
+            dashboardPage
+        case .deadlines:
+            DeadlineBoardView(store: store, showSidebar: $showSidebar)
+        case .search:
+            SearchView(store: store, showSidebar: $showSidebar)
+        case .charts, .activity, .history, .calendar, .analytics:
+            // 5.15 : regroupées sous « Statistiques », à onglets
+            StatsHubView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
+        case .timer:
+            PomodoroTimerTabView(showSidebar: $showSidebar)
+        case .achievements:
+            AchievementsView(store: store, showSidebar: $showSidebar)
+        case .kanban:
+            KanbanView(store: store, showSidebar: $showSidebar)
+        case .tableOfContents:
+            TableOfContentsView(store: store, showSidebar: $showSidebar)
+        case .widgets:
+            WidgetLibraryView(store: store, showSidebar: $showSidebar)
+        case .professor:
+            ProfessorView(store: store, showSidebar: $showSidebar)
+        case .recaps:
+            MonthlyRecapArchiveView(store: store, showSidebar: $showSidebar)
+        }
+    }
+
     /// Sorti du corps de la vue en 5.24 (expression principale trop lourde à typer).
     private func handleAppear() {
         liveSidebarWidth = CGFloat(sidebarWidthStored)
@@ -98,6 +132,7 @@ struct MainView: View {
         // pour laisser load() async finir d'abord.
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.5) {
             store.checkAndGenerateMonthlyReport()
+            MonthlyRecap.notifyIfDue(store: store)   // 5.26 — récap du mois écoulé : une notification par mois
         }
     }
 
@@ -281,7 +316,7 @@ struct MainView: View {
             HStack(spacing: 10) {
                 Image(systemName: "exclamationmark.icloud.fill")
                     .font(.system(size: 18))
-                    .foregroundColor(.orange)
+                    .foregroundColor(.semOrange)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Conflit iCloud détecté")
                         .font(.system(size: 13, weight: .semibold))
@@ -313,7 +348,7 @@ struct MainView: View {
                 conflictVersionCard(
                     title: "iCloud",
                     icon: "icloud.fill",
-                    color: Color(red: 0.247, green: 0.502, blue: 0.965),
+                    color: Color.semBlue,
                     entries: iCloudEntries,
                     modified: fmt.string(from: conflict.iCloudModified)
                 ) { store.resolveConflict(keepLocal: false) }
@@ -378,33 +413,7 @@ struct MainView: View {
                 ZStack {
                     AppBackdrop().ignoresSafeArea()   // 5.16 : fond à réfracter pour le verre
 
-                    Group {
-                        switch selectedNav {
-                        case .overview:
-                            OverviewView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
-                        case .dashboard:
-                            dashboardPage
-                        case .deadlines:
-                            DeadlineBoardView(store: store, showSidebar: $showSidebar)
-                        case .search:
-                            SearchView(store: store, showSidebar: $showSidebar)
-                        case .charts, .activity, .history, .calendar, .analytics:
-                            // 5.15 : regroupées sous « Statistiques », à onglets
-                            StatsHubView(store: store, showSidebar: $showSidebar, selectedNav: $selectedNav)
-                        case .timer:
-                            PomodoroTimerTabView(showSidebar: $showSidebar)
-                        case .achievements:
-                            AchievementsView(store: store, showSidebar: $showSidebar)
-                        case .kanban:
-                            KanbanView(store: store, showSidebar: $showSidebar)
-                        case .tableOfContents:
-                            TableOfContentsView(store: store, showSidebar: $showSidebar)
-                        case .widgets:
-                            WidgetLibraryView(store: store, showSidebar: $showSidebar)
-                        case .professor:
-                            ProfessorView(store: store, showSidebar: $showSidebar)
-                        }
-                    }
+                    currentPage
                     .id(selectedNav)
                     .transition(.opacity)
                     .appAnimation(.easeInOut(duration: 0.15), value: selectedNav)
@@ -1076,7 +1085,7 @@ struct WeeklySummaryOverlay: View {
                         HStack(spacing: 10) {
                             Image(systemName: prevChallenge.isCompleted ? "checkmark.circle.fill" : "xmark.circle.fill")
                                 .font(.system(size: 14))
-                                .foregroundColor(prevChallenge.isCompleted ? Color(red: 0.220, green: 0.753, blue: 0.439) : .labelMuted)
+                                .foregroundColor(prevChallenge.isCompleted ? Color.semGreen : .labelMuted)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Défi \(prevChallenge.isCompleted ? "relevé" : "non relevé") — \(prevChallenge.kind.displayName)")
                                     .font(.system(size: 12, weight: .semibold))
@@ -1092,7 +1101,7 @@ struct WeeklySummaryOverlay: View {
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(prevChallenge.isCompleted
-                                    ? Color(red: 0.220, green: 0.753, blue: 0.439).opacity(0.08)
+                                    ? Color.semGreen.opacity(0.08)
                                     : Color.fieldBg)
                         )
                     }
@@ -1272,24 +1281,24 @@ struct MilestoneToastView: View {
     private static func badgeInfo(for n: Int) -> BadgeInfo {
         switch n {
         case 3:   return BadgeInfo(icon: "flame",         color: .accent,                                              name: "Étincelle",    subtitle: "3 jours consécutifs — tu commences bien.")
-        case 7:   return BadgeInfo(icon: "flame.fill",    color: Color(red: 0.961, green: 0.620, blue: 0.043),        name: "Régulier",     subtitle: "Une semaine complète. Beau rythme.")
-        case 14:  return BadgeInfo(icon: "star.fill",     color: Color(red: 0.961, green: 0.455, blue: 0.114),        name: "Persévérant",  subtitle: "Deux semaines — la régularité paie.")
-        case 30:  return BadgeInfo(icon: "bolt.fill",     color: Color(red: 0.929, green: 0.329, blue: 0.329),        name: "Acharné",      subtitle: "Un mois d'écriture continue. Impressionnant.")
-        case 60:  return BadgeInfo(icon: "crown.fill",    color: Color(red: 0.749, green: 0.318, blue: 0.918),        name: "Légende",      subtitle: "Deux mois sans interruption. Remarquable.")
+        case 7:   return BadgeInfo(icon: "flame.fill",    color: Color.semAmber,        name: "Régulier",     subtitle: "Une semaine complète. Beau rythme.")
+        case 14:  return BadgeInfo(icon: "star.fill",     color: Color.semOrange,        name: "Persévérant",  subtitle: "Deux semaines — la régularité paie.")
+        case 30:  return BadgeInfo(icon: "bolt.fill",     color: Color.semRed,        name: "Acharné",      subtitle: "Un mois d'écriture continue. Impressionnant.")
+        case 60:  return BadgeInfo(icon: "crown.fill",    color: Color.semViolet,        name: "Légende",      subtitle: "Deux mois sans interruption. Remarquable.")
         case 100: return BadgeInfo(icon: "trophy.fill",   color: .accentWarm,                                         name: "Immortel",     subtitle: "100 jours. Performance exceptionnelle.")
-        case 200: return BadgeInfo(icon: "shield.fill",   color: Color(red: 0.310, green: 0.275, blue: 0.898),        name: "Titan",        subtitle: "200 jours de suite. Un mental d'acier.")
-        case 365: return BadgeInfo(icon: "rosette",       color: Color(red: 0.918, green: 0.118, blue: 0.388),        name: "Année pleine", subtitle: "Une année entière sans rupture. Légendaire.")
+        case 200: return BadgeInfo(icon: "shield.fill",   color: Color.semPurple,        name: "Titan",        subtitle: "200 jours de suite. Un mental d'acier.")
+        case 365: return BadgeInfo(icon: "rosette",       color: Color.semPink,        name: "Année pleine", subtitle: "Une année entière sans rupture. Légendaire.")
         default:  return BadgeInfo(icon: "flame.fill",    color: .accent,                                             name: "\(n) jours",   subtitle: "Continue comme ça.")
         }
     }
 
     private static func volumeInfo(for n: Int) -> (name: String, icon: String, color: Color) {
         switch n {
-        case 100_000:    return ("100\u{202F}000 caractères", "seal.fill",       Color(red: 0.961, green: 0.620, blue: 0.043))
-        case 500_000:    return ("500\u{202F}000 caractères", "crown.fill",      Color(red: 0.749, green: 0.318, blue: 0.918))
-        case 1_000_000:  return ("1 million de caractères",   "trophy.fill",     Color(red: 1.000, green: 0.843, blue: 0.000))
-        case 2_000_000:  return ("2 millions de caractères",  "medal.fill",      Color(red: 0.918, green: 0.408, blue: 0.122))
-        case 5_000_000:  return ("5 millions de caractères",  "laurel.leading",  Color(red: 0.404, green: 0.224, blue: 0.718))
+        case 100_000:    return ("100\u{202F}000 caractères", "seal.fill",       Color.semAmber)
+        case 500_000:    return ("500\u{202F}000 caractères", "crown.fill",      Color.semViolet)
+        case 1_000_000:  return ("1 million de caractères",   "trophy.fill",     Color.semYellow)
+        case 2_000_000:  return ("2 millions de caractères",  "medal.fill",      Color.semOrange)
+        case 5_000_000:  return ("5 millions de caractères",  "laurel.leading",  Color.semPurple)
         default:         return ("\(n) caractères",           "sparkles",        .accent)
         }
     }
@@ -1310,14 +1319,14 @@ struct MilestoneToastView: View {
         switch milestone {
         case .streak(let n):              return MilestoneToastView.badgeInfo(for: n).color
         case .chapterComplete:            return .accentGreen
-        case .challengeComplete:          return Color(red: 0.220, green: 0.753, blue: 0.439)
+        case .challengeComplete:          return Color.semGreen
         case .volumeMilestone(let n):     return MilestoneToastView.volumeInfo(for: n).color
         case .projectPercent(_, let pct):
-            if pct >= 100 { return Color(red: 1.0, green: 0.55, blue: 0.1) }
-            if pct >= 75  { return Color(red: 0.749, green: 0.318, blue: 0.918) }
-            return Color(red: 0.300, green: 0.650, blue: 0.900)
+            if pct >= 100 { return Color.semOrange }
+            if pct >= 75  { return Color.semViolet }
+            return Color.semSky
         case .firstChapterCompleted:      return .accentGreen
-        case .dailyRecord:                return Color(red: 0.929, green: 0.329, blue: 0.329)
+        case .dailyRecord:                return Color.semRed
         }
     }
 
@@ -1495,9 +1504,9 @@ struct WeeklyReportPromptBanner: View {
         HStack(spacing: 14) {
             Image(systemName: "calendar.badge.checkmark")
                 .font(.system(size: 20))
-                .foregroundColor(Color(red: 0.247, green: 0.502, blue: 0.965))
+                .foregroundColor(Color.semBlue)
                 .frame(width: 36, height: 36)
-                .background(Color(red: 0.247, green: 0.502, blue: 0.965).opacity(0.12))
+                .background(Color.semBlue.opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
 
             VStack(alignment: .leading, spacing: 2) {
@@ -1518,7 +1527,7 @@ struct WeeklyReportPromptBanner: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 14).padding(.vertical, 7)
-                    .background(Color(red: 0.247, green: 0.502, blue: 0.965))
+                    .background(Color.semBlue)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
             .buttonStyle(.pressable)
@@ -1543,7 +1552,7 @@ struct WeeklyReportPromptBanner: View {
                 .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: 3)
         )
         .overlay(RoundedRectangle(cornerRadius: 16)
-            .stroke(Color(red: 0.247, green: 0.502, blue: 0.965).opacity(0.22), lineWidth: 1))
+            .stroke(Color.semBlue.opacity(0.22), lineWidth: 1))
         .sheet(isPresented: $showExport) {
             ExportView(store: store)
         }

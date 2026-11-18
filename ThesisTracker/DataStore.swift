@@ -1015,11 +1015,10 @@ class DataStore: ObservableObject {
         guard let monthStart = cal.dateInterval(of: .month, for: now)?.start else { return 0 }
         let startStr = DataStore.dateString(from: monthStart)
         let endStr   = DataStore.dateString(from: now)
-        let value = data.projects
-            .flatMap(\.chapters)
-            .flatMap(\.entries)
-            .filter { $0.date >= startStr && $0.date <= endStr }
-            .reduce(0) { $0 + $1.totalCount }
+        // 5.26 — somme de ce qui a été écrit chaque jour (l'ancien calcul additionnait les totaux cumulés)
+        let value = dailyTotals()
+            .filter { $0.key >= startStr && $0.key <= endStr }
+            .reduce(0) { $0 + $1.value }
         _currentCalMonthProgressCache = (dataVersion, value)
         return value
     }
@@ -2972,10 +2971,10 @@ class DataStore: ObservableObject {
     func statusColor(for chapterId: UUID, in projectId: UUID, goal: Int) -> Color {
         guard goal > 0 else { return .gray }
         let ratio = Double(latestTotal(for: chapterId, in: projectId)) / Double(goal)
-        if ratio >= 1.0  { return Color(red: 0.196, green: 0.784, blue: 0.549) }
-        if ratio >= 0.66 { return Color(red: 0.961, green: 0.620, blue: 0.043) }
+        if ratio >= 1.0  { return Color.semGreen }
+        if ratio >= 0.66 { return Color.semAmber }
         if ratio >= 0.33 { return Color(red: 0.929, green: 0.435, blue: 0.114) }
-        return Color(red: 0.929, green: 0.329, blue: 0.329)
+        return Color.semRed
     }
 
 
@@ -4049,7 +4048,7 @@ class DataStore: ObservableObject {
         }
         var color: Color {
             switch self {
-            case .urgent:  return Color(red: 0.93, green: 0.26, blue: 0.26)
+            case .urgent:  return Color.semRed
             case .high:    return Color(red: 0.96, green: 0.55, blue: 0.10)
             case .medium:  return Color(red: 0.93, green: 0.75, blue: 0.12)
             case .low:     return Color(red: 0.40, green: 0.70, blue: 0.90)

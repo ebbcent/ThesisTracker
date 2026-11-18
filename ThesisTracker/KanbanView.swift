@@ -316,7 +316,7 @@ private struct KanbanCard: View {
                     Text(daysLeft >= 0 ? "\(daysLeft) j. restants" : "En retard")
                         .font(.system(size: 10))
                 }
-                .foregroundColor(daysLeft < 3 ? Color(red: 0.929, green: 0.329, blue: 0.329) : .labelMuted)
+                .foregroundColor(daysLeft < 3 ? Color.semRed : .labelMuted)
             }
         }
         .padding(10)

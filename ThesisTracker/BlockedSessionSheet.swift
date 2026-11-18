@@ -41,7 +41,7 @@ struct BlockedSessionSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(Color(red: 0.929, green: 0.329, blue: 0.329))
+                        .foregroundColor(Color.semRed)
                     Text("Session bloquée")
                         .font(.system(size: 16, weight: .semibold))
                 }
@@ -74,7 +74,7 @@ struct BlockedSessionSheet: View {
         VStack(spacing: 10) {
             option(
                 icon: "note.text.badge.plus",
-                color: Color(red: 0.404, green: 0.224, blue: 0.718),
+                color: Color.semPurple,
                 title: "Capturer le blocage",
                 subtitle: "Note ce qui te bloque exactement — décharge mentale, et reprends quand tu peux.",
                 action: { withAppAnimation { showBlockerField = true } }
@@ -88,14 +88,14 @@ struct BlockedSessionSheet: View {
             )
             option(
                 icon: "arrow.left.arrow.right",
-                color: Color(red: 0.300, green: 0.650, blue: 0.900),
+                color: Color.semSky,
                 title: "Changer de chapitre",
                 subtitle: "Tu butes peut-être sur ce chapitre précis. Avance ailleurs et reviens à tête reposée.",
                 action: { dismiss(); onSwitchChapter() }
             )
             option(
                 icon: "cup.and.saucer.fill",
-                color: Color(red: 0.961, green: 0.620, blue: 0.043),
+                color: Color.semAmber,
                 title: "Pause forcée 15 min",
                 subtitle: "Éloigne-toi de l'écran. Pas de scroll. Marche, bois, reviens neuf.",
                 action: { dismiss() }

@@ -33,7 +33,7 @@ struct StatsAnalyticsView: View {
 
     private let projectPalette: [Color] = [
         .accent, .accentGreen, .accentWarm,
-        Color(red: 0.706, green: 0.502, blue: 0.984),
+        Color.semViolet,
         Color(red: 0.294, green: 0.686, blue: 0.961),
         Color(red: 0.961, green: 0.365, blue: 0.482)
     ]
@@ -272,7 +272,7 @@ struct StatsAnalyticsView: View {
                                     if idx == 0 {
                                         Circle().fill(Color.yellow.opacity(0.15)).frame(width: 20, height: 20)
                                         Image(systemName: "crown.fill")
-                                            .font(.system(size: 10)).foregroundColor(.yellow)
+                                            .font(.system(size: 10)).foregroundColor(.semYellow)
                                     } else {
                                         Text("\(idx + 1)")
                                             .font(.system(size: 10, weight: .bold, design: .monospaced))
@@ -717,7 +717,7 @@ struct StatsAnalyticsView: View {
                         statPill(
                             value: without,
                             label: "jours sans écriture",
-                            color: without > 7 ? Color(red: 0.95, green: 0.35, blue: 0.35) : .accentWarm,
+                            color: without > 7 ? Color.semRed : .accentWarm,
                             icon: without > 7 ? "exclamationmark.circle.fill" : "minus.circle.fill"
                         )
                         Spacer()
@@ -760,9 +760,9 @@ struct StatsAnalyticsView: View {
                                 .font(.system(size: 10))
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        .foregroundColor(Color(red: 0.95, green: 0.35, blue: 0.35))
+                        .foregroundColor(Color.semRed)
                         .padding(8)
-                        .background(Color(red: 0.95, green: 0.35, blue: 0.35).opacity(0.08))
+                        .background(Color.semRed.opacity(0.08))
                         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                     }
                 }

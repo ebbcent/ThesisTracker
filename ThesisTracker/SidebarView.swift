@@ -240,7 +240,7 @@ struct SidebarView: View {
             navGroupDivider
             navGroup(
                 label: "Analyse",
-                items: [.analytics, .widgets],   // 5.15 : Graphiques, Activité, Calendrier, Historique → onglets de « Statistiques »
+                items: [.analytics, .recaps, .widgets],   // 5.15 : Graphiques, Activité, Calendrier, Historique → onglets de « Statistiques »
                 collapsed: $navAnalyseCollapsed
             )
             navGroupDivider
@@ -857,10 +857,10 @@ struct SidebarView: View {
     private func badgeDotColor(_ threshold: Int) -> Color {
         switch threshold {
         case 3:   return .accent
-        case 7:   return Color(red: 0.961, green: 0.620, blue: 0.043)
-        case 14:  return Color(red: 0.961, green: 0.455, blue: 0.114)
-        case 30:  return Color(red: 0.929, green: 0.329, blue: 0.329)
-        case 60:  return Color(red: 0.749, green: 0.318, blue: 0.918)
+        case 7:   return Color.semAmber
+        case 14:  return Color.semOrange
+        case 30:  return Color.semRed
+        case 60:  return Color.semViolet
         case 100: return .accentWarm
         default:  return .accent
         }

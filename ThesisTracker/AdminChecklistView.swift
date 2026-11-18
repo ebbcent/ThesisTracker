@@ -23,11 +23,11 @@ struct AdminChecklistWidget: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppLook.r(8, 12))
-                            .fill(Color(red: 0.300, green: 0.650, blue: 0.900).opacity(0.12))
+                            .fill(Color.semSky.opacity(0.12))
                             .frame(width: 28, height: 28)
                         Image(systemName: "tray.full.fill")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(Color(red: 0.300, green: 0.650, blue: 0.900))
+                            .foregroundColor(Color.semSky)
                     }
                     Text("Administratif")
                         .font(.system(size: 13, weight: .semibold))
@@ -66,7 +66,7 @@ struct AdminChecklistWidget: View {
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)
-                    .background(Color(red: 0.300, green: 0.650, blue: 0.900))
+                    .background(Color.semSky)
                     .clipShape(Capsule())
                 }
                 .buttonStyle(.pressable)
@@ -108,9 +108,9 @@ struct AdminChecklistWidget: View {
         guard let d = DataStore.parseDate(str) else { return .labelMuted }
         let cal = DataStore.gregorianCal
         let days = cal.dateComponents([.day], from: cal.startOfDay(for: Date()), to: cal.startOfDay(for: d)).day ?? 0
-        if days < 0 { return Color(red: 0.93, green: 0.26, blue: 0.26) }
-        if days <= 7 { return Color(red: 0.929, green: 0.329, blue: 0.329) }
-        if days <= 30 { return Color(red: 0.95, green: 0.60, blue: 0.15) }
+        if days < 0 { return Color.semRed }
+        if days <= 7 { return Color.semRed }
+        if days <= 30 { return Color.semOrange }
         return .labelMuted
     }
 }
@@ -165,7 +165,7 @@ struct AdminChecklistSheet: View {
                 }
                 .foregroundColor(.white)
                 .padding(.horizontal, 10).padding(.vertical, 5)
-                .background(Color(red: 0.300, green: 0.650, blue: 0.900))
+                .background(Color.semSky)
                 .clipShape(Capsule())
             }
             .buttonStyle(.pressable)

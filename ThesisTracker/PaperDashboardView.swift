@@ -120,7 +120,7 @@ struct PaperDashboardView: View {
                         Text("\(store.currentStreak) jours")
                             .font(.system(size: 11, weight: .medium))
                     }
-                    .foregroundColor(Color(red: 0.961, green: 0.455, blue: 0.114))
+                    .foregroundColor(Color.semOrange)
                 }
             }
 
@@ -260,7 +260,7 @@ struct PaperDashboardView: View {
                         .buttonStyle(.pressable)
                     Label("Passé", systemImage: "clock.arrow.circlepath")
                         .font(.system(size: 11))
-                        .foregroundColor(.orange)
+                        .foregroundColor(.semOrange)
                 }
                 Spacer()
                 if hasExistingEntry {

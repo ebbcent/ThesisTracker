@@ -58,7 +58,40 @@ struct MonthlyRecap {
         }
     }
 
-    static func compute(store: DataStore, monthStart: Date) -> MonthlyRecap {
+    /// Mois écoulés qui ont des saisies, du plus récent au plus ancien (5.26).
+    static func availableMonths(store: DataStore, now: Date = Date()) -> [Date] {
+        guard let first = store.dailyTotals().filter({ $0.value != 0 }).keys.min(),
+              let firstDate = DataStore.parseDate(first) else { return [] }
+        let firstMonth = cal.date(from: cal.dateComponents([.year, .month], from: firstDate)) ?? firstDate
+        var months: [Date] = []
+        var month = previousMonthStart(from: now)
+        while month >= firstMonth, months.count < 240 {
+            months.append(month)
+            guard let earlier = cal.date(byAdding: .month, value: -1, to: month) else { break }
+            month = earlier
+        }
+        return months
+    }
+
+    static func yearText(_ date: Date) -> String { String(cal.component(.year, from: date)) }
+
+    /// Une notification par mois, à la première ouverture de l'app après le 1er (5.26).
+    static func notifyIfDue(store: DataStore) {
+        guard !store.data.projects.isEmpty else { return }
+        let month = previousMonthStart()
+        let key = monthKey(month)
+        let defaultsKey = "monthlyRecapLastNotified"
+        guard UserDefaults.standard.string(forKey: defaultsKey) != key else { return }
+        UserDefaults.standard.set(key, forKey: defaultsKey)
+        let recap = compute(store: store, monthStart: month, includeChapter: false)
+        guard recap.total != 0 || recap.previousTotal != 0 else { return }
+        let unit = store.data.useWordCount ? "mots" : "signes"
+        let total = DataStore.formatNumber(store.data.useWordCount ? recap.total / 5 : recap.total)
+        let days = "\(recap.writingDays) jour\(recap.writingDays > 1 ? "s" : "") d'écriture"
+        NotificationManager.shared.sendMonthlyRecapReady(monthName: recap.monthName, summary: "\(total) \(unit), \(days).")
+    }
+
+    static func compute(store: DataStore, monthStart: Date, includeChapter: Bool = true) -> MonthlyRecap {
         let totals = store.dailyTotals()
         let days = dayStrings(of: monthStart)
         let values = days.map { totals[$0] ?? 0 }
@@ -77,7 +110,7 @@ struct MonthlyRecap {
 
         var topName: String? = nil
         var topAdded = 0
-        for project in store.data.projects where !project.isArchived {
+        for project in store.data.projects where includeChapter && !project.isArchived {
             for chapter in project.chapters {
                 let added = days.reduce(0) { $0 + max(0, chapter.increment(for: $1)) }
                 if added > topAdded { topAdded = added; topName = chapter.name }
@@ -484,5 +517,110 @@ struct MonthlyRecapView: View {
         if panel.runModal() == .OK, let url = panel.url {
             try? png.write(to: url)
         }
+    }
+}
+
+// MARK: - 5.26 Page « Récaps du mois » : tous les mois écoulés
+
+struct MonthlyRecapArchiveView: View {
+    @ObservedObject var store: DataStore
+    @Binding var showSidebar: Bool
+
+    private struct Entry: Identifiable {
+        let id: String
+        let recap: MonthlyRecap
+    }
+
+    @State private var entries: [Entry] = []
+    @State private var opened: Entry? = nil
+
+    private var unitWord: String { store.data.useWordCount ? "mots" : "signes" }
+    private func num(_ value: Int) -> String {
+        DataStore.formatNumber(store.data.useWordCount ? value / 5 : value)
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .bottom, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Un récap par mois écoulé, du plus récent au plus ancien")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.labelMuted)
+                        Text("Récaps du mois")
+                            .font(.system(size: 26, weight: .heavy))
+                            .tracking(-0.6)
+                    }
+                    Spacer()
+                    Button {
+                        withAppAnimation(Motion.panel) { showSidebar.toggle() }
+                    } label: {
+                        Image(systemName: "sidebar.left")
+                            .font(.system(size: 14, weight: .semibold))
+                            .frame(width: 34, height: 34)
+                            .appGlass(in: Circle())
+                    }
+                    .buttonStyle(.pressable)
+                    .help(showSidebar ? "Masquer la barre latérale" : "Afficher la barre latérale")
+                    .accessibilityLabel("Barre latérale")
+                }
+                if entries.isEmpty {
+                    EmptyStateView(icon: "rectangle.stack", title: "Pas encore de récap",
+                                   message: "Le premier récap apparaîtra au début du mois prochain, dès qu'un mois complet aura des saisies.")
+                }
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 215, maximum: 420), spacing: 14)], spacing: 14) {
+                    ForEach(entries) { entry in
+                        card(entry)
+                    }
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 18)
+            .frame(maxWidth: 1180)
+            .frame(maxWidth: .infinity)
+        }
+        .background(Color.appBg.ignoresSafeArea())
+        .onAppear(perform: reload)
+        .sheet(item: $opened) { entry in
+            MonthlyRecapView(store: store, recap: MonthlyRecap.compute(store: store, monthStart: entry.recap.monthStart))
+        }
+    }
+
+    private func reload() {
+        entries = MonthlyRecap.availableMonths(store: store).map { month in
+            Entry(id: MonthlyRecap.monthKey(month),
+                  recap: MonthlyRecap.compute(store: store, monthStart: month, includeChapter: false))
+        }
+    }
+
+    private func card(_ entry: Entry) -> some View {
+        let recap = entry.recap
+        return Button { opened = entry } label: {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(MonthlyRecap.yearText(recap.monthStart))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.labelMuted)
+                Text(recap.monthName.capitalized)
+                    .font(.system(size: 30, weight: .regular, design: .serif))
+                    .tracking(-0.6)
+                    .foregroundColor(.accentWarm)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                Text("\(num(recap.total)) \(unitWord)")
+                    .font(.system(size: 17, weight: .bold).monospacedDigit())
+                Text("\(recap.writingDays) jour\(recap.writingDays > 1 ? "s" : "") d'écriture · \(recap.verdict)")
+                    .font(.system(size: 12))
+                    .foregroundColor(.labelMuted)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.cardBg))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.pressable)
+        .help("Ouvrir le récap de \(recap.monthName) \(MonthlyRecap.yearText(recap.monthStart))")
     }
 }
