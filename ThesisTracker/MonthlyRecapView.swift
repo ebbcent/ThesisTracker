@@ -92,7 +92,7 @@ struct MonthlyRecap {
     }
 
     static func compute(store: DataStore, monthStart: Date, includeChapter: Bool = true) -> MonthlyRecap {
-        let totals = store.dailyTotals()
+        let totals = AchievementCatalog.writtenTotals(store: store)   // 5.31 : sans les imports probables
         let days = dayStrings(of: monthStart)
         let values = days.map { totals[$0] ?? 0 }
 

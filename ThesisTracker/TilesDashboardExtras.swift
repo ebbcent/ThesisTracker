@@ -421,8 +421,9 @@ struct FloatingSurface: View {
 
     var body: some View {
         if AppLook.tiles {
-            Color.clear
-                .appGlass(in: RoundedRectangle(cornerRadius: radius + 6, style: .continuous), legible: true, fallback: .cardBg)
+            // 5.31 — vu à l'écran : un verre « Liquid Glass » placé en fond se dessine par-dessus le contenu
+            // (les onglets des Échéances et du Minuteur étaient invisibles). Matériau translucide à la place.
+            RoundedRectangle(cornerRadius: radius + 6, style: .continuous).fill(.regularMaterial)
         } else {
             RoundedRectangle(cornerRadius: radius, style: .continuous).fill(Color.cardBg)
         }

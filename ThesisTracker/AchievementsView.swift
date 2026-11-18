@@ -81,7 +81,7 @@ struct AchievementsView: View {
 
                 // Badge grid
                 VStack(alignment: .leading, spacing: 12) {
-                    sectionHeader("BADGES DE STREAK", icon: "flame.fill", color: Color.semOrange)
+                    sectionHeader("BADGES DE SÉRIE", icon: "flame.fill", color: Color.semOrange)
 
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 14)], spacing: 14) {
                         ForEach(BadgeDefinition.all, id: \.threshold) { badge in

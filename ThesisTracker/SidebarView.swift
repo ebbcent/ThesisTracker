@@ -2466,7 +2466,7 @@ struct ChapterSidebarRow: View {
                             .help(chapter.name)   // 5.19 : titre complet au survol
                             .highPriorityGesture(TapGesture(count: 2).onEnded { renameDraft = chapter.name })
                     }
-                    if compactMode { chapterBadges }   // 5.28 : en vue normale, les badges ont leur propre ligne
+                    if compactMode && !AppLook.tiles { chapterBadges }   // 5.28 : en vue normale, les badges ont leur propre ligne ; 5.31 : aucun en Tuiles (ils écrasaient le titre)
                     Spacer()
                     if goal > 0 {
                         HStack(spacing: 3) {

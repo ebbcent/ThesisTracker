@@ -71,7 +71,7 @@ struct WidgetLibraryView: View {
                 .accessibilityLabel("Afficher la barre latérale")
             }
             VStack(alignment: .leading, spacing: 2) {
-                Text("Statistiques complètes")
+                Text("Bibliothèque de widgets")
                     .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
                 Text(subtitleForContext)
                     .font(.system(size: 12)).foregroundColor(.labelMuted)

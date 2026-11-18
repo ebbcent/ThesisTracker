@@ -207,6 +207,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.28** — Barre latérale : noms de projets et titres de chapitres lisibles, badges sur leur ligne
 - **5.29** — Barre latérale Tuiles : rail d'icônes et chapitre épinglé ; saisie sous la carte du chapitre
 - **5.30** — Accomplissements à progression, records, prochain badge sur l'accueil
+- **5.31** — Correctifs constatés à l'écran : onglets masqués par le verre, ligne de chapitre, records sans imports
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -318,3 +319,12 @@ Demande de Clem : ajouter des accomplissements, des défis, des badges (« je te
 - Notification à chaque accomplissement nouvellement gagné (`announceNew`, au plus deux à la fois ; liste mémorisée sur le Mac, clé `achievementsSeen` ; la première fois, ceux déjà gagnés sont mémorisés sans notification).
 - Tests : `AchievementCatalogTests`.
 Non fait, volontairement : pas de nouveaux types de défis hebdomadaires (le calendrier de 52 existe et il faudrait un champ de données pour un défi choisi).
+
+
+## 2026-11-18 — 5.31 : premiers correctifs vus à l'écran
+Depuis ce jour, l'app peut être regardée directement (pilotage des apps du Mac, accord de Clem) : tour de toutes les pages en apparence Tuiles, sombre, accent ambre. Constats :
+- Onglets des Échéances et du Minuteur invisibles : `FloatingSurface` posait un verre « Liquid Glass » en fond, qui se dessinait par-dessus les libellés (une bande vide). Remplacé par un matériau translucide ; même correction pour les bandeaux, bulles et la saisie rapide, qui utilisent la même surface.
+- Barre latérale : la ligne compacte du chapitre actif affichait « 4. La « L… » à cause du badge de statut ; en Tuiles, la ligne n'a plus de badges (le statut est dans la carte épinglée).
+- Records et récaps faussés par des imports (meilleur jour à 148 655 signes, mai à 316 444) : `AchievementCatalog.writtenTotals` écarte toute saisie de plus de 40 000 signes d'un chapitre en un jour ; utilisé par les records et les récaps du mois.
+- Textes : « Badges de série » ; la page Bibliothèque de widgets porte enfin son nom.
+Reste vu mais non traité : en-têtes de page de styles différents, libellés « car. » et « signes » mélangés, anciennes sections de la page Accomplissements en petites capitales à côté des nouvelles.

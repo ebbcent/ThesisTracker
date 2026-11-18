@@ -229,8 +229,28 @@ enum AchievementCatalog {
 
     // MARK: Records
 
+    /// Seuil au-delà duquel une saisie d'un chapitre en un jour est tenue pour un import, pas pour de l'écriture.
+    static let importThreshold = 40_000
+
+    /// Signes écrits par jour, sans les imports probables (une saisie de plus de 40 000 signes d'un coup).
+    static func writtenTotals(store: DataStore) -> [String: Int] {
+        var out: [String: Int] = [:]
+        for project in store.data.projects {
+            for chapter in project.chapters {
+                var previous = 0
+                for entry in chapter.entries.sorted(by: { $0.date < $1.date }) {
+                    let delta = entry.totalCount - previous
+                    previous = entry.totalCount
+                    if abs(delta) > importThreshold { continue }
+                    out[entry.date, default: 0] += delta
+                }
+            }
+        }
+        return out
+    }
+
     static func records(store: DataStore) -> [WritingRecord] {
-        let totals = store.dailyTotals()
+        let totals = writtenTotals(store: store)   // 5.31 : les imports ne font plus les records
         let unit = store.data.useWordCount ? "mots" : "signes"
         func num(_ v: Int) -> String { DataStore.formatNumber(store.data.useWordCount ? v / 5 : v) }
         var out: [WritingRecord] = []
@@ -306,7 +326,13 @@ struct AchievementFamiliesSection: View {
         VStack(alignment: .leading, spacing: 28) {
             if !records.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    title("Records", icon: "rosette")
+                    HStack(alignment: .firstTextBaseline) {
+                        title("Records", icon: "rosette")
+                        Spacer()
+                        Text("hors imports de plus de 40 000 signes en un jour")
+                            .font(.system(size: 12))
+                            .foregroundColor(.labelMuted)
+                    }
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 200, maximum: 320), spacing: 12)], alignment: .leading, spacing: 12) {
                         ForEach(records) { record in
                             recordCard(record)
