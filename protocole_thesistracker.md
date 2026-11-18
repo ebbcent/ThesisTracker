@@ -397,3 +397,4 @@ Non vérifié, faute de pouvoir le piloter en arrière-plan : panneau de la barr
 Troisième tour (écran entier, avec l'accord de Clem) : panneau de la barre des menus (rien à signaler), app en petite fenêtre, modes Sprint et Sanctuaire.
 - Petite fenêtre : barre du haut dépliée, ses repères à largeur fixe imposaient une largeur minimale à toute la fenêtre ; le rail et le bord droit étaient coupés vers 980 points. Les repères défilent maintenant à l'horizontale ; repliée, la barre ne posait pas de problème.
 - Sprint d'écriture : fond plein, comme l'écriture immersive.
+- Accueil : deux boutons dans l'en-tête, à côté du passage clair / sombre, pour lancer le Sprint d'écriture et le Sanctuaire (demande de Clem).
