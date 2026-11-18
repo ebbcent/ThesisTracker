@@ -205,6 +205,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.26** — Accueil corrigé d'après capture, clair / sombre fiabilisé, couleurs lisibles, créneaux depuis un calendrier, page « Récaps du mois » et notification mensuelle
 - **5.27** — Réglages réparés, police et tailles uniformisées, commandes à la couleur d'accent
 - **5.28** — Barre latérale : noms de projets et titres de chapitres lisibles, badges sur leur ligne
+- **5.29** — Barre latérale Tuiles : rail d'icônes et chapitre épinglé ; saisie sous la carte du chapitre
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -296,3 +297,12 @@ Capture de Clem (barre latérale, clair, accent ambre) : noms de projets tronqu�
 - Ligne de projet : les trois boutons d'action au survol réservaient leur largeur même cachés ; `CollapseOffRowHover` leur donne une largeur nulle hors survol. Le nom a la priorité de mise en page.
 - Carte de chapitre (vue normale) : le titre peut tenir sur deux lignes et passe avant le reste ; les badges (note, tags, hors total, terminé, relecture, statut) ont leur propre ligne (`chapterBadges`) ; en vue compacte, rien ne change. Le badge de statut ne se coupe plus ; les lignes de détail tiennent sur une ligne et passent avant « Hist. ».
 - Probable origine : les tailles relevées d'un point en 5.27 ont fait déborder des lignes déjà justes.
+
+
+## 2026-11-18 — 5.29 : nouvelle barre latérale (Tuiles) et saisie remontée
+Après la 5.28, capture de Clem : « 33 % » et « Hist. » affichés une lettre par ligne (régression : priorité donnée au titre). Quatre formats de barre latérale proposés en maquette ; Clem retient le mélange « chapitre épinglé » + « rail et liste », puis demande de remonter la barre de saisie entre la carte du chapitre et « Aujourd'hui ».
+- `TilesSidebar.swift` : `TilesNavRail` (une icône par page, mêmes groupes que la liste, Réglages en bas ; placé dans `MainView` par `navRail`, visible même barre latérale masquée) et `TilesPinnedChapterCard` (chapitre actif en haut du panneau : statut, pourcentage, titre, jauge, total, échéance, boutons Historique et Statut).
+- Panneau en Tuiles : la liste des pages n'y est plus (`sidebarTopSection`), les lignes de chapitre sont toujours compactes (la grosse carte du chapitre actif disparaît de l'arbre ; son détail est dans la carte épinglée et sur l'accueil ; les actions restent au clic droit).
+- Accueil Tuiles : `entryBar` en ligne, entre la carte du chapitre et « Aujourd'hui », à la place de la capsule flottante du bas.
+- Correctif : pourcentage et « Hist. » ne peuvent plus être écrasés (`fixedSize`), pour la vue normale des affichages d'origine.
+Affichages VA et VD : barre latérale inchangée.

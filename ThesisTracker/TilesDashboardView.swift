@@ -109,6 +109,7 @@ struct TilesDashboardView: View {
                 } else {
                     emptyCard
                 }
+                entryBar   // 5.29 : la saisie remonte juste sous le chapitre (demande de Clem)
                 sectionLabel("Aujourd'hui")
                 LazyVGrid(columns: gridColumns, spacing: 14) {
                     ringTile(title: "Jour", value: store.dailyProgress, goal: store.effectiveDailyGoal, color: TilesTheme.blue)
@@ -139,7 +140,6 @@ struct TilesDashboardView: View {
             .frame(maxWidth: .infinity)
         }
         .background(TilesTheme.bg.ignoresSafeArea())
-        .safeAreaInset(edge: .bottom, spacing: 0) { entryCapsule }
         .sheet(isPresented: $showRecap) {
             MonthlyRecapView(store: store, recap: recap)
         }
@@ -572,33 +572,32 @@ struct TilesDashboardView: View {
 
     // MARK: Saisie (capsule de verre)
 
-    private var entryCapsule: some View {
+    private var entryBar: some View {
         HStack(spacing: 10) {
             if let chapter {
                 Text(chapter.shortLabel)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(TilesTheme.ink)
                     .lineLimit(1)
-                    .frame(maxWidth: 160)
-                    .padding(.horizontal, 6)
+                    .fixedSize()
+                    .padding(.leading, 12)
             }
-            TextField("Total du chapitre", text: $inputText)
+            TextField("Total du chapitre (ex. 85 000)", text: $inputText)
                 .textFieldStyle(.plain)
                 .font(.system(size: 17, weight: .semibold).monospacedDigit())
                 .foregroundColor(TilesTheme.ink)
                 .focused($inputFocused)
                 .onSubmit { save() }
-                .frame(width: 150)
                 .padding(.horizontal, 14)
                 .frame(height: 40)
-                .background(Capsule().fill(TilesTheme.card))
-                .overlay(Capsule().stroke(TilesTheme.line, lineWidth: 1))
+                .frame(maxWidth: .infinity)
+                .background(Capsule().fill(TilesTheme.bg))
                 .accessibilityLabel("Total du chapitre")
             if let delta = typedDelta {
                 Text((delta < 0 ? "−" : "+") + DataStore.formatNumber(abs(delta)))
                     .font(.system(size: 14, weight: .semibold).monospacedDigit())
                     .foregroundColor(TilesTheme.blue)
-                    .frame(minWidth: 64, alignment: .leading)
+                    .fixedSize()
             }
             Button(action: save) {
                 Text(savedFlash ? "Enregistré" : "Enregistrer")
@@ -607,27 +606,14 @@ struct TilesDashboardView: View {
                     .padding(.horizontal, 20)
                     .frame(height: 40)
                     .background(Capsule().fill(savedFlash ? TilesTheme.green : TilesTheme.blue))
+                    .fixedSize()
             }
             .buttonStyle(.pressable)
             .disabled(inputInt == nil || chapter == nil)
             .help("Enregistrer le total du jour (⌘S)")
-            Button {
-                NotificationCenter.default.post(name: .navigateToTimer, object: nil)
-            } label: {
-                Image(systemName: "timer")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(TilesTheme.ink)
-                    .frame(width: 40, height: 40)
-                    .overlay(Circle().stroke(TilesTheme.line, lineWidth: 1))
-            }
-            .buttonStyle(.pressable)
-            .help("Ouvrir le minuteur")
-            .accessibilityLabel("Ouvrir le minuteur")
         }
         .padding(8)
-        .appGlass(in: Capsule(), legible: true, fallback: TilesTheme.card)
-        .padding(.bottom, 16)
-        .padding(.top, 6)
+        .background(Capsule().fill(TilesTheme.card))
     }
 
     private var typedDelta: Int? {
