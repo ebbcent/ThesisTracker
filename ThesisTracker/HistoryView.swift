@@ -143,7 +143,7 @@ struct HistoryRow: View {
                     .foregroundColor(.primary)
 
                 HStack(spacing: 8) {
-                    Text(formatNumber(entry.totalCount) + " car. total")
+                    Text(formatNumber(entry.totalCount) + " signes au total")
                         .font(.system(size: 12))
                         .foregroundColor(.labelMuted)
 

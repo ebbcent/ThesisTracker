@@ -254,7 +254,7 @@ struct ProjectFormView: View {
             }
             .padding(28)
         }
-        .frame(width: isEditing ? 400 : 480)
+        .frame(width: isEditing ? 400 : 580)   // 5.36 : les types de document tiennent sur une ligne
         .onAppear {
             name              = project?.name ?? ""
             selectedType      = project?.projectType

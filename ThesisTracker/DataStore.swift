@@ -2721,7 +2721,7 @@ class DataStore: ObservableObject {
     private func makeHeadline(chars: Int, days: Int, finished: Int) -> String {
         if chars == 0 { return "Mois sans écriture." }
         var parts: [String] = []
-        parts.append("\(DataStore.formatNumber(chars)) car. en \(days) jour\(days > 1 ? "s" : "")")
+        parts.append("\(DataStore.formatNumber(chars)) signes en \(days) jour\(days > 1 ? "s" : "")")
         if finished > 0 { parts.append("\(finished) chapitre\(finished > 1 ? "s" : "") terminé\(finished > 1 ? "s" : "")") }
         return parts.joined(separator: " · ")
     }

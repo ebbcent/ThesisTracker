@@ -1472,7 +1472,7 @@ struct ChartSnapshotView: View {
                     Text(title)
                         .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.white)
-                    Text("Période : \(period)  ·  Total : \(DataStore.formatNumber(total)) car.  ·  Jours actifs : \(active)")
+                    Text("Période : \(period)  ·  Total : \(DataStore.formatNumber(total)) signes  ·  Jours actifs : \(active)")
                         .font(.system(size: 11)).foregroundColor(.white.opacity(0.5))
                 }
                 Spacer()

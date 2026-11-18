@@ -389,3 +389,8 @@ Tour fait sur la version installée (accueil sombre et clair, Professeur, Éché
 - « signes » à la place de « car. » dans les widgets, le calendrier, les notifications et le mode présentation (les exports gardent « car. »).
 Vu et laissé : le défi de la semaine affiche encore « série de 30 jours » tant qu'aucune saisie n'a été enregistrée depuis la mise à jour (la cible se corrige à la prochaine saisie) ; « 4 échéances dépassées » dans Santé de la thèse contre 2 dans Échéances ; vitesse sur 7 jours actifs dans un widget, sur 14 dans la barre.
 Non vérifié : fenêtres secondaires (nouveau projet, exports, historique), panneau de la barre des menus, modes plein écran, petite fenêtre.
+Second tour (fenêtres et modes) : historique du chapitre, nouveau projet, export, import, écriture immersive, mode Aujourd'hui, mode panne.
+- Écriture immersive : fond plein (le tableau de bord transparaissait derrière la saisie).
+- Fenêtres « Nouveau projet » et « Exporter » élargies (les pastilles de type, de format et de périmètre étaient coupées ; elles défilent toujours si besoin).
+- Derniers « car. » de l'interface (historique, calendrier, carte de chaleur, graphiques, défi du mois, accueil de première ouverture) ; « Ouvrir le tableau de bord ».
+Non vérifié, faute de pouvoir le piloter en arrière-plan : panneau de la barre des menus, app en petite fenêtre, modes Sprint et Sanctuaire (non lancés pour ne pas démarrer de minuteur ni verrouiller l'écran).

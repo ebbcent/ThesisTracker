@@ -442,7 +442,7 @@ struct CalendarView: View {
                         Text(formattedDate(date))
                             .font(.system(size: 14, weight: .bold)).foregroundColor(.primary)
                         if chars > 0 {
-                            Text(fmt(chars) + " car. écrits" + (goal > 0 ? " · \(Int(ratio * 100))% de l'objectif" : ""))
+                            Text(fmt(chars) + " signes écrits" + (goal > 0 ? " · \(Int(ratio * 100))% de l'objectif" : ""))
                                 .font(.system(size: 12)).foregroundColor(.labelMuted)
                         } else {
                             Text("Aucune écriture ce jour").font(.system(size: 12)).foregroundColor(.labelMuted)

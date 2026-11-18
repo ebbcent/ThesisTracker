@@ -211,7 +211,7 @@ struct OnboardingView: View {
                     .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                     .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14))
                         .stroke(Color.cardBorder, lineWidth: 1.5))
-                Text("car. / jour")
+                Text("signes / jour")
                     .font(.system(size: 13))
                     .foregroundColor(.labelMuted)
             }

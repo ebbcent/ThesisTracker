@@ -260,7 +260,7 @@ struct ExportView: View {
             }
             .padding(28)
         }
-        .frame(width: 520)
+        .frame(width: 660)   // 5.36 : formats et périmètres moins coupés
         .frame(minHeight: 440)
     }
 
