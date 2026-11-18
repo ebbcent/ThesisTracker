@@ -207,6 +207,11 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.28** — Barre latérale : noms de projets et titres de chapitres lisibles, badges sur leur ligne
 - **5.29** — Barre latérale Tuiles : rail d'icônes et chapitre épinglé ; saisie sous la carte du chapitre
 - **5.30** — Accomplissements à progression, records, prochain badge sur l'accueil
+- **5.31** — Correctifs constatés à l'écran : onglets masqués par le verre, ligne de chapitre, records sans imports
+- **5.32** — Premier lot des 100 améliorations vues à l'écran : chiffres lisibles, colonne élargie, libellés, saisie, accomplissements en grille
+- **5.33** — Maquette validée codée (profondeur des cartes, accent réservé à l'action, arbre en lignes simples, barre du haut, tuile Série) ; une seule date de fin estimée ; graphiques sans imports ; défis de série atteignables
+- **5.34** — Titre de page unique, report d'une échéance dépassée, bouton de rythme, questions de départ du Professeur
+- **5.35** — Case « Import » sur une saisie : c'est elle, et plus un seuil, qui décide de ce qui ne compte pas comme écriture
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -318,3 +323,55 @@ Demande de Clem : ajouter des accomplissements, des défis, des badges (« je te
 - Notification à chaque accomplissement nouvellement gagné (`announceNew`, au plus deux à la fois ; liste mémorisée sur le Mac, clé `achievementsSeen` ; la première fois, ceux déjà gagnés sont mémorisés sans notification).
 - Tests : `AchievementCatalogTests`.
 Non fait, volontairement : pas de nouveaux types de défis hebdomadaires (le calendrier de 52 existe et il faudrait un champ de données pour un défi choisi).
+
+
+## 2026-11-18 — 5.31 : premiers correctifs vus à l'écran
+Depuis ce jour, l'app peut être regardée directement (pilotage des apps du Mac, accord de Clem) : tour de toutes les pages en apparence Tuiles, sombre, accent ambre. Constats :
+- Onglets des Échéances et du Minuteur invisibles : `FloatingSurface` posait un verre « Liquid Glass » en fond, qui se dessinait par-dessus les libellés (une bande vide). Remplacé par un matériau translucide ; même correction pour les bandeaux, bulles et la saisie rapide, qui utilisent la même surface.
+- Barre latérale : la ligne compacte du chapitre actif affichait « 4. La « L… » à cause du badge de statut ; en Tuiles, la ligne n'a plus de badges (le statut est dans la carte épinglée).
+- Records et récaps faussés par des imports (meilleur jour à 148 655 signes, mai à 316 444) : `AchievementCatalog.writtenTotals` écarte toute saisie de plus de 40 000 signes d'un chapitre en un jour ; utilisé par les records et les récaps du mois.
+- Textes : « Badges de série » ; la page Bibliothèque de widgets porte enfin son nom.
+Reste vu mais non traité : en-têtes de page de styles différents, libellés « car. » et « signes » mélangés, anciennes sections de la page Accomplissements en petites capitales à côté des nouvelles.
+
+
+## 2026-11-18 — 5.32 : premier lot des 100 améliorations (vues à l'écran)
+Liste de 100 améliorations établie après avoir regardé l'app. Ce lot traite les points sûrs ; la profondeur des cartes, l'usage de l'accent, l'arbre des projets et la barre du haut passent d'abord par une maquette.
+- Chiffres lisibles : « 84 079 » s'affichait « 84079 » (espace fine écrasée par l'approche resserrée). `TilesTheme.spaced` met une espace normale ; approche des grands chiffres desserrée.
+- Accueil : colonne élargie (1 560), six tuiles par ligne sur grand écran ; tuile Session retirée (le Pomodoro est déjà dans l'en-tête) ; curseur dans la saisie à l'ouverture ; total actuel en repère dans le champ ; bouton « Annuler » pendant huit secondes après une saisie ; bouton inactif en gris neutre ; « À écrire par jour ».
+- Même arrondi du pourcentage du chapitre partout (par défaut) : accueil, carte épinglée, ligne de la barre latérale.
+- Barre latérale : titre court dans la carte épinglée ; icônes du rail plus lisibles ; pastille rouge sur l'icône Échéances quand une date est dépassée.
+- Libellés : « Semaine » (au lieu de « Hebdo »), « 169 j de retard » et « dans 12 j » (au lieu de J+169 et J-12), accord de « chapitre(s) », « Calendrier (.ics) », plus de « Données chargées » au Minuteur, « Journée bien engagée », phrase du prochain badge.
+- Unité : « signes » partout (`formatCount`, `formatCountShort` et 31 libellés) ; les exports gardent « car. ».
+- Accomplissements : titres de section unifiés ; « Défis accomplis » (les huit derniers) et « Accomplissements » en grille au lieu de rangées horizontales qui coupaient les noms.
+- Récaps : phrases plus variées (relance, série, progrès) ; coche quand l'objectif mensuel est tenu.
+Non traité dans ce lot : dates de fin différentes selon les pages, imports dans les graphiques des Statistiques et de la Vue d'ensemble, défis de série inatteignables en une semaine.
+
+
+## 2026-11-18 — 5.33 : maquette « profondeur, accent, arbre, barre du haut » et projection unique
+Maquette validée par Clem (« code-la »), puis second lot de la liste.
+- Profondeur : cartes un peu plus claires en sombre ; ombre douce et reflet en haut sur les tuiles de l'accueil et la carte épinglée (`tilesSurface`) ; simple reflet sur les autres cartes (`TilesCardHighlight`, sans ombre pour ne pas alourdir le rendu).
+- Accent réservé à l'action et au chapitre actif : libellés en gris, chiffres en blanc ; anneaux Semaine et Mois neutres, seul l'anneau du jour garde l'accent.
+- Tuile Série : sept traits fins au lieu des pastilles à lettres (`TilesDayChain(bars: true)`).
+- Arbre des projets (apparence Tuiles seulement) : lignes simples, sans icône, anneau ni pastille de statut ; pourcentage à droite ; seul le chapitre actif est en couleur. Le résumé du projet et le statut restent au survol ; les affichages d'origine ne changent pas.
+- Barre du haut (apparence Tuiles) : trois repères lisibles (série, aujourd'hui, fin estimée) ; pages, vitesse et semaine restent derrière le chevron ; cloche, copie du résumé et état iCloud conservés.
+- Une seule date de fin estimée : `thesisEndDate` (reste à écrire de la thèse ÷ rythme moyen des 30 derniers jours, sans imports, jours de repos vides exclus). Elle sert à la barre du haut, à la ligne « 30 j » de la tuile Soutenance et au scénario « réaliste » des statistiques. La projection par projet utilise le même rythme. Au passage, le calcul des scénarios de soutenance comparait deux apports quotidiens entre eux : corrigé.
+- Graphiques et statistiques de rythme sans imports : `writtenTotals` (une saisie de plus de 40 000 signes d'un coup n'est pas une journée d'écriture). Les courbes de cumul gardent le texte importé.
+- Défis de la semaine : une cible de série (10, 14, 21, 30 jours) est ramenée à ce qui reste atteignable d'ici dimanche ; le défi « volume » ne compte plus les imports.
+Aucune fonctionnalité retirée, aucun champ ajouté aux données (deux réglages locaux : `challengeTargetAdjustedWeeks`).
+Reste : en-têtes de page à unifier, pages Échéances, Minuteur, Widgets et Professeur, vérification à l'écran du mode clair, des Réglages et des fenêtres secondaires.
+
+
+## 2026-11-18 — 5.34 : en-têtes et pages Échéances, Professeur
+- Titre de page : `TypeScale.pageTitle` partout (Échéances, Vue d'ensemble, Kanban, Recherche, Accomplissements, Widgets, Graphiques, Historique) ; en Tuiles, le même corps que « Aujourd'hui ».
+- Échéances : sous une échéance dépassée, « Reporter d'une semaine » et « d'un mois » (la coche à gauche sert à clore) ; « Choisir un rythme » devient un bouton ; « signes/jour ».
+- Professeur : quatre questions de départ sur la page vide (elles remplissent la saisie, rien n'est envoyé).
+Reste : style du Minuteur et grille des widgets (à faire après les avoir revus à l'écran), vérification du mode clair, des Réglages et des fenêtres secondaires.
+
+
+## 2026-11-18 — 5.35 : case « Import » (demande de Clem)
+Le seuil automatique de 40 000 signes (5.31, 5.33) est retiré : Clem préfère cocher lui-même. Sans coche, une saisie reste de l'écriture.
+- Données : `DailyEntry.isImport` (faux par défaut, anciennes données lues sans changement).
+- Une saisie cochée s'ajoute au total du chapitre et aux courbes de cumul, mais ne compte plus dans le rythme, la date de fin estimée, les graphiques quotidiens, les records, les récaps du mois ni le défi « volume ».
+- Où cocher : sur l'accueil Tuiles, case « Import » à côté de l'écart quand le total saisi augmente ; dans l'historique (fenêtre du chapitre et page Historique), case « Import » sur chaque ligne en hausse, à cocher ou décocher après coup.
+- `DataStore.setEntryImport`. Le Minuteur reprend aussi la palette de l'app (bleu, jaune, fond de champ) en Tuiles.
+À savoir : aucune saisie passée n'est cochée d'office. Les anciens imports comptent donc de nouveau comme écriture tant qu'ils ne sont pas cochés dans l'historique.

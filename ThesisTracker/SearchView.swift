@@ -238,7 +238,7 @@ struct SearchView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Recherche")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                 Text("Chapitres, plan, idées, blocages et notes quotidiennes")
                     .font(.system(size: 12))
                     .foregroundColor(.labelMuted)

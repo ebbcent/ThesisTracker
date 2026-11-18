@@ -191,7 +191,7 @@ struct WritingSprintView: View {
                         .frame(width: 80)
                         .focused($targetFocused)
                         .onSubmit { startSprint() }
-                    Text(store.data.useWordCount ? "mots" : "car.")
+                    Text(store.data.useWordCount ? "mots" : "signes")
                         .foregroundColor(.white.opacity(0.35))
                         .font(.system(size: 13))
                 }
@@ -263,7 +263,7 @@ struct WritingSprintView: View {
                         .foregroundColor(sprintDelta > 0 ? .accentGreen : .white.opacity(0.3))
                         .contentTransition(.numericText())
                         .appAnimation(Motion.progress, value: sprintDelta)
-                    Text(store.data.useWordCount ? "mots" : "car.")
+                    Text(store.data.useWordCount ? "mots" : "signes")
                         .font(.system(size: 18, weight: .light))
                         .foregroundColor(.white.opacity(0.3))
                         .padding(.bottom, 6)
@@ -282,7 +282,7 @@ struct WritingSprintView: View {
                             }
                         }
                         .frame(width: 280, height: 4)
-                        Text("Objectif sprint : \(Int(sprintProgress * 100))% · \(DataStore.formatNumber(target)) \(store.data.useWordCount ? "mots" : "car.")")
+                        Text("Objectif sprint : \(Int(sprintProgress * 100))% · \(DataStore.formatNumber(target)) \(store.data.useWordCount ? "mots" : "signes")")
                             .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.white.opacity(0.3))
                     }

@@ -144,7 +144,7 @@ struct FocusWritingView: View {
                                 .foregroundColor(.white)
                                 .contentTransition(.numericText())
                                 .appAnimation(Motion.progress, value: currentTotal)
-                            Text(store.data.useWordCount ? "mots" : "car.")
+                            Text(store.data.useWordCount ? "mots" : "signes")
                                 .font(.system(size: 22, weight: .light))
                                 .foregroundColor(.white.opacity(0.4))
                                 .padding(.bottom, 10)
@@ -179,7 +179,7 @@ struct FocusWritingView: View {
                                 Text("Objectif journalier : \(Int(ratio * 100))%")
                                     .font(.system(size: AppLook.fs(10)))
                                     .foregroundColor(.white.opacity(0.3))
-                                    .help("\(store.formatCount(todayDelta)) / \(store.formatCount(store.data.dailyGoal)) \(store.data.useWordCount ? "mots" : "car.") · \(Int(ratio * 100))% de l'objectif journalier")
+                                    .help("\(store.formatCount(todayDelta)) / \(store.formatCount(store.data.dailyGoal)) \(store.data.useWordCount ? "mots" : "signes") · \(Int(ratio * 100))% de l'objectif journalier")
                             }
                         }
                     }
@@ -199,7 +199,7 @@ struct FocusWritingView: View {
                                 .focused($fieldFocused)
                                 .onSubmit { save() }
                             if !inputText.isEmpty {
-                                Text(store.data.useWordCount ? "mots" : "car.")
+                                Text(store.data.useWordCount ? "mots" : "signes")
                                     .foregroundColor(.white.opacity(0.35))
                                     .font(.system(size: 13))
                             }
@@ -259,7 +259,7 @@ struct FocusWritingView: View {
                                     .overlay(Capsule().stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
                             }
                             .buttonStyle(.pressable)
-                            Text(store.data.useWordCount ? "mots" : "car.")
+                            Text(store.data.useWordCount ? "mots" : "signes")
                                 .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.white.opacity(0.25))
                         }
@@ -286,7 +286,7 @@ struct FocusWritingView: View {
                                         .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
                                 }
                                 .buttonStyle(.pressable)
-                                .help("Saisir \(DataStore.formatNumber(val)) \(store.data.useWordCount ? "mots" : "car.")")
+                                .help("Saisir \(DataStore.formatNumber(val)) \(store.data.useWordCount ? "mots" : "signes")")
                             }
                         }
                     }

@@ -84,9 +84,9 @@ struct DeadlineBoardView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Échéances")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                 Text(selectedTab == .chapitres
-                     ? "\(items.count) chapitre(s) avec échéance"
+                     ? "\(items.count) chapitre\(items.count > 1 ? "s" : "") avec échéance"
                      : selectedTab == .jalons
                          ? "\(store.allMilestonesSorted.count) jalon(s)"
                          : selectedTab == .next72h
@@ -106,7 +106,7 @@ struct DeadlineBoardView: View {
                 HStack(spacing: 5) {
                     Image(systemName: "calendar.badge.plus")
                         .font(.system(size: AppLook.fs(11), weight: .semibold))
-                    Text(".ics")
+                    Text("Calendrier (.ics)")
                         .font(.system(size: 12, weight: .semibold))
                 }
                 .foregroundColor(.labelMuted)
@@ -256,7 +256,7 @@ struct DeadlineBoardView: View {
                                         .font(.system(size: AppLook.fs(10)))
                                     let paceStr = store.data.useWordCount
                                         ? "\(DataStore.formatNumber(pace / 5)) mots/jour"
-                                        : "\(DataStore.formatNumber(pace)) car./jour"
+                                        : "\(DataStore.formatNumber(pace)) signes/jour"
                                     Text(item.chapter.pacing?.profile.map { "Rythme \($0.label) : \(paceStr) aujourd'hui" }
                                          ?? "Il faut \(paceStr) pour finir à temps")
                                         .font(.system(size: AppLook.fs(11)))
@@ -269,7 +269,7 @@ struct DeadlineBoardView: View {
                             // Badge J-X (#2)
                             if !item.chapter.isCompleted {
                                 let days = daysRemaining(for: deadline)
-                                Text(days < 0 ? "J+\(abs(days))" : (days == 0 ? "J-0" : "J-\(days)"))
+                                Text(days < 0 ? "\(abs(days)) j de retard" : (days == 0 ? "Aujourd'hui" : "dans \(days) j"))
                                     .font(.system(size: AppLook.fs(10), weight: .bold, design: .monospaced))
                                     .foregroundColor(statusColor(for: deadline))
                                     .padding(.horizontal, 6).padding(.vertical, 2)
@@ -287,6 +287,7 @@ struct DeadlineBoardView: View {
                     // 5.12 — simulateur de rythme du chapitre
                     if !item.chapter.isCompleted, item.chapter.goal > 0, item.chapter.deadline != nil {
                         pacingToggle(for: item.chapter)
+                        postponeRow(chapter: item.chapter, projectId: item.project.id)   // 5.34
                         if expandedPacing.contains(item.chapter.id) {
                             PacingSimulatorView(store: store, chapter: item.chapter, projectId: item.project.id)
                                 .padding(.top, 8)
@@ -314,11 +315,54 @@ struct DeadlineBoardView: View {
                 Image(systemName: open ? "chevron.up" : "chevron.down")
                     .font(.system(size: AppLook.fs(10), weight: .semibold))
             }
-            .foregroundColor(.accentWarm)
+            .foregroundColor(AppLook.tiles ? .primary : .accentWarm)
+            // 5.34 — un vrai bouton (c'était un lien discret)
+            .padding(.horizontal, AppLook.tiles ? 12 : 0)
+            .frame(height: AppLook.tiles ? 28 : nil)
+            .overlay(Capsule().stroke(AppLook.tiles ? Color.cardBorder : Color.clear, lineWidth: 1))
+            .contentShape(Capsule())
         }
         .buttonStyle(.pressable)
         .padding(.top, 8)
         .padding(.leading, 32)
+    }
+
+    // 5.34 — une échéance dépassée ne reste plus en tête sans issue : on la reporte en un clic
+    // (ou on coche le chapitre, à gauche, pour la clore).
+    @ViewBuilder
+    private func postponeRow(chapter: Chapter, projectId: UUID) -> some View {
+        let today = Calendar.current.startOfDay(for: Date())
+        if !chapter.isCompleted, let date = chapter.deadline.flatMap(DataStore.parseDate), date < today {
+            HStack(spacing: 8) {
+                Text("Échéance dépassée :")
+                    .font(.system(size: AppLook.fs(11)))
+                    .foregroundColor(.labelMuted)
+                postponeButton("Reporter d'une semaine", days: 7, chapterId: chapter.id, projectId: projectId)
+                postponeButton("d'un mois", days: 30, chapterId: chapter.id, projectId: projectId)
+            }
+            .padding(.top, 8)
+            .padding(.leading, 32)
+        }
+    }
+
+    private func postponeButton(_ title: String, days: Int, chapterId: UUID, projectId: UUID) -> some View {
+        Button {
+            guard let p = store.data.projects.firstIndex(where: { $0.id == projectId }),
+                  let c = store.data.projects[p].chapters.firstIndex(where: { $0.id == chapterId }),
+                  let target = Calendar.current.date(byAdding: .day, value: days, to: Date()) else { return }
+            store.data.projects[p].chapters[c].deadline = DataStore.dateString(from: target)
+            store.save()
+        } label: {
+            Text(title)
+                .font(.system(size: AppLook.fs(11), weight: .medium))
+                .foregroundColor(.primary)
+                .padding(.horizontal, 12)
+                .frame(height: 28)
+                .overlay(Capsule().stroke(Color.cardBorder, lineWidth: 1))
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.pressable)
+        .help("Nouvelle échéance : dans \(days) jours à compter d'aujourd'hui")
     }
 
     private func pagesSuffix(latest: Int, goal: Int) -> String {
@@ -549,8 +593,8 @@ struct DeadlineBoardView: View {
                         Spacer()
                         // Days badge
                         let daysText = cm.daysLeft < 0
-                            ? "J+\(abs(cm.daysLeft))"
-                            : (cm.daysLeft == 0 ? "Aujourd'hui" : "J-\(cm.daysLeft)")
+                            ? "\(abs(cm.daysLeft)) j de retard"
+                            : (cm.daysLeft == 0 ? "Aujourd'hui" : "dans \(cm.daysLeft) j")
                         Text(daysText)
                             .font(.system(size: AppLook.fs(11), weight: .bold, design: .monospaced))
                             .foregroundColor(u.color)
@@ -693,7 +737,7 @@ struct DeadlineBoardView: View {
     }
 
     private func progressLabel(latest: Int, goal: Int, useWordCount: Bool = false) -> String {
-        let unit = useWordCount ? "mots" : "car."
+        let unit = useWordCount ? "mots" : "signes"
         let l = useWordCount ? latest / 5 : latest
         let g = useWordCount ? goal / 5   : goal
         guard goal > 0 else { return "\(DataStore.formatNumber(l)) \(unit)" }

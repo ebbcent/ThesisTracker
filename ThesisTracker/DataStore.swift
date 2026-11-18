@@ -123,6 +123,7 @@ class DataStore: ObservableObject {
     }()
 
     private var _dailyTotalsCache: (version: Int, totals: [String: Int])? = nil
+    private var _writtenTotalsCache: (version: Int, totals: [String: Int])? = nil   // 5.33
     private var _dailyTotalsByProjectCache: [UUID: (version: Int, totals: [String: Int])] = [:]
     // Caches for expensive stat aggregations invalidated with dataVersion
     var _allMonthlyStatsCache: (version: Int, stats: [(label: String, chars: Int)])? = nil
@@ -153,6 +154,7 @@ class DataStore: ObservableObject {
     // Sidebar perf caches — rebuilt once per dataVersion, O(1) thereafter
     private var _latestTotalsAllCache: (version: Int, totals: [UUID: Int])? = nil
     private var _estimatedCompletionDatesAllCache: (version: Int, dates: [UUID: Date?])? = nil
+    private var _thesisEndCache: (version: Int, day: String, pace: Double, date: Date?)? = nil   // 5.33
     private var _projectRatiosAllCache: (version: Int, ratios: [UUID: Double])? = nil
     // Dashboard typing perf caches
     private var _weeklyProgressCache: (version: Int, value: Int)? = nil
@@ -854,14 +856,14 @@ class DataStore: ObservableObject {
         if data.useWordCount {
             return DataStore.formatNumber(value / 5) + " mots"
         }
-        return DataStore.formatNumber(value) + " car."
+        return DataStore.formatNumber(value) + " signes"   // 5.32 : un seul mot dans toute l'app
     }
 
     func formatCountShort(_ value: Int) -> String {
         if data.useWordCount {
             return DataStore.formatNumber(value / 5) + " m."
         }
-        return DataStore.formatNumber(value) + " car."
+        return DataStore.formatNumber(value) + " signes"
     }
 
     // MARK: - Active selectors
@@ -953,12 +955,26 @@ class DataStore: ObservableObject {
         return _computeDailyTotals(projectId: projectId, chapterId: chapterId)
     }
 
-    private func _computeDailyTotals(projectId: UUID?, chapterId: UUID?) -> [String: Int] {
+    /// 5.33 — comme `dailyTotals`, sans les saisies cochées « import ».
+    /// Sert aux graphiques et aux statistiques de rythme : un import n'est pas une journée d'écriture.
+    /// Les courbes de cumul gardent `dailyTotals` (le texte importé fait bien partie du total).
+    func writtenTotals(projectId: UUID? = nil, chapterId: UUID? = nil) -> [String: Int] {
+        if projectId == nil && chapterId == nil {
+            if let cache = _writtenTotalsCache, cache.version == dataVersion { return cache.totals }
+            let totals = _computeDailyTotals(projectId: nil, chapterId: nil, skipImports: true)
+            _writtenTotalsCache = (dataVersion, totals)
+            return totals
+        }
+        return _computeDailyTotals(projectId: projectId, chapterId: chapterId, skipImports: true)
+    }
+
+    private func _computeDailyTotals(projectId: UUID?, chapterId: UUID?, skipImports: Bool = false) -> [String: Int] {
         var totals: [String: Int] = [:]
         for chapter in chapters(projectId: projectId, chapterId: chapterId) {
             var previousTotal = 0
             for entry in chapter.entries.sorted(by: { $0.date < $1.date }) {
                 let increment = max(0, entry.totalCount - previousTotal)
+                if skipImports && entry.isImport { previousTotal = entry.totalCount; continue }   // 5.35 : la case décide, plus de seuil
                 if increment > 0 {
                     totals[entry.date, default: 0] += increment
                 }
@@ -1236,7 +1252,7 @@ class DataStore: ObservableObject {
         }
         // V5 — log automatique si le compteur a changé
         if count != oldValue {
-            let unit = data.useWordCount ? "mots" : "car."
+            let unit = data.useWordCount ? "mots" : "signes"
             let delta = count - oldValue
             let sign = delta > 0 ? "+" : ""
             let logContent = "\(DataStore.formatNumber(count)) \(unit) (\(sign)\(DataStore.formatNumber(delta)) ce jour)"
@@ -2475,7 +2491,7 @@ class DataStore: ObservableObject {
         // Reste à écrire (sur tous les projets non archivés)
         var remaining = 0
         for project in data.projects where !project.isArchived {
-            for chapter in project.chapters where !chapter.isCompleted {
+            for chapter in project.chapters where !chapter.isCompleted && chapter.countsInThesisTotal {   // 5.33 : même périmètre que la thèse
                 let latest = chapter.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
                 remaining += max(0, chapter.goal - latest)
             }
@@ -2483,7 +2499,7 @@ class DataStore: ObservableObject {
 
         let cal = DataStore.gregorianCal
         let today = cal.startOfDay(for: Date())
-        let totals = dailyTotals()
+        let totals = writtenIncrements { p, c in !p.isArchived && c.countsInThesisTotal }   // 5.33 : sans imports
 
         // 5.12 — une journée sans écriture (archives, séminaire, repos) sans texte
         // ajouté ne compte pas dans la moyenne.
@@ -2493,7 +2509,7 @@ class DataStore: ObservableObject {
             for offset in 1...days {
                 guard let d = cal.date(byAdding: .day, value: -offset, to: today) else { continue }
                 let ds = DataStore.dateString(from: d)
-                let value = totals[ds] ?? 0
+                let value = max(0, totals[ds] ?? 0)
                 if value == 0 && data.restDays.contains(ds) { continue }
                 sum += value
                 counted += 1
@@ -2995,23 +3011,103 @@ class DataStore: ObservableObject {
         }
         guard remaining > 0 else { return nil }
 
-        let cal = DataStore.gregorianCal
-        let today = Date()
-        // Use cached project-scoped totals (O(1) after first call per dataVersion)
-        let projectTotals = dailyTotals(projectId: projectId)
-        var increments: [Int] = []
-        for offset in 1...lookbackDays {
-            guard let date = cal.date(byAdding: .day, value: -offset, to: today) else { continue }
-            let total = projectTotals[DataStore.dateString(from: date)] ?? 0
-            if total > 0 { increments.append(total) }
-        }
-        guard !increments.isEmpty else { return nil }
-        let avgPerDay = increments.reduce(0, +) / increments.count
-        guard avgPerDay > 0 else { return nil }
-
-        let daysNeeded = Int(ceil(Double(remaining) / Double(avgPerDay)))
-        return cal.date(byAdding: .day, value: daysNeeded, to: today)
+        // 5.33 — même rythme de référence que partout ailleurs (30 jours, sans imports)
+        let pace = referencePace(writtenIncrements { p, _ in p.id == projectId })
+        return Self.endDate(remaining: remaining, pace: pace)
     }
+
+    // MARK: - 5.33 Projection de référence (une seule date de fin, partout)
+
+    /// 5.35 — coche ou décoche « import » sur une saisie (retrouvée par son identifiant).
+    func setEntryImport(_ flag: Bool, entryId: UUID) {
+        for p in data.projects.indices {
+            for c in data.projects[p].chapters.indices {
+                if let e = data.projects[p].chapters[c].entries.firstIndex(where: { $0.id == entryId }) {
+                    guard data.projects[p].chapters[c].entries[e].isImport != flag else { return }
+                    data.projects[p].chapters[c].entries[e].isImport = flag
+                    save()
+                    return
+                }
+            }
+        }
+    }
+
+    /// 5.35 — même chose pour la saisie d'un chapitre à une date donnée.
+    func setEntryImport(_ flag: Bool, chapterId: UUID, date: String) {
+        for project in data.projects {
+            if let chapter = project.chapters.first(where: { $0.id == chapterId }),
+               let entry = chapter.entries.first(where: { $0.date == date }) {
+                setEntryImport(flag, entryId: entry.id)
+                return
+            }
+        }
+    }
+
+    /// Signes écrits par jour pour les chapitres retenus, sans les saisies cochées « import ».
+    func writtenIncrements(where include: (Project, Chapter) -> Bool) -> [String: Int] {
+        var out: [String: Int] = [:]
+        for project in data.projects {
+            for chapter in project.chapters where include(project, chapter) {
+                var previous = 0
+                for entry in chapter.entries.sorted(by: { $0.date < $1.date }) {
+                    let delta = entry.totalCount - previous
+                    previous = entry.totalCount
+                    if entry.isImport { continue }   // 5.35 : une saisie cochée « import » n'est pas de l'écriture
+                    out[entry.date, default: 0] += delta
+                }
+            }
+        }
+        return out
+    }
+
+    /// Rythme de référence : moyenne par jour calendaire sur les 30 derniers jours
+    /// (les jours de repos sans écriture ne comptent pas).
+    func referencePace(_ increments: [String: Int], days: Int = 30) -> Double {
+        let cal = DataStore.gregorianCal
+        let today = cal.startOfDay(for: Date())
+        var sum = 0
+        var counted = 0
+        for offset in 1...max(1, days) {
+            guard let d = cal.date(byAdding: .day, value: -offset, to: today) else { continue }
+            let ds = DataStore.dateString(from: d)
+            let value = max(0, increments[ds] ?? 0)
+            if value == 0 && data.restDays.contains(ds) { continue }
+            sum += value
+            counted += 1
+        }
+        return counted > 0 ? Double(sum) / Double(counted) : 0
+    }
+
+    static func endDate(remaining: Int, pace: Double) -> Date? {
+        guard remaining > 0, pace > 0 else { return nil }
+        let cal = DataStore.gregorianCal
+        return cal.date(byAdding: .day, value: Int(ceil(Double(remaining) / pace)), to: cal.startOfDay(for: Date()))
+    }
+
+    /// Ce qui reste à écrire pour la thèse (chapitres comptés, non terminés, projets non archivés).
+    var thesisRemaining: Int {
+        var remaining = 0
+        for project in data.projects where !project.isArchived {
+            for chapter in project.chapters where !chapter.isCompleted && chapter.countsInThesisTotal && chapter.goal > 0 {
+                remaining += max(0, chapter.goal - (latestTotalsAll[chapter.id] ?? 0))
+            }
+        }
+        return remaining
+    }
+
+    private var thesisProjection: (pace: Double, date: Date?) {
+        let day = DataStore.today
+        if let c = _thesisEndCache, c.version == dataVersion, c.day == day { return (c.pace, c.date) }
+        let pace = referencePace(writtenIncrements { p, c in !p.isArchived && c.countsInThesisTotal })
+        let date = Self.endDate(remaining: thesisRemaining, pace: pace)
+        _thesisEndCache = (dataVersion, day, pace, date)
+        return (pace, date)
+    }
+
+    /// La date de fin estimée de la thèse : la même sur la barre du haut, la tuile Soutenance et les statistiques.
+    var thesisEndDate: Date? { thesisProjection.date }
+    /// Le rythme (signes par jour) qui sert à cette date.
+    var thesisReferencePace: Double { thesisProjection.pace }
 
     // MARK: - Streaks
 
@@ -3619,7 +3715,7 @@ class DataStore: ObservableObject {
         guard let weekStart = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) else { return 0 }
         switch challenge.kind {
         case .words:
-            let totals = dailyTotals()
+            let totals = writtenIncrements { _, _ in true }   // 5.33 : un import ne gagne pas le défi
             return (0..<7).compactMap { offset -> Int? in
                 guard let d = cal.date(byAdding: .day, value: offset, to: weekStart) else { return nil }
                 return totals[DataStore.dateString(from: d)]
@@ -3741,14 +3837,37 @@ class DataStore: ObservableObject {
 
     private func checkOrGenerateWeeklyChallenge() {
         let key = DataStore.currentWeekKey
-        guard data.weeklyChallenges.first(where: { $0.weekKey == key }) == nil else { return }
+        if let existing = data.weeklyChallenges.firstIndex(where: { $0.weekKey == key }) {
+            // 5.33 — un défi de série déjà tiré mais hors d'atteinte cette semaine est ramené, une seule fois, à une cible atteignable
+            let challenge = data.weeklyChallenges[existing]
+            let udKey = "challengeTargetAdjustedWeeks"
+            var adjusted = Set(UserDefaults.standard.array(forKey: udKey) as? [String] ?? [])
+            if challenge.kind == .streak, !challenge.isCompleted, !adjusted.contains(key) {
+                adjusted.insert(key)
+                UserDefaults.standard.set(Array(adjusted), forKey: udKey)
+                let reachable = reachableStreakThisWeek
+                if challenge.target > reachable { data.weeklyChallenges[existing].target = reachable }
+            }
+            return
+        }
 
         let cal = Calendar(identifier: .iso8601) // iso8601 — can't use gregorianCal here
         let weekOfYear = cal.component(.weekOfYear, from: Date())
         let idx = max(0, (weekOfYear - 1) % DataStore.challengeSchedule.count)
-        let (kind, target) = DataStore.challengeSchedule[idx]
+        var (kind, target) = DataStore.challengeSchedule[idx]
+        // 5.33 — une série de 14, 21 ou 30 jours ne peut pas se gagner en une semaine en partant de plus bas
+        if kind == .streak { target = min(target, reachableStreakThisWeek) }
 
         data.weeklyChallenges.append(WeeklyChallenge(weekKey: key, kind: kind, target: target))
+    }
+
+    /// La plus longue série qu'on peut encore atteindre d'ici dimanche soir (au moins 3 jours).
+    var reachableStreakThisWeek: Int {
+        let cal = DataStore.iso8601Cal
+        let weekdayIndex = (cal.component(.weekday, from: Date()) + 5) % 7   // lundi = 0 … dimanche = 6
+        let daysAfterToday = 6 - weekdayIndex
+        let wroteToday = (dailyTotals()[DataStore.today] ?? 0) > 0
+        return max(3, currentStreak + daysAfterToday + (wroteToday ? 0 : 1))
     }
 
     private func checkWeeklyChallengeCompletion() {
@@ -4514,7 +4633,7 @@ class DataStore: ObservableObject {
     }
 
     private func _computeDefenseProjection() -> DefenseProjection {
-        let totals = dailyTotals()
+        let totals = writtenIncrements { p, c in !p.isArchived && c.countsInThesisTotal }   // 5.33 : sans imports
         let cal = DataStore.gregorianCal
         var totalGoal = 0; var totalWritten = 0
         for proj in data.projects where !proj.isArchived {
@@ -4529,10 +4648,9 @@ class DataStore: ObservableObject {
         // Collect daily increments (uses shared storageDateFormatter, no alloc)
         var allIncrements: [Int] = []
         for d in 1...60 {
-            guard let date     = cal.date(byAdding: .day, value: -d,     to: Date()),
-                  let prevDate = cal.date(byAdding: .day, value: -(d+1), to: Date()) else { continue }
-            let delta = (totals[DataStore.dateString(from: date)] ?? 0)
-                      - (totals[DataStore.dateString(from: prevDate)] ?? 0)
+            // 5.33 — l'apport du jour lui-même (avant : différence entre deux apports, donc faux)
+            guard let date = cal.date(byAdding: .day, value: -d, to: Date()) else { continue }
+            let delta = totals[DataStore.dateString(from: date)] ?? 0
             if delta > 0 { allIncrements.append(delta) }
         }
         guard !allIncrements.isEmpty else {
@@ -4549,7 +4667,8 @@ class DataStore: ObservableObject {
             guard charsPerDay > 0, remaining > 0 else { return nil }
             return cal.date(byAdding: .day, value: Int(ceil(Double(remaining) / Double(charsPerDay))), to: Date())
         }
-        let realisticDate = projDate(charsPerDay: median)
+        // 5.33 — la date « réaliste » est la date de référence de toute l'app
+        let realisticDate = thesisEndDate ?? projDate(charsPerDay: median)
         let daysRemaining: Int? = realisticDate.map { cal.dateComponents([.day], from: Date(), to: $0).day ?? 0 }
         return DefenseProjection(
             totalGoal: totalGoal, totalWritten: totalWritten, avgDailyChars: median,

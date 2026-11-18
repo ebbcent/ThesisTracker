@@ -288,8 +288,9 @@ struct HoverDragHandle: ViewModifier {
 enum TypeScale {
     // 5.27 — valeurs calculées : elles suivent l'apparence (Tuiles ou d'origine)
     /// Titre de page (« Tableau de bord »).
+    /// 5.33 — un seul titre de page : en Tuiles, le même que « Aujourd'hui » sur l'accueil.
     static var pageTitle: Font {
-        AppLook.tiles ? .system(size: 24, weight: .heavy) : .system(size: 18, weight: .bold, design: .rounded)
+        AppLook.tiles ? .system(size: 26, weight: .heavy) : .system(size: 20, weight: .bold, design: AppLook.fontDesign)
     }
     /// Titre de section (« Progression »).
     static var sectionTitle: Font { .system(size: AppLook.tiles ? 13 : 12, weight: .semibold) }

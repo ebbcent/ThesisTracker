@@ -314,7 +314,7 @@ enum PomodoroStatisticsEngine {
         } else if snapshot.completedSessions >= 3 {
             headline = "Journée solide et régulière"
         } else if snapshot.completedSessions >= 1 {
-            headline = "Journée engagée, encore perfectible"
+            headline = "Journée bien engagée"
         } else {
             headline = "Aucune session terminée aujourd'hui"
         }

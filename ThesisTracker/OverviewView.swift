@@ -60,7 +60,7 @@ struct OverviewView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Vue d'ensemble")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                 Text("\(activeProjects.count) projet(s) · \(totalChapters) chapitre(s)")
                     .font(.system(size: 12))
                     .foregroundColor(.labelMuted)
@@ -211,7 +211,7 @@ struct OverviewView: View {
         let today = cal.startOfDay(for: Date())
         guard let weekAgo = cal.date(byAdding: .day, value: -7, to: today) else { return 0 }
         let weekStr = DataStore.dateString(from: weekAgo)
-        return store.dailyTotals().filter { $0.key >= weekStr }.values.reduce(0, +)
+        return store.writtenTotals().filter { $0.key >= weekStr }.values.reduce(0, +)
     }
 
     @ViewBuilder

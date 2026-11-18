@@ -338,7 +338,7 @@ final class PomodoroAppController: ObservableObject {
             notificationManager.onStartBreak = { [weak self] in self?.startRecommendedSession() }
             notificationManager.onStartSession = { [weak self] in self?.startRecommendedSession() }
             notificationManager.onSkipBreak = { [weak self] in self?.skipPendingPhase() }
-            statusMessage = bootstrap.warning ?? "Données chargées"
+            statusMessage = bootstrap.warning ?? ""   // 5.32 : plus de message technique quand tout va bien
             storageLocationDescription = bootstrap.locationDescription
             startMonitoring()
             // Session en cours lors de la fermeture / du plantage précédent

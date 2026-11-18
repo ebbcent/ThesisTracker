@@ -92,7 +92,7 @@ struct MonthlyRecap {
     }
 
     static func compute(store: DataStore, monthStart: Date, includeChapter: Bool = true) -> MonthlyRecap {
-        let totals = store.dailyTotals()
+        let totals = AchievementCatalog.writtenTotals(store: store)   // 5.31 : sans les imports probables
         let days = dayStrings(of: monthStart)
         let values = days.map { totals[$0] ?? 0 }
 
@@ -140,9 +140,12 @@ struct MonthlyRecap {
     var verdict: String {
         if total <= 0 { return "Un mois blanc." }
         if monthlyGoal > 0, total >= monthlyGoal { return "Objectif tenu." }
+        if previousTotal > 0, writingDays >= 4, total >= previousTotal * 2 { return "Le mois de la relance." }
+        if runLength >= 10 { return "Un mois en série." }
         if writingDays <= 3 { return "Un mois en pointillé." }
         if monthlyGoal > 0, Double(total) >= Double(monthlyGoal) * 0.5 { return "Un mois plein." }
         if writingDays >= 12 { return "Un mois régulier." }
+        if previousTotal > 0, total > previousTotal { return "Un mois en progrès." }
         return "Un mois discret."
     }
 
@@ -597,9 +600,19 @@ struct MonthlyRecapArchiveView: View {
         let recap = entry.recap
         return Button { opened = entry } label: {
             VStack(alignment: .leading, spacing: 6) {
-                Text(MonthlyRecap.yearText(recap.monthStart))
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.labelMuted)
+                HStack {
+                    Text(MonthlyRecap.yearText(recap.monthStart))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.labelMuted)
+                    Spacer()
+                    if recap.monthlyGoal > 0, recap.total >= recap.monthlyGoal {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 13))
+                            .foregroundColor(.semGreen)
+                            .help("Objectif mensuel tenu")
+                            .accessibilityLabel("Objectif mensuel tenu")
+                    }
+                }
                 Text(recap.monthName.capitalized)
                     .font(.system(size: 30, weight: .regular, design: .serif))
                     .tracking(-0.6)

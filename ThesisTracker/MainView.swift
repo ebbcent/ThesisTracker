@@ -140,7 +140,7 @@ struct MainView: View {
     /// 5.29 — rail d'icônes des pages, en apparence Tuiles (visible même barre latérale masquée).
     @ViewBuilder private var navRail: some View {
         if AppLook.tiles {
-            TilesNavRail(selectedNav: $selectedNav)
+            TilesNavRail(store: store, selectedNav: $selectedNav)
                 .padding(.leading, 10)
                 .padding(.vertical, 10)
         }
@@ -697,6 +697,96 @@ struct StatusBarView: View {
     }
 
     var body: some View {
+        if AppLook.tiles { tilesBody } else { classicBody }
+    }
+
+    // MARK: 5.33 — barre de l'apparence Tuiles : trois repères lisibles, sans séparateurs ni pastilles
+
+    private func marker(_ label: String, _ value: String, _ detail: String? = nil) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Text(label).font(.system(size: 12)).foregroundColor(.labelMuted)
+            Text(value).font(.system(size: 13, weight: .bold).monospacedDigit()).foregroundColor(.primary)
+            if let detail {
+                Text(detail).font(.system(size: 12)).foregroundColor(.labelMuted)
+            }
+        }
+        .lineLimit(1)
+        .fixedSize()
+        .accessibilityElement(children: .combine)
+    }
+
+    private func barButton(_ systemImage: String, tint: Color = .labelMuted, help: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(tint)
+                .frame(width: 28, height: 28)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.pressable)
+        .help(help)
+        .accessibilityLabel(help)
+    }
+
+    private var tilesBody: some View {
+        let streak = store.currentStreak
+        let goal = store.effectiveDailyGoal
+        let divisor = store.data.useWordCount ? 5 : 1
+        let streakText: String = streak > 1 ? "\(streak) jours" : (streak == 1 ? "1 jour" : "aucune")
+        let todayText: String = TilesTheme.spaced(DataStore.formatNumber(store.dailyProgress / divisor))
+        let goalText: String? = goal > 0 ? "sur " + TilesTheme.spaced(DataStore.formatNumber(goal / divisor)) : nil
+        return HStack(spacing: 24) {
+            marker("Série", streakText)
+            marker("Aujourd'hui", todayText, goalText)
+            if let eta = store.thesisEndDate ?? store.estimatedCompletionDate(for: store.data.activeProjectId ?? UUID()) {
+                let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: eta).day ?? 0
+                let inDays: String? = days >= 0 ? (days > 1 ? "· dans \(days) jours" : "· dans \(days) jour") : nil
+                marker("Fin estimée", DataStore.formatDate(eta), inDays)
+            }
+            if expanded {
+                if let pages = store.pagesNumber(store.thesisWrittenChars, digits: 0), store.thesisWrittenChars > 0 {
+                    marker("Thèse", "\(pages) p.")
+                }
+                marker("Vitesse", store.formatCount(store.velocity14Days) + "/j")
+                if store.data.weeklyGoal > 0 {
+                    let weekPct: Int = min(100, Int(Double(store.weeklyProgress) / Double(store.data.weeklyGoal) * 100))
+                    marker("Semaine", "\(weekPct) %")
+                }
+            }
+            barButton(expanded ? "chevron.left" : "chevron.right",
+                      help: expanded ? "Masquer pages, vitesse et semaine" : "Afficher pages, vitesse et semaine") {
+                withAppAnimation(Motion.quick) { expanded.toggle() }
+            }
+            .padding(.leading, -14)
+            Spacer(minLength: 0)
+            if store.isUsingICloud {
+                Image(systemName: store.iCloudSyncActive ? "arrow.triangle.2.circlepath" : "checkmark.icloud")
+                    .font(.system(size: 12))
+                    .foregroundColor(.labelMuted)
+                    .help(store.iCloudSyncActive ? "Synchronisation iCloud en cours" : "Synchronisé avec iCloud")
+                    .accessibilityLabel(store.iCloudSyncActive ? "Synchronisation iCloud en cours" : "Synchronisé avec iCloud")
+            }
+            HStack(spacing: 2) {
+                barButton(notifStore.unreadCount > 0 ? "bell.badge.fill" : "bell",
+                          tint: notifStore.unreadCount > 0 ? .accentWarm : .labelMuted,
+                          help: "Centre de notifications") { showNotificationCenter.toggle() }
+                    .popover(isPresented: $showNotificationCenter, arrowEdge: .bottom) {
+                        NotificationCenterView().preferredColorScheme(nil)
+                    }
+                barButton(copiedFeedback ? "checkmark" : "doc.on.doc",
+                          help: copiedFeedback ? "Copié" : "Copier le résumé du jour dans le presse-papier") { copyDailySummary() }
+            }
+        }
+        .padding(.horizontal, 18)
+        .frame(height: 40)
+        .clipShape(AppLook.panelShape(16))
+        .appGlass(in: AppLook.panelShape(16), fallback: .sidebarBg)
+        .padding(.horizontal, 12)
+        .padding(.top, 10)
+        .padding(.bottom, 6)
+    }
+
+    private var classicBody: some View {
         HStack(spacing: 0) {
             // #42 — Indicateur iCloud discret
             if store.isUsingICloud {
@@ -813,7 +903,7 @@ struct StatusBarView: View {
                         Image(systemName: "target")
                             .font(.system(size: 10))
                             .foregroundColor(.accentWarm)
-                        Text("Hebdo")
+                        Text("Semaine")
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted)
                         Text(store.formatCount(written))
@@ -864,7 +954,7 @@ struct StatusBarView: View {
             Spacer()
 
             // ETA deadline
-            if let eta = store.estimatedCompletionDate(for: store.data.activeProjectId ?? UUID()) {
+            if let eta = store.thesisEndDate ?? store.estimatedCompletionDate(for: store.data.activeProjectId ?? UUID()) {
                 let days = Calendar.current.dateComponents([.day], from: Date(), to: eta).day ?? 0
                 HStack(spacing: 6) {
                     Text("Fin estimée")

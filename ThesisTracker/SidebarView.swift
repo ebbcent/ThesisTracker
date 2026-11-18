@@ -1682,7 +1682,7 @@ struct ProjectSidebarRow: View {
                         if let tag = project.tag {
                             Circle().fill(tag.color).frame(width: 9, height: 9)
                                 .overlay(Circle().stroke(Color.white.opacity(0.25), lineWidth: 1))
-                        } else {
+                        } else if !AppLook.tiles {   // 5.33 : en Tuiles, lignes simples, sans icône
                             Image(systemName: isActive ? "books.vertical.fill" : "books.vertical")
                                 .font(.system(size: 12))
                                 .foregroundColor(isActive ? .accent : .labelMuted)
@@ -1702,7 +1702,7 @@ struct ProjectSidebarRow: View {
                                     .layoutPriority(1)
                                     .highPriorityGesture(TapGesture(count: 2).onEnded { renameDraft = project.name })
                             }
-                            if let summary = chapterCountSummary {
+                            if let summary = chapterCountSummary, !AppLook.tiles {   // 5.33 : au survol en Tuiles
                                 Text(summary)
                                     .font(.system(size: AppLook.fs(10), weight: .medium))
                                     .foregroundColor(.labelMuted.opacity(0.7))
@@ -1710,11 +1710,21 @@ struct ProjectSidebarRow: View {
                             }
                         }
                         Spacer()
-                        MiniProgressRing(ratio: projectRatio, color: projectRingColor)
-                            .opacity(0.85)
+                        if AppLook.tiles {
+                            // 5.33 — pourcentage aligné à droite, à la place de l'anneau
+                            Text("\(Int(min(projectRatio, 1) * 100)) %")
+                                .font(.system(size: 12, weight: .medium).monospacedDigit())
+                                .foregroundColor(.labelMuted)
+                                .fixedSize()
+                                .accessibilityLabel("Avancement \(Int(min(projectRatio, 1) * 100)) pour cent")
+                        } else {
+                            MiniProgressRing(ratio: projectRatio, color: projectRingColor)
+                                .opacity(0.85)
+                        }
                     }
                 }
                 .buttonStyle(.pressable)
+                .help(AppLook.tiles ? (chapterCountSummary ?? project.name) : "")
 
                 HStack(spacing: 4) {
                     Button {
@@ -1836,7 +1846,7 @@ struct ProjectSidebarRow: View {
                 .modifier(CollapseOffRowHover())   // 5.28 : hors survol, ces boutons ne prennent plus de place (le nom n'est plus tronqué)
             }
             .padding(.horizontal, 8).padding(.vertical, 7)
-            .background(RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous).fill(isActive ? Color.accent.opacity(AppLook.tiles ? 0.10 : 0.06) : Color.clear))
+            .background(RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous).fill(isActive && !AppLook.tiles ? Color.accent.opacity(0.06) : Color.clear))   // 5.33 : en Tuiles, seul le chapitre actif est marqué
             // Drag source pour le projet
             .draggable(project.id.uuidString) {
                 HStack(spacing: 6) {
@@ -2144,9 +2154,11 @@ private struct ChapterFolderSidebarRow: View {
                         HStack(spacing: 6) {
                             Image(systemName: folder.isExpanded ? "chevron.down" : "chevron.right")
                                 .font(.system(size: AppLook.fs(10), weight: .semibold)).foregroundColor(.labelMuted).frame(width: 10)
-                            Image(systemName: folder.isExpanded ? "folder.fill" : "folder")
-                                .font(.system(size: AppLook.fs(11)))
-                                .foregroundColor(.secondary.opacity(0.7))
+                            if !AppLook.tiles {   // 5.33
+                                Image(systemName: folder.isExpanded ? "folder.fill" : "folder")
+                                    .font(.system(size: AppLook.fs(11)))
+                                    .foregroundColor(.secondary.opacity(0.7))
+                            }
                             if renameDraft != nil {
                                 InlineRenameField(
                                     text: Binding(get: { renameDraft ?? "" }, set: { renameDraft = $0 }),
@@ -2162,7 +2174,7 @@ private struct ChapterFolderSidebarRow: View {
                                     })
                             }
                             Spacer()
-                            if folderRatio > 0 {
+                            if folderRatio > 0 && !AppLook.tiles {
                                 MiniProgressRing(ratio: folderRatio, color: folderRingColor)
                                     .opacity(0.85)
                                     .help("\(Int(folderRatio * 100)) %")
@@ -2434,7 +2446,7 @@ struct ChapterSidebarRow: View {
         Button(action: handleTap) {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
-                    Circle().fill(statusColor).frame(width: 6, height: 6)
+                    if !AppLook.tiles { Circle().fill(statusColor).frame(width: 6, height: 6) }   // 5.33 : statut dans la carte épinglée et au survol
                     // Tag du chapitre
                     if let tag = chapter.tag {
                         Circle().fill(tag.color).frame(width: 8, height: 8)
@@ -2458,7 +2470,7 @@ struct ChapterSidebarRow: View {
                     } else {
                         Text(chapter.name)
                             .font(.system(size: AppLook.tiles ? 13 : 12, weight: isActive ? .semibold : .regular))
-                            .foregroundColor(.primary).lineLimit(compactMode ? 1 : 2)
+                            .foregroundColor(AppLook.tiles && isActive ? .accentWarm : .primary).lineLimit(compactMode ? 1 : 2)
                             .fixedSize(horizontal: false, vertical: true)
                             .multilineTextAlignment(.leading)
                             .layoutPriority(1)
@@ -2466,14 +2478,14 @@ struct ChapterSidebarRow: View {
                             .help(chapter.name)   // 5.19 : titre complet au survol
                             .highPriorityGesture(TapGesture(count: 2).onEnded { renameDraft = chapter.name })
                     }
-                    if compactMode { chapterBadges }   // 5.28 : en vue normale, les badges ont leur propre ligne
+                    if compactMode && !AppLook.tiles { chapterBadges }   // 5.28 : en vue normale, les badges ont leur propre ligne ; 5.31 : aucun en Tuiles (ils écrasaient le titre)
                     Spacer()
                     if goal > 0 {
                         HStack(spacing: 3) {
-                            milestoneDots
-                            Text("\(percentage)%")
-                                .font(.system(size: AppLook.fs(11), weight: .medium))
-                                .foregroundColor(statusColor)
+                            if !AppLook.tiles { milestoneDots }
+                            Text(AppLook.tiles ? "\(percentage) %" : "\(percentage)%")
+                                .font(.system(size: AppLook.fs(11), weight: .medium).monospacedDigit())
+                                .foregroundColor(AppLook.tiles ? (isActive ? Color.accentWarm : Color.labelMuted) : statusColor)
                                 .lineLimit(1)
                         }
                         .fixedSize()   // 5.29 : le pourcentage ne peut plus être écrasé à un chiffre par ligne
@@ -2605,13 +2617,14 @@ struct ChapterSidebarRow: View {
             .padding(compactMode ? 6 : 9)
             .background(
                 isMultiSelected ? Color.accentWarm.opacity(0.12)
-                : (isActive ? Color.accent.opacity(0.08) : Color.cardBg.opacity(0.7))
+                : (AppLook.tiles ? (isActive ? Color.primary.opacity(0.07) : Color.clear)
+                   : (isActive ? Color.accent.opacity(0.08) : Color.cardBg.opacity(0.7)))
             )
             .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
             .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12))
                 .stroke(
                     isMultiSelected ? Color.accentWarm.opacity(0.55)
-                    : (isActive ? Color.accent.opacity(0.25) : Color.cardBorder),
+                    : (AppLook.tiles ? Color.clear : (isActive ? Color.accent.opacity(0.25) : Color.cardBorder)),
                     lineWidth: isMultiSelected ? 1.5 : 1
                 ))
         }

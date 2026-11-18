@@ -215,7 +215,7 @@ struct PaperDashboardView: View {
                     .contentTransition(.numericText())
                     .appAnimation(Motion.progress, value: count)
 
-                Text(store.data.useWordCount ? "mots" : "car.")
+                Text(store.data.useWordCount ? "mots" : "signes")
                     .font(.system(size: 20))
                     .foregroundColor(.labelMuted)
                     .padding(.bottom, 8)
@@ -281,7 +281,7 @@ struct PaperDashboardView: View {
                         .foregroundColor(.primary)
                         .textFieldStyle(.plain)
                         .onSubmit { saveEntry() }
-                    Text(store.data.useWordCount ? "mots" : "car.")
+                    Text(store.data.useWordCount ? "mots" : "signes")
                         .font(.system(size: 16))
                         .foregroundColor(.labelMuted)
                 }

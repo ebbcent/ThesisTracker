@@ -1281,7 +1281,7 @@ struct DashboardView: View {
                             )
                             .contentTransition(.numericText())
                             .appAnimation(Motion.progress, value: currentEntryTotal)
-                        Text(store.data.useWordCount ? "mots" : "car.")
+                        Text(store.data.useWordCount ? "mots" : "signes")
                             .font(.system(size: 15, weight: .regular))
                             .foregroundColor(.labelMuted)
                             .padding(.bottom, 6)
@@ -1382,7 +1382,7 @@ struct DashboardView: View {
                         }
                         .frame(height: 5)
                         // V5 — #10 : Tooltip
-                        .help("\(store.formatCount(currentEntryDelta)) / \(store.formatCount(store.effectiveDailyGoal)) \(store.data.useWordCount ? "mots" : "car.") · \(Int(ratio * 100))% de l'objectif journalier")
+                        .help("\(store.formatCount(currentEntryDelta)) / \(store.formatCount(store.effectiveDailyGoal)) \(store.data.useWordCount ? "mots" : "signes") · \(Int(ratio * 100))% de l'objectif journalier")
                     }
                     .padding(.bottom, 12)
                 }
@@ -1593,8 +1593,8 @@ struct DashboardView: View {
                         trackColor: Color.accent.opacity(0.12)
                     )
                     .help(store.effectiveDailyGoal > 0
-                          ? "\(store.formatCount(store.dailyProgress)) / \(store.formatCount(store.effectiveDailyGoal)) \(store.data.useWordCount ? "mots" : "car.") · \(min(100, Int(Double(store.dailyProgress) / Double(store.effectiveDailyGoal) * 100)))% de l'objectif du jour"
-                          : "\(store.formatCount(store.dailyProgress)) \(store.data.useWordCount ? "mots" : "car.") aujourd'hui")
+                          ? "\(store.formatCount(store.dailyProgress)) / \(store.formatCount(store.effectiveDailyGoal)) \(store.data.useWordCount ? "mots" : "signes") · \(min(100, Int(Double(store.dailyProgress) / Double(store.effectiveDailyGoal) * 100)))% de l'objectif du jour"
+                          : "\(store.formatCount(store.dailyProgress)) \(store.data.useWordCount ? "mots" : "signes") aujourd'hui")
                     if let ddg = store.deadlineDailyGoal, store.deadlineDailyGoalDiffers {
                         HStack(spacing: 5) {
                             Image(systemName: "calendar.badge.exclamationmark")
@@ -1643,8 +1643,8 @@ struct DashboardView: View {
                             trackColor: Color.accentGreen.opacity(0.12)
                         )
                         .help(chapter.goal > 0
-                              ? "\(store.formatCount(store.chapterProgress)) / \(store.formatCount(chapter.goal)) \(store.data.useWordCount ? "mots" : "car.") · \(min(100, Int(Double(store.chapterProgress) / Double(chapter.goal) * 100)))% du chapitre"
-                              : "\(store.formatCount(store.chapterProgress)) \(store.data.useWordCount ? "mots" : "car.") dans ce chapitre")
+                              ? "\(store.formatCount(store.chapterProgress)) / \(store.formatCount(chapter.goal)) \(store.data.useWordCount ? "mots" : "signes") · \(min(100, Int(Double(store.chapterProgress) / Double(chapter.goal) * 100)))% du chapitre"
+                              : "\(store.formatCount(store.chapterProgress)) \(store.data.useWordCount ? "mots" : "signes") dans ce chapitre")
                         ChapterGoalStatusLine(store: store, chapter: chapter, total: store.chapterProgress)
                     }
                 }
@@ -2523,7 +2523,7 @@ private struct WritingEntryInputCluster: View {
             )
             .frame(maxWidth: .infinity)
             if !text.isEmpty {
-                Text(useWordCount ? "mots" : "car.")
+                Text(useWordCount ? "mots" : "signes")
                     .foregroundColor(.labelMuted)
                     .font(.system(size: 12))
             }
@@ -2609,7 +2609,7 @@ private struct WritingEntryInputCluster: View {
             .buttonStyle(.pressable)
             .help("Jour de correction : du texte a été retiré. Le jour compte dans la série.")
             .accessibilityAddTraits(isCorrection ? .isSelected : [])
-            Text("\(DataStore.formatNumber(delta)) \(useWordCount ? "mots" : "car.") par rapport au total précédent")
+            Text("\(DataStore.formatNumber(delta)) \(useWordCount ? "mots" : "signes") par rapport au total précédent")
                 .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted)
             Spacer()

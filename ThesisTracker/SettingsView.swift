@@ -221,7 +221,7 @@ struct SettingsView: View {
                                                     .foregroundColor(.secondary)
                                                     .frame(width: 32, alignment: .leading)
                                                 TextField(
-                                                    useWordCount ? "mots" : "car.",
+                                                    useWordCount ? "mots" : "signes",
                                                     text: Binding(
                                                         get: { wdGoalTexts[wd] ?? "" },
                                                         set: { wdGoalTexts[wd] = $0 }
@@ -236,7 +236,7 @@ struct SettingsView: View {
                                                 .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
                                                 .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                                                     .stroke(Color.cardBorder, lineWidth: 1))
-                                                Text(useWordCount ? "mots" : "car.")
+                                                Text(useWordCount ? "mots" : "signes")
                                                     .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                                 Spacer()
                                                 if wdGoalTexts[wd]?.isEmpty ?? true {
@@ -1201,7 +1201,7 @@ struct GoalRow: View {
                     .background(Color.fieldBg)
                     .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                     .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
-                Text(useWordCount ? "mots" : "car.")
+                Text(useWordCount ? "mots" : "signes")
                     .font(.system(size: 12)).foregroundColor(.labelMuted)
                     .frame(width: 30)
             }

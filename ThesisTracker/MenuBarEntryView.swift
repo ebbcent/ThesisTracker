@@ -95,7 +95,7 @@ struct MenuBarEntryView: View {
                         .onAppear { refreshInput() }
                         .accessibilityLabel(store.data.useWordCount ? "Total de mots pour \(activeChapter?.name ?? "ce chapitre")" : "Total de caractères pour \(activeChapter?.name ?? "ce chapitre")")
 
-                        Text(store.data.useWordCount ? "mots" : "car.")
+                        Text(store.data.useWordCount ? "mots" : "signes")
                             .font(.system(size: 12)).foregroundColor(.labelMuted)
 
                         Spacer()

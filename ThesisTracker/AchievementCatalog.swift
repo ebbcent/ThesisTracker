@@ -229,8 +229,25 @@ enum AchievementCatalog {
 
     // MARK: Records
 
+    /// Signes écrits par jour, sans les saisies cochées « import » (5.35 : plus de seuil automatique).
+    static func writtenTotals(store: DataStore) -> [String: Int] {
+        var out: [String: Int] = [:]
+        for project in store.data.projects {
+            for chapter in project.chapters {
+                var previous = 0
+                for entry in chapter.entries.sorted(by: { $0.date < $1.date }) {
+                    let delta = entry.totalCount - previous
+                    previous = entry.totalCount
+                    if entry.isImport { continue }   // 5.35 : la case « import » décide, plus de seuil
+                    out[entry.date, default: 0] += delta
+                }
+            }
+        }
+        return out
+    }
+
     static func records(store: DataStore) -> [WritingRecord] {
-        let totals = store.dailyTotals()
+        let totals = writtenTotals(store: store)   // 5.31 : les imports ne font plus les records
         let unit = store.data.useWordCount ? "mots" : "signes"
         func num(_ v: Int) -> String { DataStore.formatNumber(store.data.useWordCount ? v / 5 : v) }
         var out: [WritingRecord] = []
@@ -306,7 +323,13 @@ struct AchievementFamiliesSection: View {
         VStack(alignment: .leading, spacing: 28) {
             if !records.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    title("Records", icon: "rosette")
+                    HStack(alignment: .firstTextBaseline) {
+                        title("Records", icon: "rosette")
+                        Spacer()
+                        Text("hors saisies cochées « import »")
+                            .font(.system(size: 12))
+                            .foregroundColor(.labelMuted)
+                    }
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 200, maximum: 320), spacing: 12)], alignment: .leading, spacing: 12) {
                         ForEach(records) { record in
                             recordCard(record)

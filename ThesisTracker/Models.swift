@@ -381,6 +381,9 @@ struct DailyEntry: Codable, Identifiable {
     var editHistory: [EntryEditRecord] = []  // #6 — historique éditions
     var energyLevel: Int? = nil   // #4 — niveau d'énergie 1-5, optionnel
     var isCorrection: Bool = false  // jour de correction : le total peut baisser
+    /// 5.35 — saisie cochée « import » : du texte déjà écrit ailleurs, pas l'écriture du jour.
+    /// Elle compte dans le total du chapitre, pas dans le rythme, les records ni les défis.
+    var isImport: Bool = false
 
     // Custom decoder for backwards compatibility
     init(date: String, totalCount: Int, note: String? = nil, savedAtHour: Int? = nil, energyLevel: Int? = nil) {
@@ -398,6 +401,7 @@ struct DailyEntry: Codable, Identifiable {
         editHistory = (try? c.decodeIfPresent(LossyArray<EntryEditRecord>.self, forKey: .editHistory))?.elements ?? []
         energyLevel = try? c.decodeIfPresent(Int.self,     forKey: .energyLevel)
         isCorrection = (try? c.decodeIfPresent(Bool.self, forKey: .isCorrection)) ?? false
+        isImport = (try? c.decodeIfPresent(Bool.self, forKey: .isImport)) ?? false
     }
 }
 

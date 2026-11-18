@@ -24,7 +24,7 @@ extension DataStore {
     var allTimeBestDay: Int {
         if let c = _allTimeBestDayCache, c.version == dataVersion { return c.value }
         let today = DataStore.today
-        let value = dailyTotals().filter { $0.key != today }.values.max() ?? 0
+        let value = writtenTotals().filter { $0.key != today }.values.max() ?? 0
         _allTimeBestDayCache = (dataVersion, value)
         return value
     }
@@ -33,7 +33,7 @@ extension DataStore {
     var allTimeBestDayDate: String? {
         if let c = _allTimeBestDayDateCache, c.version == dataVersion { return c.value }
         let today = DataStore.today
-        let totals = dailyTotals().filter { $0.key != today }
+        let totals = writtenTotals().filter { $0.key != today }
         var result: String? = nil
         if let maxVal = totals.values.max(), maxVal > 0,
            let entry = totals.first(where: { $0.value == maxVal }),
@@ -61,7 +61,7 @@ extension DataStore {
 
     var velocity14Days: Int {
         if let c = _velocity14DaysCache, c.version == dataVersion { return c.value }
-        let totals = dailyTotals()
+        let totals = writtenTotals()
         var increments: [Int] = []
         for offset in 1...14 {
             guard let date = DataStore.gregorianCal.date(byAdding: .day, value: -offset, to: Date()) else { continue }
@@ -94,7 +94,7 @@ extension DataStore {
 
     private func _computeAllMonthlyStats() -> [(label: String, chars: Int)] {
         let cal    = DataStore.gregorianCal
-        let totals = dailyTotals()
+        let totals = writtenTotals()
         guard !totals.isEmpty else { return [] }
 
         var byMonth: [String: (start: Date, count: Int)] = [:]
@@ -133,7 +133,7 @@ extension DataStore {
             return (DataStore.monthYearKeyFormatter.string(from: d), d)
         }
         var byMonth: [String: Int] = [:]
-        for (dateStr, val) in dailyTotals() where val > 0 {
+        for (dateStr, val) in writtenTotals() where val > 0 {
             guard let d = DataStore.parseDate(dateStr) else { continue }
             byMonth[DataStore.monthYearKeyFormatter.string(from: d), default: 0] += val
         }
@@ -152,7 +152,7 @@ extension DataStore {
         var cal = DataStore.gregorianCal
         cal.firstWeekday = 2
         var byWeekday: [Int: [Int]] = [:]
-        for (dateStr, val) in dailyTotals() where val > 0 {
+        for (dateStr, val) in writtenTotals() where val > 0 {
             guard let date = DataStore.parseDate(dateStr) else { continue }
             let wd  = cal.component(.weekday, from: date)
             let idx = (wd + 5) % 7
@@ -168,7 +168,7 @@ extension DataStore {
     var bestWeekStat: (label: String, chars: Int)? {
         if let c = _bestWeekStatCache, c.version == dataVersion { return c.stat }
         var byWeek: [String: Int] = [:]
-        for (dateStr, val) in dailyTotals() where val > 0 {
+        for (dateStr, val) in writtenTotals() where val > 0 {
             guard let date = DataStore.parseDate(dateStr),
                   let weekStart = DataStore.isoWeekCal.dateInterval(of: .weekOfYear, for: date)?.start else { continue }
             byWeek[DataStore.dateString(from: weekStart), default: 0] += val
@@ -294,8 +294,8 @@ extension DataStore {
 
     var top10Days: [TopDayEntry] {
         if let c = _top10DaysCache, c.version == dataVersion { return c.entries }
-        let global = dailyTotals()
-        let perProject: [(String, [String: Int])] = data.projects.map { ($0.name, dailyTotals(projectId: $0.id)) }
+        let global = writtenTotals()
+        let perProject: [(String, [String: Int])] = data.projects.map { ($0.name, writtenTotals(projectId: $0.id)) }
         let entries = global
             .sorted { $0.value > $1.value }
             .prefix(10)
@@ -311,7 +311,7 @@ extension DataStore {
     // #12 — Plage de velocité (min/moy/max) sur les 14 derniers jours actifs
     var velocityStats14Days: (min: Int, max: Int, avg: Int) {
         let cal = DataStore.gregorianCal
-        let totals = dailyTotals()
+        let totals = writtenTotals()
         var vals: [Int] = []
         for offset in 1...14 {
             guard let date = cal.date(byAdding: .day, value: -offset, to: Date()) else { continue }

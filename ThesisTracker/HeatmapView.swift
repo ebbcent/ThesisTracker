@@ -60,7 +60,7 @@ struct HeatmapView: View {
     // ── Cache rebuild ──────────────────────────────────────────────────────────
 
     private func rebuildCache() {
-        let totals = store.dailyTotals(projectId: selectedProjectId)
+        let totals = store.writtenTotals(projectId: selectedProjectId)
         let weeks = makeWeeks()
         cachedTotals = totals
         cachedWeeks = weeks

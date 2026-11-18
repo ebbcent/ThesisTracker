@@ -9,7 +9,17 @@ import SwiftUI
 
 /// Rail de navigation : une icône par page, groupées comme la liste d'origine.
 struct TilesNavRail: View {
+    @ObservedObject var store: DataStore
     @Binding var selectedNav: NavItem
+
+    /// 5.32 — nombre d'échéances dépassées (pastille sur l'icône Échéances).
+    private var overdueCount: Int {
+        let today = Calendar.current.startOfDay(for: Date())
+        return store.chaptersWithDeadlines.filter { item in
+            guard let date = item.chapter.deadline.flatMap(DataStore.parseDate) else { return false }
+            return date < today
+        }.count
+    }
 
     private static let groups: [[NavItem]] = [
         [.dashboard, .professor, .overview, .tableOfContents, .deadlines, .kanban],
@@ -50,6 +60,14 @@ struct TilesNavRail: View {
         .appGlass(in: RoundedRectangle(cornerRadius: 22, style: .continuous), fallback: .sidebarBg)
     }
 
+    private func helpText(_ item: NavItem) -> String {
+        var text = item.shortcutHint.map { "\(item.rawValue) (\($0))" } ?? item.rawValue
+        if item == .deadlines && overdueCount > 0 {
+            text += " · \(overdueCount) échéance\(overdueCount > 1 ? "s" : "") dépassée\(overdueCount > 1 ? "s" : "")"
+        }
+        return text
+    }
+
     private func railButton(_ item: NavItem) -> some View {
         let selected = isSelected(item)
         return Button {
@@ -58,13 +76,18 @@ struct TilesNavRail: View {
         } label: {
             Image(systemName: item.icon)
                 .font(.system(size: 15, weight: .medium))
-                .foregroundColor(selected ? AppLook.onAccent : .labelMuted)
+                .foregroundColor(selected ? AppLook.onAccent : Color.primary.opacity(0.72))
                 .frame(width: 38, height: 38)
                 .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(selected ? Color.accentWarm : Color.clear))
+                .overlay(alignment: .topTrailing) {
+                    if item == .deadlines && overdueCount > 0 && !selected {
+                        Circle().fill(Color.semRed).frame(width: 8, height: 8).padding(6)
+                    }
+                }
                 .contentShape(Rectangle())
         }
         .buttonStyle(.pressable)
-        .help(item.shortcutHint.map { "\(item.rawValue) (\($0))" } ?? item.rawValue)
+        .help(helpText(item))
         .accessibilityLabel(item.rawValue)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
@@ -102,17 +125,18 @@ struct TilesPinnedChapterCard: View {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text("Chapitre en cours · \(status)")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.accentWarm)
+                    .foregroundColor(.labelMuted)
                     .lineLimit(1)
                 Spacer(minLength: 4)
                 if chapter.goal > 0 {
-                    Text("\(Int((ratio * 100).rounded())) %")
+                    Text("\(Int(ratio * 100)) %")
                         .font(.system(size: 15, weight: .semibold).monospacedDigit())
-                        .foregroundColor(.accentWarm)
+                        .foregroundColor(.primary)
                         .fixedSize()
                 }
             }
-            Text(chapter.name)
+            // 5.32 — titre court (le sous-titre, qui était coupé, reste au survol)
+            Text(shortTitle(chapter))
                 .font(.system(size: 16, design: .serif))
                 .foregroundColor(.primary)
                 .lineLimit(3)
@@ -128,7 +152,7 @@ struct TilesPinnedChapterCard: View {
                 .frame(height: 6)
                 .accessibilityElement()
                 .accessibilityLabel("Progression du chapitre")
-                .accessibilityValue("\(Int((ratio * 100).rounded())) %")
+                .accessibilityValue("\(Int(ratio * 100)) %")
             }
             HStack(spacing: 8) {
                 Text(chapter.goal > 0 ? "\(num(total)) / \(num(chapter.goal))" : num(total))
@@ -150,10 +174,15 @@ struct TilesPinnedChapterCard: View {
             }
         }
         .padding(14)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.cardBg))
+        .tilesSurface(RoundedRectangle(cornerRadius: 18, style: .continuous), fill: .cardBg)
         .sheet(isPresented: $showStatusPicker) {
             ChapterStatusPickerView(store: store, chapterId: chapter.id, projectId: project.id, isPresented: $showStatusPicker)
         }
+    }
+
+    private func shortTitle(_ chapter: Chapter) -> String {
+        let parts = TilesChapterTitle(chapter.name)
+        return parts.number.map { "\($0). \(parts.title)" } ?? parts.title
     }
 
     private func cardButton(_ title: String, action: @escaping () -> Void) -> some View {

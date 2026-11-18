@@ -299,7 +299,7 @@ struct StatsAnalyticsView: View {
                                     Text(store.formatCount(entry.total))
                                         .font(.system(size: 12, weight: .bold, design: .monospaced))
                                         .foregroundColor(idx == 0 ? .yellow : .primary)
-                                    Text(store.data.useWordCount ? "mots" : "car.")
+                                    Text(store.data.useWordCount ? "mots" : "signes")
                                         .font(.system(size: 10))
                                         .foregroundColor(.labelMuted)
                                 }
@@ -326,7 +326,7 @@ struct StatsAnalyticsView: View {
     private var weekDays: [WeekDay] {
         var cal = Calendar(identifier: .gregorian); cal.firstWeekday = 2
         let today = cal.startOfDay(for: Date())
-        let totals = store.dailyTotals()
+        let totals = store.writtenTotals()
         let letters = ["L", "M", "M", "J", "V", "S", "D"]
 
         guard let weekStart = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)) else { return [] }
@@ -681,7 +681,7 @@ struct StatsAnalyticsView: View {
                             Text(store.formatCount(grandTotal))
                                 .font(.system(size: 12, weight: .bold))
                                 .foregroundColor(.primary)
-                            Text(store.data.useWordCount ? "mots" : "car.")
+                            Text(store.data.useWordCount ? "mots" : "signes")
                                 .font(.system(size: 10))
                                 .foregroundColor(.labelMuted)
                         }
@@ -809,7 +809,7 @@ struct StatsAnalyticsView: View {
                         Spacer()
                         if let days = proj.daysRemainingRealistic {
                             VStack(alignment: .trailing, spacing: 1) {
-                                Text("J-\(days)")
+                                Text("dans \(days) j")
                                     .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                                     .foregroundColor(.accent)
                                 Text("au rythme actuel")

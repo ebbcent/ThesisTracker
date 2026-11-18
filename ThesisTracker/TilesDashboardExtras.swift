@@ -9,9 +9,11 @@ import SwiftUI
 struct TilesDayChain: View {
     @ObservedObject var store: DataStore
     var days: Int = 14
+    /// 5.33 — traits fins (tuile Série) au lieu des pastilles à lettre.
+    var bars: Bool = false
 
     private enum DayState { case written, neutral, missed, today }
-    private struct Item { let date: Date; let state: DayState }
+    private struct Item { let date: Date; let state: DayState; var isToday = false }
 
     private var items: [Item] {
         let cal = DataStore.gregorianCal
@@ -26,7 +28,7 @@ struct TilesDayChain: View {
             else if offset == 0 { state = .today }
             else if store.isNeutralStreakDay(date) { state = .neutral }
             else { state = .missed }
-            out.append(Item(date: date, state: state))
+            out.append(Item(date: date, state: state, isToday: offset == 0))
         }
         return out
     }
@@ -34,15 +36,29 @@ struct TilesDayChain: View {
     private static let letters = ["D", "L", "M", "M", "J", "V", "S"]
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: bars ? 5 : 4) {
             ForEach(Array(items.enumerated()), id: \.offset) { _, item in
-                cell(item)
+                if bars { bar(item) } else { cell(item) }
             }
         }
         .fixedSize()
         .accessibilityElement()
         .accessibilityLabel("Les \(days) derniers jours")
         .accessibilityValue("\(items.filter { $0.state == .written }.count) jours écrits")
+    }
+
+    private func bar(_ item: Item) -> some View {
+        let fill: Color
+        let help: String
+        switch item.state {
+        case .written: fill = item.isToday ? TilesTheme.blue : TilesTheme.ink; help = "écrit"
+        case .neutral: fill = TilesTheme.line; help = "non prévu, repos ou pause"
+        case .missed:  fill = TilesTheme.red.opacity(0.55); help = "jour prévu, non écrit"
+        case .today:   fill = TilesTheme.blue.opacity(0.35); help = "aujourd'hui, pas encore écrit"
+        }
+        return Capsule().fill(fill)
+            .frame(width: 18, height: 5)
+            .help("\(TilesDashboardView.dayMonth(item.date)) : \(help)")
     }
 
     private func cell(_ item: Item) -> some View {
@@ -421,8 +437,9 @@ struct FloatingSurface: View {
 
     var body: some View {
         if AppLook.tiles {
-            Color.clear
-                .appGlass(in: RoundedRectangle(cornerRadius: radius + 6, style: .continuous), legible: true, fallback: .cardBg)
+            // 5.31 — vu à l'écran : un verre « Liquid Glass » placé en fond se dessine par-dessus le contenu
+            // (les onglets des Échéances et du Minuteur étaient invisibles). Matériau translucide à la place.
+            RoundedRectangle(cornerRadius: radius + 6, style: .continuous).fill(.regularMaterial)
         } else {
             RoundedRectangle(cornerRadius: radius, style: .continuous).fill(Color.cardBg)
         }

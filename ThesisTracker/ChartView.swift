@@ -149,7 +149,7 @@ struct ChartView: View {
     // MARK: - Data
 
     private var lineDataPoints: [DayCount] {
-        let totals = store.dailyTotals(projectId: selectedProjectId, chapterId: selectedChapterId)
+        let totals = store.writtenTotals(projectId: selectedProjectId, chapterId: selectedChapterId)
         return daysInRange.map { date in
             let dateStr = DataStore.dateString(from: date)
             return DayCount(date: date, count: totals[dateStr] ?? 0)
@@ -161,7 +161,7 @@ struct ChartView: View {
         let chapters = selectedChapterId.flatMap { id in project.chapters.filter { $0.id == id } }
                         ?? project.chapters
         let totalsByChapter = Dictionary(uniqueKeysWithValues: chapters.map { chapter in
-            (chapter.id, store.dailyTotals(projectId: project.id, chapterId: chapter.id))
+            (chapter.id, store.writtenTotals(projectId: project.id, chapterId: chapter.id))
         })
         return daysInRange.flatMap { date -> [ChapterDayCount] in
             let dateStr = DataStore.dateString(from: date)
@@ -183,7 +183,7 @@ struct ChartView: View {
         let previousDates = (0..<dayCount).compactMap { offset in
             cal.date(byAdding: .day, value: offset, to: previousStart)
         }
-        let totals = store.dailyTotals(projectId: selectedProjectId, chapterId: selectedChapterId)
+        let totals = store.writtenTotals(projectId: selectedProjectId, chapterId: selectedChapterId)
 
         return zip(daysInRange, previousDates).map { currentDate, previousDate in
             let previousDateString = DataStore.dateString(from: previousDate)
@@ -195,7 +195,7 @@ struct ChartView: View {
 
     private var velocityDataPoints: [VelocityPoint] {
         let windowDays = 7
-        let totals = store.dailyTotals(projectId: selectedProjectId, chapterId: selectedChapterId)
+        let totals = store.writtenTotals(projectId: selectedProjectId, chapterId: selectedChapterId)
         return daysInRange.map { date in
             var vals: [Int] = []
             for w in 1...windowDays {
@@ -306,7 +306,7 @@ struct ChartView: View {
     // MARK: - Monthly aggregation
 
     private var monthlyDataPoints: [MonthCount] {
-        let totals = store.dailyTotals(projectId: selectedProjectId, chapterId: selectedChapterId)
+        let totals = store.writtenTotals(projectId: selectedProjectId, chapterId: selectedChapterId)
         var monthly: [Date: Int] = [:]
         for (dateStr, count) in totals {
             guard let date = DataStore.parseDate(dateStr) else { continue }
@@ -401,7 +401,7 @@ struct ChartView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Graphiques")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.pageTitle)
                     .foregroundColor(.primary)
                 Text(selectedProject.map { "Projet : \($0.name)" } ?? "Vue globale")
                     .font(.system(size: 12))
