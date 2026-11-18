@@ -64,7 +64,7 @@ struct MonthlyChallengeCard: View {
                         if goal > 0 && ratio < 1.0 {
                             let remaining = goal - progress
                             statLine(icon: "textformat.abc",
-                                     text: "\(DataStore.formatNumber(remaining)) car. restants")
+                                     text: "\(DataStore.formatNumber(remaining)) signes restants")
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -144,7 +144,7 @@ struct MonthlyChallengeCard: View {
 
     private var progressLabel: String {
         guard goal > 0 else { return "Aucun objectif mensuel défini" }
-        return "\(DataStore.formatNumber(progress)) / \(DataStore.formatNumber(goal)) car."
+        return "\(DataStore.formatNumber(progress)) / \(DataStore.formatNumber(goal)) signes"
     }
 
     private static let monthFormatter: DateFormatter = {

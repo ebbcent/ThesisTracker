@@ -198,7 +198,7 @@ struct TodayModeView: View {
                 } label: {
                     HStack(spacing: 5) {
                         Image(systemName: "square.grid.2x2")
-                        Text("Ouvrir le dashboard")
+                        Text("Ouvrir le tableau de bord")
                             .font(.system(size: 12, weight: .medium))
                     }
                     .foregroundColor(.labelMuted)

@@ -802,7 +802,7 @@ struct StatsAnalyticsView: View {
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Fin estimée du projet")
                                 .font(.system(size: 13, weight: .semibold))
-                            Text("\(DataStore.formatNumber(proj.totalWritten)) / \(DataStore.formatNumber(proj.totalGoal)) car. écrits")
+                            Text("\(DataStore.formatNumber(proj.totalWritten)) / \(DataStore.formatNumber(proj.totalGoal)) signes écrits")
                                 .font(.system(size: 10))
                                 .foregroundColor(.labelMuted)
                         }
@@ -1063,7 +1063,7 @@ struct StatsAnalyticsView: View {
                     if !review.bestDayDate.isEmpty && review.bestDayChars > 0 {
                         HStack(spacing: 6) {
                             Image(systemName: "star.fill").font(.system(size: 10)).foregroundColor(.accentWarm)
-                            Text("Meilleur jour · \(shortDate(review.bestDayDate)) — \(store.formatCount(review.bestDayChars)) car.")
+                            Text("Meilleur jour · \(shortDate(review.bestDayDate)) — \(store.formatCount(review.bestDayChars)) signes")
                                 .font(.system(size: 11))
                                 .foregroundColor(.secondary)
                         }
@@ -1204,7 +1204,7 @@ struct StatsAnalyticsView: View {
                         if let peak = entries.max(by: { $0.totalChars < $1.totalChars }), peak.totalChars > 0 {
                             HStack(spacing: 6) {
                                 Image(systemName: "sun.max.fill").font(.system(size: 10)).foregroundColor(.accentWarm)
-                                Text("Pic d'écriture · \(peak.hour)h–\(peak.hour + 1)h (\(store.formatCount(peak.totalChars)) car. cumulés)")
+                                Text("Pic d'écriture · \(peak.hour)h–\(peak.hour + 1)h (\(store.formatCount(peak.totalChars)) signes cumulés)")
                                     .font(.system(size: 11))
                                     .foregroundColor(.secondary)
                             }

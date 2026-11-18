@@ -2624,10 +2624,10 @@ private struct WritingEntryInputCluster: View {
                 Label("\(DataStore.formatNumber(n)) mots", systemImage: "text.word.spacing")
                     .font(.system(size: AppLook.fs(10))).foregroundColor(.accent)
                 Text("·").foregroundColor(.labelMuted).font(.system(size: AppLook.fs(10)))
-                Label("≈ \(DataStore.formatNumber(n * 5)) car.", systemImage: "textformat.123")
+                Label("≈ \(DataStore.formatNumber(n * 5)) signes", systemImage: "textformat.123")
                     .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
             } else {
-                Label("\(DataStore.formatNumber(n)) car.", systemImage: "textformat.123")
+                Label("\(DataStore.formatNumber(n)) signes", systemImage: "textformat.123")
                     .font(.system(size: AppLook.fs(10))).foregroundColor(.accent)
                 Text("·").foregroundColor(.labelMuted).font(.system(size: AppLook.fs(10)))
                 Label("≈ \(DataStore.formatNumber(max(1, n / 5))) mots", systemImage: "text.word.spacing")
@@ -2781,7 +2781,7 @@ private struct MiniBarChartView: View {
                                     }
                                 }
                         }
-                        .help(v > 0 ? "\(DataStore.formatNumber(v)) car." + (ratio > 1 ? " (hors échelle)" : "") : "Rien ce jour-là")
+                        .help(v > 0 ? "\(DataStore.formatNumber(v)) signes" + (ratio > 1 ? " (hors échelle)" : "") : "Rien ce jour-là")
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

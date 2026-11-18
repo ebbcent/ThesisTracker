@@ -735,7 +735,11 @@ struct StatusBarView: View {
         let streakText: String = streak > 1 ? "\(streak) jours" : (streak == 1 ? "1 jour" : "aucune")
         let todayText: String = TilesTheme.spaced(DataStore.formatNumber(store.dailyProgress / divisor))
         let goalText: String? = goal > 0 ? "sur " + TilesTheme.spaced(DataStore.formatNumber(goal / divisor)) : nil
-        return HStack(spacing: 24) {
+        return HStack(spacing: 12) {
+            // 5.36 — les repères défilent s'ils ne tiennent pas : dépliée, la barre imposait sa largeur
+            // à toute la fenêtre (contenu coupé des deux côtés sur un petit écran).
+            ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 24) {
             marker("Série", streakText)
             marker("Aujourd'hui", todayText, goalText)
             if let eta = store.thesisEndDate ?? store.estimatedCompletionDate(for: store.data.activeProjectId ?? UUID()) {
@@ -758,6 +762,8 @@ struct StatusBarView: View {
                 withAppAnimation(Motion.quick) { expanded.toggle() }
             }
             .padding(.leading, -14)
+            }
+            }
             Spacer(minLength: 0)
             if store.isUsingICloud {
                 Image(systemName: store.iCloudSyncActive ? "arrow.triangle.2.circlepath" : "checkmark.icloud")

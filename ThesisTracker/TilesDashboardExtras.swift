@@ -272,7 +272,7 @@ struct TilesSlotContent: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Prochain créneau")
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(TilesTheme.green)
+                .foregroundColor(TilesTheme.muted)   // 5.36 : libellé neutre, comme les autres tuiles
             if let up = upcoming {
                 Text("\(Self.hour.string(from: up.start))–\(Self.hour.string(from: up.end))")
                     .font(.system(size: 26, weight: .heavy).monospacedDigit())

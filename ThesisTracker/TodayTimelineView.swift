@@ -121,7 +121,7 @@ struct TodayTimelineView: View {
                     let sortKey = hour.map { Double($0) } ?? 99.0
                     events.append(TimelineEvent(
                         icon: "text.cursor",
-                        title: "\(store.formatCountShort(inc)) car.",
+                        title: "\(store.formatCountShort(inc)) signes",
                         subtitle: chapter.name == project.name ? chapter.name : "\(project.name) · \(chapter.name)",
                         timeLabel: timeLabel,
                         dotColor: .accent,

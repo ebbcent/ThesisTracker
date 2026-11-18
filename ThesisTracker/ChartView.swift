@@ -755,7 +755,7 @@ struct ChartView: View {
                         Rectangle()
                             .fill(Color.accentWarm.opacity(0.55))
                             .frame(width: 18, height: 2)
-                        Text("Objectif journalier : \(formatNumber(store.data.dailyGoal)) car.")
+                        Text("Objectif journalier : \(formatNumber(store.data.dailyGoal)) signes")
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted)
                     }
@@ -1472,13 +1472,13 @@ struct ChartSnapshotView: View {
                     Text(title)
                         .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.white)
-                    Text("Période : \(period)  ·  Total : \(DataStore.formatNumber(total)) car.  ·  Jours actifs : \(active)")
+                    Text("Période : \(period)  ·  Total : \(DataStore.formatNumber(total)) signes  ·  Jours actifs : \(active)")
                         .font(.system(size: 11)).foregroundColor(.white.opacity(0.5))
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 3) {
                     Text("Meilleur jour").font(.system(size: 10)).foregroundColor(.white.opacity(0.4))
-                    Text(DataStore.formatNumber(best) + " car.")
+                    Text(DataStore.formatNumber(best) + " signes")
                         .font(.system(size: 13, weight: .bold, design: .monospaced))
                         .foregroundColor(Self.accent)
                 }

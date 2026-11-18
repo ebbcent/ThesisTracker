@@ -278,7 +278,7 @@ struct HeatmapView: View {
             Spacer()
 
             if count > 0 {
-                Text(fmt(count) + " car. ecrits")
+                Text(fmt(count) + " signes écrits")
                     .font(.system(size: 11, weight: .semibold, design: .monospaced))
                     .foregroundColor(.accent)
             } else {
@@ -492,7 +492,7 @@ struct HeatmapSnapshotView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Heatmap d'activité — 365 jours")
                         .font(.system(size: 13, weight: .bold, design: AppLook.fontDesign)).foregroundColor(.white)
-                    Text("\(activeDays) jours actifs · \(DataStore.formatNumber(totals.values.reduce(0, +))) car. au total")
+                    Text("\(activeDays) jours actifs · \(DataStore.formatNumber(totals.values.reduce(0, +))) signes au total")
                         .font(.system(size: 10)).foregroundColor(.white.opacity(0.4))
                 }
                 Spacer()

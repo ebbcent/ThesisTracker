@@ -176,7 +176,7 @@ struct ChapterCheckpointsSheet: View {
                     .foregroundColor(.labelMuted)
                 HStack(spacing: 10) {
                     if checkpoint.latestTotal > 0 {
-                        Label("\(checkpoint.latestTotal.formatted()) car.",
+                        Label("\(checkpoint.latestTotal.formatted()) signes",
                               systemImage: "text.alignleft")
                             .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)

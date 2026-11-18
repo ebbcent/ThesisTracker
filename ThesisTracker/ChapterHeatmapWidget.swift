@@ -96,7 +96,7 @@ struct ChapterHeatmapWidget: View {
                     RoundedRectangle(cornerRadius: 1.5)
                         .fill(heatColor(level: bucket(for: value, goal: chapter.goal)))
                         .frame(width: compact ? 4 : 9, height: compact ? 8 : 14)
-                        .help("\(dateStr) · \(value.formatted()) car.")
+                        .help("\(dateStr) · \(value.formatted()) signes")
                 }
             }
         }
@@ -194,7 +194,7 @@ struct ChapterHeatmapSheet: View {
                     .font(.system(size: 12, weight: .medium))
                     .lineLimit(1)
                 let totalChars = totals.values.reduce(0, +)
-                Text("\(totalChars.formatted()) car. sur la période")
+                Text("\(totalChars.formatted()) signes sur la période")
                     .font(.system(size: 10))
                     .foregroundColor(.labelMuted)
             }
@@ -207,7 +207,7 @@ struct ChapterHeatmapSheet: View {
                     RoundedRectangle(cornerRadius: 2)
                         .fill(heatColor(value: value, goal: chapter.goal))
                         .frame(width: rangeDays > 120 ? 4 : 7, height: 14)
-                        .help("\(dateStr) · \(value.formatted()) car.")
+                        .help("\(dateStr) · \(value.formatted()) signes")
                 }
             }
         }

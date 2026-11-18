@@ -87,8 +87,19 @@ struct SettingsView: View {
 
     var body: some View {
         settingsBody
-            .frame(minWidth: 960, idealWidth: 1060, minHeight: 560, idealHeight: 760)   // 5.27
+            .frame(minWidth: 620, idealWidth: 1120, minHeight: 560, idealHeight: 760)   // 5.36 : la fenêtre peut être étroite, les colonnes s'empilent
+            .background(GeometryReader { geo in
+                Color.clear
+                    .onAppear { settingsWidth = geo.size.width }
+                    .onChange(of: geo.size.width) { _, new in settingsWidth = new }
+            })
             .tint(Color.accent)   // 5.27 — interrupteurs, curseurs et sélecteurs à la couleur d'accent
+    }
+
+    /// 5.36 — largeur de la fenêtre : deux colonnes si elles tiennent, une seule sinon (elles débordaient à 960 points).
+    @State private var settingsWidth: CGFloat = 1120
+    private var columnsLayout: AnyLayout {
+        settingsWidth >= 1060 ? AnyLayout(HStackLayout(alignment: .top, spacing: 20)) : AnyLayout(VStackLayout(spacing: 20))
     }
 
     private var settingsBody: some View {
@@ -128,7 +139,7 @@ struct SettingsView: View {
 
                 // ── Corps scrollable (molette souris) ────────────────────
                 ScrollView(.vertical, showsIndicators: true) {
-                    HStack(alignment: .top, spacing: 20) {
+                    columnsLayout {
 
                     // ╔══════════════════╗
                     // ║  Colonne gauche  ║  Objectifs & Raccourcis
@@ -917,7 +928,6 @@ struct SettingsView: View {
                 }   // HStack colonnes
                 .padding(.horizontal, 24)
                 .padding(.vertical, 20)
-                .frame(minWidth: 900)   // 5.27 — deux colonnes lisibles ; en dessous, la fenêtre défile
                 }   // ScrollView
 
                 Divider()

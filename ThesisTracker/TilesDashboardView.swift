@@ -219,6 +219,13 @@ struct TilesDashboardView: View {
             Spacer()
             // 5.26 — raccourci Pomodoro : lance un bloc sur le chapitre actif (clic droit : durée, arrêt)
             PomodoroQuickControl(store: store)
+            // 5.36 — raccourcis vers les modes Sprint et Sanctuaire (demande de Clem)
+            headerButton(systemImage: "bolt.fill", help: "Sprint d'écriture (⇧⌘T)") {
+                NotificationCenter.default.post(name: .showWritingSprint, object: nil)
+            }
+            headerButton(systemImage: "moon.stars.fill", help: "Sanctuaire (⌥⇧⌘K)") {
+                NotificationCenter.default.post(name: .showSanctuary, object: nil)
+            }
             headerButton(systemImage: "sidebar.left", help: showSidebar ? "Masquer la barre latérale" : "Afficher la barre latérale") {
                 withAppAnimation(Motion.panel) { showSidebar.toggle() }
             }
@@ -385,6 +392,7 @@ struct TilesDashboardView: View {
             .foregroundColor(TilesTheme.muted)   // 5.33 : libellé neutre
         }
         .menuStyle(.borderlessButton)
+        .tint(TilesTheme.muted)   // 5.36 : le menu prenait la teinte d'accent malgré la couleur du libellé
         .fixedSize()
         .help("Changer de chapitre")
     }

@@ -30,7 +30,7 @@ struct WritingSpeedWidget: View {
                     Text(DataStore.formatNumber(data.avgCharsPerDay))
                         .font(.system(size: 26, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.primary)
-                    Text(store.data.useWordCount ? "mots/j" : "car./j")
+                    Text(store.data.useWordCount ? "mots/j" : "signes/j")
                         .font(.system(size: 12))
                         .foregroundColor(.labelMuted)
                     Spacer()

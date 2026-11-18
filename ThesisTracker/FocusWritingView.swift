@@ -76,7 +76,7 @@ struct FocusWritingView: View {
     var body: some View {
         ZStack {
             // Fond sombre
-            Color.black.opacity(0.92)
+            Color.black   // 5.36 : fond plein (le tableau de bord transparaissait derrière)
                 .ignoresSafeArea()
                 .onTapGesture { /* Ne pas fermer au tap */ }
 
