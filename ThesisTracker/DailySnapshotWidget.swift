@@ -133,6 +133,6 @@ struct DailySnapshotWidget: View {
     }
 
     private func fmt(_ val: Int) -> String {
-        useWords ? "\(DataStore.formatNumber(val / 5)) mots" : "\(DataStore.formatNumber(val)) car."
+        useWords ? "\(DataStore.formatNumber(val / 5)) mots" : "\(DataStore.formatNumber(val)) signes"
     }
 }

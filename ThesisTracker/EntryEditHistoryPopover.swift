@@ -7,7 +7,7 @@ struct EntryEditHistoryPopover: View {
     let useWords: Bool
 
     private func fmt(_ v: Int) -> String {
-        useWords ? "\(DataStore.formatNumber(v / 5)) mots" : "\(DataStore.formatNumber(v)) car."
+        useWords ? "\(DataStore.formatNumber(v / 5)) mots" : "\(DataStore.formatNumber(v)) signes"
     }
 
     var body: some View {

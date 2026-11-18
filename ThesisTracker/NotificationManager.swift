@@ -430,7 +430,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         UserDefaults.standard.set(today, forKey: todayKey)
         let content = UNMutableNotificationContent()
         content.title = "📝 Récapitulatif du jour"
-        let count = useWordCount ? "\(DataStore.formatNumber(totalToday / 5)) mots" : "\(DataStore.formatNumber(totalToday)) car."
+        let count = useWordCount ? "\(DataStore.formatNumber(totalToday / 5)) mots" : "\(DataStore.formatNumber(totalToday)) signes"
         let streakPart = streak > 1 ? " · 🔥 Série : \(streak) jours" : ""
         let goalPart = dailyGoal > 0 && totalToday >= dailyGoal ? " · ✅ Objectif atteint !" : ""
         content.body = "\(count) écrits aujourd'hui\(streakPart)\(goalPart)"
@@ -444,7 +444,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.removePendingNotificationRequests(withIdentifiers: ["daily-recap"])
         let content = UNMutableNotificationContent()
         content.title = "📝 Récapitulatif du jour"
-        let count = useWordCount ? "\(DataStore.formatNumber(totalToday / 5)) mots" : "\(DataStore.formatNumber(totalToday)) car."
+        let count = useWordCount ? "\(DataStore.formatNumber(totalToday / 5)) mots" : "\(DataStore.formatNumber(totalToday)) signes"
         let streakPart = streak > 1 ? " · 🔥 Série : \(streak) jours" : ""
         let goalPart = dailyGoal > 0 && totalToday >= dailyGoal ? " · ✅ Objectif atteint !" : ""
         content.body = "\(count) écrits aujourd'hui\(streakPart)\(goalPart)"
@@ -549,8 +549,8 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         comps.weekday = 1; comps.hour = 19; comps.minute = 0
         let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: true)
 
-        let total = useWordCount ? "\(DataStore.formatNumber(weekTotal / 5)) mots" : "\(DataStore.formatNumber(weekTotal)) car."
-        let best  = useWordCount ? "\(DataStore.formatNumber(bestDay / 5)) mots" : "\(DataStore.formatNumber(bestDay)) car."
+        let total = useWordCount ? "\(DataStore.formatNumber(weekTotal / 5)) mots" : "\(DataStore.formatNumber(weekTotal)) signes"
+        let best  = useWordCount ? "\(DataStore.formatNumber(bestDay / 5)) mots" : "\(DataStore.formatNumber(bestDay)) signes"
 
         let content = UNMutableNotificationContent()
         content.title = "📊 Rapport de la semaine"
@@ -571,8 +571,8 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         guard UserDefaults.standard.string(forKey: key) != today else { return }
         UserDefaults.standard.set(today, forKey: key)
 
-        let count = useWordCount ? "\(DataStore.formatNumber(total / 5)) mots" : "\(DataStore.formatNumber(total)) car."
-        let goalStr = useWordCount ? "\(DataStore.formatNumber(goal / 5)) mots" : "\(DataStore.formatNumber(goal)) car."
+        let count = useWordCount ? "\(DataStore.formatNumber(total / 5)) mots" : "\(DataStore.formatNumber(total)) signes"
+        let goalStr = useWordCount ? "\(DataStore.formatNumber(goal / 5)) mots" : "\(DataStore.formatNumber(goal)) signes"
 
         let content = UNMutableNotificationContent()
         content.title = "🚀 Double objectif !"
@@ -632,7 +632,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         guard UserDefaults.standard.string(forKey: key) != today else { return }
         UserDefaults.standard.set(today, forKey: key)
 
-        let count = useWordCount ? "\(DataStore.formatNumber(total / 5)) mots" : "\(DataStore.formatNumber(total)) car."
+        let count = useWordCount ? "\(DataStore.formatNumber(total / 5)) mots" : "\(DataStore.formatNumber(total)) signes"
         let content = UNMutableNotificationContent()
         content.title = "✅ Objectif du jour atteint !"
         content.body  = "\(count) écrits — félicitations pour cette session productive !"
@@ -647,7 +647,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     func scheduleDeadlineConflictAlert(chapterNames: String, totalRequiredPerDay: Int, useWordCount: Bool) {
         let pace = useWordCount
             ? "\(DataStore.formatNumber(totalRequiredPerDay / 5)) mots/jour"
-            : "\(DataStore.formatNumber(totalRequiredPerDay)) car./jour"
+            : "\(DataStore.formatNumber(totalRequiredPerDay)) signes/jour"
 
         let content = UNMutableNotificationContent()
         content.title = "⚠️ Chevauchement d'échéances"

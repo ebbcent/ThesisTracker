@@ -127,7 +127,7 @@ struct DefenseDateWidget: View {
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.primary)
                     let avg = Int(proj.avgPerDay)
-                    Text(avg > 0 ? "~ \(avg) car./j" : "")
+                    Text(avg > 0 ? "~ \(avg) signes/j" : "")
                         .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 } else {

@@ -200,7 +200,7 @@ struct PresentationView: View {
                     icon: "bolt.fill",
                     label: "Vitesse 14 j",
                     value: DataStore.formatNumber(store.velocity14Days),
-                    sub: "car./j",
+                    sub: "signes/j",
                     color: Color(red: 0.706, green: 0.502, blue: 0.984)
                 )
             }
@@ -213,7 +213,7 @@ struct PresentationView: View {
                         Text("Objectif global")
                             .font(.system(size: 13)).foregroundColor(.white.opacity(0.5))
                         Spacer()
-                        Text("\(DataStore.formatNumber(globalWrittenTotal)) / \(DataStore.formatNumber(globalGoalTotal)) car.")
+                        Text("\(DataStore.formatNumber(globalWrittenTotal)) / \(DataStore.formatNumber(globalGoalTotal)) signes")
                             .font(.system(size: 13, weight: .semibold, design: .monospaced))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -291,10 +291,10 @@ struct PresentationView: View {
                     Text("\(ch.pct)%")
                         .font(.system(size: 18, weight: .bold, design: .monospaced))
                         .foregroundColor(isComplete ? Self.green : color)
-                    Text("\(DataStore.formatNumber(ch.total)) / \(DataStore.formatNumber(ch.goal)) car.")
+                    Text("\(DataStore.formatNumber(ch.total)) / \(DataStore.formatNumber(ch.goal)) signes")
                         .font(.system(size: 11, design: .monospaced)).foregroundColor(.white.opacity(0.4))
                 } else {
-                    Text(DataStore.formatNumber(ch.total) + " car.")
+                    Text(DataStore.formatNumber(ch.total) + " signes")
                         .font(.system(size: 13, design: .monospaced)).foregroundColor(.white.opacity(0.5))
                 }
             }

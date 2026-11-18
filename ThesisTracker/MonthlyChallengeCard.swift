@@ -144,7 +144,7 @@ struct MonthlyChallengeCard: View {
 
     private var progressLabel: String {
         guard goal > 0 else { return "Aucun objectif mensuel défini" }
-        return "\(DataStore.formatNumber(progress)) / \(DataStore.formatNumber(goal)) car."
+        return "\(DataStore.formatNumber(progress)) / \(DataStore.formatNumber(goal)) signes"
     }
 
     private static let monthFormatter: DateFormatter = {

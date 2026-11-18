@@ -2237,7 +2237,7 @@ private struct ChapterFolderSidebarRow: View {
                 .padding(.horizontal, 8).padding(.vertical, 6)
                 .background(
                     RoundedRectangle(cornerRadius: AppLook.r(7, 10))
-                        .fill(isDropTarget ? Color.accent.opacity(0.18) : Color.primary.opacity(0.03))
+                        .fill(isDropTarget ? Color.accent.opacity(0.18) : (AppLook.tiles ? Color.clear : Color.primary.opacity(0.03)))   // 5.36
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: AppLook.r(7, 10))

@@ -1063,7 +1063,7 @@ struct StatsAnalyticsView: View {
                     if !review.bestDayDate.isEmpty && review.bestDayChars > 0 {
                         HStack(spacing: 6) {
                             Image(systemName: "star.fill").font(.system(size: 10)).foregroundColor(.accentWarm)
-                            Text("Meilleur jour · \(shortDate(review.bestDayDate)) — \(store.formatCount(review.bestDayChars)) car.")
+                            Text("Meilleur jour · \(shortDate(review.bestDayDate)) — \(store.formatCount(review.bestDayChars)) signes")
                                 .font(.system(size: 11))
                                 .foregroundColor(.secondary)
                         }

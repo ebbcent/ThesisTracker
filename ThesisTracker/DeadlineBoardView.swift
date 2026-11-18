@@ -276,12 +276,14 @@ struct DeadlineBoardView: View {
                                     .background(statusColor(for: deadline).opacity(0.1))
                                     .clipShape(RoundedRectangle(cornerRadius: 4))
                             }
+                        if item.chapter.isCompleted {   // 5.36 : sinon le badge du dessus dit déjà la même chose
                         Text(statusText(for: deadline, completed: item.chapter.isCompleted))
                             .font(.system(size: AppLook.fs(11), weight: .semibold))
                             .foregroundColor(item.chapter.isCompleted ? .accentGreen : statusColor(for: deadline))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Capsule().fill((item.chapter.isCompleted ? Color.accentGreen : statusColor(for: deadline)).opacity(0.12)))
+                        }
                         }  // end VStack trailing
                     }
                     // 5.12 — simulateur de rythme du chapitre

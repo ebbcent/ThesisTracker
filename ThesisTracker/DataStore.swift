@@ -4065,7 +4065,7 @@ class DataStore: ObservableObject {
             let effectiveDeadline = effectiveDeadlineDate(for: item.chapter.deadline) ?? deadline
             // DTEND = lendemain (exclusif dans iCal)
             let endDate = Calendar.current.date(byAdding: .day, value: 1, to: effectiveDeadline) ?? effectiveDeadline
-            let progress = "\(DataStore.formatNumber(latestTotal(for: item.chapter.id, in: item.project.id))) / \(DataStore.formatNumber(item.chapter.goal)) car."
+            let progress = "\(DataStore.formatNumber(latestTotal(for: item.chapter.id, in: item.project.id))) / \(DataStore.formatNumber(item.chapter.goal)) signes"
             lines += [
                 "BEGIN:VEVENT",
                 "UID:\(item.chapter.id.uuidString)@thesistracker",
@@ -4669,7 +4669,7 @@ class DataStore: ObservableObject {
         }
         // 5.33 — la date « réaliste » est la date de référence de toute l'app
         let realisticDate = thesisEndDate ?? projDate(charsPerDay: median)
-        let daysRemaining: Int? = realisticDate.map { cal.dateComponents([.day], from: Date(), to: $0).day ?? 0 }
+        let daysRemaining: Int? = realisticDate.map { cal.dateComponents([.day], from: cal.startOfDay(for: Date()), to: $0).day ?? 0 }   // 5.36 : même décompte que la barre du haut
         return DefenseProjection(
             totalGoal: totalGoal, totalWritten: totalWritten, avgDailyChars: median,
             optimisticDate: projDate(charsPerDay: q75),

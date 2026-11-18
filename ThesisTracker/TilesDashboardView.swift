@@ -385,6 +385,7 @@ struct TilesDashboardView: View {
             .foregroundColor(TilesTheme.muted)   // 5.33 : libellé neutre
         }
         .menuStyle(.borderlessButton)
+        .tint(TilesTheme.muted)   // 5.36 : le menu prenait la teinte d'accent malgré la couleur du libellé
         .fixedSize()
         .help("Changer de chapitre")
     }

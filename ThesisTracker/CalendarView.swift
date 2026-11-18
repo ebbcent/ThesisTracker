@@ -374,7 +374,7 @@ struct CalendarView: View {
                 .foregroundColor(.primary)
 
             HStack(spacing: 10) {
-                Label(fmt(chars) + " car.", systemImage: "text.cursor")
+                Label(fmt(chars) + " signes", systemImage: "text.cursor")
                     .font(.system(size: 11))
                     .foregroundColor(.accent)
                 if goal > 0 {
@@ -394,7 +394,7 @@ struct CalendarView: View {
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(.primary)
                             Spacer()
-                            Text(fmt(e.chars) + " car.")
+                            Text(fmt(e.chars) + " signes")
                                 .font(.system(size: 10, weight: .semibold))
                                 .foregroundColor(.labelMuted)
                         }
@@ -525,7 +525,7 @@ struct CalendarView: View {
                                     }
                                 }
                                 Spacer()
-                                Text(fmt(e.chars) + " car.")
+                                Text(fmt(e.chars) + " signes")
                                     .font(.system(size: 11, weight: .semibold, design: .monospaced))
                                     .foregroundColor(.accent)
                             }

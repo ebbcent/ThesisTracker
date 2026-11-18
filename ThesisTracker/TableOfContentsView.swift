@@ -117,7 +117,7 @@ struct TableOfContentsView: View {
                                 Text("\(Int(ratio * 100))%")
                                     .font(.system(size: 13, weight: .bold, design: AppLook.fontDesign))
                                     .foregroundColor(.accent)
-                                Text("\(DataStore.formatNumber(totalWritten)) car.")
+                                Text("\(DataStore.formatNumber(totalWritten)) signes")
                                     .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                             }
                         }

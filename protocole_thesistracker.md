@@ -212,6 +212,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.33** — Maquette validée codée (profondeur des cartes, accent réservé à l'action, arbre en lignes simples, barre du haut, tuile Série) ; une seule date de fin estimée ; graphiques sans imports ; défis de série atteignables
 - **5.34** — Titre de page unique, report d'une échéance dépassée, bouton de rythme, questions de départ du Professeur
 - **5.35** — Case « Import » sur une saisie : c'est elle, et plus un seuil, qui décide de ce qui ne compte pas comme écriture
+- **5.36** — Corrections après le tour à l'écran de la 5.35 : Réglages qui débordaient, badge d'échéance en double, saisie du Professeur, libellés
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -375,3 +376,16 @@ Le seuil automatique de 40 000 signes (5.31, 5.33) est retiré : Clem préfère 
 - Où cocher : sur l'accueil Tuiles, case « Import » à côté de l'écart quand le total saisi augmente ; dans l'historique (fenêtre du chapitre et page Historique), case « Import » sur chaque ligne en hausse, à cocher ou décocher après coup.
 - `DataStore.setEntryImport`. Le Minuteur reprend aussi la palette de l'app (bleu, jaune, fond de champ) en Tuiles.
 À savoir : aucune saisie passée n'est cochée d'office. Les anciens imports comptent donc de nouveau comme écriture tant qu'ils ne sont pas cochés dans l'historique.
+
+
+## 2026-11-18 — 5.36 : corrections après vérification à l'écran de la 5.35
+Tour fait sur la version installée (accueil sombre et clair, Professeur, Échéances, Statistiques, Minuteur, Widgets, Réglages).
+- Réglages : les deux colonnes débordaient de la fenêtre à 960 points (titres et unités coupés). Deux colonnes à partir de 1 060 points, une seule en dessous (`columnsLayout`) ; largeur minimale ramenée à 620.
+- Accueil : le menu « Chapitre 4 · rédaction » restait à la couleur d'accent (un menu suit la teinte, pas la couleur du libellé) ; libellé « Prochain créneau » en gris.
+- Barre latérale Tuiles : plus de fond sur les lignes de dossier.
+- Échéances : un seul badge par ligne (« 109 j de retard » et « En retard 109j » disaient la même chose).
+- Professeur : la zone de saisie prend la hauteur du texte, plus toute la place disponible.
+- Statistiques : « dans N j » de la projection compte les jours comme la barre du haut (écart d'un jour).
+- « signes » à la place de « car. » dans les widgets, le calendrier, les notifications et le mode présentation (les exports gardent « car. »).
+Vu et laissé : le défi de la semaine affiche encore « série de 30 jours » tant qu'aucune saisie n'a été enregistrée depuis la mise à jour (la cible se corrige à la prochaine saisie) ; « 4 échéances dépassées » dans Santé de la thèse contre 2 dans Échéances ; vitesse sur 7 jours actifs dans un widget, sur 14 dans la barre.
+Non vérifié : fenêtres secondaires (nouveau projet, exports, historique), panneau de la barre des menus, modes plein écran, petite fenêtre.

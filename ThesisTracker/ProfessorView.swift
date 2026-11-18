@@ -314,7 +314,8 @@ struct ProfessorView: View {
                     .font(.system(size: 13))
                     .scrollContentBackground(.hidden)
                     .focused($inputFocused)
-                    .frame(minHeight: 44, maxHeight: 140)
+                    .frame(minHeight: 44, idealHeight: 44, maxHeight: 140)
+                    .fixedSize(horizontal: false, vertical: true)   // 5.36 : hauteur du texte, plus toute la place disponible
                     .padding(6)
                     .background(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).fill(Color.fieldBg))
                     .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
