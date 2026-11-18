@@ -306,7 +306,7 @@ struct SettingsView: View {
                                         .foregroundColor(.accent)
                                         .padding(.horizontal, 10).padding(.vertical, 5)
                                         .background(Color.accent.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                                        .clipShape(AppLook.buttonShape(7))
                                         .buttonStyle(.pressable)
                                 }
                                 .padding(14)
@@ -964,8 +964,8 @@ struct SettingsView: View {
                             .foregroundColor(.labelMuted)
                             .padding(.horizontal, 18).padding(.vertical, 9)
                             .background(Color.cardBg)
-                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                            .clipShape(AppLook.buttonShape(10))
+                            .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                             .buttonStyle(.pressable)
                             .keyboardShortcut(.escape)
 
@@ -976,7 +976,7 @@ struct SettingsView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 22).padding(.vertical, 9)
                             .background(Color.accent)
-                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                            .clipShape(AppLook.buttonShape(10))
                             .buttonStyle(.pressable)
                             .keyboardShortcut(.return)
                     }

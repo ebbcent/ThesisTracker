@@ -192,8 +192,8 @@ struct SidebarView: View {
                     .foregroundColor(.labelMuted)
                     .frame(width: 26, height: 26)
                     .background(Color.glassFill)
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 13), style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 13), style: .continuous).stroke(AppLook.hairline, lineWidth: 1))
+                    .clipShape(AppLook.buttonShape(6))
+                    .overlay(AppLook.buttonShape(6).stroke(AppLook.hairline, lineWidth: 1))
             }
             .buttonStyle(.pressable)
             .help("Masquer la barre latérale")
@@ -341,7 +341,7 @@ struct SidebarView: View {
                     Image(systemName: "plus")
                         .font(.system(size: AppLook.fs(11), weight: .semibold)).foregroundColor(.accent)
                         .frame(width: 22, height: 22)
-                        .background(Color.accent.opacity(0.10)).clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                        .background(Color.accent.opacity(0.10)).clipShape(AppLook.buttonShape(6))
                 }
                 .buttonStyle(.pressable).help("Nouveau projet")
                 .accessibilityLabel("Nouveau projet")
@@ -606,7 +606,7 @@ struct SidebarView: View {
                             .accessibilityLabel("Désépingler")
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
-                        .background(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).fill(Color.accentWarm.opacity(0.06)))
+                        .background(AppLook.buttonShape(6).fill(Color.accentWarm.opacity(0.06)))
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.pressable)
@@ -639,7 +639,7 @@ struct SidebarView: View {
                             .accessibilityLabel("Désépingler")
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
-                        .background(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).fill(Color.accentWarm.opacity(0.04)))
+                        .background(AppLook.buttonShape(6).fill(Color.accentWarm.opacity(0.04)))
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.pressable)
@@ -810,9 +810,9 @@ struct SidebarView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 30)
                     .background(Color.glassFill)
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .clipShape(AppLook.buttonShape(8))
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppLook.r(8, 12))
+                        AppLook.buttonShape(8)
                             .stroke(archiveDropActive ? Color.accentWarm : Color.cardBorder,
                                     lineWidth: archiveDropActive ? 1.5 : 1)
                     )
@@ -906,9 +906,9 @@ struct SidebarView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 30)
                 .background(Color.glassFill)
-                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 15), style: .continuous))
+                .clipShape(AppLook.buttonShape(8))
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppLook.r(8, 15), style: .continuous)
+                    AppLook.buttonShape(8)
                         .stroke(AppLook.hairline, lineWidth: 1)
                 )
                 .contentShape(Rectangle())
@@ -1240,7 +1240,7 @@ struct FolderSidebarRow: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .background(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).fill(Color.accent.opacity(0.03)))
+        .background(AppLook.buttonShape(8).fill(Color.accent.opacity(0.03)))
         .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
         .sheet(isPresented: $showAddSubfolder) {
             FolderFormView(
@@ -1710,7 +1710,7 @@ struct ProjectSidebarRow: View {
                             .foregroundColor(.accent.opacity(0.75))
                             .frame(width: 20, height: 20)
                             .background(Color.accent.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                            .clipShape(AppLook.buttonShape(5))
                     }
                     .buttonStyle(.pressable)
                     .help("Nouveau dossier dans \(project.name)").modifier(RevealOnRowHover())
@@ -1718,7 +1718,7 @@ struct ProjectSidebarRow: View {
 
                     Button(action: onAddChapter) {
                         Image(systemName: "plus").font(.system(size: AppLook.fs(10), weight: .semibold)).foregroundColor(.accent)
-                            .frame(width: 20, height: 20).background(Color.accent.opacity(0.10)).clipShape(RoundedRectangle(cornerRadius: 5))
+                            .frame(width: 20, height: 20).background(Color.accent.opacity(0.10)).clipShape(AppLook.buttonShape(5))
                     }
                     .buttonStyle(.pressable)
                     .help("Nouveau chapitre dans \(project.name)").modifier(RevealOnRowHover())
@@ -2159,7 +2159,7 @@ private struct ChapterFolderSidebarRow: View {
                     Button { showAddChapter = true } label: {
                         Image(systemName: "plus").font(.system(size: AppLook.fs(10), weight: .semibold)).foregroundColor(.accent)
                             .frame(width: 18, height: 18).background(Color.accent.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                            .clipShape(AppLook.buttonShape(4))
                     }
                     .buttonStyle(.pressable)
                     .help("Nouveau chapitre")

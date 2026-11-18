@@ -90,7 +90,7 @@ struct TodayModeView: View {
                     .padding(14)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.accent.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
+                    .clipShape(AppLook.buttonShape(12))
                 } else {
                     Text("Pas de prochaine action définie.")
                         .font(.system(size: 13))
@@ -167,7 +167,7 @@ struct TodayModeView: View {
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.accentWarm.opacity(0.08))
-            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(12, 18)))
+            .clipShape(AppLook.buttonShape(12))
         } else {
             HStack(spacing: 10) {
                 Button {

@@ -79,8 +79,8 @@ struct OverviewView: View {
                     .foregroundColor(.accentWarm)
                     .padding(.horizontal, 12).padding(.vertical, 7)
                     .background(Color.accentWarm.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
+                    .clipShape(AppLook.buttonShape(8))
+                    .overlay(AppLook.buttonShape(8).stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))
                     .contentShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 }
                 .buttonStyle(.pressable)
@@ -96,8 +96,8 @@ struct OverviewView: View {
                     .foregroundColor(.accent)
                     .padding(.horizontal, 12).padding(.vertical, 7)
                     .background(Color.accent.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accent.opacity(0.25), lineWidth: 1))
+                    .clipShape(AppLook.buttonShape(8))
+                    .overlay(AppLook.buttonShape(8).stroke(Color.accent.opacity(0.25), lineWidth: 1))
                     .contentShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 }
                 .buttonStyle(.pressable)
@@ -336,8 +336,8 @@ struct OverviewView: View {
                         }
                         .padding(.horizontal, 14).padding(.vertical, 10)
                         .background(Color.glassFill)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(10))
+                        .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                     }
                     .buttonStyle(.pressable)
 

@@ -52,8 +52,8 @@ struct TableOfContentsView: View {
                         .foregroundColor(.accent)
                         .padding(.horizontal, 10).padding(.vertical, 5)
                         .background(Color.accent.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accent.opacity(0.2), lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(8))
+                        .overlay(AppLook.buttonShape(8).stroke(Color.accent.opacity(0.2), lineWidth: 1))
                     }
                     .buttonStyle(.pressable)
                 }
@@ -266,7 +266,7 @@ private struct ExportTextSheet: View {
                     }
                     .foregroundColor(.accent)
                     .padding(.horizontal, 10).padding(.vertical, 5)
-                    .background(Color.accent.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                    .background(Color.accent.opacity(0.1)).clipShape(AppLook.buttonShape(7))
                 }
                 .buttonStyle(.pressable)
                 Button { dismiss() } label: {

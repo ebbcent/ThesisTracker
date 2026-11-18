@@ -79,7 +79,7 @@ struct OnboardingView: View {
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
                             .background(Color.accent)
-                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                            .clipShape(AppLook.buttonShape(10))
                             .contentShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
                         }
                         .buttonStyle(.pressable)

@@ -37,6 +37,11 @@ enum AppLook {
     /// 5.27 — petites tailles relevées d'un point en Tuiles (10 → 11, 11 → 12), pour la lisibilité.
     static func fs(_ size: CGFloat) -> CGFloat { tiles && size <= 11 ? size + 1 : size }
 
+    /// 5.27 — forme des boutons : pastille en Tuiles (comme ceux de l'accueil), rectangle arrondi d'origine sinon.
+    static func buttonShape(_ classic: CGFloat) -> AnyShape {
+        tiles ? AnyShape(Capsule()) : AnyShape(RoundedRectangle(cornerRadius: classic))
+    }
+
     /// Liseré des cartes et des champs : absent en Tuiles.
     static var hairline: Color { tiles ? .clear : .cardBorder }
 

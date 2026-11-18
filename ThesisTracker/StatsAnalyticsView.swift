@@ -497,7 +497,7 @@ struct StatsAnalyticsView: View {
                         }
                         .padding(10)
                         .background(Color.accentWarm.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                        .clipShape(AppLook.buttonShape(8))
 
                         // Mini histogramme 6h–24h
                         let workHours = Array(6...23)
@@ -1069,7 +1069,7 @@ struct StatsAnalyticsView: View {
                         }
                         .padding(8)
                         .background(Color.accentWarm.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                        .clipShape(AppLook.buttonShape(7))
                     }
                 }
             }

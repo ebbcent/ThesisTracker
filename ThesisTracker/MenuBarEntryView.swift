@@ -388,8 +388,8 @@ struct MenuBarEntryView: View {
             }
             .padding(.horizontal, 10).padding(.vertical, 7)
             .background(Color.glassFill)
-            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-            .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.glassBorder, lineWidth: 1))
+            .clipShape(AppLook.buttonShape(8))
+            .overlay(AppLook.buttonShape(8).stroke(Color.glassBorder, lineWidth: 1))
         }
     }
 

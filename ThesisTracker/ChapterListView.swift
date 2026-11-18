@@ -234,8 +234,8 @@ struct ProjectFormView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(10))
+                        .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
@@ -466,8 +466,8 @@ struct ChapterFormView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(10))
+                        .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
@@ -486,8 +486,8 @@ struct ChapterFormView: View {
                             .foregroundColor(.accent)
                             .padding(.horizontal, 14).padding(.vertical, 10)
                             .background(Color.accent.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.accent.opacity(0.2), lineWidth: 1))
+                            .clipShape(AppLook.buttonShape(10))
+                            .overlay(AppLook.buttonShape(10).stroke(Color.accent.opacity(0.2), lineWidth: 1))
                         }
                         .buttonStyle(.pressable)
                         .fixedSize()

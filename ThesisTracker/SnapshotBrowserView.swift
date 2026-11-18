@@ -119,8 +119,8 @@ struct SnapshotBrowserView: View {
                     .foregroundColor(.primary)
                     .padding(.horizontal, 16).padding(.vertical, 7)
                     .background(Color.cardBg)
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
+                    .clipShape(AppLook.buttonShape(8))
+                    .overlay(AppLook.buttonShape(8).stroke(Color.cardBorder, lineWidth: 1))
                     .buttonStyle(.pressable)
             }
             .padding(.horizontal, 20)
@@ -203,7 +203,7 @@ struct SnapshotBrowserView: View {
             .foregroundColor(.accent)
             .padding(.horizontal, 10).padding(.vertical, 5)
             .background(Color.accent.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+            .clipShape(AppLook.buttonShape(6))
             .buttonStyle(.pressable)
         }
         .padding(.horizontal, 16)

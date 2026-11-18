@@ -112,8 +112,8 @@ struct DeadlineBoardView: View {
                 .foregroundColor(.labelMuted)
                 .padding(.horizontal, 10).padding(.vertical, 7)
                 .background(Color.cardBg)
-                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(AppLook.buttonShape(8))
+                .overlay(AppLook.buttonShape(8).stroke(Color.cardBorder, lineWidth: 1))
             }
             .buttonStyle(.pressable)
             .help("Exporter les échéances et jalons au format iCal (.ics)")
@@ -137,7 +137,7 @@ struct DeadlineBoardView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 12).padding(.vertical, 7)
                     .background(Color.accent)
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                    .clipShape(AppLook.buttonShape(8))
                 }
                 .menuStyle(.borderlessButton)
                 .fixedSize()
@@ -1354,8 +1354,8 @@ struct MilestoneFormView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(10))
+                        .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 

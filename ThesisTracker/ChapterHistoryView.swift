@@ -38,8 +38,8 @@ struct ChapterHistoryView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 14).padding(.vertical, 7)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(8))
+                        .overlay(AppLook.buttonShape(8).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
                 }

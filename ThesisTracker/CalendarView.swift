@@ -177,8 +177,8 @@ struct CalendarView: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 12, weight: .semibold)).foregroundColor(.labelMuted)
                         .frame(width: 30, height: 30)
-                        .background(Color.glassFill).clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.glassBorder, lineWidth: 1))
+                        .background(Color.glassFill).clipShape(AppLook.buttonShape(8))
+                        .overlay(AppLook.buttonShape(8).stroke(Color.glassBorder, lineWidth: 1))
                 }
                 .buttonStyle(.pressable)
                 .help("Mois précédent")
@@ -194,8 +194,8 @@ struct CalendarView: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .semibold)).foregroundColor(.labelMuted)
                         .frame(width: 30, height: 30)
-                        .background(Color.glassFill).clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.glassBorder, lineWidth: 1))
+                        .background(Color.glassFill).clipShape(AppLook.buttonShape(8))
+                        .overlay(AppLook.buttonShape(8).stroke(Color.glassBorder, lineWidth: 1))
                 }
                 .buttonStyle(.pressable)
                 .disabled(!canGoForward)
@@ -504,8 +504,8 @@ struct CalendarView: View {
                     }
                     .padding(.horizontal, 10).padding(.vertical, 8)
                     .background(Color.accent.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accent.opacity(0.18), lineWidth: 1))
+                    .clipShape(AppLook.buttonShape(8))
+                    .overlay(AppLook.buttonShape(8).stroke(Color.accent.opacity(0.18), lineWidth: 1))
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
 

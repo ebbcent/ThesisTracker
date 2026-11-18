@@ -157,8 +157,8 @@ struct ImportView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(10))
+                        .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
 
                     Spacer()
@@ -260,8 +260,8 @@ struct ImportView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10).padding(.vertical, 6)
                 .background(Color.cardBg)
-                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
+                .clipShape(AppLook.buttonShape(8))
+                .overlay(AppLook.buttonShape(8).stroke(Color.cardBorder, lineWidth: 1))
         }
     }
 

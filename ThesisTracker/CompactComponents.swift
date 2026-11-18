@@ -217,9 +217,9 @@ struct CompactDatePicker: View {
             .accessibilityLabel("Jour suivant")
         }
         .background(Color.glassFill)
-        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous))
+        .clipShape(AppLook.buttonShape(8))
         .overlay(
-            RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous)
+            AppLook.buttonShape(8)
                 .stroke(Color.glassBorder, lineWidth: 1)
         )
     }
@@ -246,7 +246,7 @@ struct CompactDatePicker: View {
                         .foregroundColor(.labelMuted)
                         .frame(width: 26, height: 26)
                         .background(Color.glassFill)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                        .clipShape(AppLook.buttonShape(6))
                 }
                 .buttonStyle(.pressable)
                 .help("Mois précédent")
@@ -264,7 +264,7 @@ struct CompactDatePicker: View {
                         .foregroundColor(canGoNextMonth ? .labelMuted : .labelMuted.opacity(0.25))
                         .frame(width: 26, height: 26)
                         .background(Color.glassFill)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                        .clipShape(AppLook.buttonShape(6))
                 }
                 .buttonStyle(.pressable)
                 .disabled(!canGoNextMonth)
@@ -508,9 +508,9 @@ struct CompactDropdownPicker: View {
             }
             .padding(.horizontal, 12).padding(.vertical, 8)
             .background(Color.glassFill)
-            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14), style: .continuous))
+            .clipShape(AppLook.buttonShape(10))
             .overlay(
-                RoundedRectangle(cornerRadius: AppLook.r(10, 14), style: .continuous)
+                AppLook.buttonShape(10)
                     .stroke(Color.glassBorder, lineWidth: 1)
             )
         }

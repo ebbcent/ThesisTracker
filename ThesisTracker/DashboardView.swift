@@ -981,8 +981,8 @@ struct DashboardView: View {
                                         .foregroundColor(idx > 0 ? .secondary : .labelMuted.opacity(0.3))
                                         .frame(width: 22, height: 22)
                                         .background(Color.glassFill)
-                                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
-                                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color.cardBorder, lineWidth: 1))
+                                        .clipShape(AppLook.buttonShape(6))
+                                        .overlay(AppLook.buttonShape(6).stroke(Color.cardBorder, lineWidth: 1))
                                 }
                                 .buttonStyle(.pressable)
                                 .disabled(idx <= 0)
@@ -997,8 +997,8 @@ struct DashboardView: View {
                                         .foregroundColor(idx < chapters.count - 1 ? .secondary : .labelMuted.opacity(0.3))
                                         .frame(width: 22, height: 22)
                                         .background(Color.glassFill)
-                                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
-                                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color.cardBorder, lineWidth: 1))
+                                        .clipShape(AppLook.buttonShape(6))
+                                        .overlay(AppLook.buttonShape(6).stroke(Color.cardBorder, lineWidth: 1))
                                 }
                                 .buttonStyle(.pressable)
                                 .disabled(idx >= chapters.count - 1)
@@ -1408,8 +1408,8 @@ struct DashboardView: View {
                     }
                     .padding(9)
                     .background(Color.accentWarm.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.accentWarm.opacity(0.2), lineWidth: 1))
+                    .clipShape(AppLook.buttonShape(8))
+                    .overlay(AppLook.buttonShape(8).stroke(Color.accentWarm.opacity(0.2), lineWidth: 1))
                     .padding(.top, 10)
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
@@ -1616,8 +1616,8 @@ struct DashboardView: View {
                         }
                         .padding(.horizontal, 8).padding(.vertical, 5)
                         .background(Color.accentWarm.opacity(0.07))
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(6, 10)).stroke(Color.accentWarm.opacity(0.15), lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(6))
+                        .overlay(AppLook.buttonShape(6).stroke(Color.accentWarm.opacity(0.15), lineWidth: 1))
                         .padding(.top, 8)
                     }
 
@@ -2244,7 +2244,7 @@ struct DashboardView: View {
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 20).padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).fill(Color.accent)
+                .background(AppLook.buttonShape(10).fill(Color.accent)
                     .shadow(color: Color.accent.opacity(0.35), radius: 8, x: 0, y: 3))
                 .buttonStyle(.pressable)
             }
@@ -2926,8 +2926,8 @@ struct DashboardCustomizeSheet: View {
                                 .foregroundColor(.accent)
                                 .padding(.horizontal, 10).padding(.vertical, 5)
                                 .background(Color.accent.opacity(0.08))
-                                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
-                                .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10)).stroke(Color.accent.opacity(0.18), lineWidth: 1))
+                                .clipShape(AppLook.buttonShape(7))
+                                .overlay(AppLook.buttonShape(7).stroke(Color.accent.opacity(0.18), lineWidth: 1))
                             }
                             .buttonStyle(.pressable)
                             .help("Appliquer le profil « \(profile.name) »")
@@ -2974,7 +2974,7 @@ struct DashboardCustomizeSheet: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 20).padding(.vertical, 9)
                     .background(Color.accent)
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(9, 13)))
+                    .clipShape(AppLook.buttonShape(9))
                     .buttonStyle(.pressable)
                 }
                 .padding(20)

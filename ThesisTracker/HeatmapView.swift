@@ -116,8 +116,8 @@ struct HeatmapView: View {
                 }
                 .padding(.horizontal, 12).padding(.vertical, 8)
                 .background(Color.glassFill)
-                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
+                .clipShape(AppLook.buttonShape(10))
+                .overlay(AppLook.buttonShape(10).stroke(
                     pngExportSuccess ? Color.accentGreen.opacity(0.4) : Color.glassBorder, lineWidth: 1))
                 .contentShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
             }

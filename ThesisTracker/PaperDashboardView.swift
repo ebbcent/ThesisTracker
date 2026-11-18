@@ -553,7 +553,7 @@ struct PaperDashboardView: View {
             .font(.system(size: 13, weight: .medium))
             .foregroundColor(.white)
             .padding(.horizontal, 20).padding(.vertical, 9)
-            .background(RoundedRectangle(cornerRadius: AppLook.r(9, 13)).fill(Color.accent))
+            .background(AppLook.buttonShape(9).fill(Color.accent))
             .buttonStyle(.pressable)
         }
         .frame(maxWidth: .infinity)
