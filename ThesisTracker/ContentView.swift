@@ -121,7 +121,7 @@ extension Color {
     // 5.25 : troisième variante, « papier » (fond et cartes légèrement chauds)
     static let appBg     = look(classic: (0xF8F7F5, 0x0C0B0A), tiles: (0xF1EFEA, 0x0F0E10), paper: (0xEAE5DA, 0x11100F))
     static let sidebarBg = look(classic: (0xF2F1EF, 0x0A0908), tiles: (0xE9E6DF, 0x151416), paper: (0xE3DDD0, 0x171614))
-    static let cardBg    = look(classic: (0xFFFFFF, 0x1A1816), tiles: (0xFFFFFF, 0x1C1B1E), paper: (0xFBF9F4, 0x1B1A18))   // 5.18 : plus distinct du fond
+    static let cardBg    = look(classic: (0xFFFFFF, 0x1A1816), tiles: (0xFFFFFF, 0x222125), paper: (0xFDFBF7, 0x201E1B))   // 5.18 : plus distinct du fond ; 5.33 : cartes plus claires en sombre
     /// Fond des jauges et des anneaux (partie non remplie).
     static let trackBg   = look(classic: (0xE8E4E2, 0x272320), tiles: (0xE3DFD6, 0x333136), paper: (0xE4DDCF, 0x302E2A))
 
@@ -278,6 +278,8 @@ struct GlassCard<Content: View>: View {
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .stroke(tiles ? Color.clear : Color.cardBorder, lineWidth: 1)
             )
+            // 5.33 — en Tuiles : fin reflet en haut de carte (profondeur sans ombre, donc sans coût de rendu)
+            .overlay(TilesCardHighlight(shape: RoundedRectangle(cornerRadius: radius, style: .continuous)).opacity(tiles ? 1 : 0))
         // Suppression du .shadow(radius: 12) — il forçait un off-screen render
         // pass par carte (× 79 cartes sur le dashboard). Le contour 1px suffit
         // pour la profondeur (look Notion / Linear).

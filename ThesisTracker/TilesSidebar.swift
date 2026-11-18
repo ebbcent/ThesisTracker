@@ -125,13 +125,13 @@ struct TilesPinnedChapterCard: View {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text("Chapitre en cours · \(status)")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.accentWarm)
+                    .foregroundColor(.labelMuted)
                     .lineLimit(1)
                 Spacer(minLength: 4)
                 if chapter.goal > 0 {
                     Text("\(Int(ratio * 100)) %")
                         .font(.system(size: 15, weight: .semibold).monospacedDigit())
-                        .foregroundColor(.accentWarm)
+                        .foregroundColor(.primary)
                         .fixedSize()
                 }
             }
@@ -174,7 +174,7 @@ struct TilesPinnedChapterCard: View {
             }
         }
         .padding(14)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.cardBg))
+        .tilesSurface(RoundedRectangle(cornerRadius: 18, style: .continuous), fill: .cardBg)
         .sheet(isPresented: $showStatusPicker) {
             ChapterStatusPickerView(store: store, chapterId: chapter.id, projectId: project.id, isPresented: $showStatusPicker)
         }

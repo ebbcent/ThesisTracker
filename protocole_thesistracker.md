@@ -209,6 +209,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.30** — Accomplissements à progression, records, prochain badge sur l'accueil
 - **5.31** — Correctifs constatés à l'écran : onglets masqués par le verre, ligne de chapitre, records sans imports
 - **5.32** — Premier lot des 100 améliorations vues à l'écran : chiffres lisibles, colonne élargie, libellés, saisie, accomplissements en grille
+- **5.33** — Maquette validée codée (profondeur des cartes, accent réservé à l'action, arbre en lignes simples, barre du haut, tuile Série) ; une seule date de fin estimée ; graphiques sans imports ; défis de série atteignables
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -342,3 +343,17 @@ Liste de 100 améliorations établie après avoir regardé l'app. Ce lot traite 
 - Accomplissements : titres de section unifiés ; « Défis accomplis » (les huit derniers) et « Accomplissements » en grille au lieu de rangées horizontales qui coupaient les noms.
 - Récaps : phrases plus variées (relance, série, progrès) ; coche quand l'objectif mensuel est tenu.
 Non traité dans ce lot : dates de fin différentes selon les pages, imports dans les graphiques des Statistiques et de la Vue d'ensemble, défis de série inatteignables en une semaine.
+
+
+## 2026-11-18 — 5.33 : maquette « profondeur, accent, arbre, barre du haut » et projection unique
+Maquette validée par Clem (« code-la »), puis second lot de la liste.
+- Profondeur : cartes un peu plus claires en sombre ; ombre douce et reflet en haut sur les tuiles de l'accueil et la carte épinglée (`tilesSurface`) ; simple reflet sur les autres cartes (`TilesCardHighlight`, sans ombre pour ne pas alourdir le rendu).
+- Accent réservé à l'action et au chapitre actif : libellés en gris, chiffres en blanc ; anneaux Semaine et Mois neutres, seul l'anneau du jour garde l'accent.
+- Tuile Série : sept traits fins au lieu des pastilles à lettres (`TilesDayChain(bars: true)`).
+- Arbre des projets (apparence Tuiles seulement) : lignes simples, sans icône, anneau ni pastille de statut ; pourcentage à droite ; seul le chapitre actif est en couleur. Le résumé du projet et le statut restent au survol ; les affichages d'origine ne changent pas.
+- Barre du haut (apparence Tuiles) : trois repères lisibles (série, aujourd'hui, fin estimée) ; pages, vitesse et semaine restent derrière le chevron ; cloche, copie du résumé et état iCloud conservés.
+- Une seule date de fin estimée : `thesisEndDate` (reste à écrire de la thèse ÷ rythme moyen des 30 derniers jours, sans imports, jours de repos vides exclus). Elle sert à la barre du haut, à la ligne « 30 j » de la tuile Soutenance et au scénario « réaliste » des statistiques. La projection par projet utilise le même rythme. Au passage, le calcul des scénarios de soutenance comparait deux apports quotidiens entre eux : corrigé.
+- Graphiques et statistiques de rythme sans imports : `writtenTotals` (une saisie de plus de 40 000 signes d'un coup n'est pas une journée d'écriture). Les courbes de cumul gardent le texte importé.
+- Défis de la semaine : une cible de série (10, 14, 21, 30 jours) est ramenée à ce qui reste atteignable d'ici dimanche ; le défi « volume » ne compte plus les imports.
+Aucune fonctionnalité retirée, aucun champ ajouté aux données (deux réglages locaux : `challengeTargetAdjustedWeeks`).
+Reste : en-têtes de page à unifier, pages Échéances, Minuteur, Widgets et Professeur, vérification à l'écran du mode clair, des Réglages et des fenêtres secondaires.

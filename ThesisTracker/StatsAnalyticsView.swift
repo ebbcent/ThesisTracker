@@ -326,7 +326,7 @@ struct StatsAnalyticsView: View {
     private var weekDays: [WeekDay] {
         var cal = Calendar(identifier: .gregorian); cal.firstWeekday = 2
         let today = cal.startOfDay(for: Date())
-        let totals = store.dailyTotals()
+        let totals = store.writtenTotals()
         let letters = ["L", "M", "M", "J", "V", "S", "D"]
 
         guard let weekStart = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)) else { return [] }

@@ -43,6 +43,39 @@ enum TilesTheme {
     static let sheetSize = 1500
 }
 
+// MARK: Profondeur des cartes (5.33)
+
+/// Fin reflet en haut d'une carte : elle se détache du fond, surtout en sombre.
+struct TilesCardHighlight<S: InsettableShape>: View {
+    @Environment(\.colorScheme) private var scheme
+    let shape: S
+    var body: some View {
+        shape
+            .strokeBorder(LinearGradient(colors: [Color.white.opacity(scheme == .dark ? 0.10 : 0.75), .clear],
+                                         startPoint: .top, endPoint: .center), lineWidth: 1)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}
+
+/// Surface d'une tuile de l'accueil : fond plein, ombre douce, reflet en haut.
+struct TilesSurface<S: InsettableShape>: ViewModifier {
+    @Environment(\.colorScheme) private var scheme
+    let shape: S
+    var fill: Color = TilesTheme.card
+    func body(content: Content) -> some View {
+        content
+            .background(shape.fill(fill).shadow(color: .black.opacity(scheme == .dark ? 0.38 : 0.09), radius: 12, x: 0, y: 6))
+            .overlay(TilesCardHighlight(shape: shape))
+    }
+}
+
+extension View {
+    func tilesSurface<S: InsettableShape>(_ shape: S, fill: Color = TilesTheme.card) -> some View {
+        modifier(TilesSurface(shape: shape, fill: fill))
+    }
+}
+
 // MARK: Titre de chapitre découpé (« 4. Titre : sous-titre »)
 
 struct TilesChapterTitle {
@@ -120,9 +153,9 @@ struct TilesDashboardView: View {
                 sectionLabel("Aujourd'hui")
                 LazyVGrid(columns: gridColumns, spacing: 14) {
                     ringTile(title: "Jour", value: store.dailyProgress, goal: store.effectiveDailyGoal, color: TilesTheme.blue)
-                    ringTile(title: "Semaine", value: store.weeklyProgress, goal: store.data.weeklyGoal, color: TilesTheme.green)
+                    ringTile(title: "Semaine", value: store.weeklyProgress, goal: store.data.weeklyGoal, color: TilesTheme.ink)
                     ringTile(title: MonthlyRecap.monthName(Date()).capitalized, value: store.currentCalendarMonthProgress,
-                             goal: store.data.monthlyGoal, color: TilesTheme.gold)
+                             goal: store.data.monthlyGoal, color: TilesTheme.ink)
                     streakTile
                     tile { TilesSlotContent(store: store) }
                 }
@@ -221,7 +254,7 @@ struct TilesDashboardView: View {
                 Spacer()
                 if let info = deadlineInfo(chapter.deadline) {
                     Text(info.text)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(TilesTheme.red)
                 }
             }
@@ -273,7 +306,7 @@ struct TilesDashboardView: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 20)
-        .background(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(TilesTheme.card))
+        .tilesSurface(RoundedRectangle(cornerRadius: 26, style: .continuous))
     }
 
     /// Les chiffres du chapitre actif, et seulement eux.
@@ -347,7 +380,7 @@ struct TilesDashboardView: View {
                 Text(label).font(.system(size: 13, weight: .semibold))
                 Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold))
             }
-            .foregroundColor(TilesTheme.blue)
+            .foregroundColor(TilesTheme.muted)   // 5.33 : libellé neutre
         }
         .menuStyle(.borderlessButton)
         .fixedSize()
@@ -373,7 +406,7 @@ struct TilesDashboardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(32)
-        .background(RoundedRectangle(cornerRadius: 32, style: .continuous).fill(TilesTheme.card))
+        .tilesSurface(RoundedRectangle(cornerRadius: 32, style: .continuous))
     }
 
     // MARK: Tuiles
@@ -385,7 +418,7 @@ struct TilesDashboardView: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
             .clipped()
-            .background(RoundedRectangle(cornerRadius: TilesTheme.radius, style: .continuous).fill(background))
+            .tilesSurface(RoundedRectangle(cornerRadius: TilesTheme.radius, style: .continuous), fill: background)
     }
 
     private func ringTile(title: String, value: Int, goal: Int, color: Color) -> some View {
@@ -403,7 +436,7 @@ struct TilesDashboardView: View {
                 .frame(width: 62, height: 62)
                 .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.system(size: 13, weight: .semibold)).foregroundColor(color)
+                    Text(title).font(.system(size: 13, weight: .semibold)).foregroundColor(TilesTheme.muted)   // 5.33 : libellés en gris, l'accent reste à l'anneau du jour
                     Text(num(value))
                         .font(.system(size: 24, weight: .heavy).monospacedDigit())
                         .tracking(0)
@@ -434,7 +467,7 @@ struct TilesDashboardView: View {
                     .tracking(-0.3)
                     .foregroundColor(TilesTheme.ink)
                     .lineLimit(1)
-                TilesDayChain(store: store, days: 7)
+                TilesDayChain(store: store, days: 7, bars: true)   // 5.33 : sept traits, plus légers que les pastilles à lettres
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -652,7 +685,7 @@ struct TilesDashboardView: View {
             .help("Enregistrer le total du jour (⌘S)")
         }
         .padding(8)
-        .background(Capsule().fill(TilesTheme.card))
+        .tilesSurface(Capsule())
     }
 
     private var canSave: Bool { inputInt != nil && chapter != nil }
