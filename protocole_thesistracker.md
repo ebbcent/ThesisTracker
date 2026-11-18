@@ -211,6 +211,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.32** — Premier lot des 100 améliorations vues à l'écran : chiffres lisibles, colonne élargie, libellés, saisie, accomplissements en grille
 - **5.33** — Maquette validée codée (profondeur des cartes, accent réservé à l'action, arbre en lignes simples, barre du haut, tuile Série) ; une seule date de fin estimée ; graphiques sans imports ; défis de série atteignables
 - **5.34** — Titre de page unique, report d'une échéance dépassée, bouton de rythme, questions de départ du Professeur
+- **5.35** — Case « Import » sur une saisie : c'est elle, et plus un seuil, qui décide de ce qui ne compte pas comme écriture
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -365,3 +366,12 @@ Reste : en-têtes de page à unifier, pages Échéances, Minuteur, Widgets et Pr
 - Échéances : sous une échéance dépassée, « Reporter d'une semaine » et « d'un mois » (la coche à gauche sert à clore) ; « Choisir un rythme » devient un bouton ; « signes/jour ».
 - Professeur : quatre questions de départ sur la page vide (elles remplissent la saisie, rien n'est envoyé).
 Reste : style du Minuteur et grille des widgets (à faire après les avoir revus à l'écran), vérification du mode clair, des Réglages et des fenêtres secondaires.
+
+
+## 2026-11-18 — 5.35 : case « Import » (demande de Clem)
+Le seuil automatique de 40 000 signes (5.31, 5.33) est retiré : Clem préfère cocher lui-même. Sans coche, une saisie reste de l'écriture.
+- Données : `DailyEntry.isImport` (faux par défaut, anciennes données lues sans changement).
+- Une saisie cochée s'ajoute au total du chapitre et aux courbes de cumul, mais ne compte plus dans le rythme, la date de fin estimée, les graphiques quotidiens, les records, les récaps du mois ni le défi « volume ».
+- Où cocher : sur l'accueil Tuiles, case « Import » à côté de l'écart quand le total saisi augmente ; dans l'historique (fenêtre du chapitre et page Historique), case « Import » sur chaque ligne en hausse, à cocher ou décocher après coup.
+- `DataStore.setEntryImport`. Le Minuteur reprend aussi la palette de l'app (bleu, jaune, fond de champ) en Tuiles.
+À savoir : aucune saisie passée n'est cochée d'office. Les anciens imports comptent donc de nouveau comme écriture tant qu'ils ne sont pas cochés dans l'historique.

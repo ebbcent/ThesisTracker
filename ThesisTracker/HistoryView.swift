@@ -72,7 +72,8 @@ struct HistoryView: View {
                                 HistoryRow(
                                     entry: entry,
                                     chapter: currentChapter,
-                                    onDelete: { entryToDelete = entry }
+                                    onDelete: { entryToDelete = entry },
+                                    onToggleImport: { store.setEntryImport(!entry.isImport, entryId: entry.id) }
                                 )
                             }
                         }
@@ -115,6 +116,8 @@ struct HistoryRow: View {
     let entry: DailyEntry
     let chapter: Chapter?
     let onDelete: () -> Void
+    /// 5.35 — coche ou décoche « import » pour cette saisie.
+    var onToggleImport: (() -> Void)? = nil
 
     private var increment: Int {
         guard let chapter = chapter else { return 0 }
@@ -152,6 +155,26 @@ struct HistoryRow: View {
                                 .font(.system(size: AppLook.fs(11), weight: .medium))
                         }
                         .foregroundColor(Color.accentGreen)
+                        if let onToggleImport {
+                            Button(action: onToggleImport) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: entry.isImport ? "checkmark.square.fill" : "square")
+                                        .font(.system(size: AppLook.fs(11)))
+                                    Text("Import")
+                                        .font(.system(size: AppLook.fs(11), weight: .medium))
+                                }
+                                .foregroundColor(entry.isImport ? .primary : .labelMuted)
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .overlay(Capsule().stroke(Color.cardBorder, lineWidth: 1))
+                                .contentShape(Capsule())
+                            }
+                            .buttonStyle(.pressable)
+                            .help(entry.isImport
+                                  ? "Import : ce texte s'ajoute au total, sans compter comme écriture du jour. Cliquer pour le recompter comme écriture."
+                                  : "Cocher si ce texte vient d'ailleurs : il ne comptera plus dans le rythme, les records ni les défis.")
+                            .accessibilityLabel("Import")
+                            .accessibilityAddTraits(entry.isImport ? .isSelected : [])
+                        }
                     } else if let chapter, chapter.netChange(for: entry.date) < 0 {
                         HStack(spacing: 3) {
                             Image(systemName: "arrow.down")

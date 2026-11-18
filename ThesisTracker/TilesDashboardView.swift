@@ -117,6 +117,8 @@ struct TilesDashboardView: View {
 
     @State private var inputText: String = ""
     @State private var savedFlash = false
+    /// 5.35 — la saisie en cours est un import (texte déjà écrit ailleurs) : elle ne comptera pas comme écriture du jour.
+    @State private var markImport = false
     @State private var showRecap = false
     @FocusState private var inputFocused: Bool
 
@@ -652,6 +654,7 @@ struct TilesDashboardView: View {
                     .font(.system(size: 14, weight: .semibold).monospacedDigit())
                     .foregroundColor(TilesTheme.blue)
                     .fixedSize()
+                if delta > 0 { importToggle }
             }
             if savedFlash {
                 // 5.32 — revenir en arrière tout de suite après une saisie
@@ -690,6 +693,28 @@ struct TilesDashboardView: View {
 
     private var canSave: Bool { inputInt != nil && chapter != nil }
 
+    /// 5.35 — case « Import » : à cocher quand on colle du texte déjà écrit ailleurs.
+    private var importToggle: some View {
+        Button { markImport.toggle() } label: {
+            HStack(spacing: 5) {
+                Image(systemName: markImport ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 13))
+                Text("Import")
+                    .font(.system(size: 13, weight: .medium))
+            }
+            .foregroundColor(markImport ? TilesTheme.ink : TilesTheme.muted)
+            .padding(.horizontal, 12)
+            .frame(height: 40)
+            .overlay(Capsule().stroke(TilesTheme.line, lineWidth: 1))
+            .contentShape(Capsule())
+            .fixedSize()
+        }
+        .buttonStyle(.pressable)
+        .help("Cocher si ce texte vient d'ailleurs (import) : il s'ajoute au total du chapitre, sans compter comme écriture du jour")
+        .accessibilityLabel("Marquer cette saisie comme un import")
+        .accessibilityAddTraits(markImport ? .isSelected : [])
+    }
+
     private var entryPlaceholder: String {
         guard let project, let chapter else { return "Total du chapitre" }
         return "Total du chapitre (actuel : \(num(store.latestTotal(for: chapter.id, in: project.id))))"
@@ -705,6 +730,8 @@ struct TilesDashboardView: View {
         withAppAnimation(Motion.progress) {
             store.setTotalForDate(count, for: chapter.id, in: project.id, date: DataStore.today)
         }
+        if markImport { store.setEntryImport(true, chapterId: chapter.id, date: DataStore.today) }   // 5.35
+        markImport = false
         inputText = ""
         AchievementCatalog.announceNew(store: store, sessions: pomodoroController.data.sessions)   // 5.30
         withAppAnimation(Motion.quick) { savedFlash = true }

@@ -188,7 +188,8 @@ struct HistoryListView: View {
                 HistoryRow(
                     entry: entry,
                     chapter: selectedChapter,
-                    onDelete: { entryToDelete = entry }
+                    onDelete: { entryToDelete = entry },
+                    onToggleImport: { store.setEntryImport(!entry.isImport, entryId: entry.id) }
                 )
             }
         }

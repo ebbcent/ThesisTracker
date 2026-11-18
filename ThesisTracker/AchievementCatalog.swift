@@ -229,10 +229,7 @@ enum AchievementCatalog {
 
     // MARK: Records
 
-    /// Seuil au-delà duquel une saisie d'un chapitre en un jour est tenue pour un import, pas pour de l'écriture.
-    static let importThreshold = 40_000
-
-    /// Signes écrits par jour, sans les imports probables (une saisie de plus de 40 000 signes d'un coup).
+    /// Signes écrits par jour, sans les saisies cochées « import » (5.35 : plus de seuil automatique).
     static func writtenTotals(store: DataStore) -> [String: Int] {
         var out: [String: Int] = [:]
         for project in store.data.projects {
@@ -241,7 +238,7 @@ enum AchievementCatalog {
                 for entry in chapter.entries.sorted(by: { $0.date < $1.date }) {
                     let delta = entry.totalCount - previous
                     previous = entry.totalCount
-                    if abs(delta) > importThreshold { continue }
+                    if entry.isImport { continue }   // 5.35 : la case « import » décide, plus de seuil
                     out[entry.date, default: 0] += delta
                 }
             }
@@ -329,7 +326,7 @@ struct AchievementFamiliesSection: View {
                     HStack(alignment: .firstTextBaseline) {
                         title("Records", icon: "rosette")
                         Spacer()
-                        Text("hors imports de plus de 40 000 signes en un jour")
+                        Text("hors saisies cochées « import »")
                             .font(.system(size: 12))
                             .foregroundColor(.labelMuted)
                     }

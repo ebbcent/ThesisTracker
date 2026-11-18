@@ -955,7 +955,7 @@ class DataStore: ObservableObject {
         return _computeDailyTotals(projectId: projectId, chapterId: chapterId)
     }
 
-    /// 5.33 — comme `dailyTotals`, sans les imports probables (une saisie de plus de 40 000 signes d'un coup).
+    /// 5.33 — comme `dailyTotals`, sans les saisies cochées « import ».
     /// Sert aux graphiques et aux statistiques de rythme : un import n'est pas une journée d'écriture.
     /// Les courbes de cumul gardent `dailyTotals` (le texte importé fait bien partie du total).
     func writtenTotals(projectId: UUID? = nil, chapterId: UUID? = nil) -> [String: Int] {
@@ -974,7 +974,7 @@ class DataStore: ObservableObject {
             var previousTotal = 0
             for entry in chapter.entries.sorted(by: { $0.date < $1.date }) {
                 let increment = max(0, entry.totalCount - previousTotal)
-                if skipImports && increment > Self.projectionImportThreshold { previousTotal = entry.totalCount; continue }
+                if skipImports && entry.isImport { previousTotal = entry.totalCount; continue }   // 5.35 : la case décide, plus de seuil
                 if increment > 0 {
                     totals[entry.date, default: 0] += increment
                 }
@@ -3018,10 +3018,32 @@ class DataStore: ObservableObject {
 
     // MARK: - 5.33 Projection de référence (une seule date de fin, partout)
 
-    /// Au-delà de ce seuil, une saisie est un import de texte existant, pas de l'écriture du jour.
-    static let projectionImportThreshold = 40_000
+    /// 5.35 — coche ou décoche « import » sur une saisie (retrouvée par son identifiant).
+    func setEntryImport(_ flag: Bool, entryId: UUID) {
+        for p in data.projects.indices {
+            for c in data.projects[p].chapters.indices {
+                if let e = data.projects[p].chapters[c].entries.firstIndex(where: { $0.id == entryId }) {
+                    guard data.projects[p].chapters[c].entries[e].isImport != flag else { return }
+                    data.projects[p].chapters[c].entries[e].isImport = flag
+                    save()
+                    return
+                }
+            }
+        }
+    }
 
-    /// Signes écrits par jour pour les chapitres retenus, sans les imports probables.
+    /// 5.35 — même chose pour la saisie d'un chapitre à une date donnée.
+    func setEntryImport(_ flag: Bool, chapterId: UUID, date: String) {
+        for project in data.projects {
+            if let chapter = project.chapters.first(where: { $0.id == chapterId }),
+               let entry = chapter.entries.first(where: { $0.date == date }) {
+                setEntryImport(flag, entryId: entry.id)
+                return
+            }
+        }
+    }
+
+    /// Signes écrits par jour pour les chapitres retenus, sans les saisies cochées « import ».
     func writtenIncrements(where include: (Project, Chapter) -> Bool) -> [String: Int] {
         var out: [String: Int] = [:]
         for project in data.projects {
@@ -3030,7 +3052,7 @@ class DataStore: ObservableObject {
                 for entry in chapter.entries.sorted(by: { $0.date < $1.date }) {
                     let delta = entry.totalCount - previous
                     previous = entry.totalCount
-                    if abs(delta) > Self.projectionImportThreshold { continue }
+                    if entry.isImport { continue }   // 5.35 : une saisie cochée « import » n'est pas de l'écriture
                     out[entry.date, default: 0] += delta
                 }
             }
