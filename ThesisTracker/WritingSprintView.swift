@@ -63,7 +63,7 @@ struct WritingSprintView: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.93).ignoresSafeArea()
+            Color.black.ignoresSafeArea()   // 5.36 : fond plein (le tableau de bord transparaissait)
 
             // Barre de progression du minuteur (haut de l'écran)
             VStack(spacing: 0) {

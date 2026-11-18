@@ -394,3 +394,6 @@ Second tour (fenêtres et modes) : historique du chapitre, nouveau projet, expor
 - Fenêtres « Nouveau projet » et « Exporter » élargies (les pastilles de type, de format et de périmètre étaient coupées ; elles défilent toujours si besoin).
 - Derniers « car. » de l'interface (historique, calendrier, carte de chaleur, graphiques, défi du mois, accueil de première ouverture) ; « Ouvrir le tableau de bord ».
 Non vérifié, faute de pouvoir le piloter en arrière-plan : panneau de la barre des menus, app en petite fenêtre, modes Sprint et Sanctuaire (non lancés pour ne pas démarrer de minuteur ni verrouiller l'écran).
+Troisième tour (écran entier, avec l'accord de Clem) : panneau de la barre des menus (rien à signaler), app en petite fenêtre, modes Sprint et Sanctuaire.
+- Petite fenêtre : barre du haut dépliée, ses repères à largeur fixe imposaient une largeur minimale à toute la fenêtre ; le rail et le bord droit étaient coupés vers 980 points. Les repères défilent maintenant à l'horizontale ; repliée, la barre ne posait pas de problème.
+- Sprint d'écriture : fond plein, comme l'écriture immersive.
