@@ -70,7 +70,7 @@ struct AchievementsView: View {
                     )
                     AchievementStatCard(
                         icon: "text.word.spacing", iconColor: .accentGreen,
-                        value: store.formatCountShort(totalWordsWritten), unit: store.data.useWordCount ? "mots" : "car.", label: "Total écrit"
+                        value: store.formatCountShort(totalWordsWritten), unit: store.data.useWordCount ? "mots" : "signes", label: "Total écrit"
                     )
                 }
 
@@ -144,11 +144,11 @@ struct AchievementsView: View {
                 if !completedChallenges.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
                         sectionHeader("DÉFIS ACCOMPLIS", icon: "target", color: .accentGreen)
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 10) {
-                                ForEach(completedChallenges) { challenge in
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 200, maximum: 320), spacing: 10)], alignment: .leading, spacing: 10) {
+                            Group {   // 5.32 : grille (la rangée horizontale coupait les noms) ; les huit derniers
+                                ForEach(Array(completedChallenges.prefix(8))) { challenge in
                                     CompletedChallengeCard(challenge: challenge, store: store)
-                                        .frame(width: 210)
+                                        .frame(maxWidth: .infinity)
                                 }
                             }
                         }
@@ -158,11 +158,11 @@ struct AchievementsView: View {
                 // General achievements
                 VStack(alignment: .leading, spacing: 12) {
                     sectionHeader("ACCOMPLISSEMENTS", icon: "star.fill", color: .accentGold)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 200, maximum: 320), spacing: 10)], alignment: .leading, spacing: 10) {
+                        Group {   // 5.32 : grille
                             ForEach(generalAchievements) { achievement in
                                 GeneralAchievementCard(achievement: achievement)
-                                    .frame(width: 210)
+                                    .frame(maxWidth: .infinity)
                             }
                         }
                     }
@@ -214,7 +214,7 @@ struct AchievementsView: View {
         let completedChapters = allChapters.filter { $0.isCompleted }.count
         let totalProjects = store.data.projects.count
         let chaptersWithDeadline = allChapters.filter { $0.deadline != nil }.count
-        let unit = store.data.useWordCount ? "mots" : "car."
+        let unit = store.data.useWordCount ? "mots" : "signes"
 
         list.append(GeneralAchievement(
             id: "first_word", icon: "pencil.tip", color: .accent,
@@ -376,7 +376,7 @@ struct AchievementsView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Prochain badge : \(badge.name)")
                             .font(.system(size: 13, weight: .semibold))
-                        Text("Plus que \(remaining) jour\(remaining > 1 ? "s" : "") consécutif\(remaining > 1 ? "s" : "") — \(badge.description)")
+                        Text("Encore \(remaining) jour\(remaining > 1 ? "s" : "") d'affilée pour l'obtenir (\(badge.description))")
                             .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                     }
                     Spacer()
@@ -400,8 +400,12 @@ struct AchievementsView: View {
     @ViewBuilder
     private func sectionHeader(_ text: String, icon: String, color: Color) -> some View {
         HStack(spacing: 6) {
-            Image(systemName: icon).font(.system(size: AppLook.fs(10), weight: .bold)).foregroundColor(color)
-            Text(text).font(.system(size: AppLook.fs(10), weight: .bold)).foregroundColor(.labelMuted).kerning(1.0)
+            // 5.32 — en Tuiles : même titre de section que les nouvelles familles
+            Image(systemName: icon).font(.system(size: AppLook.tiles ? 13 : AppLook.fs(10), weight: .bold)).foregroundColor(color)
+            Text(AppLook.tiles ? String(text.prefix(1)) + text.dropFirst().lowercased() : text)
+                .font(.system(size: AppLook.tiles ? 15 : AppLook.fs(10), weight: .bold))
+                .foregroundColor(AppLook.tiles ? .primary : .labelMuted)
+                .kerning(AppLook.tiles ? 0 : 1.0)
         }
     }
 }
@@ -650,7 +654,7 @@ private struct CompletedChallengeCard: View {
     }
 
     private var challengeDescription: String {
-        let unit = store.data.useWordCount ? "mots" : "car."
+        let unit = store.data.useWordCount ? "mots" : "signes"
         switch challenge.kind {
         case .words:             return "\(challenge.target.formatted()) \(unit)"
         case .daysWritten:       return "\(challenge.target) jour\(challenge.target > 1 ? "s" : "") écrits"

@@ -296,7 +296,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
                 let daysLate = cal.dateComponents([.day], from: item.deadline, to: item.etaDate).day ?? 0
                 guard daysLate > 0 else { continue }
 
-                let unit = item.useWordCount ? "mots" : "car."
+                let unit = item.useWordCount ? "mots" : "signes"
                 let needed = item.useWordCount ? item.requiredPerDay / 5 : item.requiredPerDay
 
                 let content = UNMutableNotificationContent()

@@ -84,11 +84,11 @@ struct UpcomingDeadlinesWidget: View {
     }
 
     private func countdownStyle(_ days: Int) -> (Color, String) {
-        if days < 0  { return (Color(hex: "#DC2626"), "J+\(-days)") }
+        if days < 0  { return (Color(hex: "#DC2626"), "\(-days) j de retard") }
         if days == 0 { return (Color(hex: "#DC2626"), "Aujourd'hui") }
         if days == 1 { return (Color(hex: "#DC2626"), "Demain") }
-        if days <= 7 { return (Color(hex: "#F97316"), "J-\(days)") }
-        if days <= 14{ return (Color(hex: "#F5C518"), "J-\(days)") }
-        return (.accentGreen, "J-\(days)")
+        if days <= 7 { return (Color(hex: "#F97316"), "dans \(days) j") }
+        if days <= 14{ return (Color(hex: "#F5C518"), "dans \(days) j") }
+        return (.accentGreen, "dans \(days) j")
     }
 }

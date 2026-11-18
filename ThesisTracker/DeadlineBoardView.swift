@@ -86,7 +86,7 @@ struct DeadlineBoardView: View {
                 Text("Échéances")
                     .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                 Text(selectedTab == .chapitres
-                     ? "\(items.count) chapitre(s) avec échéance"
+                     ? "\(items.count) chapitre\(items.count > 1 ? "s" : "") avec échéance"
                      : selectedTab == .jalons
                          ? "\(store.allMilestonesSorted.count) jalon(s)"
                          : selectedTab == .next72h
@@ -106,7 +106,7 @@ struct DeadlineBoardView: View {
                 HStack(spacing: 5) {
                     Image(systemName: "calendar.badge.plus")
                         .font(.system(size: AppLook.fs(11), weight: .semibold))
-                    Text(".ics")
+                    Text("Calendrier (.ics)")
                         .font(.system(size: 12, weight: .semibold))
                 }
                 .foregroundColor(.labelMuted)
@@ -269,7 +269,7 @@ struct DeadlineBoardView: View {
                             // Badge J-X (#2)
                             if !item.chapter.isCompleted {
                                 let days = daysRemaining(for: deadline)
-                                Text(days < 0 ? "J+\(abs(days))" : (days == 0 ? "J-0" : "J-\(days)"))
+                                Text(days < 0 ? "\(abs(days)) j de retard" : (days == 0 ? "Aujourd'hui" : "dans \(days) j"))
                                     .font(.system(size: AppLook.fs(10), weight: .bold, design: .monospaced))
                                     .foregroundColor(statusColor(for: deadline))
                                     .padding(.horizontal, 6).padding(.vertical, 2)
@@ -549,8 +549,8 @@ struct DeadlineBoardView: View {
                         Spacer()
                         // Days badge
                         let daysText = cm.daysLeft < 0
-                            ? "J+\(abs(cm.daysLeft))"
-                            : (cm.daysLeft == 0 ? "Aujourd'hui" : "J-\(cm.daysLeft)")
+                            ? "\(abs(cm.daysLeft)) j de retard"
+                            : (cm.daysLeft == 0 ? "Aujourd'hui" : "dans \(cm.daysLeft) j")
                         Text(daysText)
                             .font(.system(size: AppLook.fs(11), weight: .bold, design: .monospaced))
                             .foregroundColor(u.color)
@@ -693,7 +693,7 @@ struct DeadlineBoardView: View {
     }
 
     private func progressLabel(latest: Int, goal: Int, useWordCount: Bool = false) -> String {
-        let unit = useWordCount ? "mots" : "car."
+        let unit = useWordCount ? "mots" : "signes"
         let l = useWordCount ? latest / 5 : latest
         let g = useWordCount ? goal / 5   : goal
         guard goal > 0 else { return "\(DataStore.formatNumber(l)) \(unit)" }

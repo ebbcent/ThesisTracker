@@ -854,14 +854,14 @@ class DataStore: ObservableObject {
         if data.useWordCount {
             return DataStore.formatNumber(value / 5) + " mots"
         }
-        return DataStore.formatNumber(value) + " car."
+        return DataStore.formatNumber(value) + " signes"   // 5.32 : un seul mot dans toute l'app
     }
 
     func formatCountShort(_ value: Int) -> String {
         if data.useWordCount {
             return DataStore.formatNumber(value / 5) + " m."
         }
-        return DataStore.formatNumber(value) + " car."
+        return DataStore.formatNumber(value) + " signes"
     }
 
     // MARK: - Active selectors
@@ -1236,7 +1236,7 @@ class DataStore: ObservableObject {
         }
         // V5 — log automatique si le compteur a changé
         if count != oldValue {
-            let unit = data.useWordCount ? "mots" : "car."
+            let unit = data.useWordCount ? "mots" : "signes"
             let delta = count - oldValue
             let sign = delta > 0 ? "+" : ""
             let logContent = "\(DataStore.formatNumber(count)) \(unit) (\(sign)\(DataStore.formatNumber(delta)) ce jour)"

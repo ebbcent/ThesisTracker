@@ -34,6 +34,11 @@ enum TilesTheme {
     static let gold   = dynamic(0x8A5A00, 0xF0C36A)
 
     static let radius: CGFloat = 22
+
+    /// Remplace l'espace fine des milliers par une espace insécable normale (lisible en grand corps).
+    static func spaced(_ text: String) -> String {
+        text.replacingOccurrences(of: "\u{202F}", with: "\u{00A0}")
+    }
     /// Un feuillet = 1 500 signes.
     static let sheetSize = 1500
 }
@@ -87,7 +92,8 @@ struct TilesDashboardView: View {
     private var unitWord: String { store.data.useWordCount ? "mots" : "signes" }
 
     private func num(_ value: Int) -> String {
-        DataStore.formatNumber(store.data.useWordCount ? value / 5 : value)
+        // 5.32 — espace normale entre les milliers : l'espace fine disparaissait dans les grands chiffres
+        TilesTheme.spaced(DataStore.formatNumber(store.data.useWordCount ? value / 5 : value))
     }
 
     private var inputInt: Int? {
@@ -118,7 +124,6 @@ struct TilesDashboardView: View {
                     ringTile(title: MonthlyRecap.monthName(Date()).capitalized, value: store.currentCalendarMonthProgress,
                              goal: store.data.monthlyGoal, color: TilesTheme.gold)
                     streakTile
-                    tile { TilesSessionContent(store: store) }
                     tile { TilesSlotContent(store: store) }
                 }
                 if let project {
@@ -138,19 +143,22 @@ struct TilesDashboardView: View {
             .padding(.horizontal, 24)
             .padding(.top, 18)
             .padding(.bottom, 20)
-            .frame(maxWidth: 1180)
+            .frame(maxWidth: 1560)
             .frame(maxWidth: .infinity)
         }
         .background(TilesTheme.bg.ignoresSafeArea())
         .sheet(isPresented: $showRecap) {
             MonthlyRecapView(store: store, recap: recap)
         }
-        .onAppear { presentRecapIfDue() }
+        .onAppear {
+            presentRecapIfDue()
+            inputFocused = true   // 5.32 : prêt à saisir dès l'ouverture
+        }
         .onReceive(NotificationCenter.default.publisher(for: .dashboardSave)) { _ in save() }
         .onReceive(NotificationCenter.default.publisher(for: .dashboardFocusInput)) { _ in inputFocused = true }
     }
 
-    private var gridColumns: [GridItem] { [GridItem(.adaptive(minimum: 215, maximum: 420), spacing: 14)] }
+    private var gridColumns: [GridItem] { [GridItem(.adaptive(minimum: 190, maximum: 420), spacing: 14)] }
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
@@ -237,7 +245,7 @@ struct TilesDashboardView: View {
                 VStack(alignment: .trailing, spacing: 0) {
                     Text(num(latest))
                         .font(.system(size: 50, weight: .heavy).monospacedDigit())
-                        .tracking(-1.8)
+                        .tracking(-0.4)
                         .foregroundColor(TilesTheme.ink)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -280,8 +288,8 @@ struct TilesDashboardView: View {
             fact("Aujourd'hui", (today < 0 ? "−" : "+") + num(abs(today)), color: TilesTheme.blue)
             fact("Reste", chapter.goal > 0 ? num(remaining) : "—")
             fact("Échéance", deadline?.short ?? "—", color: deadline == nil ? TilesTheme.ink : TilesTheme.red)
-            fact("Par jour", pace.map { num($0) } ?? "—")
-            fact("Avancement", chapter.goal > 0 ? "\(Int((Double(latest) / Double(chapter.goal) * 100).rounded())) %" : "—")
+            fact("À écrire par jour", pace.map { num($0) } ?? "—")
+            fact("Avancement", chapter.goal > 0 ? "\(Int(Double(latest) / Double(chapter.goal) * 100)) %" : "—")
             fact("Dernière saisie", lastEntry.map(Self.dayMonth) ?? "—")
         }
         .padding(.top, 2)
@@ -398,7 +406,7 @@ struct TilesDashboardView: View {
                     Text(title).font(.system(size: 13, weight: .semibold)).foregroundColor(color)
                     Text(num(value))
                         .font(.system(size: 24, weight: .heavy).monospacedDigit())
-                        .tracking(-0.6)
+                        .tracking(0)
                         .foregroundColor(TilesTheme.ink)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
@@ -423,7 +431,7 @@ struct TilesDashboardView: View {
                     .lineLimit(1)
                 Text(streak > 1 ? "\(streak) jours" : "\(streak) jour")
                     .font(.system(size: 30, weight: .heavy))
-                    .tracking(-1)
+                    .tracking(-0.3)
                     .foregroundColor(TilesTheme.ink)
                     .lineLimit(1)
                 TilesDayChain(store: store, days: 7)
@@ -448,7 +456,7 @@ struct TilesDashboardView: View {
                         .lineLimit(1)
                     Text(info.short)
                         .font(.system(size: 30, weight: .heavy))
-                        .tracking(-1)
+                        .tracking(-0.3)
                         .foregroundColor(TilesTheme.ink)
                     Text(deadlineCaption(for: next.chapter, in: next.project))
                         .font(.system(size: 13))
@@ -458,7 +466,7 @@ struct TilesDashboardView: View {
                     Text("Échéance").font(.system(size: 13, weight: .semibold)).foregroundColor(TilesTheme.muted)
                     Text("Aucune")
                         .font(.system(size: 30, weight: .heavy))
-                        .tracking(-1)
+                        .tracking(-0.3)
                         .foregroundColor(TilesTheme.ink)
                     Text("Aucune échéance à venir.")
                         .font(.system(size: 13))
@@ -488,7 +496,7 @@ struct TilesDashboardView: View {
                                                                to: Calendar.current.startOfDay(for: date)).day ?? 0
                     Text(days >= 0 ? "\(days) jours" : "Passée")
                         .font(.system(size: 30, weight: .heavy))
-                        .tracking(-1)
+                        .tracking(-0.3)
                         .foregroundColor(TilesTheme.bg)
                     Text(Self.fullDate(date) + (thesisPercent.map { " · \($0) % des chapitres écrits" } ?? ""))
                         .font(.system(size: 13))
@@ -497,7 +505,7 @@ struct TilesDashboardView: View {
                 } else {
                     Text("À définir")
                         .font(.system(size: 30, weight: .heavy))
-                        .tracking(-1)
+                        .tracking(-0.3)
                         .foregroundColor(TilesTheme.bg)
                     Text("La date se règle dans le tableau de bord complet.")
                         .font(.system(size: 13))
@@ -595,7 +603,7 @@ struct TilesDashboardView: View {
                     .fixedSize()
                     .padding(.leading, 12)
             }
-            TextField("Total du chapitre (ex. 85 000)", text: $inputText)
+            TextField(entryPlaceholder, text: $inputText)
                 .textFieldStyle(.plain)
                 .font(.system(size: 17, weight: .semibold).monospacedDigit())
                 .foregroundColor(TilesTheme.ink)
@@ -612,21 +620,46 @@ struct TilesDashboardView: View {
                     .foregroundColor(TilesTheme.blue)
                     .fixedSize()
             }
+            if savedFlash {
+                // 5.32 — revenir en arrière tout de suite après une saisie
+                Button {
+                    store.undo()
+                    withAppAnimation(Motion.quick) { savedFlash = false }
+                } label: {
+                    Text("Annuler")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(TilesTheme.ink)
+                        .padding(.horizontal, 14)
+                        .frame(height: 40)
+                        .overlay(Capsule().stroke(TilesTheme.line, lineWidth: 1))
+                        .fixedSize()
+                }
+                .buttonStyle(.pressable)
+                .help("Annuler la saisie qui vient d'être enregistrée")
+            }
             Button(action: save) {
                 Text(savedFlash ? "Enregistré" : "Enregistrer")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(TilesTheme.onBlue)
+                    .foregroundColor(canSave || savedFlash ? TilesTheme.onBlue : TilesTheme.muted)
                     .padding(.horizontal, 20)
                     .frame(height: 40)
-                    .background(Capsule().fill(savedFlash ? TilesTheme.green : TilesTheme.blue))
+                    // 5.32 — bouton inactif en gris neutre (l'accent atténué donnait un marron terne)
+                    .background(Capsule().fill(savedFlash ? TilesTheme.green : (canSave ? TilesTheme.blue : TilesTheme.line)))
                     .fixedSize()
             }
-            .buttonStyle(.pressable)
-            .disabled(inputInt == nil || chapter == nil)
+            .buttonStyle(.plain)
+            .disabled(!canSave)
             .help("Enregistrer le total du jour (⌘S)")
         }
         .padding(8)
         .background(Capsule().fill(TilesTheme.card))
+    }
+
+    private var canSave: Bool { inputInt != nil && chapter != nil }
+
+    private var entryPlaceholder: String {
+        guard let project, let chapter else { return "Total du chapitre" }
+        return "Total du chapitre (actuel : \(num(store.latestTotal(for: chapter.id, in: project.id))))"
     }
 
     private var typedDelta: Int? {
@@ -642,7 +675,7 @@ struct TilesDashboardView: View {
         inputText = ""
         AchievementCatalog.announceNew(store: store, sessions: pomodoroController.data.sessions)   // 5.30
         withAppAnimation(Motion.quick) { savedFlash = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
             withAppAnimation(Motion.quick) { savedFlash = false }
         }
     }

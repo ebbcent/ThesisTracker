@@ -140,7 +140,7 @@ struct MainView: View {
     /// 5.29 — rail d'icônes des pages, en apparence Tuiles (visible même barre latérale masquée).
     @ViewBuilder private var navRail: some View {
         if AppLook.tiles {
-            TilesNavRail(selectedNav: $selectedNav)
+            TilesNavRail(store: store, selectedNav: $selectedNav)
                 .padding(.leading, 10)
                 .padding(.vertical, 10)
         }
@@ -813,7 +813,7 @@ struct StatusBarView: View {
                         Image(systemName: "target")
                             .font(.system(size: 10))
                             .foregroundColor(.accentWarm)
-                        Text("Hebdo")
+                        Text("Semaine")
                             .font(.system(size: 11))
                             .foregroundColor(.labelMuted)
                         Text(store.formatCount(written))

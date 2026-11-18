@@ -265,7 +265,7 @@ struct QuickEntryView: View {
                     .accessibilityValue("Actuel \(currentTotal)")
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(store.data.useWordCount ? "mots" : "car.")
+                        Text(store.data.useWordCount ? "mots" : "signes")
                             .font(.system(size: 12))
                             .foregroundColor(.labelMuted)
                         if currentTotal > 0 {

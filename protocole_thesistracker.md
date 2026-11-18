@@ -208,6 +208,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.29** — Barre latérale Tuiles : rail d'icônes et chapitre épinglé ; saisie sous la carte du chapitre
 - **5.30** — Accomplissements à progression, records, prochain badge sur l'accueil
 - **5.31** — Correctifs constatés à l'écran : onglets masqués par le verre, ligne de chapitre, records sans imports
+- **5.32** — Premier lot des 100 améliorations vues à l'écran : chiffres lisibles, colonne élargie, libellés, saisie, accomplissements en grille
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -328,3 +329,16 @@ Depuis ce jour, l'app peut être regardée directement (pilotage des apps du Mac
 - Records et récaps faussés par des imports (meilleur jour à 148 655 signes, mai à 316 444) : `AchievementCatalog.writtenTotals` écarte toute saisie de plus de 40 000 signes d'un chapitre en un jour ; utilisé par les records et les récaps du mois.
 - Textes : « Badges de série » ; la page Bibliothèque de widgets porte enfin son nom.
 Reste vu mais non traité : en-têtes de page de styles différents, libellés « car. » et « signes » mélangés, anciennes sections de la page Accomplissements en petites capitales à côté des nouvelles.
+
+
+## 2026-11-18 — 5.32 : premier lot des 100 améliorations (vues à l'écran)
+Liste de 100 améliorations établie après avoir regardé l'app. Ce lot traite les points sûrs ; la profondeur des cartes, l'usage de l'accent, l'arbre des projets et la barre du haut passent d'abord par une maquette.
+- Chiffres lisibles : « 84 079 » s'affichait « 84079 » (espace fine écrasée par l'approche resserrée). `TilesTheme.spaced` met une espace normale ; approche des grands chiffres desserrée.
+- Accueil : colonne élargie (1 560), six tuiles par ligne sur grand écran ; tuile Session retirée (le Pomodoro est déjà dans l'en-tête) ; curseur dans la saisie à l'ouverture ; total actuel en repère dans le champ ; bouton « Annuler » pendant huit secondes après une saisie ; bouton inactif en gris neutre ; « À écrire par jour ».
+- Même arrondi du pourcentage du chapitre partout (par défaut) : accueil, carte épinglée, ligne de la barre latérale.
+- Barre latérale : titre court dans la carte épinglée ; icônes du rail plus lisibles ; pastille rouge sur l'icône Échéances quand une date est dépassée.
+- Libellés : « Semaine » (au lieu de « Hebdo »), « 169 j de retard » et « dans 12 j » (au lieu de J+169 et J-12), accord de « chapitre(s) », « Calendrier (.ics) », plus de « Données chargées » au Minuteur, « Journée bien engagée », phrase du prochain badge.
+- Unité : « signes » partout (`formatCount`, `formatCountShort` et 31 libellés) ; les exports gardent « car. ».
+- Accomplissements : titres de section unifiés ; « Défis accomplis » (les huit derniers) et « Accomplissements » en grille au lieu de rangées horizontales qui coupaient les noms.
+- Récaps : phrases plus variées (relance, série, progrès) ; coche quand l'objectif mensuel est tenu.
+Non traité dans ce lot : dates de fin différentes selon les pages, imports dans les graphiques des Statistiques et de la Vue d'ensemble, défis de série inatteignables en une semaine.
