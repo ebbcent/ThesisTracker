@@ -1684,6 +1684,7 @@ struct ProjectSidebarRow: View {
                                 Text(project.name)
                                     .font(.system(size: 13, weight: isActive ? .semibold : .medium))
                                     .foregroundColor(.primary).lineLimit(1)
+                                    .layoutPriority(1)
                                     .highPriorityGesture(TapGesture(count: 2).onEnded { renameDraft = project.name })
                             }
                             if let summary = chapterCountSummary {
@@ -1817,6 +1818,7 @@ struct ProjectSidebarRow: View {
                         Text("Le projet, ses chapitres et toutes leurs saisies seront supprimés. ⌘Z permet de revenir en arrière tant que l'app reste ouverte.")
                     }
                 }
+                .modifier(CollapseOffRowHover())   // 5.28 : hors survol, ces boutons ne prennent plus de place (le nom n'est plus tronqué)
             }
             .padding(.horizontal, 8).padding(.vertical, 7)
             .background(RoundedRectangle(cornerRadius: AppLook.r(8, 12), style: .continuous).fill(isActive ? Color.accent.opacity(AppLook.tiles ? 0.10 : 0.06) : Color.clear))
@@ -2438,52 +2440,16 @@ struct ChapterSidebarRow: View {
                         )
                     } else {
                         Text(chapter.name)
-                            .font(.system(size: 12, weight: isActive ? .semibold : .regular))
-                            .foregroundColor(.primary).lineLimit(1)
+                            .font(.system(size: AppLook.tiles ? 13 : 12, weight: isActive ? .semibold : .regular))
+                            .foregroundColor(.primary).lineLimit(compactMode ? 1 : 2)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.leading)
+                            .layoutPriority(1)
                             .truncationMode(.tail)
                             .help(chapter.name)   // 5.19 : titre complet au survol
                             .highPriorityGesture(TapGesture(count: 2).onEnded { renameDraft = chapter.name })
                     }
-                    if chapter.notes != nil {
-                        Image(systemName: "note.text")
-                            .font(.system(size: AppLook.fs(10)))
-                            .foregroundColor(.labelMuted.opacity(0.6))
-                    }
-                    // #36 — Tags libres (premiers 2 tags)
-                    ForEach(chapter.customTags.prefix(2), id: \.self) { tag in
-                        Text(tag)
-                            .font(.system(size: AppLook.fs(10), weight: .medium))
-                            .foregroundColor(.accent)
-                            .padding(.horizontal, 4).padding(.vertical, 1)
-                            .background(Color.accent.opacity(0.1))
-                            .clipShape(Capsule())
-                    }
-                    if !chapter.countsInThesisTotal {
-                        Image(systemName: "tray.full")
-                            .font(.system(size: AppLook.fs(10)))
-                            .foregroundColor(.labelMuted.opacity(0.7))
-                            .help("Hors total de la thèse")
-                    }
-                    if chapter.isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: AppLook.fs(10))).foregroundColor(.accentGreen)
-                    }
-                    // Badge relecture directeur (#1) — visible si un cycle est ouvert
-                    if chapter.reviewState != .notSent && chapter.reviewState != .addressed {
-                        Image(systemName: chapter.reviewState.icon)
-                            .font(.system(size: AppLook.fs(10)))
-                            .foregroundColor(chapter.reviewState.color)
-                            .help(reviewTooltip)
-                    }
-                    // V3.2 — Badge statut
-                    if let st = chapter.status, !chapter.isCompleted {
-                        Text(st.label)
-                            .font(.system(size: AppLook.fs(10), weight: .semibold))
-                            .foregroundColor(Color(hex: st.color))
-                            .padding(.horizontal, 5).padding(.vertical, 2)
-                            .background(Color(hex: st.color).opacity(0.15))
-                            .clipShape(Capsule())
-                    }
+                    if compactMode { chapterBadges }   // 5.28 : en vue normale, les badges ont leur propre ligne
                     Spacer()
                     if goal > 0 {
                         HStack(spacing: 3) {
@@ -2492,6 +2458,13 @@ struct ChapterSidebarRow: View {
                                 .font(.system(size: AppLook.fs(11), weight: .medium))
                                 .foregroundColor(statusColor)
                         }
+                    }
+                }
+
+                if !compactMode && hasChapterBadges {
+                    HStack(spacing: 5) {
+                        chapterBadges
+                        Spacer(minLength: 0)
                     }
                 }
 
@@ -2529,9 +2502,12 @@ struct ChapterSidebarRow: View {
                             Text("Échéance : " + DataStore.formatDate(date))
                                 .font(.system(size: AppLook.fs(10), weight: .medium))
                                 .foregroundColor(.accentWarm.opacity(0.8))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.85)
                         }
                     }
-                    Spacer()
+                    .layoutPriority(1)
+                    Spacer(minLength: 4)
                     HStack(spacing: 8) {
                         Button("Hist.") { onHistory() }
                             .font(.system(size: AppLook.fs(10))).foregroundColor(.accent).buttonStyle(.pressable)
@@ -2701,6 +2677,58 @@ struct ChapterSidebarRow: View {
     }
 
     // MARK: - Milestone dots (feature #69)
+
+    /// 5.28 — note, tags, hors total, terminé, relecture, statut : regroupés pour tenir sur une ligne à eux.
+    private var hasChapterBadges: Bool {
+        chapter.notes != nil || !chapter.customTags.isEmpty || !chapter.countsInThesisTotal || chapter.isCompleted
+            || (chapter.reviewState != .notSent && chapter.reviewState != .addressed)
+            || (chapter.status != nil && !chapter.isCompleted)
+    }
+
+    @ViewBuilder private var chapterBadges: some View {
+        if chapter.notes != nil {
+            Image(systemName: "note.text")
+                .font(.system(size: AppLook.fs(10)))
+                .foregroundColor(.labelMuted.opacity(0.6))
+        }
+        // #36 — Tags libres (premiers 2 tags)
+        ForEach(chapter.customTags.prefix(2), id: \.self) { tag in
+            Text(tag)
+                .font(.system(size: AppLook.fs(10), weight: .medium))
+                .foregroundColor(.accent)
+                .padding(.horizontal, 4).padding(.vertical, 1)
+                .background(Color.accent.opacity(0.1))
+                .clipShape(Capsule())
+        }
+        if !chapter.countsInThesisTotal {
+            Image(systemName: "tray.full")
+                .font(.system(size: AppLook.fs(10)))
+                .foregroundColor(.labelMuted.opacity(0.7))
+                .help("Hors total de la thèse")
+        }
+        if chapter.isCompleted {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: AppLook.fs(10))).foregroundColor(.accentGreen)
+        }
+        // Badge relecture directeur (#1) — visible si un cycle est ouvert
+        if chapter.reviewState != .notSent && chapter.reviewState != .addressed {
+            Image(systemName: chapter.reviewState.icon)
+                .font(.system(size: AppLook.fs(10)))
+                .foregroundColor(chapter.reviewState.color)
+                .help(reviewTooltip)
+        }
+        // V3.2 — Badge statut
+        if let st = chapter.status, !chapter.isCompleted {
+            Text(st.label)
+                .font(.system(size: AppLook.fs(10), weight: .semibold))
+                .foregroundColor(Color(hex: st.color))
+                .lineLimit(1)
+                .fixedSize()
+                .padding(.horizontal, 7).padding(.vertical, 2)
+                .background(Color(hex: st.color).opacity(0.15))
+                .clipShape(Capsule())
+        }
+    }
 
     /// Trois petits ronds (25 % / 50 % / 75 %) remplis en bronze / argent / or selon la progression
     @ViewBuilder

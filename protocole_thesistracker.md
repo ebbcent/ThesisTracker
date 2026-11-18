@@ -204,6 +204,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.25** — Tuiles, suite : barre latérale et barre du haut en panneaux flottants, boutons et cartes alignés, menu Modes, table des matières dans la barre latérale
 - **5.26** — Accueil corrigé d'après capture, clair / sombre fiabilisé, couleurs lisibles, créneaux depuis un calendrier, page « Récaps du mois » et notification mensuelle
 - **5.27** — Réglages réparés, police et tailles uniformisées, commandes à la couleur d'accent
+- **5.28** — Barre latérale : noms de projets et titres de chapitres lisibles, badges sur leur ligne
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -288,3 +289,10 @@ Capture de Clem (Réglages, clair, fond papier) : colonne gauche écrasée (un s
 - Verre sur chaque écran (demande de Clem, apparence Tuiles) : `FloatingSurface` (verre dépoli en Tuiles, carte pleine sinon) sur tout ce qui flotte au-dessus du contenu : les six bandeaux et bulles de la fenêtre principale (conflit iCloud, bilans du jour et de la semaine, jalon, fin de session, rapport hebdomadaire), la saisie rapide, la bulle d'aide, les barres d'onglets des Échéances, du Minuteur et de l'Activité. Popovers (notifications, sélecteurs de date et de liste, jour du calendrier) : fond laissé au matériau du système (`AppLook.popoverBackground`). Panneau de la barre des menus : matériau translucide. Les cartes de contenu restent pleines (leçon de la 5.16) ; les feuilles gardent leur fond.
 - Boutons alignés sur l'accueil (demande de Clem) : `AppLook.buttonShape` (pastille en Tuiles, rectangle arrondi d'origine sinon) appliqué aux boutons d'accent, aux boutons d'icône des en-têtes de page et aux boutons secondaires (« Annuler »…) de toutes les pages, avec leur liseré.
 Hors Tuiles, toutes ces valeurs restent celles d'origine.
+
+
+## 2026-11-18 — 5.28 : barre latérale, d'après capture
+Capture de Clem (barre latérale, clair, accent ambre) : noms de projets tronqués (« 2. Arti… », « 15 chap… ») alors qu'il reste de la place, titre du chapitre actif tronqué (« 4. La « Li… »), badge de statut coupé en deux lignes (« Rédactio / n »), échéance sur deux lignes.
+- Ligne de projet : les trois boutons d'action au survol réservaient leur largeur même cachés ; `CollapseOffRowHover` leur donne une largeur nulle hors survol. Le nom a la priorité de mise en page.
+- Carte de chapitre (vue normale) : le titre peut tenir sur deux lignes et passe avant le reste ; les badges (note, tags, hors total, terminé, relecture, statut) ont leur propre ligne (`chapterBadges`) ; en vue compacte, rien ne change. Le badge de statut ne se coupe plus ; les lignes de détail tiennent sur une ligne et passent avant « Hist. ».
+- Probable origine : les tailles relevées d'un point en 5.27 ont fait déborder des lignes déjà justes.

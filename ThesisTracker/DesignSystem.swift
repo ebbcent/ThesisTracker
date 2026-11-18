@@ -248,6 +248,18 @@ struct RevealOnRowHover: ViewModifier {
     }
 }
 
+/// 5.28 — groupe d'actions de ligne : hors survol, il ne réserve aucune largeur
+/// (les boutons restent lus par VoiceOver et atteignables au clavier).
+struct CollapseOffRowHover: ViewModifier {
+    @Environment(\.rowHovered) private var hovered
+    func body(content: Content) -> some View {
+        content
+            .fixedSize()
+            .frame(width: hovered ? nil : 0, alignment: .trailing)
+            .clipped()
+    }
+}
+
 /// Poignée de déplacement d'une carte du tableau de bord : visible au survol ou en mode « Personnaliser ».
 struct HoverDragHandle: ViewModifier {
     var forceVisible: Bool
