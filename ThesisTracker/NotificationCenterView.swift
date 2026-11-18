@@ -42,7 +42,7 @@ struct NotificationCenterView: View {
             content
         }
         .sheetFrame(width: 360, height: 500)
-        .background(Color.cardBg)
+        .background(AppLook.popoverBackground)   // 5.27
         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(14, 20), style: .continuous))
     }
 
@@ -52,11 +52,11 @@ struct NotificationCenterView: View {
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Notifications")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 if store.unreadCount > 0 {
                     Text("\(store.unreadCount) non lue\(store.unreadCount > 1 ? "s" : "")")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.accent)
                 }
             }
@@ -69,7 +69,7 @@ struct NotificationCenterView: View {
                         withAppAnimation(.easeInOut(duration: 0.18)) { store.markAllRead() }
                     } label: {
                         Text("Tout lire")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppLook.fs(11), weight: .medium))
                             .foregroundColor(.accent)
                     }
                     .buttonStyle(.pressable)
@@ -124,10 +124,10 @@ struct NotificationCenterView: View {
             HStack(spacing: 4) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                 }
                 Text(label)
-                    .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                    .font(.system(size: AppLook.fs(11), weight: isSelected ? .semibold : .regular))
             }
             .foregroundColor(isSelected ? .white : .labelMuted)
             .padding(.horizontal, 10)
@@ -169,7 +169,7 @@ struct NotificationCenterView: View {
                             }
                         } header: {
                             Text(group.label)
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: AppLook.fs(10), weight: .semibold))
                                 .foregroundColor(.labelMuted)
                                 .textCase(.uppercase)
                                 .tracking(0.5)
@@ -238,13 +238,13 @@ struct NotificationRow: View {
                     .lineLimit(2)
                 if !notif.body.isEmpty {
                     Text(notif.body)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Text(timeAgo(notif.date))
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted.opacity(0.65))
                     .padding(.top, 1)
             }

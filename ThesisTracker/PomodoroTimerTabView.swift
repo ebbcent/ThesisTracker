@@ -20,8 +20,8 @@ struct PomodoroTimerTabView: View {
                         .foregroundColor(.labelMuted)
                         .frame(width: 32, height: 32)
                         .background(Color.glassFill)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.glassBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(8))
+                        .overlay(AppLook.buttonShape(8).stroke(Color.glassBorder, lineWidth: 1))
                 }
                 .buttonStyle(.pressable)
                 .padding(.leading, 16)
@@ -37,15 +37,15 @@ struct PomodoroTimerTabView: View {
                     }
                 }
                 .padding(4)
-                .background(Color.glassFill)
+                .background(FloatingSurface(radius: 10))   // 5.27 : verre en Tuiles
                 .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.glassBorder, lineWidth: 1))
+                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(AppLook.tiles ? Color.clear : Color.glassBorder, lineWidth: 1))
 
                 Spacer()
 
                 // Status message
                 Text(controller.statusMessage)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                     .lineLimit(1)
                     .padding(.trailing, 16)
@@ -86,7 +86,7 @@ struct PomodoroTimerTabView: View {
         } label: {
             HStack(spacing: 5) {
                 Image(systemName: section.icon)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: AppLook.fs(11), weight: .medium))
                 Text(section.title)
                     .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
                     .lineLimit(1)

@@ -31,7 +31,7 @@ struct WeeklyPlanWidget: View {
                     Spacer()
                     if let plan, !plan.items.isEmpty {
                         Text("\(plan.doneCount)/\(plan.totalCount)")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(color)
                             .padding(.horizontal, 7).padding(.vertical, 2)
                             .background(color.opacity(0.10))
@@ -44,10 +44,10 @@ struct WeeklyPlanWidget: View {
                         ForEach(plan.items.prefix(4)) { item in
                             HStack(spacing: 6) {
                                 Image(systemName: item.isDone ? "checkmark.circle.fill" : "circle")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(item.isDone ? .accentGreen : .labelMuted.opacity(0.5))
                                 Text(item.text)
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(item.isDone ? .labelMuted : .primary)
                                     .strikethrough(item.isDone, color: .labelMuted)
                                     .lineLimit(1)
@@ -56,7 +56,7 @@ struct WeeklyPlanWidget: View {
                         }
                         if plan.items.count > 4 {
                             Text("+ \(plan.items.count - 4) autre\(plan.items.count - 4 > 1 ? "s" : "")…")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted.opacity(0.7))
                         }
                     }
@@ -70,16 +70,16 @@ struct WeeklyPlanWidget: View {
                     .frame(height: 5)
                 } else {
                     Text("Aucune action prévue pour la semaine.")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 }
 
                 Button { showSheet = true } label: {
                     HStack(spacing: 5) {
                         Image(systemName: plan?.items.isEmpty ?? true ? "plus.circle.fill" : "list.bullet")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                         Text(plan?.items.isEmpty ?? true ? "Définir le plan" : "Ouvrir le plan")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)
@@ -140,7 +140,7 @@ struct WeeklyPlanSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Plan de bataille").font(.system(size: 16, weight: .semibold))
                 Text("Semaine \(plan.weekKey.suffix(3)) · \(plan.doneCount)/\(plan.totalCount) actions accomplies")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Button { dismiss() } label: {
@@ -164,7 +164,7 @@ struct WeeklyPlanSheet: View {
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.labelMuted)
             Text("Ajoute 3-5 actions concrètes pour la semaine (rédiger l'intro, relire le chapitre 2, etc).")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
@@ -206,12 +206,12 @@ struct WeeklyPlanSheet: View {
             Spacer()
             if let doneDate = item.doneDate {
                 Text(doneDate.suffix(5))
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted.opacity(0.7))
             }
             Button { store.deleteWeeklyPlanItem(itemId: item.id) } label: {
                 Image(systemName: "trash")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted.opacity(0.6))
             }
             .buttonStyle(.pressable)
@@ -225,15 +225,15 @@ struct WeeklyPlanSheet: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
                 Image(systemName: "arrow.uturn.backward.circle")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                 Text("RÉTROSPECTIVE — SEMAINE PRÉCÉDENTE")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(0.8)
                 Spacer()
                 Text("\(lastPlan.doneCount)/\(lastPlan.totalCount)")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(.labelMuted)
             }
             .padding(.horizontal, 18).padding(.top, 18)
@@ -242,11 +242,11 @@ struct WeeklyPlanSheet: View {
                 ForEach(lastPlan.items.prefix(8)) { item in
                     HStack(spacing: 6) {
                         Image(systemName: item.isDone ? "checkmark" : "minus")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(item.isDone ? .accentGreen : .labelMuted.opacity(0.4))
                             .frame(width: 12)
                         Text(item.text)
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                             .lineLimit(1)
                         Spacer()
@@ -260,14 +260,14 @@ struct WeeklyPlanSheet: View {
     private var addBar: some View {
         HStack(spacing: 8) {
             Image(systemName: "plus")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
             TextField("Nouvelle action pour la semaine…", text: $newItemText, onCommit: addItem)
                 .textFieldStyle(.plain)
                 .font(.system(size: 12))
             Button(action: addItem) {
                 Text("Ajouter")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 5)
                     .background(Color.accent)

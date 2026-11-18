@@ -80,10 +80,10 @@ struct FilterChipButton: View {
             HStack(spacing: 4) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 10, weight: isSelected ? .semibold : .regular))
+                        .font(.system(size: AppLook.fs(10), weight: isSelected ? .semibold : .regular))
                 }
                 Text(label)
-                    .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                    .font(.system(size: AppLook.fs(11), weight: isSelected ? .semibold : .regular))
             }
             .foregroundColor(isSelected ? .white : .labelMuted)
             .padding(.horizontal, 10).padding(.vertical, 5)

@@ -25,7 +25,7 @@ struct FragmentsWidget: View {
                         .font(.system(size: 13, weight: .semibold))
                     Spacer()
                     Text("\(active.count)")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 6).padding(.vertical, 2)
                         .background(Color.labelMuted.opacity(0.1))
@@ -58,7 +58,7 @@ struct FragmentsWidget: View {
                                     .fill(Color.semAmber)
                                     .frame(width: 4, height: 4)
                                 Text(fragment.content)
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.labelMuted)
                                     .lineLimit(1)
                                 Spacer()
@@ -66,14 +66,14 @@ struct FragmentsWidget: View {
                         }
                         if active.count > 3 {
                             Text("+ \(active.count - 3) autres")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted.opacity(0.7))
                         }
                     }
                 }
                 Button { showSheet = true } label: {
                     Text("Ouvrir le carnet")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 10).padding(.vertical, 6)
                         .background(Color.semAmber)
@@ -127,11 +127,11 @@ struct FragmentsSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Carnet de fragments").font(.system(size: 16, weight: .semibold))
                 Text("\(store.activeFragments.count) actif\(store.activeFragments.count > 1 ? "s" : "") · \(store.data.fragments.count) total")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Toggle(isOn: $showArchived) {
-                Text("Archivés").font(.system(size: 11))
+                Text("Archivés").font(.system(size: AppLook.fs(11)))
             }
             .toggleStyle(.switch)
             Button { dismiss() } label: {
@@ -160,7 +160,7 @@ struct FragmentsSheet: View {
                 newText = ""
             } label: {
                 Text("Capter")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 5)
                     .background(Color.semAmber)
@@ -183,7 +183,7 @@ struct FragmentsSheet: View {
             Text(showArchived
                  ? "Les fragments que tu marqueras comme « utilisé » apparaîtront ici."
                  : "Capture une idée, une citation, une phrase à recycler — sans casser ton flux d'écriture.")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -211,7 +211,7 @@ struct FragmentsSheet: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
                 Text(fragment.createdAt)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: AppLook.fs(10), weight: .medium))
                     .foregroundColor(.labelMuted.opacity(0.7))
                 Spacer()
                 if fragment.archivedAt == nil {
@@ -225,7 +225,7 @@ struct FragmentsSheet: View {
                         }
                     } label: {
                         Label("Déplacer", systemImage: "arrow.right.circle")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.accent)
                     }
                     .menuStyle(.borderlessButton)
@@ -233,7 +233,7 @@ struct FragmentsSheet: View {
                     .help("Déplacer vers un chapitre")
                     Button { store.archiveFragment(fragment.id) } label: {
                         Image(systemName: "archivebox")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted.opacity(0.6))
                     }
                     .buttonStyle(.pressable)
@@ -242,7 +242,7 @@ struct FragmentsSheet: View {
                 } else {
                     Button { store.unarchiveFragment(fragment.id) } label: {
                         Image(systemName: "tray.and.arrow.up")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted.opacity(0.6))
                     }
                     .buttonStyle(.pressable)
@@ -251,7 +251,7 @@ struct FragmentsSheet: View {
                 }
                 Button { store.deleteFragment(fragment.id) } label: {
                     Image(systemName: "trash")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted.opacity(0.6))
                 }
                 .buttonStyle(.pressable)

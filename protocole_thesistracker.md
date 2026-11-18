@@ -203,6 +203,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.24** — Affichage « Tuiles » du tableau de bord (clair / sombre) et récap du mois
 - **5.25** — Tuiles, suite : barre latérale et barre du haut en panneaux flottants, boutons et cartes alignés, menu Modes, table des matières dans la barre latérale
 - **5.26** — Accueil corrigé d'après capture, clair / sombre fiabilisé, couleurs lisibles, créneaux depuis un calendrier, page « Récaps du mois » et notification mensuelle
+- **5.27** — Réglages réparés, police et tailles uniformisées, commandes à la couleur d'accent
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -277,3 +278,13 @@ Première capture de l'app par Clem (accueil Tuiles, sombre). Constats et demand
 - Page « Récaps du mois » (`NavItem.recaps`, groupe Analyse) : un récap par mois écoulé ayant des saisies, du plus récent au plus ancien ; les nouveaux s'y ajoutent seuls. Notification système une fois par mois, à la première ouverture après le 1er (`monthlyRecapLastNotified`).
 - `MainView` : l'aiguillage des pages est sorti du corps de la vue (`currentPage`).
 - Tests : `WritingCalendarTests`.
+
+
+## 2026-11-18 — 5.27 : Réglages réparés, typographie uniformisée
+Capture de Clem (Réglages, clair, fond papier) : colonne gauche écrasée (un sous-titre affiché une lettre par ligne), contenu coupé des deux côtés, interrupteurs et curseur orange alors que l'accent est bleu.
+- Cause : la rangée des couleurs d'accent, rigide, était devenue plus large avec le préréglage « Encre » ajouté en 5.25. Elle est maintenant une grille qui passe à la ligne. La fenêtre des Réglages a une largeur minimale (960), le corps à deux colonnes aussi (900) ; `settingRow` garde une largeur minimale au texte.
+- Commandes à la couleur d'accent : `.tint(Color.accent)` à la racine de la fenêtre principale (`AppLookRefresher`), des Réglages et du panneau de la barre des menus. Les teintes explicites (alertes en orange) restent.
+- Typographie (apparence Tuiles) : `AppLook.fontDesign` remplace 136 `design: .rounded` (une seule famille de caractères) ; `AppLook.fs` relève d'un point les tailles 10 et 11 (877 sites, hors graphiques, carte de chaleur, calendrier, cadran, barre des menus, exports) ; `TypeScale` devient calculé et suit l'apparence ; les 8 titres de page écrits en dur passent par `TypeScale.pageTitle` (24 gras en Tuiles).
+- Verre sur chaque écran (demande de Clem, apparence Tuiles) : `FloatingSurface` (verre dépoli en Tuiles, carte pleine sinon) sur tout ce qui flotte au-dessus du contenu : les six bandeaux et bulles de la fenêtre principale (conflit iCloud, bilans du jour et de la semaine, jalon, fin de session, rapport hebdomadaire), la saisie rapide, la bulle d'aide, les barres d'onglets des Échéances, du Minuteur et de l'Activité. Popovers (notifications, sélecteurs de date et de liste, jour du calendrier) : fond laissé au matériau du système (`AppLook.popoverBackground`). Panneau de la barre des menus : matériau translucide. Les cartes de contenu restent pleines (leçon de la 5.16) ; les feuilles gardent leur fond.
+- Boutons alignés sur l'accueil (demande de Clem) : `AppLook.buttonShape` (pastille en Tuiles, rectangle arrondi d'origine sinon) appliqué aux boutons d'accent, aux boutons d'icône des en-têtes de page et aux boutons secondaires (« Annuler »…) de toutes les pages, avec leur liseré.
+Hors Tuiles, toutes ces valeurs restent celles d'origine.

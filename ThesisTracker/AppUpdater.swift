@@ -295,7 +295,7 @@ struct UpdatesSettingsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("MISES À JOUR")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(1.2)
             VStack(alignment: .leading, spacing: 12) {
@@ -308,7 +308,7 @@ struct UpdatesSettingsSection: View {
                         Text("Version \(updater.currentVersion) · build \(updater.currentBuild)")
                             .font(.system(size: 13, weight: .medium))
                         Text(statusText)
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(statusIsError ? .orange : .labelMuted)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -328,7 +328,7 @@ struct UpdatesSettingsSection: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(updater.hasToken ? "Clé GitHub enregistrée dans le Trousseau de ce Mac." :
                             "Clé GitHub en lecture seule (une fois par Mac) :")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                     HStack(spacing: 8) {
                         SecureField(updater.hasToken ? "Remplacer la clé…" : "github_pat_…", text: $tokenInput)
@@ -348,7 +348,7 @@ struct UpdatesSettingsSection: View {
                     }
                     Link("Créer une clé sur GitHub (Contents : lecture seule, dépôt ThesisTracker)",
                          destination: URL(string: "https://github.com/settings/personal-access-tokens/new")!)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.accentWarm)
                 }
             }

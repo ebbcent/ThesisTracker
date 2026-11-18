@@ -38,9 +38,9 @@ struct DefenseDateWidget: View {
                 } label: {
                     HStack(spacing: 5) {
                         Image(systemName: store.targetDefenseDate == nil ? "flag" : "flag.fill")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                         Text(store.targetDefenseDate == nil ? "Définir une date cible" : "Modifier la cible")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppLook.fs(11), weight: .medium))
                     }
                     .foregroundColor(.accent)
                     .padding(.horizontal, 10).padding(.vertical, 5)
@@ -64,20 +64,20 @@ struct DefenseDateWidget: View {
                             showTargetEditor = false
                         }
                         .buttonStyle(.pressable)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(Color.semRed)
                     }
                     Spacer()
                     Button("Annuler") { showTargetEditor = false }
                         .buttonStyle(.pressable)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                     Button {
                         store.targetDefenseDate = draftTarget
                         showTargetEditor = false
                     } label: {
                         Text("Enregistrer")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 12).padding(.vertical, 6)
                             .background(Color.accent)
@@ -113,10 +113,10 @@ struct DefenseDateWidget: View {
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(color)
                 Text(subtitle)
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted.opacity(0.8))
             }
             .frame(width: 140, alignment: .leading)
@@ -128,14 +128,14 @@ struct DefenseDateWidget: View {
                         .foregroundColor(.primary)
                     let avg = Int(proj.avgPerDay)
                     Text(avg > 0 ? "~ \(avg) car./j" : "")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 } else {
                     Text("—")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.labelMuted.opacity(0.5))
                     Text("vitesse insuffisante")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted.opacity(0.7))
                 }
             }
@@ -159,12 +159,12 @@ struct DefenseDateWidget: View {
                 .foregroundColor(onTrack ? .accentGreen : Color.semRed)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Cible : \(DataStore.formatDate(target)) (\(days >= 0 ? "dans " : "il y a ")\(abs(days)) j)")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                 if let g = gap {
                     Text(onTrack
                          ? "À ton rythme actuel, tu y arriverais avec \(abs(g)) j d'avance."
                          : "À ton rythme actuel, tu serais en retard de \(g) j.")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 }
             }

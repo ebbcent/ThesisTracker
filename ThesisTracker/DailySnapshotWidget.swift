@@ -54,7 +54,7 @@ struct DailySnapshotWidget: View {
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(deltaColor)
                         Text(delta == 0 ? "=" : (delta > 0 ? "+\(fmt(delta))" : "-\(fmt(abs(delta)))"))
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(deltaColor)
                     }
                     .frame(maxHeight: .infinity, alignment: .center)
@@ -76,16 +76,16 @@ struct DailySnapshotWidget: View {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             Text("Aujourd'hui · \(fmt(todayTotal)) / \(fmt(dailyGoal))")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted)
                             Spacer()
                             if r >= 1.0 {
                                 Text("✓ Objectif atteint")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .foregroundColor(.accentGreen)
                             } else {
                                 Text("\(Int(r * 100))%")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .foregroundColor(.accent)
                             }
                         }
@@ -107,15 +107,15 @@ struct DailySnapshotWidget: View {
     private func statBlock(label: String, value: String, sub: String?, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label)
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: AppLook.fs(10), weight: .semibold))
                 .foregroundColor(.labelMuted)
                 .textCase(.uppercase)
                 .tracking(0.4)
             Text(value)
-                .font(.system(size: 17, weight: .bold, design: .rounded))
+                .font(.system(size: 17, weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(color)
             if let sub {
-                Text(sub).font(.system(size: 10)).foregroundColor(.labelMuted)
+                Text(sub).font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
             }
         }
     }
@@ -124,7 +124,7 @@ struct DailySnapshotWidget: View {
         HStack(spacing: 3) {
             Circle().fill(Color.accentGreen).frame(width: 5, height: 5)
             Text("Aujourd'hui · \(fmt(todayTotal))")
-                .font(.system(size: 10, weight: .medium))
+                .font(.system(size: AppLook.fs(10), weight: .medium))
                 .foregroundColor(.accentGreen)
         }
         .padding(.horizontal, 7).padding(.vertical, 3)

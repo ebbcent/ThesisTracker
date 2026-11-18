@@ -64,7 +64,7 @@ struct StatsAnalyticsView: View {
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Statistiques & Analyse")
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .font(TypeScale.pageTitle)
                             .foregroundColor(.primary)
                         Text("Patterns, tendances et prévisions d'écriture")
                             .font(.system(size: 11))
@@ -497,7 +497,7 @@ struct StatsAnalyticsView: View {
                         }
                         .padding(10)
                         .background(Color.accentWarm.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
+                        .clipShape(AppLook.buttonShape(8))
 
                         // Mini histogramme 6h–24h
                         let workHours = Array(6...23)
@@ -776,7 +776,7 @@ struct StatsAnalyticsView: View {
                 .font(.system(size: 12))
                 .foregroundColor(color)
             Text("\(value)")
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(color)
             Text(label)
                 .font(.system(size: 10))
@@ -810,7 +810,7 @@ struct StatsAnalyticsView: View {
                         if let days = proj.daysRemainingRealistic {
                             VStack(alignment: .trailing, spacing: 1) {
                                 Text("J-\(days)")
-                                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                                    .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                                     .foregroundColor(.accent)
                                 Text("au rythme actuel")
                                     .font(.system(size: 10))
@@ -852,7 +852,7 @@ struct StatsAnalyticsView: View {
         VStack(spacing: 3) {
             Text(label).font(.system(size: 10, weight: .semibold)).foregroundColor(.labelMuted).textCase(.uppercase).tracking(0.3)
             Text(date.map { fmtMonthYear($0) } ?? "—")
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .font(.system(size: 12, weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(date != nil ? color : .labelMuted)
         }
     }
@@ -883,7 +883,7 @@ struct StatsAnalyticsView: View {
                                         .frame(width: 48, height: 48)
                                         .rotationEffect(.degrees(-90))
                                     Text("\(Int(rate * 100))%")
-                                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                                        .font(.system(size: 11, weight: .bold, design: AppLook.fontDesign))
                                         .foregroundColor(consistencyColor(rate))
                                 }
                                 Text("\(days)j")
@@ -935,7 +935,7 @@ struct StatsAnalyticsView: View {
                         Spacer()
                         VStack(alignment: .trailing, spacing: 2) {
                             Text("\(store.formatCount(data.recentAvg))/j")
-                                .font(.system(size: 14, weight: .bold, design: .rounded))
+                                .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                             Text("vs \(store.formatCount(data.priorAvg))/j")
                                 .font(.system(size: 10))
                                 .foregroundColor(.labelMuted)
@@ -1002,7 +1002,7 @@ struct StatsAnalyticsView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 let pctColor: Color = row.isCompleted ? .accentGreen : (row.progressPct >= 75 ? .accentGreen : row.progressPct >= 50 ? .accent : .accentWarm)
                                 Text(row.isCompleted ? "✓" : "\(row.progressPct)%")
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                                    .font(.system(size: 11, weight: .bold, design: AppLook.fontDesign))
                                     .foregroundColor(pctColor)
                                     .frame(width: 36, alignment: .trailing)
                                 Text(row.avgCharsPerDay > 0 ? store.formatCount(row.avgCharsPerDay) : "—")
@@ -1052,7 +1052,7 @@ struct StatsAnalyticsView: View {
                                 Image(systemName: review.growthPct >= 0 ? "arrow.up" : "arrow.down")
                                     .font(.system(size: 10, weight: .bold))
                                 Text("\(review.growthPct >= 0 ? "+" : "")\(Int(review.growthPct))%")
-                                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                                    .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                             }
                             .foregroundColor(growthColor)
                             Text("vs mois dernier").font(.system(size: 10)).foregroundColor(.labelMuted)
@@ -1069,7 +1069,7 @@ struct StatsAnalyticsView: View {
                         }
                         .padding(8)
                         .background(Color.accentWarm.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                        .clipShape(AppLook.buttonShape(7))
                     }
                 }
             }
@@ -1079,7 +1079,7 @@ struct StatsAnalyticsView: View {
     private func reviewMetric(value: String, label: String, icon: String, color: Color) -> some View {
         VStack(spacing: 3) {
             Image(systemName: icon).font(.system(size: 10)).foregroundColor(color)
-            Text(value).font(.system(size: 14, weight: .bold, design: .rounded)).foregroundColor(color)
+            Text(value).font(.system(size: 14, weight: .bold, design: AppLook.fontDesign)).foregroundColor(color)
             Text(label).font(.system(size: 10)).foregroundColor(.labelMuted).multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)

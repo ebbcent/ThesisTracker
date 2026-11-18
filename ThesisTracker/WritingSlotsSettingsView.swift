@@ -27,7 +27,7 @@ struct WritingSlotsSettingsView: View {
                     Text("Rappels de créneaux sur ce Mac")
                         .font(.system(size: 13, weight: .medium))
                     Text("Les créneaux sont partagés entre tes deux Mac ; les rappels se règlent sur chacun.")
-                        .font(.system(size: 11)).foregroundColor(.labelMuted)
+                        .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer()
@@ -89,7 +89,7 @@ struct WritingSlotsSettingsView: View {
                         }
                     } label: {
                         Text(label)
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                             .frame(width: 22, height: 22)
                             .foregroundColor(isOn ? .white : .secondary)
                             .background(Circle().fill(isOn ? Color.accent : Color.fieldBg))

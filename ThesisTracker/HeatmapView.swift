@@ -94,7 +94,7 @@ struct HeatmapView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Activite")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("365 derniers jours · \(metrics.activeDays) jour(s) actif(s)")
                     .font(.system(size: 12))
@@ -116,8 +116,8 @@ struct HeatmapView: View {
                 }
                 .padding(.horizontal, 12).padding(.vertical, 8)
                 .background(Color.glassFill)
-                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
+                .clipShape(AppLook.buttonShape(10))
+                .overlay(AppLook.buttonShape(10).stroke(
                     pngExportSuccess ? Color.accentGreen.opacity(0.4) : Color.glassBorder, lineWidth: 1))
                 .contentShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
             }
@@ -491,7 +491,7 @@ struct HeatmapSnapshotView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Heatmap d'activité — 365 jours")
-                        .font(.system(size: 13, weight: .bold, design: .rounded)).foregroundColor(.white)
+                        .font(.system(size: 13, weight: .bold, design: AppLook.fontDesign)).foregroundColor(.white)
                     Text("\(activeDays) jours actifs · \(DataStore.formatNumber(totals.values.reduce(0, +))) car. au total")
                         .font(.system(size: 10)).foregroundColor(.white.opacity(0.4))
                 }

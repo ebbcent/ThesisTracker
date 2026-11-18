@@ -29,7 +29,7 @@ struct ChapterGoalOptionsView: View {
                     Text("Hors total de la thèse")
                         .font(.system(size: 12, weight: .medium))
                     Text("Annexes, dictionnaire… : exclu du reste à écrire et de la projection, compte toujours pour la série")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -77,13 +77,13 @@ struct ChapterGoalStatusLine: View {
             HStack(spacing: 8) {
                 if let message {
                     Text(message.text)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: AppLook.fs(11), weight: .medium))
                         .foregroundColor(message.color)
                 }
                 Spacer(minLength: 0)
                 if let pages {
                     Text(pages)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .help("Équivalent en pages (Réglages > Calendrier d'écriture)")
                 }

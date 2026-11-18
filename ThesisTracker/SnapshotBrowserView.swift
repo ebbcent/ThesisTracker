@@ -28,7 +28,7 @@ struct SnapshotBrowserView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
                     Text("\(snapshots.count) sauvegarde(s) disponible(s)")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 }
                 Spacer()
@@ -56,7 +56,7 @@ struct SnapshotBrowserView: View {
                         .font(.system(size: 14))
                         .foregroundColor(.labelMuted)
                     Text("Les snapshots sont créés automatiquement à chaque sauvegarde significative.")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted.opacity(0.7))
                         .multilineTextAlignment(.center)
                 }
@@ -81,7 +81,7 @@ struct SnapshotBrowserView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(.red)
-                    Text(err).font(.system(size: 11)).foregroundColor(.red)
+                    Text(err).font(.system(size: AppLook.fs(11))).foregroundColor(.red)
                     Spacer()
                 }
                 .padding(.horizontal, 20)
@@ -94,7 +94,7 @@ struct SnapshotBrowserView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.accentGreen)
                     Text("Snapshot restauré avec succès.")
-                        .font(.system(size: 11)).foregroundColor(.accentGreen)
+                        .font(.system(size: AppLook.fs(11))).foregroundColor(.accentGreen)
                     Spacer()
                 }
                 .padding(.horizontal, 20)
@@ -119,8 +119,8 @@ struct SnapshotBrowserView: View {
                     .foregroundColor(.primary)
                     .padding(.horizontal, 16).padding(.vertical, 7)
                     .background(Color.cardBg)
-                    .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
-                    .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
+                    .clipShape(AppLook.buttonShape(8))
+                    .overlay(AppLook.buttonShape(8).stroke(Color.cardBorder, lineWidth: 1))
                     .buttonStyle(.pressable)
             }
             .padding(.horizontal, 20)
@@ -174,7 +174,7 @@ struct SnapshotBrowserView: View {
                         .foregroundColor(.primary)
                     if index == 0 {
                         Text("Dernier")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(.accent)
                             .padding(.horizontal, 5).padding(.vertical, 2)
                             .background(Color.accent.opacity(0.12))
@@ -182,7 +182,7 @@ struct SnapshotBrowserView: View {
                     }
                 }
                 Text(snap.url.lastPathComponent)
-                    .font(.system(size: 10, design: .monospaced))
+                    .font(.system(size: AppLook.fs(10), design: .monospaced))
                     .foregroundColor(.labelMuted)
             }
 
@@ -190,7 +190,7 @@ struct SnapshotBrowserView: View {
 
             // Size
             Text(formatSize(snap.size))
-                .font(.system(size: 11, design: .monospaced))
+                .font(.system(size: AppLook.fs(11), design: .monospaced))
                 .foregroundColor(.labelMuted)
                 .frame(width: 56, alignment: .trailing)
 
@@ -199,11 +199,11 @@ struct SnapshotBrowserView: View {
                 selectedURL = snap.url
                 showConfirm = true
             }
-            .font(.system(size: 11, weight: .medium))
+            .font(.system(size: AppLook.fs(11), weight: .medium))
             .foregroundColor(.accent)
             .padding(.horizontal, 10).padding(.vertical, 5)
             .background(Color.accent.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+            .clipShape(AppLook.buttonShape(6))
             .buttonStyle(.pressable)
         }
         .padding(.horizontal, 16)

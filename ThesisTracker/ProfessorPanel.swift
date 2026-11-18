@@ -94,7 +94,7 @@ struct ProfessorQuickButton: View {
                     .foregroundColor(.accentWarm)
                     .frame(width: size, height: size)
                     .background(
-                        RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
+                        AppLook.buttonShape(7)
                             .fill(Color.accentWarm.opacity(0.09))
                             .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10), style: .continuous)
                                 .stroke(Color.accentWarm.opacity(0.25), lineWidth: 1))

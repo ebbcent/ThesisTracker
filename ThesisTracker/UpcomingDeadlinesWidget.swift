@@ -27,7 +27,7 @@ struct UpcomingDeadlinesWidget: View {
                     Spacer()
                     if !items.isEmpty {
                         Text("\(items.count)")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.system(size: AppLook.fs(10), weight: .bold))
                             .foregroundColor(.labelMuted)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Color.cardBorder)
@@ -38,7 +38,7 @@ struct UpcomingDeadlinesWidget: View {
                 if items.isEmpty {
                     HStack(spacing: 6) {
                         Image(systemName: "checkmark.circle")
-                            .font(.system(size: 11)).foregroundColor(.accentGreen)
+                            .font(.system(size: AppLook.fs(11))).foregroundColor(.accentGreen)
                         Text("Aucun jalon à venir")
                             .font(.system(size: 12)).foregroundColor(.labelMuted)
                         Spacer()
@@ -67,7 +67,7 @@ struct UpcomingDeadlinesWidget: View {
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 Text(item.projectName)
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
                     .lineLimit(1)
             }
@@ -75,7 +75,7 @@ struct UpcomingDeadlinesWidget: View {
             Spacer()
 
             Text(label)
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .font(.system(size: AppLook.fs(11), weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(color)
                 .padding(.horizontal, 8).padding(.vertical, 3)
                 .background(color.opacity(0.10))

@@ -93,9 +93,9 @@ struct ProjectTemplatePickerSheet: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Choisir un modèle")
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                         Text("La structure sera pré-remplie — modifiable ensuite")
-                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                     }
                     Spacer()
                     Button { dismiss() } label: {
@@ -142,12 +142,12 @@ struct ProjectTemplatePickerSheet: View {
                     Spacer()
                 }
                 Text(template.description)
-                    .font(.system(size: 10)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                     .lineLimit(2).multilineTextAlignment(.leading)
                 HStack(spacing: 4) {
-                    Image(systemName: "list.bullet").font(.system(size: 10)).foregroundColor(.labelMuted)
+                    Image(systemName: "list.bullet").font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                     Text("\(template.chapters.count) chapitre\(template.chapters.count != 1 ? "s" : "")")
-                        .font(.system(size: 10)).foregroundColor(.labelMuted)
+                        .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                 }
             }
             .padding(12)

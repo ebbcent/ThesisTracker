@@ -39,7 +39,7 @@ struct MonthlyChallengeCard: View {
                         .foregroundColor(.primary)
                     Spacer()
                     Text(monthLabel)
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(ringColor)
                         .padding(.horizontal, 8).padding(.vertical, 3)
                         .background(ringColor.opacity(0.10))
@@ -104,10 +104,10 @@ struct MonthlyChallengeCard: View {
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 0) {
                 Text("\(pct)")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 17, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("%")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -131,11 +131,11 @@ struct MonthlyChallengeCard: View {
     private func statLine(icon: String, text: String) -> some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted.opacity(0.6))
                 .frame(width: 12)
             Text(text)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
         }
     }

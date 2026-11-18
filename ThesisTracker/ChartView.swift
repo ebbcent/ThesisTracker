@@ -401,7 +401,7 @@ struct ChartView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Graphiques")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text(selectedProject.map { "Projet : \($0.name)" } ?? "Vue globale")
                     .font(.system(size: 12))
@@ -422,8 +422,8 @@ struct ChartView: View {
                 }
                 .padding(.horizontal, 12).padding(.vertical, 8)
                 .background(Color.glassFill)
-                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(
+                .clipShape(AppLook.buttonShape(10))
+                .overlay(AppLook.buttonShape(10).stroke(
                     pngExportSuccess ? Color.accentGreen.opacity(0.4) : Color.glassBorder, lineWidth: 1))
                 .contentShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
             }
@@ -1470,7 +1470,7 @@ struct ChartSnapshotView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.white)
                     Text("Période : \(period)  ·  Total : \(DataStore.formatNumber(total)) car.  ·  Jours actifs : \(active)")
                         .font(.system(size: 11)).foregroundColor(.white.opacity(0.5))

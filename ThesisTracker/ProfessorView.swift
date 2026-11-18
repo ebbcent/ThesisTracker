@@ -51,7 +51,7 @@ struct ProfessorView: View {
             Text("Professeur")
                 .font(.system(size: 13, weight: .semibold))
             Text(settings.model == .opus ? "Opus" : "Sonnet")
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted)
             Spacer()
             Button {
@@ -102,10 +102,10 @@ struct ProfessorView: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("Professeur")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(TypeScale.pageTitle)
                     .foregroundColor(.primary)
                 Text("L. Vandenbossche · directeur virtuel · \(settings.model == .opus ? "Opus" : "Sonnet")")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
             }
             Spacer()
@@ -200,12 +200,12 @@ struct ProfessorView: View {
             if isUser { Spacer(minLength: compact ? 30 : 80) }
             VStack(alignment: .leading, spacing: 6) {
                 Text(isUser ? "Toi" : "L. Vandenbossche")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(isUser ? .accentWarm : .labelMuted)
                 if let name = turn.attachmentName {
                     Label("\(name)\(turn.attachmentSigns.map { " · \(DataStore.formatNumber($0)) signes" } ?? "")",
                           systemImage: "paperclip")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 }
                 Text(markdown(turn.text))
@@ -235,24 +235,24 @@ struct ProfessorView: View {
         VStack(alignment: .leading, spacing: 8) {
             if let error = session.errorMessage {
                 Text(error)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.semOrange)
                     .textSelection(.enabled)
             }
             if let warning = session.journalWarning {
                 Text(warning)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.semOrange)
             }
             if let attachment = session.pendingAttachment {
                 HStack(spacing: 6) {
-                    Image(systemName: "paperclip").font(.system(size: 11))
+                    Image(systemName: "paperclip").font(.system(size: AppLook.fs(11)))
                     Text("\(attachment.fileName) · \(DataStore.formatNumber(attachment.signs)) signes\(attachment.truncated ? " (début seulement)" : "")")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                     Button {
                         session.pendingAttachment = nil
                     } label: {
-                        Image(systemName: "xmark.circle.fill").font(.system(size: 11))
+                        Image(systemName: "xmark.circle.fill").font(.system(size: AppLook.fs(11)))
                     }
                     .buttonStyle(.pressable)
                     .accessibilityLabel("Retirer le texte joint")
@@ -299,7 +299,7 @@ struct ProfessorView: View {
             }
             if let usage = session.lastUsage {
                 Text("Dernier échange : \(usage.input + usage.cacheRead + usage.cacheWrite) jetons lus (dont \(usage.cacheRead) depuis le cache), \(usage.output) écrits.")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -322,7 +322,7 @@ struct ProfessorView: View {
             }
             if let context = session.context {
                 Text("Consignes : \(context.personaFromVault ? "« Consignes app.md » du dossier" : "consignes intégrées à l'app")")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                 ForEach(context.sources) { source in
                     HStack {
                         Image(systemName: icon(source.status))
@@ -331,11 +331,11 @@ struct ProfessorView: View {
                         Text(source.label).font(.system(size: 12))
                         Spacer()
                         Text(statusText(source.status))
-                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                     }
                 }
                 Text("Le contexte est figé au début de la séance. « Recharger » ou « Nouvelle séance » relisent le coffre.")
-                    .font(.system(size: 10)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer()

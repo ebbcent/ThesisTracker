@@ -27,7 +27,7 @@ struct MonthlyReportWidget: View {
                         .font(.system(size: 13, weight: .semibold))
                     Spacer()
                     Text("\(reports.count)")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 6).padding(.vertical, 2)
                         .background(Color.labelMuted.opacity(0.1))
@@ -38,18 +38,18 @@ struct MonthlyReportWidget: View {
                         Text(monthLabel(latest.monthKey))
                             .font(.system(size: 12, weight: .semibold))
                         Text(latest.headline)
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                             .lineLimit(2)
                     }
                 } else {
                     Text("Le premier bilan sera généré automatiquement le 1er du mois suivant.")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 }
                 Button { showSheet = true } label: {
                     Text(reports.isEmpty ? "Voir le détail" : "Lire les bilans")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 10).padding(.vertical, 6)
                         .background(Color.semSky)
@@ -123,7 +123,7 @@ struct MonthlyReportSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Bilans mensuels").font(.system(size: 16, weight: .semibold))
                 Text("\(reports.count) bilan\(reports.count > 1 ? "s" : "")")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Button { dismiss() } label: {
@@ -147,7 +147,7 @@ struct MonthlyReportSheet: View {
                 .font(.system(size: 13))
                 .foregroundColor(.labelMuted)
             Text("Le premier bilan apparaîtra le 1er du mois suivant le début d'utilisation.")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
@@ -163,14 +163,14 @@ struct MonthlyReportSheet: View {
                     Button { selectedKey = report.monthKey } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "calendar")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.labelMuted)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(monthLabel(report.monthKey))
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundColor(.primary)
                                 Text("\(report.charsWritten.formatted()) car. · \(report.daysActive) j")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                     .foregroundColor(.labelMuted)
                             }
                             Spacer()
@@ -193,7 +193,7 @@ struct MonthlyReportSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     Text(monthLabel(r.monthKey))
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     Text(r.headline)
                         .font(.system(size: 13))
                         .foregroundColor(.labelMuted)
@@ -210,7 +210,7 @@ struct MonthlyReportSheet: View {
                     }
                     Divider()
                     Text("RÉFLEXION LIBRE")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: AppLook.fs(10), weight: .bold))
                         .foregroundColor(.labelMuted).kerning(0.8)
                     TextEditor(text: $notesDraft)
                         .font(.system(size: 12))
@@ -222,7 +222,7 @@ struct MonthlyReportSheet: View {
                         store.updateMonthlyReportNotes(monthKey: r.monthKey, notes: notesDraft)
                     } label: {
                         Text("Enregistrer la réflexion")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 12).padding(.vertical, 6)
                             .background(Color.accent)
@@ -243,7 +243,7 @@ struct MonthlyReportSheet: View {
     private func statTile(label: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label.uppercased())
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.6)
             Text(value)

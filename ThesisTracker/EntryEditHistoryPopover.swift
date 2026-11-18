@@ -15,14 +15,14 @@ struct EntryEditHistoryPopover: View {
             // Header
             HStack(spacing: 8) {
                 Image(systemName: "clock.arrow.circlepath")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.accent)
                 Text("Historique des modifications")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.primary)
                 Spacer()
                 Text(entry.date)
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
             .padding(.horizontal, 14).padding(.top, 14).padding(.bottom, 10)
@@ -31,7 +31,7 @@ struct EntryEditHistoryPopover: View {
 
             if entry.editHistory.isEmpty {
                 Text("Aucune modification enregistrée")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                     .padding(14)
             } else {
@@ -61,32 +61,32 @@ struct EntryEditHistoryPopover: View {
                     .fill(isUp ? Color.accentGreen.opacity(0.12) : Color.accentWarm.opacity(0.12))
                     .frame(width: 26, height: 26)
                 Image(systemName: isUp ? "arrow.up" : "arrow.down")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(isUp ? .accentGreen : .accentWarm)
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
                     Text(fmt(rec.oldValue))
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .strikethrough()
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                     Text(fmt(rec.newValue))
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.primary)
                 }
                 HStack(spacing: 4) {
                     let sign = rec.delta > 0 ? "+" : ""
                     Text("\(sign)\(fmt(abs(rec.delta)))")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(isUp ? .accentGreen : .accentWarm)
                     Text("·")
-                        .font(.system(size: 10)).foregroundColor(.labelMuted)
+                        .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                     Text(rec.timestamp)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 }
             }

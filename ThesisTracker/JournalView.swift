@@ -27,7 +27,7 @@ struct JournalWidget: View {
                         .font(.system(size: 13, weight: .semibold))
                     Spacer()
                     Text("\(entries.count)")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 6).padding(.vertical, 2)
                         .background(Color.labelMuted.opacity(0.1))
@@ -35,7 +35,7 @@ struct JournalWidget: View {
                 }
                 if let todayEntry {
                     Text(todayEntry.content)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.primary.opacity(0.85))
                         .lineLimit(3)
                         .padding(8)
@@ -43,23 +43,23 @@ struct JournalWidget: View {
                         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                 } else if let last = entries.first {
                     Text("Dernière entrée — \(last.date.suffix(5))")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                     Text(last.content)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .lineLimit(2)
                 } else {
                     Text("Écris une note libre par jour — réflexion, blocage, idée méta. Pas pour produire, pour respirer.")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 }
                 Button { showSheet = true } label: {
                     HStack(spacing: 5) {
                         Image(systemName: todayEntry == nil ? "square.and.pencil" : "list.bullet")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                         Text(todayEntry == nil ? "Écrire aujourd'hui" : "Ouvrir le journal")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)
@@ -128,7 +128,7 @@ struct JournalSheet: View {
         HStack(spacing: 6) {
             Image(systemName: icon).foregroundColor(color)
             Text(text)
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: AppLook.fs(11), weight: .medium))
                 .lineLimit(2)
             Spacer()
         }
@@ -144,7 +144,7 @@ struct JournalSheet: View {
                 Text("Journal de bord")
                     .font(.system(size: 16, weight: .semibold))
                 Text("\(store.data.journalEntries.count) entrée\(store.data.journalEntries.count > 1 ? "s" : "")")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Menu {
@@ -153,7 +153,7 @@ struct JournalSheet: View {
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "square.and.arrow.up")
-                    Text("Exporter").font(.system(size: 11, weight: .medium))
+                    Text("Exporter").font(.system(size: AppLook.fs(11), weight: .medium))
                 }
                 .foregroundColor(.labelMuted)
                 .padding(.horizontal, 10).padding(.vertical, 5)
@@ -178,7 +178,7 @@ struct JournalSheet: View {
     private var todayComposer: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("AUJOURD'HUI — \(DataStore.today)")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.6)
             HStack(alignment: .top, spacing: 8) {
@@ -194,7 +194,7 @@ struct JournalSheet: View {
                 } label: {
                     VStack(spacing: 4) {
                         Image(systemName: "plus.circle.fill").font(.system(size: 18))
-                        Text("Ajouter").font(.system(size: 10, weight: .semibold))
+                        Text("Ajouter").font(.system(size: AppLook.fs(10), weight: .semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 12).padding(.vertical, 10)
@@ -211,7 +211,7 @@ struct JournalSheet: View {
     private var searchBar: some View {
         HStack(spacing: 6) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
             TextField("Rechercher dans le journal…", text: $query)
                 .textFieldStyle(.plain)
@@ -232,7 +232,7 @@ struct JournalSheet: View {
             Text(query.isEmpty
                  ? "Note tes blocages, déclics et idées du jour. Le champ du haut sauvegarde immédiatement."
                  : "Aucune entrée ne correspond à « \(query) ».")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -260,12 +260,12 @@ struct JournalSheet: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
                 Text(longDate(entry.date))
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(.labelMuted)
                     .kerning(0.4)
                 if let mood = entry.mood {
                     Text("· humeur \(mood)/5")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted.opacity(0.8))
                 }
                 Spacer()
@@ -274,7 +274,7 @@ struct JournalSheet: View {
                     else { editingId = entry.id; editingText = entry.content }
                 } label: {
                     Image(systemName: editingId == entry.id ? "checkmark.circle.fill" : "pencil")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(editingId == entry.id ? .accentGreen : .labelMuted.opacity(0.6))
                 }
                 .buttonStyle(.pressable)
@@ -284,7 +284,7 @@ struct JournalSheet: View {
                     store.deleteJournalEntry(entry.id)
                 } label: {
                     Image(systemName: "trash")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted.opacity(0.6))
                 }
                 .buttonStyle(.pressable)
@@ -303,7 +303,7 @@ struct JournalSheet: View {
                     editingId = nil
                 }
                 .buttonStyle(.pressable)
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: AppLook.fs(11), weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 10).padding(.vertical, 4)
                 .background(Color.accent)
@@ -318,7 +318,7 @@ struct JournalSheet: View {
                 HStack(spacing: 4) {
                     ForEach(entry.tags.prefix(5), id: \.self) { tag in
                         Text("#\(tag)")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                             .padding(.horizontal, 5).padding(.vertical, 1)
                             .background(Color.labelMuted.opacity(0.1))
@@ -334,7 +334,7 @@ struct JournalSheet: View {
         HStack(spacing: 6) {
             Image(systemName: "checkmark.circle.fill").foregroundColor(.accentGreen)
             Text("Copié dans le presse-papier")
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: AppLook.fs(11), weight: .medium))
             Spacer()
         }
         .padding(.horizontal, 12).padding(.vertical, 8)

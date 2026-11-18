@@ -50,7 +50,7 @@ struct WeekComparisonWidget: View {
         let color: Color = isFlat ? .labelMuted : (isUp ? .accentGreen : Color(hex: "#F97316"))
         let label = isFlat ? "stable" : (isUp ? "+\(deltaPercent)%" : "\(deltaPercent)%")
         return Text(label)
-            .font(.system(size: 10, weight: .semibold))
+            .font(.system(size: AppLook.fs(10), weight: .semibold))
             .foregroundColor(color)
             .padding(.horizontal, 7).padding(.vertical, 3)
             .background(color.opacity(0.10))
@@ -77,7 +77,7 @@ struct WeekComparisonWidget: View {
                             .frame(width: 7, height: th)
                     }
                     Text(data.dayLabels[i])
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 }
                 if i < 6 { Spacer(minLength: 0) }
@@ -89,7 +89,7 @@ struct WeekComparisonWidget: View {
     private func legendDot(color: Color, label: String) -> some View {
         HStack(spacing: 5) {
             RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 12, height: 4)
-            Text(label).font(.system(size: 10)).foregroundColor(.labelMuted)
+            Text(label).font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
         }
     }
 }

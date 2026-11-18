@@ -34,7 +34,7 @@ struct ThesisReportSheet: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text("Rapport de suivi")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 17, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("Prêt à partager avec ton directeur de thèse")
                     .font(.system(size: 12))
@@ -74,7 +74,7 @@ struct ThesisReportSheet: View {
             // Bouton fermer
             Button { dismiss() } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.labelMuted)
                     .padding(7)
                     .background(Circle().fill(Color.glassFill))

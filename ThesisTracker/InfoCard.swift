@@ -18,7 +18,7 @@ struct InfoCard<Content: View>: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Label(title, systemImage: systemImage)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                 Spacer()
             }

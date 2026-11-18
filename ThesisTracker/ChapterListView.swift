@@ -91,7 +91,7 @@ struct ProjectFormView: View {
 
             VStack(alignment: .leading, spacing: 24) {
                 Text(isEditing ? "Renommer le projet" : "Nouveau projet")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
 
                 DarkFormField(label: "Nom du projet", placeholder: "ex: Ma thèse, Article Nature…", text: $name, onSubmit: save)
@@ -108,8 +108,8 @@ struct ProjectFormView: View {
                                 withAppAnimation(.easeInOut(duration: 0.15)) { selectedType = nil }
                             } label: {
                                 HStack(spacing: 5) {
-                                    Image(systemName: "minus.circle").font(.system(size: 11))
-                                    Text("Aucun").font(.system(size: 11, weight: selectedType == nil ? .semibold : .regular))
+                                    Image(systemName: "minus.circle").font(.system(size: AppLook.fs(11)))
+                                    Text("Aucun").font(.system(size: AppLook.fs(11), weight: selectedType == nil ? .semibold : .regular))
                                 }
                                 .foregroundColor(selectedType == nil ? .white : .labelMuted)
                                 .padding(.horizontal, 12).padding(.vertical, 7)
@@ -124,8 +124,8 @@ struct ProjectFormView: View {
                                     withAppAnimation(.easeInOut(duration: 0.15)) { selectedType = type }
                                 } label: {
                                     HStack(spacing: 5) {
-                                        Image(systemName: type.icon).font(.system(size: 11))
-                                        Text(type.label).font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                                        Image(systemName: type.icon).font(.system(size: AppLook.fs(11)))
+                                        Text(type.label).font(.system(size: AppLook.fs(11), weight: isSelected ? .semibold : .regular))
                                     }
                                     .foregroundColor(isSelected ? .white : .labelMuted)
                                     .padding(.horizontal, 12).padding(.vertical, 7)
@@ -176,7 +176,7 @@ struct ProjectFormView: View {
                                             .font(.system(size: 14))
                                             .foregroundColor(isSelected ? .white : .labelMuted)
                                         Text(template.rawValue)
-                                            .font(.system(size: 10, weight: .medium))
+                                            .font(.system(size: AppLook.fs(10), weight: .medium))
                                             .foregroundColor(isSelected ? .white : .secondary)
                                             .multilineTextAlignment(.center)
                                             .lineLimit(2)
@@ -195,10 +195,10 @@ struct ProjectFormView: View {
                         if selectedTemplate != .none {
                             HStack(spacing: 6) {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.accentGreen)
                                 Text("\(selectedTemplate.chapters.count) chapitres seront créés automatiquement")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.labelMuted)
                             }
                         }
@@ -208,13 +208,13 @@ struct ProjectFormView: View {
                             showTemplatePicker = true
                         } label: {
                             HStack(spacing: 6) {
-                                Image(systemName: "sparkles").font(.system(size: 11)).foregroundColor(.accent)
+                                Image(systemName: "sparkles").font(.system(size: AppLook.fs(11))).foregroundColor(.accent)
                                 if let t = selectedProjectTemplate {
-                                    Text("Modèle : \(t.name)").font(.system(size: 11, weight: .medium)).foregroundColor(.accent)
-                                    Image(systemName: "xmark.circle.fill").font(.system(size: 10)).foregroundColor(.labelMuted)
+                                    Text("Modèle : \(t.name)").font(.system(size: AppLook.fs(11), weight: .medium)).foregroundColor(.accent)
+                                    Image(systemName: "xmark.circle.fill").font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                                         .onTapGesture { selectedProjectTemplate = nil; selectedTemplate = .none }
                                 } else {
-                                    Text("Choisir parmi les modèles enrichis →").font(.system(size: 11, weight: .medium)).foregroundColor(.accent)
+                                    Text("Choisir parmi les modèles enrichis →").font(.system(size: AppLook.fs(11), weight: .medium)).foregroundColor(.accent)
                                 }
                             }
                         }
@@ -234,8 +234,8 @@ struct ProjectFormView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(10))
+                        .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
@@ -343,14 +343,14 @@ struct ChapterFormView: View {
 
             VStack(alignment: .leading, spacing: 24) {
                 Text(isEditing ? "Modifier le chapitre" : "Nouveau chapitre")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
 
                 DarkFormField(label: "Nom du chapitre", placeholder: "ex: Chapitre 1 — Introduction", text: $name)
                 DarkFormField(label: "Objectif (en caractères, optionnel)", placeholder: "ex: 20000 — laisser vide si aucun", text: $goalText)
                 if let line = pagesLine {   // 5.12 — équivalent en pages de thèse
                     Text(line)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 }
                 ChapterGoalOptionsView(goalKind: $goalKind, excludedFromTotal: $excludedFromTotal)
@@ -376,7 +376,7 @@ struct ChapterFormView: View {
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.labelMuted)
                         Text("Numéro du draft en cours")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted.opacity(0.6))
                     }
                     Spacer()
@@ -421,8 +421,8 @@ struct ChapterFormView: View {
                                 chapterPriority = p
                             } label: {
                                 HStack(spacing: 5) {
-                                    Image(systemName: p.icon).font(.system(size: 10))
-                                    Text(p.label).font(.system(size: 11, weight: sel ? .semibold : .regular))
+                                    Image(systemName: p.icon).font(.system(size: AppLook.fs(10)))
+                                    Text(p.label).font(.system(size: AppLook.fs(11), weight: sel ? .semibold : .regular))
                                 }
                                 .foregroundColor(sel ? .white : .labelMuted)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
@@ -466,8 +466,8 @@ struct ChapterFormView: View {
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .background(Color.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                        .clipShape(AppLook.buttonShape(10))
+                        .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                         .buttonStyle(.pressable)
                         .keyboardShortcut(.escape)
 
@@ -486,8 +486,8 @@ struct ChapterFormView: View {
                             .foregroundColor(.accent)
                             .padding(.horizontal, 14).padding(.vertical, 10)
                             .background(Color.accent.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.accent.opacity(0.2), lineWidth: 1))
+                            .clipShape(AppLook.buttonShape(10))
+                            .overlay(AppLook.buttonShape(10).stroke(Color.accent.opacity(0.2), lineWidth: 1))
                         }
                         .buttonStyle(.pressable)
                         .fixedSize()

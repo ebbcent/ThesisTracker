@@ -47,16 +47,16 @@ struct ThesisProjectionCard: View {
                 // ── Header ──────────────────────────
                 HStack(spacing: 0) {
                     Label("Projection finale", systemImage: "flag.checkered")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                         .foregroundColor(.primary)
                     Spacer()
                     if velocity > 0 {
                         HStack(spacing: 4) {
                             Image(systemName: "bolt.fill")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.accent)
                             Text(store.formatCountShort(velocity) + "/j · 14j")
-                                .font(.system(size: 11, weight: .medium))
+                                .font(.system(size: AppLook.fs(11), weight: .medium))
                                 .foregroundColor(.accent)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
@@ -104,10 +104,10 @@ struct ThesisProjectionCard: View {
                 if chaptersExcluded > 0 {
                     HStack(spacing: 6) {
                         Image(systemName: "tray.full")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                         Text("\(chaptersExcluded) chapitre(s) hors total (annexes…) non compté(s) ici.")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -117,10 +117,10 @@ struct ThesisProjectionCard: View {
                 if chaptersWithoutGoal > 0 {
                     HStack(spacing: 6) {
                         Image(systemName: "info.circle.fill")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                         Text("\(chaptersWithoutGoal) chapitre(s) sans objectif — projection partielle.")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -132,16 +132,16 @@ struct ThesisProjectionCard: View {
     private func projStat(label: String, value: String, subtitle: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label.uppercased())
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.8)
             Text(value)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(TypeScale.pageTitle)
                 .foregroundColor(color)
                 .lineLimit(1)
                 .minimumScaleFactor(0.65)
             Text(subtitle)
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -182,15 +182,15 @@ struct MonthlyMiniChart: View {
                 // Header
                 HStack {
                     Label("Tendance mensuelle", systemImage: "chart.bar.fill")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                         .foregroundColor(.primary)
                     Spacer()
                     if data.count > 1 {
                         HStack(spacing: 4) {
                             Image(systemName: "hand.point.left")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                             Text("Faire défiler")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                         }
                         .foregroundColor(.labelMuted)
                     }
@@ -215,11 +215,11 @@ struct MonthlyMiniChart: View {
                                     Group {
                                         if item.chars > 0 {
                                             Text(store.formatCountShort(item.chars))
-                                                .font(.system(size: 10, weight: .semibold))
+                                                .font(.system(size: AppLook.fs(10), weight: .semibold))
                                                 .foregroundColor(isLast ? .accent : .labelMuted)
                                         } else {
                                             Text("—")
-                                                .font(.system(size: 10))
+                                                .font(.system(size: AppLook.fs(10)))
                                                 .foregroundColor(.labelMuted.opacity(0.5))
                                         }
                                     }
@@ -242,7 +242,7 @@ struct MonthlyMiniChart: View {
 
                                     // Label mois
                                     Text(item.label)
-                                        .font(.system(size: 10, weight: isLast ? .semibold : .regular))
+                                        .font(.system(size: AppLook.fs(10), weight: isLast ? .semibold : .regular))
                                         .foregroundColor(isLast ? .accent : .labelMuted)
                                         .lineLimit(1)
                                         .frame(width: barWidth)
@@ -279,17 +279,17 @@ struct WeekdayChart: View {
             VStack(alignment: .leading, spacing: 14) {
                 HStack {
                     Label("Productivité par jour", systemImage: "chart.bar.xaxis.ascending")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                         .foregroundColor(.primary)
                     Spacer()
                     // Badge meilleur jour
                     if bestIdx >= 0 {
                         HStack(spacing: 4) {
                             Image(systemName: "star.fill")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.accentWarm)
                             Text(data[bestIdx].day)
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.system(size: AppLook.fs(11), weight: .semibold))
                                 .foregroundColor(.accentWarm)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 4)
@@ -324,7 +324,7 @@ struct WeekdayChart: View {
                                     }
 
                                     Text(item.day)
-                                        .font(.system(size: 10, weight: isBest ? .bold : .regular))
+                                        .font(.system(size: AppLook.fs(10), weight: isBest ? .bold : .regular))
                                         .foregroundColor(isBest ? .accentWarm : .labelMuted)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -335,7 +335,7 @@ struct WeekdayChart: View {
                         HStack {
                             Spacer()
                             Text("moyenne · toute la période · jours actifs seulement")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted)
                         }
                     }

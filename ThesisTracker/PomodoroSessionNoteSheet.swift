@@ -19,10 +19,10 @@ struct PomodoroSessionNoteSheet: View {
                 if let delta = controller.sessionWritingDelta, delta > 0 {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("+" + store.formatCount(delta))
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .font(TypeScale.pageTitle)
                             .foregroundColor(.accentGreen)
                         Text("pendant cette session")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundStyle(.secondary)
                     }
                     .padding(.horizontal, 12).padding(.vertical, 8)

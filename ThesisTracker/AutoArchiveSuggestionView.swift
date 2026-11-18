@@ -53,7 +53,7 @@ struct AutoArchiveSuggestionBanner: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.primary)
                 Text("Aucune saisie depuis plus de 90 jours")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
             Spacer()
@@ -61,25 +61,25 @@ struct AutoArchiveSuggestionBanner: View {
                 Button("Archiver") {
                     archiveProject(project)
                 }
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: AppLook.fs(11), weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 10).padding(.vertical, 4)
                 .background(Color.accentWarm)
-                .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
+                .clipShape(AppLook.buttonShape(6))
                 .buttonStyle(.pressable)
 
                 Button("Ignorer") {
                     dismissProject(project)
                 }
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
                 .buttonStyle(.pressable)
             }
         }
         .padding(12)
         .background(Color.accentWarm.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-        .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.accentWarm.opacity(0.2), lineWidth: 1))
+        .clipShape(AppLook.buttonShape(10))
+        .overlay(AppLook.buttonShape(10).stroke(Color.accentWarm.opacity(0.2), lineWidth: 1))
     }
 
     private func archiveProject(_ project: Project) {

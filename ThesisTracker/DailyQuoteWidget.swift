@@ -61,7 +61,7 @@ struct DailyQuoteWidget: View {
                         pinnedQuoteIndex = next
                     } label: {
                         Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: AppLook.fs(10), weight: .medium))
                             .foregroundColor(.labelMuted)
                     }
                     .buttonStyle(.pressable)
@@ -84,7 +84,7 @@ struct DailyQuoteWidget: View {
                 HStack {
                     Spacer()
                     Text("— \(quote.author)")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: AppLook.fs(11), weight: .medium))
                         .foregroundColor(.labelMuted)
                         .italic()
                 }

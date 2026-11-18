@@ -86,6 +86,12 @@ struct SettingsView: View {
     @State private var snapshotCount: Int = 0
 
     var body: some View {
+        settingsBody
+            .frame(minWidth: 960, idealWidth: 1060, minHeight: 560, idealHeight: 760)   // 5.27
+            .tint(Color.accent)   // 5.27 — interrupteurs, curseurs et sélecteurs à la couleur d'accent
+    }
+
+    private var settingsBody: some View {
         ZStack {
             AppBackdrop().ignoresSafeArea()
 
@@ -95,10 +101,10 @@ struct SettingsView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Réglages")
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .font(TypeScale.pageTitle)
                             .foregroundColor(.primary)
                         Text("Objectifs · Apparence · Comportement")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
                     Spacer()
@@ -166,14 +172,14 @@ struct SettingsView: View {
                                         Text(deadlineBuffer == 0
                                              ? "Échéances affichées sans marge"
                                              : "Échéances avancées de \(deadlineBuffer) jour\(deadlineBuffer > 1 ? "s" : "")")
-                                            .font(.system(size: 11))
+                                            .font(.system(size: AppLook.fs(11)))
                                             .foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Stepper("\(deadlineBuffer) j", value: $deadlineBuffer, in: 0...14)
                                         .labelsHidden()
                                     Text("\(deadlineBuffer) j")
-                                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                        .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                                         .frame(width: 32, alignment: .trailing)
                                 }
                                 .padding(14)
@@ -193,7 +199,7 @@ struct SettingsView: View {
                                         Text("Objectif variable selon le jour")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Objectif différent pour chaque jour")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Toggle("", isOn: $weekdayGoalsEnabled)
@@ -231,11 +237,11 @@ struct SettingsView: View {
                                                 .overlay(RoundedRectangle(cornerRadius: AppLook.r(7, 10))
                                                     .stroke(Color.cardBorder, lineWidth: 1))
                                                 Text(useWordCount ? "mots" : "car.")
-                                                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                                 Spacer()
                                                 if wdGoalTexts[wd]?.isEmpty ?? true {
                                                     Text("= global")
-                                                        .font(.system(size: 10))
+                                                        .font(.system(size: AppLook.fs(10)))
                                                         .foregroundColor(.labelMuted.opacity(0.6))
                                                 }
                                             }
@@ -292,7 +298,7 @@ struct SettingsView: View {
                                         Text("Snapshots automatiques")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("\(snapshotCount) sauvegarde(s) disponible(s)")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Button("Parcourir") { showSnapshotBrowser = true }
@@ -300,7 +306,7 @@ struct SettingsView: View {
                                         .foregroundColor(.accent)
                                         .padding(.horizontal, 10).padding(.vertical, 5)
                                         .background(Color.accent.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerRadius: AppLook.r(7, 10)))
+                                        .clipShape(AppLook.buttonShape(7))
                                         .buttonStyle(.pressable)
                                 }
                                 .padding(14)
@@ -321,7 +327,7 @@ struct SettingsView: View {
                                         Text("Exporter le fichier JSON")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Sauvegarde complète de toutes les données")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     if jsonExportSuccess {
@@ -353,10 +359,10 @@ struct SettingsView: View {
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         if let n = compactResult {
                                             Text(n == 0 ? "Aucune entrée compactée" : "\(n) entrée(s) compactée(s)")
-                                                .font(.system(size: 11)).foregroundColor(.accentGreen)
+                                                .font(.system(size: AppLook.fs(11))).foregroundColor(.accentGreen)
                                         } else {
                                             Text("Agrège les données de plus de 2 ans par mois")
-                                                .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                                .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                         }
                                     }
                                     Spacer()
@@ -396,9 +402,9 @@ struct SettingsView: View {
                                             HStack(alignment: .top, spacing: 6) {
                                                 Image(systemName: issue.severity == .error ? "xmark.circle.fill" : "exclamationmark.circle.fill")
                                                     .foregroundColor(issue.severity == .error ? .red : .orange)
-                                                    .font(.system(size: 10))
+                                                    .font(.system(size: AppLook.fs(10)))
                                                 Text(issue.message)
-                                                    .font(.system(size: 10, design: .monospaced))
+                                                    .font(.system(size: AppLook.fs(10), design: .monospaced))
                                                     .foregroundColor(.primary.opacity(0.8))
                                             }
                                         }
@@ -419,7 +425,7 @@ struct SettingsView: View {
                                         Text("Statistiques d'utilisation")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Ouvertures ce mois-ci")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Text("\(store.appOpensThisMonth)")
@@ -462,7 +468,7 @@ struct SettingsView: View {
                                         Text("Afficher en mots")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Divise les compteurs par 5 (estimation)")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Toggle("", isOn: $useWordCount)
@@ -482,7 +488,7 @@ struct SettingsView: View {
                                         Text("Forcer le mode sombre")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Ignore l'apparence du système")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Toggle("", isOn: $forceDarkMode)
@@ -513,7 +519,8 @@ struct SettingsView: View {
 
                                 Divider().padding(.leading, 48)
 
-                                HStack(spacing: 8) {
+                                // 5.27 — grille qui passe à la ligne : la rangée, devenue trop large, écrasait la colonne voisine
+                                LazyVGrid(columns: [GridItem(.adaptive(minimum: 50, maximum: 70), spacing: 8)], alignment: .leading, spacing: 10) {
                                     ForEach(accentPresets, id: \.hex) { preset in
                                         let isSelected = selectedAccentHex.uppercased() == preset.hex.uppercased()
                                         Button {
@@ -525,29 +532,29 @@ struct SettingsView: View {
                                                     Circle().fill(Color(hex: preset.hex)).frame(width: 26, height: 26)
                                                     if isSelected {
                                                         Image(systemName: "checkmark")
-                                                            .font(.system(size: 10, weight: .bold))
+                                                            .font(.system(size: AppLook.fs(10), weight: .bold))
                                                             .foregroundColor(.white)
                                                     }
                                                 }
                                                 Text(preset.name)
-                                                    .font(.system(size: 10, weight: isSelected ? .bold : .regular))
+                                                    .font(.system(size: AppLook.fs(10), weight: isSelected ? .bold : .regular))
                                                     .foregroundColor(isSelected ? .primary : .labelMuted)
                                             }
                                         }
                                         .buttonStyle(.pressable)
                                     }
 
-                                    Divider().frame(height: 36)
-
-                                    ColorPicker("", selection: $customColor, supportsOpacity: false)
-                                        .labelsHidden()
-                                        .frame(width: 26, height: 26)
-                                        .onChange(of: customColor) { _, newColor in
-                                            selectedAccentHex = newColor.toHex()
-                                        }
-                                    Text("Perso")
-                                        .font(.system(size: 10))
-                                        .foregroundColor(.labelMuted)
+                                    VStack(spacing: 4) {
+                                        ColorPicker("", selection: $customColor, supportsOpacity: false)
+                                            .labelsHidden()
+                                            .frame(width: 26, height: 26)
+                                            .onChange(of: customColor) { _, newColor in
+                                                selectedAccentHex = newColor.toHex()
+                                            }
+                                        Text("Perso")
+                                            .font(.system(size: AppLook.fs(10)))
+                                            .foregroundColor(.labelMuted)
+                                    }
                                 }
                                 .padding(.horizontal, 14).padding(.vertical, 10)
                             }
@@ -561,7 +568,7 @@ struct SettingsView: View {
                                         Text("Taille du compteur")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Taille de l'affichage principal (⌘⇧I)")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Text("\(Int(focusCounterSize)) pt")
@@ -572,9 +579,9 @@ struct SettingsView: View {
                                 .padding(14)
                                 Divider()
                                 HStack(spacing: 10) {
-                                    Text("48").font(.system(size: 10, design: .monospaced)).foregroundColor(.labelMuted)
+                                    Text("48").font(.system(size: AppLook.fs(10), design: .monospaced)).foregroundColor(.labelMuted)
                                     Slider(value: $focusCounterSize, in: 48...96, step: 4).tint(.accent)
-                                    Text("96").font(.system(size: 10, design: .monospaced)).foregroundColor(.labelMuted)
+                                    Text("96").font(.system(size: AppLook.fs(10), design: .monospaced)).foregroundColor(.labelMuted)
                                 }
                                 .padding(.horizontal, 14).padding(.vertical, 10)
                             }
@@ -594,7 +601,7 @@ struct SettingsView: View {
                                         Text("Sessions Pomodoro par semaine")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Objectif affiché dans le tableau de bord")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     HStack(spacing: 6) {
@@ -637,7 +644,7 @@ struct SettingsView: View {
                                         Text("Démarrer avec macOS")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Lance Writing Process au démarrage de la session")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Toggle("", isOn: $launchAtLogin)
@@ -667,7 +674,7 @@ struct SettingsView: View {
                                         Text("Rappel quotidien")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text("Notification à l'heure choisie — active aussi les rappels ci-dessous (série, récap, objectif…)")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Toggle("", isOn: $notificationsEnabled)
@@ -688,7 +695,7 @@ struct SettingsView: View {
                                         Text("État dans macOS")
                                             .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                         Text(notificationDiagnostic.isEmpty ? "…" : notificationDiagnostic)
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                             .fixedSize(horizontal: false, vertical: true)
                                     }
                                     Spacer()
@@ -719,7 +726,7 @@ struct SettingsView: View {
                                             Text("Alerte série en danger")
                                                 .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                             Text("Si la série n'est pas maintenue ce jour-là")
-                                                .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                                .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                         }
                                         Spacer()
                                         if streakWarningEnabled {
@@ -752,7 +759,7 @@ struct SettingsView: View {
                                             Text("Récapitulatif quotidien")
                                                 .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                             Text("Bilan à 19h avec le total du jour et la série")
-                                                .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                                .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                         }
                                         Spacer()
                                         Toggle("", isOn: $ntfDailyRecapEnabled)
@@ -773,7 +780,7 @@ struct SettingsView: View {
                                             Text("Rapport hebdomadaire")
                                                 .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                             Text("Synthèse de la semaine chaque dimanche à 19h")
-                                                .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                                .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                         }
                                         Spacer()
                                         Toggle("", isOn: $ntfWeeklyReportEnabled)
@@ -794,7 +801,7 @@ struct SettingsView: View {
                                             Text("Rappel de saisie")
                                                 .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                             Text("Si aucune écriture enregistrée dans la journée")
-                                                .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                                .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                         }
                                         Spacer()
                                         if ntfEmptyDayEnabled {
@@ -827,7 +834,7 @@ struct SettingsView: View {
                                             Text("Objectif atteint (arrière-plan)")
                                                 .font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
                                             Text("Notification quand l'objectif est franchi hors de l'app")
-                                                .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                                .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                         }
                                         Spacer()
                                         Toggle("", isOn: $ntfBgGoalEnabled)
@@ -887,7 +894,7 @@ struct SettingsView: View {
                                                         }
                                                     } label: {
                                                         Text(label)
-                                                            .font(.system(size: 10, weight: isOn ? .bold : .regular))
+                                                            .font(.system(size: AppLook.fs(10), weight: isOn ? .bold : .regular))
                                                             .foregroundColor(isOn ? .white : .labelMuted)
                                                             .frame(width: 34, height: 24)
                                                             .background(isOn ? Color.accent : Color.fieldBg)
@@ -910,6 +917,7 @@ struct SettingsView: View {
                 }   // HStack colonnes
                 .padding(.horizontal, 24)
                 .padding(.vertical, 20)
+                .frame(minWidth: 900)   // 5.27 — deux colonnes lisibles ; en dessous, la fenêtre défile
                 }   // ScrollView
 
                 Divider()
@@ -921,14 +929,14 @@ struct SettingsView: View {
                     let fileExists = FileManager.default.fileExists(atPath: activeURL.path)
                     HStack(spacing: 8) {
                         Image(systemName: store.isUsingICloud ? "icloud.fill" : "internaldrive.fill")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(store.isUsingICloud ? .accent : .labelMuted)
                         Text(store.isUsingICloud ? "iCloud Drive" : "Local")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(store.isUsingICloud ? .accent : .labelMuted)
-                        Text("·").foregroundColor(.labelMuted).font(.system(size: 10))
+                        Text("·").foregroundColor(.labelMuted).font(.system(size: AppLook.fs(10)))
                         Text(activeURL.path)
-                            .font(.system(size: 10, design: .monospaced))
+                            .font(.system(size: AppLook.fs(10), design: .monospaced))
                             .foregroundColor(.labelMuted)
                             .lineLimit(1).truncationMode(.middle)
                         Circle()
@@ -936,17 +944,17 @@ struct SettingsView: View {
                             .frame(width: 5, height: 5)
                         Spacer()
                         Text("\(store.data.projects.count) projet(s)")
-                            .font(.system(size: 10, design: .monospaced)).foregroundColor(.labelMuted)
-                        Text("·").foregroundColor(.labelMuted).font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10), design: .monospaced)).foregroundColor(.labelMuted)
+                        Text("·").foregroundColor(.labelMuted).font(.system(size: AppLook.fs(10)))
                         let totalEntries = store.data.projects.flatMap(\.chapters).flatMap(\.entries).count
                         Text("\(totalEntries) entrée(s)")
-                            .font(.system(size: 10, design: .monospaced)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(10), design: .monospaced)).foregroundColor(.labelMuted)
                         Button("↺ Recharger") { store.load() }
-                            .font(.system(size: 10, weight: .semibold)).foregroundColor(.accent).buttonStyle(.pressable)
+                            .font(.system(size: AppLook.fs(10), weight: .semibold)).foregroundColor(.accent).buttonStyle(.pressable)
                     }
                     if let err = store.loadErrorMessage {
                         Text("⚠ \(err)")
-                            .font(.system(size: 10, design: .monospaced)).foregroundColor(.red).lineLimit(2)
+                            .font(.system(size: AppLook.fs(10), design: .monospaced)).foregroundColor(.red).lineLimit(2)
                     }
 
                     // Boutons Annuler / Enregistrer
@@ -956,8 +964,8 @@ struct SettingsView: View {
                             .foregroundColor(.labelMuted)
                             .padding(.horizontal, 18).padding(.vertical, 9)
                             .background(Color.cardBg)
-                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
-                            .overlay(RoundedRectangle(cornerRadius: AppLook.r(10, 14)).stroke(Color.cardBorder, lineWidth: 1))
+                            .clipShape(AppLook.buttonShape(10))
+                            .overlay(AppLook.buttonShape(10).stroke(Color.cardBorder, lineWidth: 1))
                             .buttonStyle(.pressable)
                             .keyboardShortcut(.escape)
 
@@ -968,7 +976,7 @@ struct SettingsView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 22).padding(.vertical, 9)
                             .background(Color.accent)
-                            .clipShape(RoundedRectangle(cornerRadius: AppLook.r(10, 14)))
+                            .clipShape(AppLook.buttonShape(10))
                             .buttonStyle(.pressable)
                             .keyboardShortcut(.return)
                     }
@@ -1039,7 +1047,7 @@ struct SettingsView: View {
     private func settingsSection<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(1.2)
             content()
@@ -1135,7 +1143,7 @@ struct SettingsView: View {
             Spacer()
             HStack(spacing: 3) {
                 Text(prefix)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: AppLook.fs(11), weight: .medium))
                     .foregroundColor(.labelMuted)
                 TextField(placeholder, text: keyBinding)
                     .font(.system(size: 13, weight: .bold, design: .monospaced))
@@ -1179,7 +1187,7 @@ struct GoalRow: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(label).font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
-                Text(subtitle).font(.system(size: 11)).foregroundColor(.labelMuted)
+                Text(subtitle).font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             HStack(spacing: 6) {

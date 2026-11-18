@@ -113,14 +113,14 @@ struct DailySessionCard: View {
             // Chiffres gauche
             VStack(alignment: .leading, spacing: 3) {
                 Text(store.data.weeklyGoal > 0 ? "AUJOURD'HUI · POUR LA SEMAINE" : "AUJOURD'HUI")   // 5.18
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1)
 
                 if smartGoal > 0 {
                     HStack(alignment: .firstTextBaseline, spacing: 5) {
                         Text(store.formatCount(progress))
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .font(.system(size: 24, weight: .bold, design: AppLook.fontDesign))
                             .tracking(-0.4)   // 5.18
                             .foregroundColor(isGoalReached ? .accentGreen : .primary)
                             .contentTransition(.numericText())
@@ -136,7 +136,7 @@ struct DailySessionCard: View {
                     }
                 } else {
                     Text("—")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(.system(size: 24, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.labelMuted)
                 }
 
@@ -144,9 +144,9 @@ struct DailySessionCard: View {
                 if hasCatchUp && !isGoalReached {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.uturn.right")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                         Text("+\(store.formatCount(catchUp)) rattrapage")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                     }
                     .foregroundColor(.accentWarm)
                     .padding(.horizontal, 7).padding(.vertical, 3)
@@ -196,11 +196,11 @@ struct DailySessionCard: View {
             Image(systemName: isGoalReached
                   ? "checkmark.circle.fill"
                   : (hasCatchUp && progress == 0 ? "arrow.uturn.right.circle.fill" : "pencil.circle.fill"))
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(statusColor)
 
             Text(statusMessage)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -217,14 +217,14 @@ struct DailySessionCard: View {
         return VStack(spacing: 6) {
             HStack(spacing: 6) {
                 Image(systemName: done ? "timer.badge.checkmark" : "timer")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(done ? .accentGreen : .labelMuted.opacity(0.7))
                 Text("Sessions cette semaine")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                 Spacer()
                 Text("\(count) / \(goal)")
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold, design: AppLook.fontDesign))
                     .foregroundColor(done ? .accentGreen : .secondary)
             }
             GeometryReader { geo in
@@ -267,7 +267,7 @@ struct SessionRingView: View {
                 .appAnimation(Motion.progress, value: ratio)
 
             Text("\(Int(ratio * 100))%")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(color)
         }
     }
@@ -288,7 +288,7 @@ struct GoalReachedToast: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.primary)
                 Text("Continue sur ta lancée.")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
             }
         }

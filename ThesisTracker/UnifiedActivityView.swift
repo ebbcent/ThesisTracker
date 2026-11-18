@@ -43,7 +43,7 @@ struct UnifiedActivityView: View {
                 modeButton(icon: "calendar",        target: .calendar, tooltip: "Vue mensuelle (calendrier)")
             }
             .padding(3)
-            .background(Color.glassFill)
+            .background(FloatingSurface(radius: 9))   // 5.27 : verre en Tuiles
             .clipShape(RoundedRectangle(cornerRadius: AppLook.r(9, 13), style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: AppLook.r(9, 13), style: .continuous)

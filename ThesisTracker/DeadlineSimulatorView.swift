@@ -21,10 +21,10 @@ struct DeadlineSimulatorView: View {
         let preview = store.quotaPreview(remaining: remaining, deadline: deadline)
         HStack(spacing: 6) {
             Image(systemName: "function")
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.accent)
             Text(text(remaining: remaining, days: preview.days, perDay: preview.perDay))
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
                 .fixedSize(horizontal: false, vertical: true)
         }

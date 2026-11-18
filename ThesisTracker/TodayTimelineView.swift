@@ -31,9 +31,9 @@ struct TodayTimelineView: View {
                             } label: {
                                 HStack(spacing: 5) {
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     Text("Voir \(events.count - 5) de plus")
-                                        .font(.system(size: 11, weight: .medium))
+                                        .font(.system(size: AppLook.fs(11), weight: .medium))
                                 }
                                 .foregroundColor(.labelMuted)
                                 .frame(maxWidth: .infinity)
@@ -71,7 +71,7 @@ struct TodayTimelineView: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 5) {
                     Image(systemName: event.icon)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(event.dotColor)
                     Text(event.title)
                         .font(.system(size: 12, weight: .semibold))
@@ -79,13 +79,13 @@ struct TodayTimelineView: View {
                     Spacer()
                     if let timeLabel = event.timeLabel {
                         Text(timeLabel)
-                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .font(.system(size: AppLook.fs(10), weight: .medium, design: .monospaced))
                             .foregroundColor(.labelMuted)
                     }
                 }
                 if let subtitle = event.subtitle {
                     Text(subtitle)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 }
             }

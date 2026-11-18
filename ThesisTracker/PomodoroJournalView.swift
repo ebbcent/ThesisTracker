@@ -17,7 +17,7 @@ struct PomodoroJournalView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Journal")
-                            .font(.system(size: 32, weight: .heavy, design: .rounded))
+                            .font(.system(size: 32, weight: .heavy, design: AppLook.fontDesign))
                             .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                         Text("Historique complet des sessions, notes et interruptions.")
                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
@@ -26,7 +26,7 @@ struct PomodoroJournalView: View {
                     if let selectedDay = controller.selectedJournalDate {
                         HStack(spacing: 8) {
                             Text(selectedDay.formatted(date: .abbreviated, time: .omitted))
-                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .font(.system(size: 12, weight: .semibold, design: AppLook.fontDesign))
                                 .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                             Button("Effacer le jour") {
                                 controller.clearJournalDateSelection()
@@ -62,7 +62,7 @@ struct PomodoroJournalView: View {
                                                 .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
                                         }
                                         Text("\(session.completionState.displayName) • \(Int(session.duration / 60)) min • \(controller.categoryName(for: session.categoryID)) • \(controller.projectName(for: session.projectID))")
-                                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                                            .font(.system(size: 12, weight: .medium, design: AppLook.fontDesign))
                                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                                         if !session.note.isEmpty {
                                             Text(session.note)

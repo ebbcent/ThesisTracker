@@ -29,9 +29,9 @@ struct DayOffMenuButton: View {
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: kind?.symbol ?? "archivebox")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                 Text(kind?.label ?? "Archives / Repos")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: AppLook.fs(11), weight: .medium))
             }
             .foregroundColor(kind != nil ? .accentWarm : .labelMuted)
             .padding(.horizontal, 8).padding(.vertical, 3)
@@ -71,7 +71,7 @@ struct DaysOffManagerSheet: View {
                     .keyboardShortcut(.cancelAction)
             }
             Text("Archives, séminaires, repos : pas d'objectif ces jours-là, la série continue, et les moyennes de vitesse les ignorent si rien n'y est écrit.")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -120,7 +120,7 @@ struct DaysOffManagerSheet: View {
     private func row(_ date: String, _ kind: DayOffKind) -> some View {
         HStack(spacing: 10) {
             Image(systemName: kind.symbol)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.accentWarm)
                 .frame(width: 18)
             Text(DataStore.parseDate(date).map { DataStore.formatDate($0) } ?? date)
@@ -137,7 +137,7 @@ struct DaysOffManagerSheet: View {
             Button {
                 store.setDayOff(date, kind: nil)
             } label: {
-                Image(systemName: "trash").font(.system(size: 11))
+                Image(systemName: "trash").font(.system(size: AppLook.fs(11)))
             }
             .buttonStyle(.pressable)
             .foregroundColor(.labelMuted)

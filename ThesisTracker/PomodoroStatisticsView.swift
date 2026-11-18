@@ -11,10 +11,10 @@ struct PomodoroStatisticsView: View {
                 HStack(alignment: .center) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Statistiques")
-                            .font(.system(size: 28, weight: .heavy, design: .rounded))
+                            .font(.system(size: 28, weight: .heavy, design: AppLook.fontDesign))
                             .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                         Text(periodTitle)
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .font(.system(size: 14, weight: .medium, design: AppLook.fontDesign))
                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                     }
                     Spacer()
@@ -69,7 +69,7 @@ struct PomodoroStatisticsView: View {
                                 .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
                             AxisValueLabel()
                                 .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
-                                .font(.system(size: 11, design: .rounded))
+                                .font(.system(size: AppLook.fs(11), design: AppLook.fontDesign))
                         }
                     }
                     .chartYAxis {
@@ -78,7 +78,7 @@ struct PomodoroStatisticsView: View {
                                 .foregroundStyle(CockpitTheme.stroke(for: colorScheme))
                             AxisValueLabel()
                                 .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
-                                .font(.system(size: 11, design: .rounded))
+                                .font(.system(size: AppLook.fs(11), design: AppLook.fontDesign))
                         }
                     }
                     .frame(height: 240)
@@ -112,7 +112,7 @@ struct PomodoroStatisticsView: View {
     private var contributionCard: some View {
         InfoCard(title: "Activité annuelle", systemImage: "calendar") {
             Text("Cliquer sur un jour ouvre le journal filtré.")
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .font(.system(size: AppLook.fs(11), weight: .medium, design: AppLook.fontDesign))
                 .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
             LazyVGrid(columns: Array(repeating: GridItem(.fixed(13), spacing: 4), count: 20), spacing: 4) {
                 ForEach(controller.contributionCells) { cell in
@@ -145,7 +145,7 @@ struct PomodoroStatisticsView: View {
                     AxisMarks {
                         AxisValueLabel()
                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
-                            .font(.system(size: 11, design: .rounded))
+                            .font(.system(size: AppLook.fs(11), design: AppLook.fontDesign))
                     }
                 }
                 .chartYAxis {
@@ -154,7 +154,7 @@ struct PomodoroStatisticsView: View {
                             .foregroundStyle(CockpitTheme.stroke(for: colorScheme))
                         AxisValueLabel()
                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
-                            .font(.system(size: 11, design: .rounded))
+                            .font(.system(size: AppLook.fs(11), design: AppLook.fontDesign))
                     }
                 }
                 .frame(height: 160)
@@ -179,7 +179,7 @@ struct PomodoroStatisticsView: View {
                     AxisMarks(values: .stride(by: 4)) {
                         AxisValueLabel()
                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
-                            .font(.system(size: 11, design: .rounded))
+                            .font(.system(size: AppLook.fs(11), design: AppLook.fontDesign))
                     }
                 }
                 .chartYAxis {
@@ -188,7 +188,7 @@ struct PomodoroStatisticsView: View {
                             .foregroundStyle(CockpitTheme.stroke(for: colorScheme))
                         AxisValueLabel()
                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
-                            .font(.system(size: 11, design: .rounded))
+                            .font(.system(size: AppLook.fs(11), design: AppLook.fontDesign))
                     }
                 }
                 .frame(height: 160)
@@ -224,7 +224,7 @@ struct PomodoroStatisticsView: View {
         HStack(spacing: 6) {
             Circle().fill(color).frame(width: 8, height: 8)
             Text(label)
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .font(.system(size: AppLook.fs(11), weight: .medium, design: AppLook.fontDesign))
                 .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
         }
     }

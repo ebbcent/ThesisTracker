@@ -100,7 +100,7 @@ struct HistoryListView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Historique")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 if let project = selectedProject, let chapter = selectedChapter {
                     Text("\(project.name) · \(chapter.name)")
@@ -127,7 +127,7 @@ struct HistoryListView: View {
                             }
                         } label: {
                             HStack(spacing: 5) {
-                                Image(systemName: "folder.fill").font(.system(size: 10))
+                                Image(systemName: "folder.fill").font(.system(size: AppLook.fs(10)))
                                 Text(project.name)
                                     .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
                                     .lineLimit(1)

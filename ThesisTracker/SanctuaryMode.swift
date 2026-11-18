@@ -95,7 +95,7 @@ struct SanctuaryModeView: View {
                     .font(.system(size: 36))
                     .foregroundColor(.white.opacity(0.85))
                 Text("Sanctuaire")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .font(.system(size: 28, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.white)
                 Text("Aucune distraction. Un chapitre. Une intention.")
                     .font(.system(size: 13))
@@ -104,7 +104,7 @@ struct SanctuaryModeView: View {
             if let chapter, let project {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(project.name.uppercased())
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: AppLook.fs(10), weight: .bold))
                         .foregroundColor(.white.opacity(0.5))
                         .kerning(1.2)
                     Text(chapter.name)
@@ -121,7 +121,7 @@ struct SanctuaryModeView: View {
             }
             VStack(spacing: 10) {
                 Text("DURÉE")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.white.opacity(0.5))
                     .kerning(1.2)
                 HStack(spacing: 8) {
@@ -155,7 +155,7 @@ struct SanctuaryModeView: View {
             Spacer()
             Button("Quitter") { onDismiss() }
                 .buttonStyle(.pressable)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.white.opacity(0.4))
         }
         .padding(40)
@@ -164,7 +164,7 @@ struct SanctuaryModeView: View {
     private func durationButton(minutes: Int) -> some View {
         Button { totalSeconds = minutes * 60 } label: {
             Text("\(minutes) min")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: AppLook.fs(11), weight: .semibold))
                 .foregroundColor(totalSeconds == minutes * 60 ? .black : .white.opacity(0.7))
                 .padding(.horizontal, 12).padding(.vertical, 6)
                 .background(totalSeconds == minutes * 60 ? Color.white : Color.white.opacity(0.08))
@@ -179,11 +179,11 @@ struct SanctuaryModeView: View {
             if let chapter {
                 VStack(spacing: 6) {
                     Text("FOCUS")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: AppLook.fs(10), weight: .bold))
                         .foregroundColor(.white.opacity(0.4))
                         .kerning(1.4)
                     Text(chapter.name)
-                        .font(.system(size: 22, weight: .semibold, design: .rounded))
+                        .font(.system(size: 22, weight: .semibold, design: AppLook.fontDesign))
                         .foregroundColor(.white.opacity(0.9))
                 }
             }
@@ -202,17 +202,17 @@ struct SanctuaryModeView: View {
                     .rotationEffect(.degrees(-90))
                 VStack(spacing: 0) {
                     Text(formatTime(remaining))
-                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .font(.system(size: 48, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.white)
                         .monospacedDigit()
                     Text("restant")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.white.opacity(0.4))
                 }
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("CAPTURE RAPIDE")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.white.opacity(0.4))
                     .kerning(1.0)
                 TextField("Une idée, une question, à reprendre…", text: $noteText)
@@ -230,7 +230,7 @@ struct SanctuaryModeView: View {
                     }
                 } label: {
                     Text("Capter dans le carnet")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.black)
                         .padding(.horizontal, 12).padding(.vertical, 6)
                         .background(Color.white)
@@ -242,7 +242,7 @@ struct SanctuaryModeView: View {
             .frame(maxWidth: 420)
             Spacer()
             Text("⎋ pour sortir")
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.white.opacity(0.3))
         }
         .padding(40)
@@ -255,7 +255,7 @@ struct SanctuaryModeView: View {
                 .font(.system(size: 56))
                 .foregroundColor(.white)
             Text("Session terminée")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(.system(size: 28, weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(.white)
             Text("\(totalSeconds / 60) minutes de focus profond.")
                 .font(.system(size: 13))

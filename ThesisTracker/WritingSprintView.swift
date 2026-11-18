@@ -146,7 +146,7 @@ struct WritingSprintView: View {
             // Sélecteur de durée
             VStack(spacing: 12) {
                 Text("DURÉE")
-                    .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold, design: .monospaced))
                     .foregroundColor(.white.opacity(0.3))
                     .tracking(1.5)
                 HStack(spacing: 10) {
@@ -177,7 +177,7 @@ struct WritingSprintView: View {
             // Objectif de sprint (optionnel)
             VStack(spacing: 12) {
                 Text("OBJECTIF DE SPRINT (optionnel)")
-                    .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold, design: .monospaced))
                     .foregroundColor(.white.opacity(0.3))
                     .tracking(1.5)
                 HStack(spacing: 8) {
@@ -259,7 +259,7 @@ struct WritingSprintView: View {
             VStack(spacing: 10) {
                 HStack(alignment: .lastTextBaseline, spacing: 6) {
                     Text("+\(DataStore.formatNumber(sprintDelta))")
-                        .font(.system(size: 44, weight: .bold, design: .rounded))
+                        .font(.system(size: 44, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(sprintDelta > 0 ? .accentGreen : .white.opacity(0.3))
                         .contentTransition(.numericText())
                         .appAnimation(Motion.progress, value: sprintDelta)
@@ -283,7 +283,7 @@ struct WritingSprintView: View {
                         }
                         .frame(width: 280, height: 4)
                         Text("Objectif sprint : \(Int(sprintProgress * 100))% · \(DataStore.formatNumber(target)) \(store.data.useWordCount ? "mots" : "car.")")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.white.opacity(0.3))
                     }
                 }

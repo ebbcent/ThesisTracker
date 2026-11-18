@@ -80,13 +80,13 @@ struct ChapterCheckpointsSheet: View {
                 Text("Points de sauvegarde")
                     .font(.system(size: 16, weight: .semibold))
                 Text("\(chapter.name) · \(sortedCheckpoints.count) point\(sortedCheckpoints.count > 1 ? "s" : "")")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
             }
             Spacer()
             Button { showSelfReview = true } label: {
                 Label("Self-review", systemImage: "star.bubble")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.accent)
                     .padding(.horizontal, 10).padding(.vertical, 5)
                     .background(Color.accent.opacity(0.10))
@@ -125,7 +125,7 @@ struct ChapterCheckpointsSheet: View {
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.labelMuted)
             Text("Crée un point avant une grosse refonte ou un envoi en relecture pour pouvoir revenir à l'état actuel.")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
@@ -165,35 +165,35 @@ struct ChapterCheckpointsSheet: View {
                     Text(checkpoint.label)
                         .font(.system(size: 13, weight: .semibold))
                     Text("v\(checkpoint.draftVersion)")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 5).padding(.vertical, 1)
                         .background(Color.labelMuted.opacity(0.1))
                         .clipShape(Capsule())
                 }
                 Text(formattedTimestamp(checkpoint.timestamp))
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                 HStack(spacing: 10) {
                     if checkpoint.latestTotal > 0 {
                         Label("\(checkpoint.latestTotal.formatted()) car.",
                               systemImage: "text.alignleft")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                     }
                     if let plan = checkpoint.notesPlan, !plan.isEmpty {
                         Label("Plan", systemImage: "list.bullet")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                     }
                     if let ideas = checkpoint.notesIdeas, !ideas.isEmpty {
                         Label("Idées", systemImage: "lightbulb")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                     }
                     if let blockers = checkpoint.notesBlockers, !blockers.isEmpty {
                         Label("Blockers", systemImage: "exclamationmark.triangle")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(Color.semRed)
                     }
                 }
@@ -202,7 +202,7 @@ struct ChapterCheckpointsSheet: View {
             HStack(spacing: 4) {
                 Button { pendingRestoreId = checkpoint.id } label: {
                     Image(systemName: "arrow.uturn.backward")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: AppLook.fs(11), weight: .medium))
                         .foregroundColor(.accent)
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
@@ -212,7 +212,7 @@ struct ChapterCheckpointsSheet: View {
                 .accessibilityLabel("Restaurer ce point")
                 Button { pendingDeleteId = checkpoint.id } label: {
                     Image(systemName: "trash")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
@@ -283,11 +283,11 @@ private struct SaveCheckpointSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(chapter.name).font(.system(size: 13, weight: .semibold))
                 Text("Projet : \(project.name) · Draft v\(chapter.draftVersion)")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text("Étiquette")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: AppLook.fs(11), weight: .medium))
                     .foregroundColor(.labelMuted)
                 TextField("ex. avant refonte du plan, fin du cas d'étude…", text: $label)
                     .textFieldStyle(.plain)
@@ -298,7 +298,7 @@ private struct SaveCheckpointSheet: View {
                     .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
             }
             Text("Le plan, les idées, les blockers, la prochaine action et le compteur courant seront figés.")
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted.opacity(0.7))
             HStack {
                 Button("Annuler") { dismiss() }
@@ -352,7 +352,7 @@ struct CheckpointsWidget: View {
                     Spacer()
                     if !checkpoints.isEmpty {
                         Text("\(checkpoints.count)")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(.accent)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Color.accent.opacity(0.12))
@@ -361,19 +361,19 @@ struct CheckpointsWidget: View {
                 }
                 if chapter == nil {
                     Text("Aucun chapitre sélectionné")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 } else if checkpoints.isEmpty {
                     Text("Crée un point avant une refonte ou un envoi en relecture.")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 } else if let latest = checkpoints.max(by: { $0.timestamp < $1.timestamp }) {
                     HStack(spacing: 6) {
                         Image(systemName: "clock")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted.opacity(0.6))
                         Text("Dernier : \(latest.label) (v\(latest.draftVersion))")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                             .lineLimit(1)
                     }
@@ -381,9 +381,9 @@ struct CheckpointsWidget: View {
                 Button { showSheet = true } label: {
                     HStack(spacing: 6) {
                         Image(systemName: chapter == nil ? "bookmark" : "plus.circle.fill")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                         Text(chapter == nil ? "Ouvrir" : (checkpoints.isEmpty ? "Créer un point" : "Voir les points"))
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)

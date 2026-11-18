@@ -357,8 +357,7 @@ struct MainView: View {
         .padding(16)
         .frame(maxWidth: 500)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.16), radius: 8, x: 0, y: 3)
         )
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.orange.opacity(0.30), lineWidth: 1))
@@ -1027,7 +1026,7 @@ struct WeeklySummaryOverlay: View {
                         }
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Récap de la semaine")
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                                 .foregroundColor(.primary)
                             Text(weekLabel)
                                 .font(.system(size: 11))
@@ -1109,8 +1108,7 @@ struct WeeklySummaryOverlay: View {
                 .padding(18)
                 .frame(width: 440)
                 .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.cardBg)
+                    FloatingSurface(radius: 18)   // 5.27 : verre en Tuiles
                         .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: -2)
                 )
                 .overlay(
@@ -1130,7 +1128,7 @@ struct WeeklySummaryOverlay: View {
                 .font(.system(size: 12))
                 .foregroundColor(.accentWarm)
             Text(value)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .font(.system(size: 12, weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -1169,7 +1167,7 @@ struct DailySummaryOverlay: View {
                         }
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Bilan du jour")
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                                 .foregroundColor(.primary)
                             Text(DataStore.formatLongDate(Date(), capitalize: true))
                                 .font(.system(size: 11))
@@ -1224,8 +1222,7 @@ struct DailySummaryOverlay: View {
                 .padding(18)
                 .frame(width: 420)
                 .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.cardBg)
+                    FloatingSurface(radius: 18)   // 5.27 : verre en Tuiles
                         .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: -2)
                 )
                 .overlay(
@@ -1246,7 +1243,7 @@ struct DailySummaryOverlay: View {
                 .font(.system(size: 12))
                 .foregroundColor(.accent)
             Text(value)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .font(.system(size: 13, weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(.primary)
                 .lineLimit(1)
             Text(label)
@@ -1387,7 +1384,7 @@ struct MilestoneToastView: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text(subtitle)
                     .font(.system(size: 12))
@@ -1410,8 +1407,7 @@ struct MilestoneToastView: View {
         .padding(.vertical, 14)
         .frame(maxWidth: 380)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: 3)
         )
         .overlay(
@@ -1450,7 +1446,7 @@ struct PostSessionPromptView: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text("Session focus terminée")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("Tu as écrit combien de caractères ?")
                     .font(.system(size: 12))
@@ -1483,8 +1479,7 @@ struct PostSessionPromptView: View {
         .padding(.vertical, 14)
         .frame(maxWidth: 400)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: 3)
         )
         .overlay(
@@ -1547,8 +1542,7 @@ struct WeeklyReportPromptBanner: View {
         .padding(.horizontal, 18).padding(.vertical, 14)
         .frame(maxWidth: 440)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.cardBg)
+            FloatingSurface(radius: 16)   // 5.27 : verre en Tuiles
                 .shadow(color: .black.opacity(0.14), radius: 8, x: 0, y: 3)
         )
         .overlay(RoundedRectangle(cornerRadius: 16)

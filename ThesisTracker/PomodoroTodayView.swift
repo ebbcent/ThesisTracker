@@ -42,11 +42,11 @@ struct PomodoroTodayView: View {
                     .font(TypeScale.pageTitle)
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                 Text(controller.statusMessage)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(.system(size: 13, weight: .medium, design: AppLook.fontDesign))
                     .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                 if let warning = controller.storageWarning {
                     Label(warning, systemImage: "exclamationmark.icloud")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .font(.system(size: 12, weight: .semibold, design: AppLook.fontDesign))
                         .foregroundStyle(.orange)
                 }
             }
@@ -206,7 +206,7 @@ struct PomodoroTodayView: View {
                     controller.saveSettings()
                 } label: {
                     Text("\(m) min")
-                        .font(.system(size: 11, weight: on ? .semibold : .medium).monospacedDigit())
+                        .font(.system(size: AppLook.fs(11), weight: on ? .semibold : .medium).monospacedDigit())
                         .foregroundStyle(on ? Color.accent : CockpitTheme.textSecondary(for: colorScheme))
                         .padding(.horizontal, 10).padding(.vertical, 5)
                         .background(Capsule().fill(on ? Color.accent.opacity(0.12) : Color.clear))
@@ -253,11 +253,11 @@ struct PomodoroTodayView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(store.data.useWordCount ? "Mots / objectif des blocs" : "Signes / objectif des blocs")
-                            .font(.system(size: 11, weight: .medium, design: .rounded))
+                            .font(.system(size: AppLook.fs(11), weight: .medium, design: AppLook.fontDesign))
                             .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                         Spacer()
                         Text("\(todayWords) / \(sessionTarget)")
-                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold, design: AppLook.fontDesign))
                             .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                     }
                     ProgressView(value: wordRatio)
@@ -266,7 +266,7 @@ struct PomodoroTodayView: View {
                 .padding(.top, 4)
             }
             Text(snap.nextMilestoneText)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .font(.system(size: 12, weight: .medium, design: AppLook.fontDesign))
                 .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                 .padding(.top, 4)
         }
@@ -279,17 +279,17 @@ struct PomodoroTodayView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         HStack {
                             Text(goal.title)
-                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                                 .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                             Spacer()
                             Text(goal.description)
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .font(.system(size: 12, weight: .medium, design: AppLook.fontDesign))
                                 .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                         }
                         ProgressView(value: goal.progress)
                             .tint(CockpitTheme.glow)
                         Text(goal.remainingText)
-                            .font(.system(size: 11, weight: .medium, design: .rounded))
+                            .font(.system(size: AppLook.fs(11), weight: .medium, design: AppLook.fontDesign))
                             .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
                     }
                 }
@@ -302,7 +302,7 @@ struct PomodoroTodayView: View {
             let summary = controller.dailySummary
             VStack(alignment: .leading, spacing: 8) {
                 Text(summary.headline)
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                 Text(summary.detail)
                     .font(.system(size: 13))
@@ -360,7 +360,7 @@ struct PomodoroTodayView: View {
                     ForEach(controller.selectedDayTimeline) { segment in
                         HStack(alignment: .center, spacing: 10) {
                             Text(segment.startedAt.formatted(date: .omitted, time: .shortened))
-                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                                .font(.system(size: AppLook.fs(11), weight: .bold, design: AppLook.fontDesign))
                                 .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
                                 .frame(width: 52, alignment: .leading)
                             GeometryReader { proxy in
@@ -372,7 +372,7 @@ struct PomodoroTodayView: View {
                                         .fill(Color(hex: segment.colorHex).opacity(0.85))
                                         .frame(width: max(40, proxy.size.width * CGFloat(min(segment.durationHours / 6, 1))), height: 28)
                                     Text(segment.title)
-                                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                        .font(.system(size: AppLook.fs(11), weight: .semibold, design: AppLook.fontDesign))
                                         .foregroundStyle(.white)
                                         .lineLimit(1)
                                         .padding(.horizontal, 8)
@@ -380,7 +380,7 @@ struct PomodoroTodayView: View {
                             }
                             .frame(height: 28)
                             Text(segment.subtitle)
-                                .font(.system(size: 11, weight: .medium, design: .rounded))
+                                .font(.system(size: AppLook.fs(11), weight: .medium, design: AppLook.fontDesign))
                                 .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
                                 .frame(maxWidth: 180, alignment: .leading)
                         }
@@ -398,7 +398,7 @@ struct PomodoroTodayView: View {
         dial.overlay(alignment: .top) {
             if controller.focusSessionJustCompleted {
                 Label("Bloc terminé", systemImage: "checkmark.seal.fill")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundStyle(CockpitTheme.success)
                     .padding(.horizontal, 10).padding(.vertical, 4)
                     .background(Capsule().fill(CockpitTheme.success.opacity(0.12)))
@@ -416,10 +416,10 @@ struct PomodoroTodayView: View {
                 .frame(width: 4, height: 32)
             VStack(alignment: .leading, spacing: 1) {
                 Text(value)
-                    .font(.system(size: 17, weight: .bold, design: .rounded).monospacedDigit())
+                    .font(.system(size: 17, weight: .bold, design: AppLook.fontDesign).monospacedDigit())
                     .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                 Text(title)
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold, design: AppLook.fontDesign))
                     .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
             }
         }
@@ -435,11 +435,11 @@ struct PomodoroTodayView: View {
     private func predictionRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: 13, design: .rounded))
+                .font(.system(size: 13, design: AppLook.fontDesign))
                 .foregroundStyle(CockpitTheme.textSecondary(for: colorScheme))
             Spacer()
             Text(value)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                 .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
         }
     }
@@ -447,10 +447,10 @@ struct PomodoroTodayView: View {
     private func statusChip(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(title)   // 5.19 : casse normale, comme les titres de section
-                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .font(.system(size: AppLook.fs(10), weight: .semibold, design: AppLook.fontDesign))
                 .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
             Text(value)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(.system(size: 12, weight: .semibold, design: AppLook.fontDesign))
                 .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                 .lineLimit(1)
         }

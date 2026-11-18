@@ -274,18 +274,21 @@ struct HoverDragHandle: ViewModifier {
 /// leurs tailles fixes, ramenées à 10 pt minimum en 5.15). Polices système : optique et approche
 /// ajustées par macOS selon la taille.
 enum TypeScale {
+    // 5.27 — valeurs calculées : elles suivent l'apparence (Tuiles ou d'origine)
     /// Titre de page (« Tableau de bord »).
-    static let pageTitle = Font.system(size: 18, weight: .bold, design: .rounded)
+    static var pageTitle: Font {
+        AppLook.tiles ? .system(size: 24, weight: .heavy) : .system(size: 18, weight: .bold, design: .rounded)
+    }
     /// Titre de section (« Progression »).
-    static let sectionTitle = Font.system(size: 12, weight: .semibold)
+    static var sectionTitle: Font { .system(size: AppLook.tiles ? 13 : 12, weight: .semibold) }
     /// Texte courant.
-    static let body = Font.system(size: 13)
+    static var body: Font { .system(size: 13) }
     /// Légende, texte secondaire.
-    static let caption = Font.system(size: 11)
+    static var caption: Font { .system(size: AppLook.fs(11)) }
     /// Chiffre dans une ligne (« 7 966 car./j »).
-    static let figure = Font.system(size: 13, weight: .bold).monospacedDigit()
+    static var figure: Font { .system(size: 13, weight: .bold).monospacedDigit() }
     /// Chiffre principal d'une carte (« 0 car. »).
-    static let heroFigure = Font.system(size: 24, weight: .bold, design: .rounded).monospacedDigit()
+    static var heroFigure: Font { .system(size: 24, weight: .bold, design: AppLook.fontDesign).monospacedDigit() }
 }
 
 

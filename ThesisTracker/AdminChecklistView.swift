@@ -34,7 +34,7 @@ struct AdminChecklistWidget: View {
                     Spacer()
                     if !upcoming.isEmpty {
                         Text("\(upcoming.count)")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(.labelMuted)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Color.labelMuted.opacity(0.1))
@@ -43,7 +43,7 @@ struct AdminChecklistWidget: View {
                 }
                 if upcoming.isEmpty {
                     Text("Pas de tâche administrative en cours.")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 } else {
                     VStack(alignment: .leading, spacing: 5) {
@@ -52,7 +52,7 @@ struct AdminChecklistWidget: View {
                         }
                         if upcoming.count > 3 {
                             Text("+ \(upcoming.count - 3) autre\(upcoming.count - 3 > 1 ? "s" : "")")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted.opacity(0.7))
                         }
                     }
@@ -60,9 +60,9 @@ struct AdminChecklistWidget: View {
                 Button { showSheet = true } label: {
                     HStack(spacing: 5) {
                         Image(systemName: upcoming.isEmpty ? "plus.circle.fill" : "list.bullet.rectangle")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                         Text(upcoming.isEmpty ? "Ajouter une tâche" : "Voir tout")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)
@@ -80,17 +80,17 @@ struct AdminChecklistWidget: View {
     private func taskMini(_ task: AdminTask) -> some View {
         HStack(spacing: 6) {
             Image(systemName: task.kind.icon)
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(task.kind.color)
                 .frame(width: 14)
             Text(task.title)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.primary)
                 .lineLimit(1)
             Spacer()
             if let dueStr = task.dueDate {
                 Text(dueLabel(dueStr))
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(dueColor(dueStr))
             }
         }
@@ -151,17 +151,17 @@ struct AdminChecklistSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Administratif").font(.system(size: 16, weight: .semibold))
                 Text("\(store.upcomingAdminTasks.count) tâche\(store.upcomingAdminTasks.count > 1 ? "s" : "") en cours")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Toggle(isOn: $showCompleted) {
-                Text("Terminées").font(.system(size: 11))
+                Text("Terminées").font(.system(size: AppLook.fs(11)))
             }
             .toggleStyle(.switch)
             Button { showAddSheet = true } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "plus")
-                    Text("Ajouter").font(.system(size: 11, weight: .semibold))
+                    Text("Ajouter").font(.system(size: AppLook.fs(11), weight: .semibold))
                 }
                 .foregroundColor(.white)
                 .padding(.horizontal, 10).padding(.vertical, 5)
@@ -220,10 +220,10 @@ struct AdminChecklistSheet: View {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 5) {
                     Image(systemName: task.kind.icon)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(task.kind.color)
                     Text(task.kind.label)
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: AppLook.fs(10), weight: .bold))
                         .foregroundColor(task.kind.color)
                         .kerning(0.5)
                 }
@@ -234,16 +234,16 @@ struct AdminChecklistSheet: View {
                 if let due = task.dueDate {
                     HStack(spacing: 4) {
                         Image(systemName: "calendar")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted.opacity(0.7))
                         Text(due)
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                     }
                 }
                 if let notes = task.notes, !notes.isEmpty {
                     Text(notes)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                         .lineLimit(2)
                 }
@@ -251,7 +251,7 @@ struct AdminChecklistSheet: View {
             Spacer()
             Button { store.deleteAdminTask(task.id) } label: {
                 Image(systemName: "trash")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
             .buttonStyle(.pressable)
@@ -279,7 +279,7 @@ private struct AddAdminTaskSheet: View {
                 Spacer()
             }
             VStack(alignment: .leading, spacing: 6) {
-                Text("Type").font(.system(size: 11, weight: .medium)).foregroundColor(.labelMuted)
+                Text("Type").font(.system(size: AppLook.fs(11), weight: .medium)).foregroundColor(.labelMuted)
                 Picker("", selection: $kind) {
                     ForEach(AdminTask.Kind.allCases, id: \.self) { k in
                         Label(k.label, systemImage: k.icon).tag(k)
@@ -289,7 +289,7 @@ private struct AddAdminTaskSheet: View {
                 .labelsHidden()
             }
             VStack(alignment: .leading, spacing: 6) {
-                Text("Titre").font(.system(size: 11, weight: .medium)).foregroundColor(.labelMuted)
+                Text("Titre").font(.system(size: AppLook.fs(11), weight: .medium)).foregroundColor(.labelMuted)
                 TextField("ex. rendre le rapport d'avancement…", text: $title)
                     .textFieldStyle(.plain)
                     .font(.system(size: 12))
@@ -307,7 +307,7 @@ private struct AddAdminTaskSheet: View {
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text("Notes (optionnel)")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: AppLook.fs(11), weight: .medium))
                     .foregroundColor(.labelMuted)
                 TextEditor(text: $notes)
                     .font(.system(size: 12))

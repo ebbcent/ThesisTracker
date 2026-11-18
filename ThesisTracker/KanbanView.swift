@@ -69,7 +69,7 @@ struct KanbanView: View {
                     .accessibilityLabel("Afficher la barre latérale")
                 }
                 Text("Kanban")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
                 Spacer()
                 Text("\(allChapters.count) chapitres")
                     .font(.system(size: 12)).foregroundColor(.labelMuted)
@@ -186,10 +186,10 @@ private struct KanbanColumn: View {
             // Column header — #60 double-clic pour créer un chapitre
             HStack(spacing: 7) {
                 Image(systemName: status.icon)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(status.color)
                 Text(status.rawValue.uppercased())
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(0.8)
                 Spacer()
@@ -199,7 +199,7 @@ private struct KanbanColumn: View {
                         onAddChapter?()
                     } label: {
                         Image(systemName: "plus")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(status.color)
                             .padding(4)
                             .background(Circle().fill(status.color.opacity(0.12)))
@@ -210,7 +210,7 @@ private struct KanbanColumn: View {
                     .accessibilityLabel("Nouveau chapitre dans « \(status.rawValue) » (ou double-clic)")
                 }
                 Text("\(items.count)")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(status.color.opacity(0.8))
                     .padding(.horizontal, 6).padding(.vertical, 2)
                     .background(status.color.opacity(0.12))
@@ -231,7 +231,7 @@ private struct KanbanColumn: View {
                     }
                     if items.isEmpty {
                         Text("Déposer ici")
-                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                             .frame(maxWidth: .infinity).padding(.vertical, 24)
                     }
                 }
@@ -279,7 +279,7 @@ private struct KanbanCard: View {
                 Spacer()
                 Button { onEdit(project, chapter) } label: {
                     Image(systemName: "pencil")
-                        .font(.system(size: 10)).foregroundColor(.labelMuted)
+                        .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                 }
                 .buttonStyle(.pressable)
                 .help("Modifier le chapitre")
@@ -287,7 +287,7 @@ private struct KanbanCard: View {
             }
 
             Text(project.name)
-                .font(.system(size: 10)).foregroundColor(.labelMuted)
+                .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
 
             if chapter.goal > 0 {
                 VStack(alignment: .leading, spacing: 3) {
@@ -301,10 +301,10 @@ private struct KanbanCard: View {
                     .frame(height: 3)
                     HStack {
                         Text("\(store.formatCountShort(latest)) / \(store.formatCountShort(chapter.goal))")
-                            .font(.system(size: 10)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                         Spacer()
                         Text("\(Int(ratio * 100))%")
-                            .font(.system(size: 10, weight: .medium)).foregroundColor(statusColor)
+                            .font(.system(size: AppLook.fs(10), weight: .medium)).foregroundColor(statusColor)
                     }
                 }
             }
@@ -312,9 +312,9 @@ private struct KanbanCard: View {
             if let deadline = chapter.deadline.flatMap(DataStore.parseDate) {
                 let daysLeft = Calendar.current.dateComponents([.day], from: Date(), to: deadline).day ?? 0
                 HStack(spacing: 4) {
-                    Image(systemName: "calendar").font(.system(size: 10))
+                    Image(systemName: "calendar").font(.system(size: AppLook.fs(10)))
                     Text(daysLeft >= 0 ? "\(daysLeft) j. restants" : "En retard")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                 }
                 .foregroundColor(daysLeft < 3 ? Color.semRed : .labelMuted)
             }

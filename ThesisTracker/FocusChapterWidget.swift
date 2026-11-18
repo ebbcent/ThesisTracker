@@ -56,7 +56,7 @@ struct FocusChapterWidget: View {
                         Spacer()
                         if let st = chapter.status, !chapter.isCompleted {
                             Text(st.label)
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: AppLook.fs(10), weight: .semibold))
                                 .foregroundColor(Color(hex: st.color))
                                 .padding(.horizontal, 6).padding(.vertical, 2)
                                 .background(Color(hex: st.color).opacity(0.12))
@@ -71,7 +71,7 @@ struct FocusChapterWidget: View {
 
                     // Chapter name
                     Text(chapter.name)
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.primary)
                         .lineLimit(2)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -83,27 +83,27 @@ struct FocusChapterWidget: View {
                             if goal > 0 {
                                 HStack(alignment: .firstTextBaseline, spacing: 3) {
                                     Text(DataStore.formatNumber(latest))
-                                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                                        .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                                         .foregroundColor(.primary)
                                     Text("/ \(DataStore.formatNumber(goal))")
-                                        .font(.system(size: 11))
+                                        .font(.system(size: AppLook.fs(11)))
                                         .foregroundColor(.labelMuted)
                                 }
                             } else {
                                 Text(DataStore.formatNumber(latest))
-                                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                                    .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                                     .foregroundColor(.primary)
                             }
 
                             if let days = daysToETA {
                                 HStack(spacing: 4) {
                                     Image(systemName: "clock")
-                                        .font(.system(size: 10))
+                                        .font(.system(size: AppLook.fs(10)))
                                         .foregroundColor(.labelMuted)
                                     Text(days <= 0 ? "Fin prévue aujourd'hui"
                                          : days == 1 ? "Fin prévue demain"
                                          : "Fin dans \(days) j")
-                                        .font(.system(size: 11))
+                                        .font(.system(size: AppLook.fs(11)))
                                         .foregroundColor(.labelMuted)
                                 }
                             }
@@ -111,11 +111,11 @@ struct FocusChapterWidget: View {
                             if let nextStep = chapter.nextStep, !nextStep.isEmpty {
                                 HStack(alignment: .top, spacing: 4) {
                                     Image(systemName: "arrow.right.circle.fill")
-                                        .font(.system(size: 10))
+                                        .font(.system(size: AppLook.fs(10)))
                                         .foregroundColor(.accent)
                                         .padding(.top, 1)
                                     Text(nextStep)
-                                        .font(.system(size: 11))
+                                        .font(.system(size: AppLook.fs(11)))
                                         .foregroundColor(.secondary)
                                         .lineLimit(2)
                                 }
@@ -128,10 +128,10 @@ struct FocusChapterWidget: View {
                     if let eta, goal > 0, ratio < 1.0 {
                         HStack(spacing: 4) {
                             Image(systemName: "calendar")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted.opacity(0.6))
                             Text("Fin estimée le \(etaFormatted(eta))")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted.opacity(0.7))
                             Spacer()
                         }
@@ -175,10 +175,10 @@ struct FocusChapterWidget: View {
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 0) {
                 Text("\(pct)")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("%")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
         }

@@ -57,7 +57,7 @@ struct WritingScheduleSettingsView: View {
                         }
                     }
                     .labelsHidden()
-                    .frame(width: 180)
+                    .frame(width: 150)
                     TextField("car./p", value: Binding(
                         get: { schedule.charsPerPage ?? DataStore.defaultCharsPerPage },
                         set: { value in store.updateWritingSchedule { $0.charsPerPage = max(0, min(20_000, value)) } }
@@ -121,7 +121,7 @@ struct WritingScheduleSettingsView: View {
             }
         } label: {
             Text(label)
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: AppLook.fs(11), weight: .semibold))
                 .frame(width: 24, height: 24)
                 .foregroundColor(isOn ? .white : .secondary)
                 .background(Circle().fill(isOn ? Color.accent : Color.fieldBg))
@@ -140,10 +140,12 @@ struct WritingScheduleSettingsView: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.system(size: 13, weight: .medium)).foregroundColor(.primary)
-                Text(subtitle).font(.system(size: 11)).foregroundColor(.labelMuted)
+                Text(subtitle).font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            Spacer()
+            .frame(minWidth: 150, alignment: .leading)   // 5.27 — jamais écrasé à une lettre par ligne
+            .layoutPriority(1)
+            Spacer(minLength: 8)
             control()
         }
         .padding(14)
