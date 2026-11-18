@@ -164,7 +164,7 @@ struct CalendarView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Calendrier")
-                    .font(.system(size: 20, weight: .bold, design: .rounded)).foregroundColor(.primary)
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign)).foregroundColor(.primary)
                 Text(monthTitle)
                     .font(.system(size: 12)).foregroundColor(.labelMuted)
             }

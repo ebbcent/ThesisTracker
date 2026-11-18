@@ -28,7 +28,7 @@ struct WritingSpeedWidget: View {
 
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(DataStore.formatNumber(data.avgCharsPerDay))
-                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                        .font(.system(size: 26, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.primary)
                     Text(store.data.useWordCount ? "mots/j" : "car./j")
                         .font(.system(size: 12))
@@ -39,7 +39,7 @@ struct WritingSpeedWidget: View {
                 Text(data.activeDaysCount == 0
                      ? "Aucun jour actif sur les 7 derniers jours"
                      : "Moyenne sur \(data.activeDaysCount) jour\(data.activeDaysCount > 1 ? "s" : "") actif\(data.activeDaysCount > 1 ? "s" : "") · 7 jours")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
 
                 sparkline
@@ -55,8 +55,8 @@ struct WritingSpeedWidget: View {
         let icon  = isFlat ? "minus" : (isUp ? "arrow.up.right" : "arrow.down.right")
         let label = isFlat ? "stable" : (isUp ? "+\(pct)%" : "-\(pct)%")
         return HStack(spacing: 3) {
-            Image(systemName: icon).font(.system(size: 10, weight: .bold))
-            Text(label).font(.system(size: 10, weight: .semibold))
+            Image(systemName: icon).font(.system(size: AppLook.fs(10), weight: .bold))
+            Text(label).font(.system(size: AppLook.fs(10), weight: .semibold))
         }
         .foregroundColor(color)
         .padding(.horizontal, 7).padding(.vertical, 3)

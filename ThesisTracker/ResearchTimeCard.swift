@@ -33,7 +33,7 @@ struct ResearchTimeCard: View {
                         showLogSheet = true
                     } label: {
                         Image(systemName: "plus")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                             .foregroundColor(.accent)
                             .frame(width: 22, height: 22)
                             .background(Color.accent.opacity(0.10))
@@ -47,10 +47,10 @@ struct ResearchTimeCard: View {
                 if todayEntries.isEmpty {
                     HStack(spacing: 6) {
                         Image(systemName: "clock.badge.questionmark")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted.opacity(0.5))
                         Text("Aucune session aujourd'hui")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                         Spacer()
                     }
@@ -58,10 +58,10 @@ struct ResearchTimeCard: View {
                     // Total
                     HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text(formatDuration(todayMinutes))
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
                             .foregroundColor(.primary)
                         Text("aujourd'hui")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                         Spacer()
                     }
@@ -93,9 +93,9 @@ struct ResearchTimeCard: View {
     private func typePill(type: ResearchType, minutes: Int) -> some View {
         HStack(spacing: 4) {
             Image(systemName: type.icon)
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: AppLook.fs(10), weight: .semibold))
             Text(formatDuration(minutes))
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: AppLook.fs(10), weight: .semibold))
         }
         .foregroundColor(Color(hex: type.color))
         .padding(.horizontal, 7).padding(.vertical, 3)
@@ -107,29 +107,29 @@ struct ResearchTimeCard: View {
     private func entryRow(_ entry: ResearchEntry) -> some View {
         HStack(spacing: 8) {
             Image(systemName: entry.type.icon)
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(Color(hex: entry.type.color))
                 .frame(width: 14)
             VStack(alignment: .leading, spacing: 1) {
                 Text(entry.type.label)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: AppLook.fs(11), weight: .medium))
                     .foregroundColor(.primary)
                 if let note = entry.note, !note.isEmpty {
                     Text(note)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                         .lineLimit(1)
                 }
             }
             Spacer()
             Text(formatDuration(entry.durationMinutes))
-                .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                .font(.system(size: AppLook.fs(11), weight: .semibold, design: .monospaced))
                 .foregroundColor(.secondary)
             Button {
                 store.deleteResearchEntry(entry.id)
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
             .buttonStyle(.pressable)
@@ -169,7 +169,7 @@ struct ResearchLogSheet: View {
             // Header
             HStack {
                 Text("Ajouter une session")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                 Spacer()
                 Button { isPresented = false } label: {
                     Image(systemName: "xmark")
@@ -299,7 +299,7 @@ struct ResearchLogSheet: View {
         Button { selectedType = type } label: {
             HStack(spacing: 6) {
                 Image(systemName: type.icon)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                 Text(type.label)
                     .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
             }
@@ -333,7 +333,7 @@ struct ResearchLogSheet: View {
 
     private func label(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 11, weight: .semibold))
+            .font(.system(size: AppLook.fs(11), weight: .semibold))
             .foregroundColor(.labelMuted)
             .textCase(.uppercase)
             .tracking(0.5)

@@ -57,7 +57,7 @@ struct DirectorReportSheet: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text("Rapport pour le directeur")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 17, weight: .bold, design: AppLook.fontDesign))
                 Text("Synthèse par chapitre · prêt à copier")
                     .font(.system(size: 12))
                     .foregroundColor(.labelMuted)
@@ -86,7 +86,7 @@ struct DirectorReportSheet: View {
             }
             .buttonStyle(.pressable)
             Button { dismiss() } label: {
-                Image(systemName: "xmark").font(.system(size: 11, weight: .semibold))
+                Image(systemName: "xmark").font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.labelMuted).padding(7)
                     .background(Circle().fill(Color.glassFill))
                     .overlay(Circle().stroke(Color.cardBorder, lineWidth: 1))

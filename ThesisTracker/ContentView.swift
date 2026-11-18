@@ -31,6 +31,12 @@ enum AppLook {
     /// Rayon de coin selon l'apparence (d'origine, Tuiles).
     static func r(_ classic: CGFloat, _ tilesRadius: CGFloat) -> CGFloat { tiles ? tilesRadius : classic }
 
+    /// 5.27 — une seule famille de caractères en Tuiles (plus de variante arrondie par endroits).
+    static var fontDesign: Font.Design { tiles ? .default : .rounded }
+
+    /// 5.27 — petites tailles relevées d'un point en Tuiles (10 → 11, 11 → 12), pour la lisibilité.
+    static func fs(_ size: CGFloat) -> CGFloat { tiles && size <= 11 ? size + 1 : size }
+
     /// Liseré des cartes et des champs : absent en Tuiles.
     static var hairline: Color { tiles ? .clear : .cardBorder }
 

@@ -51,7 +51,7 @@ struct TodayModeView: View {
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.labelMuted)
                 Text("Bonjour.")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.system(size: 32, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
             }
             Spacer()
@@ -70,11 +70,11 @@ struct TodayModeView: View {
         VStack(alignment: .leading, spacing: 16) {
             if let project, let chapter {
                 Text(project.name.uppercased())
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: AppLook.fs(11), weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1.4)
                 Text(chapter.name)
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .font(.system(size: 26, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 if let nextStep = chapter.nextStep?.trimmingCharacters(in: .whitespacesAndNewlines), !nextStep.isEmpty {
                     HStack(alignment: .top, spacing: 10) {
@@ -125,15 +125,15 @@ struct TodayModeView: View {
                     .rotationEffect(.degrees(-90))
                 VStack(spacing: 0) {
                     Text("\(Int(ratio * 100))")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
                     Text("%")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 }
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("Objectif du jour")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.labelMuted)
                     .kerning(0.8)
                 Text("\(todayProgress.formatted()) / \(todayGoal.formatted())")
@@ -143,10 +143,10 @@ struct TodayModeView: View {
                 if streak > 0 {
                     HStack(spacing: 4) {
                         Image(systemName: "flame.fill")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.accentWarm)
                         Text("Série · \(streak) j")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppLook.fs(11), weight: .medium))
                             .foregroundColor(.accentWarm)
                     }
                 }
@@ -216,10 +216,10 @@ struct TodayModeView: View {
     private var footer: some View {
         HStack(spacing: 4) {
             Image(systemName: "keyboard")
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted.opacity(0.5))
             Text("Esc pour fermer · ⏎ pour démarrer")
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted.opacity(0.5))
         }
     }

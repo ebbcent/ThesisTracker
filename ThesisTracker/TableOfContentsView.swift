@@ -34,10 +34,10 @@ struct TableOfContentsView: View {
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Table des matières")
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .font(TypeScale.pageTitle)
                             .foregroundColor(.primary)
                         Text("Arborescence complète de vos projets et chapitres")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
                     Spacer()
@@ -46,8 +46,8 @@ struct TableOfContentsView: View {
                         showExportSheet = true
                     } label: {
                         HStack(spacing: 4) {
-                            Image(systemName: "square.and.arrow.up").font(.system(size: 10, weight: .medium))
-                            Text("Exporter").font(.system(size: 11, weight: .medium))
+                            Image(systemName: "square.and.arrow.up").font(.system(size: AppLook.fs(10), weight: .medium))
+                            Text("Exporter").font(.system(size: AppLook.fs(11), weight: .medium))
                         }
                         .foregroundColor(.accent)
                         .padding(.horizontal, 10).padding(.vertical, 5)
@@ -102,27 +102,27 @@ struct TableOfContentsView: View {
                     HStack(spacing: 10) {
                         ZStack {
                             RoundedRectangle(cornerRadius: AppLook.r(6, 10)).fill(Color.accent.opacity(0.12)).frame(width: 26, height: 26)
-                            Image(systemName: "folder.fill").font(.system(size: 11)).foregroundColor(.accent)
+                            Image(systemName: "folder.fill").font(.system(size: AppLook.fs(11))).foregroundColor(.accent)
                         }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(project.name)
-                                .font(.system(size: 14, weight: .bold, design: .rounded))
+                                .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                                 .foregroundColor(.primary)
                             Text("\(project.chapters.count) chapitre\(project.chapters.count != 1 ? "s" : "") · \(completedCount) terminé\(completedCount != 1 ? "s" : "")")
-                                .font(.system(size: 10)).foregroundColor(.labelMuted)
+                                .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                         }
                         Spacer()
                         if totalGoal > 0 {
                             VStack(alignment: .trailing, spacing: 2) {
                                 Text("\(Int(ratio * 100))%")
-                                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                                    .font(.system(size: 13, weight: .bold, design: AppLook.fontDesign))
                                     .foregroundColor(.accent)
                                 Text("\(DataStore.formatNumber(totalWritten)) car.")
-                                    .font(.system(size: 10)).foregroundColor(.labelMuted)
+                                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                             }
                         }
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                            .font(.system(size: 10, weight: .medium)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(10), weight: .medium)).foregroundColor(.labelMuted)
                     }
                 }
                 .buttonStyle(.pressable)
@@ -151,7 +151,7 @@ struct TableOfContentsView: View {
         return VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
                 Image(systemName: chapter.isCompleted ? "checkmark.circle.fill" : "doc.text")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(chapter.isCompleted ? .accentGreen : .labelMuted)
                     .frame(width: 16)
 
@@ -162,23 +162,23 @@ struct TableOfContentsView: View {
                             .foregroundColor(.primary)
                         if isActive {
                             Text("actif")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: AppLook.fs(10), weight: .semibold))
                                 .foregroundColor(.accent)
                                 .padding(.horizontal, 4).padding(.vertical, 1)
                                 .background(Color.accent.opacity(0.1))
                                 .clipShape(Capsule())
                         }
                         if chapter.priority == .high {
-                            Image(systemName: "exclamationmark").font(.system(size: 10, weight: .bold)).foregroundColor(Color(hex: "#DC2626"))
+                            Image(systemName: "exclamationmark").font(.system(size: AppLook.fs(10), weight: .bold)).foregroundColor(Color(hex: "#DC2626"))
                         }
                         ForEach(chapter.customTags.prefix(2), id: \.self) { tag in
-                            Text(tag).font(.system(size: 10)).foregroundColor(.accent)
+                            Text(tag).font(.system(size: AppLook.fs(10))).foregroundColor(.accent)
                                 .padding(.horizontal, 3).padding(.vertical, 1)
                                 .background(Color.accent.opacity(0.08)).clipShape(Capsule())
                         }
                     }
                     if let st = chapter.status, !chapter.isCompleted {
-                        Text(st.label).font(.system(size: 10)).foregroundColor(Color(hex: st.color))
+                        Text(st.label).font(.system(size: AppLook.fs(10))).foregroundColor(Color(hex: st.color))
                     }
                 }
 
@@ -187,16 +187,16 @@ struct TableOfContentsView: View {
                 HStack(spacing: 6) {
                     if chapter.goal > 0 {
                         Text("\(DataStore.formatNumber(latest)) / \(DataStore.formatNumber(chapter.goal))")
-                            .font(.system(size: 10)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                         Text("\(pct)%")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(chapter.isCompleted ? .accentGreen : .accent)
                     } else if latest > 0 {
                         Text(DataStore.formatNumber(latest))
-                            .font(.system(size: 10)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                     }
                     if let dl = chapter.deadline, !dl.isEmpty {
-                        Image(systemName: "calendar").font(.system(size: 10)).foregroundColor(.accentWarm)
+                        Image(systemName: "calendar").font(.system(size: AppLook.fs(10))).foregroundColor(.accentWarm)
                     }
                 }
             }
@@ -207,13 +207,13 @@ struct TableOfContentsView: View {
                 VStack(spacing: 0) {
                     ForEach(chapter.subchapters) { sub in
                         HStack(spacing: 6) {
-                            Image(systemName: "arrow.turn.down.right").font(.system(size: 10)).foregroundColor(.labelMuted).frame(width: 20)
-                            Text(sub.name).font(.system(size: 11)).foregroundColor(.secondary)
+                            Image(systemName: "arrow.turn.down.right").font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted).frame(width: 20)
+                            Text(sub.name).font(.system(size: AppLook.fs(11))).foregroundColor(.secondary)
                             Spacer()
                             let subLatest = sub.entries.max(by: { $0.date < $1.date })?.totalCount ?? 0
                             if sub.goal > 0 {
                                 Text("\(Int(min(100, Double(subLatest)/Double(sub.goal)*100)))%")
-                                    .font(.system(size: 10)).foregroundColor(.labelMuted)
+                                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                             }
                         }
                         .padding(.vertical, 3).padding(.leading, 28)
@@ -255,14 +255,14 @@ private struct ExportTextSheet: View {
         VStack(spacing: 0) {
             HStack {
                 Text("Export Table des matières")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                 Spacer()
                 Button {
                     let pb = NSPasteboard.general; pb.clearContents(); pb.setString(text, forType: .string)
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: "doc.on.doc").font(.system(size: 10))
-                        Text("Copier").font(.system(size: 11, weight: .medium))
+                        Image(systemName: "doc.on.doc").font(.system(size: AppLook.fs(10)))
+                        Text("Copier").font(.system(size: AppLook.fs(11), weight: .medium))
                     }
                     .foregroundColor(.accent)
                     .padding(.horizontal, 10).padding(.vertical, 5)
@@ -280,7 +280,7 @@ private struct ExportTextSheet: View {
             Divider()
             ScrollView {
                 Text(text)
-                    .font(.system(size: 11, design: .monospaced))
+                    .font(.system(size: AppLook.fs(11), design: .monospaced))
                     .foregroundColor(.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)

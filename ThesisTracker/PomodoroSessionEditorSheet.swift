@@ -26,7 +26,7 @@ struct PomodoroSessionEditorSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text("Modifier la session")
-                .font(.system(size: 24, weight: .heavy, design: .rounded))
+                .font(.system(size: 24, weight: .heavy, design: AppLook.fontDesign))
 
             DatePicker("Début", selection: $startedAt)
             DatePicker("Fin", selection: $endedAt, in: startedAt...)
@@ -52,7 +52,7 @@ struct PomodoroSessionEditorSheet: View {
             }
 
             Text("Note")
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
             TextEditor(text: $note)
                 .frame(minHeight: 120)
                 .overlay(

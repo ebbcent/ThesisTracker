@@ -116,9 +116,9 @@ struct PaperDashboardView: View {
                 if store.currentStreak > 0 {
                     HStack(spacing: 4) {
                         Image(systemName: "flame.fill")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                         Text("\(store.currentStreak) jours")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppLook.fs(11), weight: .medium))
                     }
                     .foregroundColor(Color.semOrange)
                 }
@@ -255,18 +255,18 @@ struct PaperDashboardView: View {
                     .onChange(of: selectedDate) { _, _ in refreshInput() }
                 if !isToday {
                     Button("Aujourd'hui") { withAppAnimation { selectedDate = Date() } }
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: AppLook.fs(11), weight: .medium))
                         .foregroundColor(.accent)
                         .buttonStyle(.pressable)
                     Label("Passé", systemImage: "clock.arrow.circlepath")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.semOrange)
                 }
                 Spacer()
                 if hasExistingEntry {
                     Button { showDeleteConfirm = true } label: {
                         Label("Effacer", systemImage: "trash")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(Color(red: 1, green: 0.35, blue: 0.35))
                     }
                     .buttonStyle(.pressable)
@@ -316,7 +316,7 @@ struct PaperDashboardView: View {
 
             // Note
             HStack(spacing: 8) {
-                Image(systemName: "pencil").foregroundColor(.labelMuted).font(.system(size: 11))
+                Image(systemName: "pencil").foregroundColor(.labelMuted).font(.system(size: AppLook.fs(11)))
                 TextField("Note du jour…", text: $noteText)
                     .textFieldStyle(.plain)
                     .font(.system(size: 13))
@@ -332,7 +332,7 @@ struct PaperDashboardView: View {
     private var paperProgressSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Progression")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: AppLook.fs(11), weight: .semibold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.8)
 
@@ -375,10 +375,10 @@ struct PaperDashboardView: View {
                             .font(.system(size: 12))
                             .foregroundColor(.primary)
                         Text(" / \(formatNumber(goal))")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                         Text("  \(Int(min(1.0, Double(value) / Double(goal)) * 100))%")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                             .foregroundColor(isComplete ? .accentGreen : color)
                     }
                 } else {
@@ -407,7 +407,7 @@ struct PaperDashboardView: View {
     private var paperWeekSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Cette semaine")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: AppLook.fs(11), weight: .semibold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.8)
 
@@ -427,7 +427,7 @@ struct PaperDashboardView: View {
 
         return VStack(spacing: 4) {
             Text(day.letter)
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(day.isToday ? .accent : .labelMuted)
 
             Text("\(day.dayNumber)")
@@ -436,7 +436,7 @@ struct PaperDashboardView: View {
 
             if reached {
                 Image(systemName: "checkmark")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.accentGreen)
                     .frame(height: 10)
             } else if day.written > 0 && !day.isFuture {
@@ -490,7 +490,7 @@ struct PaperDashboardView: View {
         if !store.dailyTotals().isEmpty {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Insights")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.labelMuted)
                     .kerning(0.8)
 
@@ -517,7 +517,7 @@ struct PaperDashboardView: View {
     private func paperInsightRow(icon: String, color: Color, label: String, value: String, sub: String?) -> some View {
         HStack(spacing: 10) {
             Image(systemName: icon)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(color)
                 .frame(width: 16)
             Text(label)
@@ -530,7 +530,7 @@ struct PaperDashboardView: View {
                     .foregroundColor(.primary)
                 if let sub = sub {
                     Text(sub)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 }
             }

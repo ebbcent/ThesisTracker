@@ -72,7 +72,7 @@ struct OnboardingView: View {
                                 Text(step == 0 ? "Commencer" : "Suivant")
                                     .lineLimit(1)
                                 Image(systemName: "arrow.right")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                             }
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
@@ -93,7 +93,7 @@ struct OnboardingView: View {
                                 Text("C'est parti !")
                                     .lineLimit(1)
                                 Image(systemName: "checkmark")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                             }
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
@@ -127,7 +127,7 @@ struct OnboardingView: View {
             }
             VStack(spacing: 8) {
                 Text("Bienvenue dans ThesisTracker")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
                 Text("Ton compagnon quotidien pour la rédaction de thèse.\nSuivi des progrès, Pomodoro, échéances — tout au même endroit.")
@@ -154,7 +154,7 @@ struct OnboardingView: View {
             }
             VStack(spacing: 8) {
                 Text("Nomme ton premier projet")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("En général, le titre de ta thèse ou une version courte.")
                     .font(.system(size: 13))
@@ -194,7 +194,7 @@ struct OnboardingView: View {
             }
             VStack(spacing: 8) {
                 Text("Définis un objectif journalier")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("Combien de caractères veux-tu écrire par jour ? Tu pourras modifier ça plus tard.")
                     .font(.system(size: 13))
@@ -228,7 +228,7 @@ struct OnboardingView: View {
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(goalText == value ? .white : .accent)
                             Text(label)
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(goalText == value ? .white.opacity(0.8) : .labelMuted)
                         }
                         .padding(.horizontal, 14)

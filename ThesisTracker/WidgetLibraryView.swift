@@ -72,7 +72,7 @@ struct WidgetLibraryView: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text("Statistiques complètes")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
                 Text(subtitleForContext)
                     .font(.system(size: 12)).foregroundColor(.labelMuted)
             }
@@ -88,7 +88,7 @@ struct WidgetLibraryView: View {
                 if isEditingVisibility, hiddenCount > 0 {
                     Button { resetVisibility() } label: {
                         Text("Tout réafficher (\(hiddenCount))")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppLook.fs(11), weight: .medium))
                             .foregroundColor(.accent)
                             .padding(.horizontal, 9).padding(.vertical, 5)
                             .background(Color.accent.opacity(0.10))
@@ -103,9 +103,9 @@ struct WidgetLibraryView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: isEditingVisibility ? "checkmark" : "checklist")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppLook.fs(11), weight: .medium))
                         Text(isEditingVisibility ? "Terminer" : "Modifier l'affichage")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                     }
                     .foregroundColor(isEditingVisibility ? .white : .labelMuted)
                     .padding(.horizontal, 10).padding(.vertical, 5)
@@ -164,14 +164,14 @@ struct WidgetLibraryView: View {
                              isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 6) {
-                Image(systemName: icon).font(.system(size: 11))
+                Image(systemName: icon).font(.system(size: AppLook.fs(11)))
                 VStack(alignment: .leading, spacing: 1) {
                     Text(label)
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .lineLimit(1)
                     if let subtitle {
                         Text(subtitle)
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(isSelected ? .white.opacity(0.8) : .labelMuted)
                             .lineLimit(1)
                     }

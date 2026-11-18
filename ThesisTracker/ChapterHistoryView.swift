@@ -26,7 +26,7 @@ struct ChapterHistoryView: View {
                 HStack(alignment: .firstTextBaseline) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Historique")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                             .foregroundColor(.primary)
                         Text(chapter.name)
                             .font(.system(size: 12))
@@ -63,7 +63,7 @@ struct ChapterHistoryView: View {
                     if !newNoteText.isEmpty {
                         Button(action: addManualNote) {
                             Image(systemName: "return")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.system(size: AppLook.fs(11), weight: .semibold))
                                 .foregroundColor(.white)
                                 .padding(6)
                                 .background(Color.accent)
@@ -91,7 +91,7 @@ struct ChapterHistoryView: View {
                             .font(.system(size: 13))
                             .foregroundColor(.labelMuted.opacity(0.5))
                         Text("Les mises à jour de compteur, changements de statut\net tes notes apparaîtront ici.")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted.opacity(0.4))
                             .multilineTextAlignment(.center)
                         Spacer()
@@ -141,7 +141,7 @@ struct ChapterHistoryView: View {
                     .foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(formattedTimestamp(entry.timestamp))
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted.opacity(0.6))
             }
 

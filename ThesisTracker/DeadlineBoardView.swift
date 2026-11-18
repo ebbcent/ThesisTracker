@@ -84,7 +84,7 @@ struct DeadlineBoardView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Échéances")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                 Text(selectedTab == .chapitres
                      ? "\(items.count) chapitre(s) avec échéance"
                      : selectedTab == .jalons
@@ -105,7 +105,7 @@ struct DeadlineBoardView: View {
             } label: {
                 HStack(spacing: 5) {
                     Image(systemName: "calendar.badge.plus")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                     Text(".ics")
                         .font(.system(size: 12, weight: .semibold))
                 }
@@ -130,7 +130,7 @@ struct DeadlineBoardView: View {
                 } label: {
                     HStack(spacing: 5) {
                         Image(systemName: "plus")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: AppLook.fs(11), weight: .bold))
                         Text("Jalon")
                             .font(.system(size: 12, weight: .semibold))
                     }
@@ -165,7 +165,7 @@ struct DeadlineBoardView: View {
             withAppAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
         } label: {
             HStack(spacing: 6) {
-                Image(systemName: icon).font(.system(size: 11))
+                Image(systemName: icon).font(.system(size: AppLook.fs(11)))
                 Text(label)
                     .font(.system(size: 13, weight: selectedTab == tab ? .semibold : .regular))
                     .lineLimit(1)
@@ -215,7 +215,7 @@ struct DeadlineBoardView: View {
                                     .frame(width: 20, height: 20)
                                 if item.chapter.isCompleted {
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 10, weight: .bold))
+                                        .font(.system(size: AppLook.fs(10), weight: .bold))
                                         .foregroundColor(.accentGreen)
                                 }
                             }
@@ -236,7 +236,7 @@ struct DeadlineBoardView: View {
                                     .foregroundColor(.labelMuted)
                                 if store.deadlineBuffer > 0 {
                                     Text("(buffer \(store.deadlineBuffer)j)")
-                                        .font(.system(size: 10))
+                                        .font(.system(size: AppLook.fs(10)))
                                         .foregroundColor(.orange.opacity(0.8))
                                 }
                             }
@@ -253,13 +253,13 @@ struct DeadlineBoardView: View {
                             if let pace, !item.chapter.isCompleted {
                                 HStack(spacing: 4) {
                                     Image(systemName: "speedometer")
-                                        .font(.system(size: 10))
+                                        .font(.system(size: AppLook.fs(10)))
                                     let paceStr = store.data.useWordCount
                                         ? "\(DataStore.formatNumber(pace / 5)) mots/jour"
                                         : "\(DataStore.formatNumber(pace)) car./jour"
                                     Text(item.chapter.pacing?.profile.map { "Rythme \($0.label) : \(paceStr) aujourd'hui" }
                                          ?? "Il faut \(paceStr) pour finir à temps")
-                                        .font(.system(size: 11))
+                                        .font(.system(size: AppLook.fs(11)))
                                 }
                                 .foregroundColor(statusColor(for: deadline))
                             }
@@ -270,14 +270,14 @@ struct DeadlineBoardView: View {
                             if !item.chapter.isCompleted {
                                 let days = daysRemaining(for: deadline)
                                 Text(days < 0 ? "J+\(abs(days))" : (days == 0 ? "J-0" : "J-\(days)"))
-                                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                    .font(.system(size: AppLook.fs(10), weight: .bold, design: .monospaced))
                                     .foregroundColor(statusColor(for: deadline))
                                     .padding(.horizontal, 6).padding(.vertical, 2)
                                     .background(statusColor(for: deadline).opacity(0.1))
                                     .clipShape(RoundedRectangle(cornerRadius: 4))
                             }
                         Text(statusText(for: deadline, completed: item.chapter.isCompleted))
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                             .foregroundColor(item.chapter.isCompleted ? .accentGreen : statusColor(for: deadline))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -308,11 +308,11 @@ struct DeadlineBoardView: View {
         } label: {
             HStack(spacing: 5) {
                 Image(systemName: chapter.pacing?.profile?.symbol ?? "chart.xyaxis.line")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                 Text(chapter.pacing?.profile.map { "Rythme : \($0.label)" } ?? "Choisir un rythme")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: AppLook.fs(11), weight: .medium))
                 Image(systemName: open ? "chevron.up" : "chevron.down")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
             }
             .foregroundColor(.accentWarm)
         }
@@ -359,7 +359,7 @@ struct DeadlineBoardView: View {
                             .frame(width: 20, height: 20)
                         if item.milestone.isCompleted {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: AppLook.fs(10), weight: .bold))
                                 .foregroundColor(.accentGreen)
                         }
                     }
@@ -376,7 +376,7 @@ struct DeadlineBoardView: View {
                         Spacer()
                         // Badge date
                         Text(statusText(for: milestoneDate, completed: item.milestone.isCompleted))
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                             .foregroundColor(color)
                             .padding(.horizontal, 8).padding(.vertical, 3)
                             .background(Capsule().fill(color.opacity(0.12)))
@@ -384,20 +384,20 @@ struct DeadlineBoardView: View {
 
                     HStack(spacing: 4) {
                         if let type = item.project.projectType {
-                            Image(systemName: type.icon).font(.system(size: 10))
+                            Image(systemName: type.icon).font(.system(size: AppLook.fs(10)))
                         }
                         Text(item.project.name)
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                     }
                     .foregroundColor(.labelMuted)
 
                     Text(DataStore.formatDate(milestoneDate))
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(isOverdue ? .red.opacity(0.8) : .labelMuted)
 
                     if let notes = item.milestone.notes, !notes.isEmpty {
                         Text(notes)
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                             .lineLimit(2)
                     }
@@ -408,9 +408,9 @@ struct DeadlineBoardView: View {
                             let st = item.milestone.milestoneStatus
                             HStack(spacing: 4) {
                                 Image(systemName: st.icon)
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                 Text(st.label)
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                             }
                             .foregroundColor(st.color)
                             .padding(.horizontal, 7).padding(.vertical, 2)
@@ -423,9 +423,9 @@ struct DeadlineBoardView: View {
                            let ch = item.project.chapters.first(where: { $0.id == cid }) {
                             HStack(spacing: 4) {
                                 Image(systemName: "doc.text")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                 Text(ch.name)
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .lineLimit(1)
                             }
                             .foregroundColor(.accentGreen)
@@ -438,9 +438,9 @@ struct DeadlineBoardView: View {
                         if let recurrence = item.milestone.recurrence {
                             HStack(spacing: 4) {
                                 Image(systemName: recurrence.icon)
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                 Text(recurrence.label)
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                             }
                             .foregroundColor(.accent)
                             .padding(.horizontal, 7).padding(.vertical, 2)
@@ -456,7 +456,7 @@ struct DeadlineBoardView: View {
                     showEditMilestone = true
                 } label: {
                     Image(systemName: "pencil")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .padding(6)
                         .background(Color.cardBg)
@@ -514,7 +514,7 @@ struct DeadlineBoardView: View {
                     ForEach([DataStore.CriticalUrgency.urgent, .high, .medium, .low], id: \.rawValue) { u in
                         HStack(spacing: 5) {
                             Circle().fill(u.color).frame(width: 8, height: 8)
-                            Text(u.label).font(.system(size: 10)).foregroundColor(.labelMuted)
+                            Text(u.label).font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                         }
                     }
                     Spacer()
@@ -552,7 +552,7 @@ struct DeadlineBoardView: View {
                             ? "J+\(abs(cm.daysLeft))"
                             : (cm.daysLeft == 0 ? "Aujourd'hui" : "J-\(cm.daysLeft)")
                         Text(daysText)
-                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                            .font(.system(size: AppLook.fs(11), weight: .bold, design: .monospaced))
                             .foregroundColor(u.color)
                             .padding(.horizontal, 7).padding(.vertical, 3)
                             .background(u.color.opacity(0.10))
@@ -561,19 +561,19 @@ struct DeadlineBoardView: View {
 
                     HStack(spacing: 4) {
                         if let type = cm.project.projectType {
-                            Image(systemName: type.icon).font(.system(size: 10))
+                            Image(systemName: type.icon).font(.system(size: AppLook.fs(10)))
                         }
                         Text(cm.project.name)
                         Text("·")
                         Text(DataStore.formatDate(DataStore.parseDate(cm.milestone.date) ?? Date()))
                     }
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
 
                     HStack(spacing: 8) {
                         // Urgency label
                         Text(u.label)
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(u.color)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(u.color.opacity(0.08))
@@ -583,8 +583,8 @@ struct DeadlineBoardView: View {
                         if cm.milestone.milestoneStatus != .pending {
                             let st = cm.milestone.milestoneStatus
                             HStack(spacing: 3) {
-                                Image(systemName: st.icon).font(.system(size: 10))
-                                Text(st.label).font(.system(size: 10, weight: .semibold))
+                                Image(systemName: st.icon).font(.system(size: AppLook.fs(10)))
+                                Text(st.label).font(.system(size: AppLook.fs(10), weight: .semibold))
                             }
                             .foregroundColor(st.color)
                             .padding(.horizontal, 6).padding(.vertical, 2)
@@ -595,8 +595,8 @@ struct DeadlineBoardView: View {
                         // Blocking indicator
                         if cm.isBlocking {
                             HStack(spacing: 3) {
-                                Image(systemName: "link").font(.system(size: 10))
-                                Text("Bloquant").font(.system(size: 10, weight: .semibold))
+                                Image(systemName: "link").font(.system(size: AppLook.fs(10)))
+                                Text("Bloquant").font(.system(size: AppLook.fs(10), weight: .semibold))
                             }
                             .foregroundColor(.red.opacity(0.7))
                             .padding(.horizontal, 6).padding(.vertical, 2)
@@ -612,7 +612,7 @@ struct DeadlineBoardView: View {
                     showEditMilestone = true
                 } label: {
                     Image(systemName: "pencil")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .padding(6)
                         .background(Color.cardBg)
@@ -757,7 +757,7 @@ struct DeadlineBoardView: View {
                     if !urgentChapters.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("CHAPITRES")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: AppLook.fs(10), weight: .bold))
                                 .foregroundColor(.labelMuted).kerning(1)
                             deadlineListCards(items: urgentChapters)
                         }
@@ -765,7 +765,7 @@ struct DeadlineBoardView: View {
                     if !urgentMilestones.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("JALONS")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: AppLook.fs(10), weight: .bold))
                                 .foregroundColor(.labelMuted).kerning(1)
                             ForEach(urgentMilestones, id: \.milestone.id) { item in
                                 milestoneCard(item)
@@ -932,7 +932,7 @@ extension DeadlineBoardView {
                 let x = gx(monthStart)
                 VStack(spacing: 0) {
                     Text(monthLabel(monthStart))
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .kerning(0.5)
                         .frame(height: axisH, alignment: .center)
@@ -948,7 +948,7 @@ extension DeadlineBoardView {
             // Marque "aujourd'hui"
             let todayX = gx(cal.startOfDay(for: Date()))
             Text("auj.")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.red.opacity(0.7))
                 .offset(x: todayX - 10, y: 0)
         }
@@ -1011,17 +1011,17 @@ extension DeadlineBoardView {
             HStack(spacing: 4) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(row.label)
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(row.isCompleted ? .labelMuted : .primary)
                         .lineLimit(1)
                     Text(row.sub)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                         .lineLimit(1)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: row.isMilestone ? "flag.fill" : "doc.text")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted.opacity(0.5))
                     .padding(.trailing, 4)
             }
@@ -1057,7 +1057,7 @@ extension DeadlineBoardView {
                 // Losange à la date
                 let x = gx(row.barEnd)
                 Image(systemName: row.isCompleted ? "diamond.fill" : "diamond")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(row.accentColor)
                     .frame(width: 14, height: 14)
                     .offset(x: x - 7, y: (rowH - 14) / 2)
@@ -1163,11 +1163,11 @@ struct MilestoneFormView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(isEditing ? "Modifier le jalon" : "Nouveau jalon")
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .font(TypeScale.pageTitle)
                         HStack(spacing: 4) {
                             if let type = project.projectType {
                                 Image(systemName: type.icon)
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                             }
                             Text(project.name)
                                 .font(.system(size: 12))

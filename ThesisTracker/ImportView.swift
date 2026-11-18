@@ -42,7 +42,7 @@ struct ImportView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Importer des données")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                             .foregroundColor(.primary)
                         Text("Collez depuis Excel ou choisissez un fichier CSV")
                             .font(.system(size: 12))
@@ -67,7 +67,7 @@ struct ImportView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text("DONNÉES")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.system(size: AppLook.fs(10), weight: .bold))
                             .foregroundColor(.labelMuted)
                             .kerning(1.2)
                         Spacer()
@@ -201,7 +201,7 @@ struct ImportView: View {
     private var previewTable: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("\(parsedEntries.count) ENTRÉES DÉTECTÉES")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.accentGreen)
                 .kerning(1.0)
 
@@ -210,7 +210,7 @@ struct ImportView: View {
                     Text("Date").frame(maxWidth: .infinity, alignment: .leading)
                     Text("Caractères (total)").frame(width: 140, alignment: .trailing)
                 }
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .padding(.horizontal, 12).padding(.vertical, 6)
 
@@ -234,7 +234,7 @@ struct ImportView: View {
                         }
                         if parsedEntries.count > 10 {
                             Text("… et \(parsedEntries.count - 10) entrées de plus")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.labelMuted)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
                         }
@@ -253,7 +253,7 @@ struct ImportView: View {
     private func pickerBlock<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(1.0)
             content()

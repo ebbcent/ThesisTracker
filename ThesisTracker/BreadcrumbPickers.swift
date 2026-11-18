@@ -17,7 +17,7 @@ struct BreadcrumbProjectPicker: View {
             Divider()
             if projects.isEmpty {
                 Text("Aucun projet")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                     .padding(14)
             } else {
@@ -40,12 +40,12 @@ struct BreadcrumbProjectPicker: View {
     private var header: some View {
         HStack {
             Text("Projets")
-                .font(.system(size: 11, weight: .bold))
+                .font(.system(size: AppLook.fs(11), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.8)
             Spacer()
             Text("\(projects.count)")
-                .font(.system(size: 10, weight: .medium))
+                .font(.system(size: AppLook.fs(10), weight: .medium))
                 .foregroundColor(.labelMuted.opacity(0.6))
         }
         .padding(.horizontal, 12).padding(.vertical, 8)
@@ -70,12 +70,12 @@ struct BreadcrumbProjectPicker: View {
                 Spacer()
                 if !project.chapters.isEmpty {
                     Text("\(project.chapters.count) ch.")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 }
                 if isActive {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.accent)
                 }
             }
@@ -101,7 +101,7 @@ struct BreadcrumbChapterPicker: View {
             Divider()
             if chapters.isEmpty {
                 Text("Aucun chapitre")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                     .padding(14)
             } else {
@@ -124,13 +124,13 @@ struct BreadcrumbChapterPicker: View {
     private var header: some View {
         HStack {
             Text("Chapitres · \(project.name)")
-                .font(.system(size: 11, weight: .bold))
+                .font(.system(size: AppLook.fs(11), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.6)
                 .lineLimit(1)
             Spacer()
             Text("\(chapters.count)")
-                .font(.system(size: 10, weight: .medium))
+                .font(.system(size: AppLook.fs(10), weight: .medium))
                 .foregroundColor(.labelMuted.opacity(0.6))
         }
         .padding(.horizontal, 12).padding(.vertical, 8)
@@ -161,23 +161,23 @@ struct BreadcrumbChapterPicker: View {
                         .lineLimit(1)
                     if goal > 0 {
                         Text("\(pct)% · v\(chapter.draftVersion)")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                     }
                 }
                 Spacer()
                 if chapter.reviewState == .sent {
                     Image(systemName: "paperplane.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(chapter.reviewState.color)
                 } else if chapter.reviewState == .received {
                     Image(systemName: "envelope.open.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(chapter.reviewState.color)
                 }
                 if isActive {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.accent)
                 }
             }

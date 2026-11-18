@@ -46,7 +46,7 @@ struct BlockedSessionSheet: View {
                         .font(.system(size: 16, weight: .semibold))
                 }
                 Text(chapter?.name ?? "Aucun chapitre actif")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Button { dismiss() } label: {
@@ -119,13 +119,13 @@ struct BlockedSessionSheet: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.primary)
                     Text(subtitle)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .multilineTextAlignment(.leading)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.labelMuted.opacity(0.4))
             }
             .padding(14)
@@ -140,7 +140,7 @@ struct BlockedSessionSheet: View {
     private var blockerInput: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Le blocage")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: AppLook.fs(11), weight: .semibold))
                 .foregroundColor(.labelMuted)
             TextEditor(text: $blockerText)
                 .font(.system(size: 12))
@@ -154,7 +154,7 @@ struct BlockedSessionSheet: View {
                     saveBlocker()
                 } label: {
                     Text("Ajouter aux blockers du chapitre")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 12).padding(.vertical, 6)
                         .background(Color.accent)

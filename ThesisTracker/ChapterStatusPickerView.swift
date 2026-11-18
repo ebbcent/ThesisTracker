@@ -31,7 +31,7 @@ struct ChapterStatusPickerView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Statut du chapitre")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                     Text(chapterName)
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
@@ -152,7 +152,7 @@ private struct StatusOptionCard: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.primary)
                     Text(status.description)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.secondary)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)

@@ -45,7 +45,7 @@ struct PomodoroTimerTabView: View {
 
                 // Status message
                 Text(controller.statusMessage)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                     .lineLimit(1)
                     .padding(.trailing, 16)
@@ -86,7 +86,7 @@ struct PomodoroTimerTabView: View {
         } label: {
             HStack(spacing: 5) {
                 Image(systemName: section.icon)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: AppLook.fs(11), weight: .medium))
                 Text(section.title)
                     .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
                     .lineLimit(1)

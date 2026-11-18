@@ -47,7 +47,7 @@ struct AchievementsView: View {
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Accomplissements")
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(.system(size: 22, weight: .bold, design: AppLook.fontDesign))
                         Text("Progression et badges")
                             .font(.system(size: 12)).foregroundColor(.labelMuted)
                     }
@@ -118,7 +118,7 @@ struct AchievementsView: View {
                                         Text("Prochain badge volume : \(next.name)")
                                             .font(.system(size: 13, weight: .semibold))
                                         Text("Plus que \(store.formatCountShort(remaining)) à écrire — \(next.description)")
-                                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                                     }
                                     Spacer()
                                     Text("\(Int(progress * 100))%")
@@ -374,7 +374,7 @@ struct AchievementsView: View {
                         Text("Prochain badge : \(badge.name)")
                             .font(.system(size: 13, weight: .semibold))
                         Text("Plus que \(remaining) jour\(remaining > 1 ? "s" : "") consécutif\(remaining > 1 ? "s" : "") — \(badge.description)")
-                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                     }
                     Spacer()
                     Text("\(Int(progress * 100))%")
@@ -397,8 +397,8 @@ struct AchievementsView: View {
     @ViewBuilder
     private func sectionHeader(_ text: String, icon: String, color: Color) -> some View {
         HStack(spacing: 6) {
-            Image(systemName: icon).font(.system(size: 10, weight: .bold)).foregroundColor(color)
-            Text(text).font(.system(size: 10, weight: .bold)).foregroundColor(.labelMuted).kerning(1.0)
+            Image(systemName: icon).font(.system(size: AppLook.fs(10), weight: .bold)).foregroundColor(color)
+            Text(text).font(.system(size: AppLook.fs(10), weight: .bold)).foregroundColor(.labelMuted).kerning(1.0)
         }
     }
 }
@@ -456,17 +456,17 @@ private struct VolumeBadgeCard: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(isUnlocked ? .primary : .labelMuted)
                 Text(badge.description)
-                    .font(.system(size: 10)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
             }
             if isUnlocked {
                 HStack(spacing: 3) {
-                    Image(systemName: "checkmark.circle.fill").font(.system(size: 10))
-                    Text("Débloqué").font(.system(size: 10, weight: .medium))
+                    Image(systemName: "checkmark.circle.fill").font(.system(size: AppLook.fs(10)))
+                    Text("Débloqué").font(.system(size: AppLook.fs(10), weight: .medium))
                 }
                 .foregroundColor(badge.color)
             } else {
                 Text("\(Int(progress * 100))%")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -507,13 +507,13 @@ private struct BadgeCard: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(isUnlocked ? .primary : .labelMuted)
                 Text(badge.description)
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
             if isUnlocked {
                 HStack(spacing: 3) {
-                    Image(systemName: "checkmark.circle.fill").font(.system(size: 10))
-                    Text("Débloqué").font(.system(size: 10, weight: .medium))
+                    Image(systemName: "checkmark.circle.fill").font(.system(size: AppLook.fs(10)))
+                    Text("Débloqué").font(.system(size: AppLook.fs(10), weight: .medium))
                 }
                 .foregroundColor(badge.color)
             }
@@ -561,7 +561,7 @@ private struct GeneralAchievementCard: View {
                     .foregroundColor(achievement.isUnlocked ? .primary : .labelMuted)
                     .lineLimit(1)
                 Text(achievement.description)
-                    .font(.system(size: 10)).foregroundColor(.labelMuted).lineLimit(1)
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted).lineLimit(1)
             }
             Spacer()
             if achievement.isUnlocked {
@@ -602,11 +602,11 @@ private struct CompletedChallengeCard: View {
                     .font(.system(size: 12, weight: .semibold))
                     .lineLimit(1)
                 Text(challengeDescription)
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
                     .lineLimit(1)
                 Text(weekLabel)
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted.opacity(0.7))
                     .lineLimit(1)
             }
@@ -682,10 +682,10 @@ private struct AchievementStatCard: View {
             Image(systemName: icon).font(.system(size: 14)).foregroundColor(iconColor)
             VStack(alignment: .leading, spacing: 1) {
                 HStack(alignment: .lastTextBaseline, spacing: 3) {
-                    Text(value).font(.system(size: 20, weight: .bold, design: .rounded))
-                    Text(unit).font(.system(size: 11)).foregroundColor(.labelMuted)
+                    Text(value).font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    Text(unit).font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                 }
-                Text(label).font(.system(size: 10)).foregroundColor(.labelMuted)
+                Text(label).font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
             }
         }
         .padding(14)

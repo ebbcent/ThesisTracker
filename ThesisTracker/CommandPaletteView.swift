@@ -149,13 +149,13 @@ struct CommandPaletteView: View {
                                                     .font(.system(size: 13, weight: .medium))
                                                     .foregroundColor(.primary)
                                                 Text(result.subtitle)
-                                                    .font(.system(size: 11))
+                                                    .font(.system(size: AppLook.fs(11)))
                                                     .foregroundColor(.labelMuted)
                                             }
                                             Spacer()
                                             if i == selectedIndex {
                                                 Image(systemName: "return")
-                                                    .font(.system(size: 10))
+                                                    .font(.system(size: AppLook.fs(10)))
                                                     .foregroundColor(.labelMuted)
                                             }
                                         }
@@ -217,13 +217,13 @@ struct CommandPaletteView: View {
     private func shortcutHint(_ key: String, label: String) -> some View {
         HStack(spacing: 4) {
             Text(key)
-                .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                .font(.system(size: AppLook.fs(10), weight: .semibold, design: .monospaced))
                 .foregroundColor(.labelMuted)
                 .padding(.horizontal, 5).padding(.vertical, 2)
                 .background(Color.fieldBg)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
             Text(label)
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted)
         }
     }

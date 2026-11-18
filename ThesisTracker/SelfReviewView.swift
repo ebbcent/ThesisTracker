@@ -55,7 +55,7 @@ struct SelfReviewSheet: View {
                     }
                     Divider()
                     Text("NOTES")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: AppLook.fs(10), weight: .bold))
                         .foregroundColor(.labelMuted).kerning(0.6)
                     TextEditor(text: $notes)
                         .font(.system(size: 12))
@@ -77,7 +77,7 @@ struct SelfReviewSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Self-review qualité").font(.system(size: 16, weight: .semibold))
                 Text("\(chapter.name) · Draft v\(chapter.draftVersion)")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Button { dismiss() } label: {
@@ -98,9 +98,9 @@ struct SelfReviewSheet: View {
                 .foregroundColor(.labelMuted)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Précédente : \(prev.date) (draft v\(prev.draftVersion))")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                 Text("Moyenne : \(String(format: "%.1f", prev.average))/5")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
             Spacer()
@@ -121,12 +121,12 @@ struct SelfReviewSheet: View {
                     Text(c.label)
                         .font(.system(size: 13, weight: .semibold))
                     Text(c.description)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                 }
                 Spacer()
                 Text("\(currentValue(for: c.id))/5")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(scoreColor(currentValue(for: c.id)))
             }
             HStack(spacing: 6) {
@@ -137,7 +137,7 @@ struct SelfReviewSheet: View {
                                 .fill(currentValue(for: c.id) >= lvl ? scoreColor(currentValue(for: c.id)) : Color.labelMuted.opacity(0.12))
                                 .frame(width: 22, height: 22)
                             Text("\(lvl)")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: AppLook.fs(10), weight: .semibold))
                                 .foregroundColor(currentValue(for: c.id) >= lvl ? .white : .labelMuted)
                         }
                     }
@@ -160,7 +160,7 @@ struct SelfReviewSheet: View {
             Spacer()
             let avg = Double(clarity + argumentation + citations + transitions + originality) / 5.0
             Text("Moyenne : \(String(format: "%.1f", avg))/5")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
             Button {
                 _ = store.addSelfReview(
@@ -245,7 +245,7 @@ struct PainfulChaptersWidget: View {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.accentGreen)
                         Text("Aucun chapitre en souffrance — tout coule.")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
                 } else {
@@ -254,18 +254,18 @@ struct PainfulChaptersWidget: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(spacing: 4) {
                                     Image(systemName: "exclamationmark.triangle.fill")
-                                        .font(.system(size: 10))
+                                        .font(.system(size: AppLook.fs(10)))
                                         .foregroundColor(severityColor(p.score))
                                     Text(p.chapter.name)
                                         .font(.system(size: 12, weight: .semibold))
                                         .lineLimit(1)
                                     Spacer()
                                     Text("\(p.score)/5")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                                         .foregroundColor(severityColor(p.score))
                                 }
                                 Text(p.reasons.joined(separator: " · "))
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                     .foregroundColor(.labelMuted)
                                     .lineLimit(2)
                             }
@@ -275,7 +275,7 @@ struct PainfulChaptersWidget: View {
                         }
                         if painful.count > 3 {
                             Text("+ \(painful.count - 3) autre\(painful.count - 3 > 1 ? "s" : "")")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted.opacity(0.7))
                         }
                     }

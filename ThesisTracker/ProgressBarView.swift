@@ -32,7 +32,7 @@ struct ProgressBarView: View {
             HStack(spacing: 0) {
                 HStack(spacing: 7) {
                     Image(systemName: isComplete ? "checkmark.circle.fill" : icon)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: AppLook.fs(11), weight: .medium))
                         .foregroundColor(displayColor)
                         .frame(width: 16)
                     Text(label)
@@ -42,16 +42,16 @@ struct ProgressBarView: View {
                 Spacer(minLength: 8)
                 HStack(spacing: 0) {
                     Text(formatNumber(value))
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.primary)
                         .contentTransition(.numericText())
                         .appAnimation(.easeOut(duration: 0.15), value: value)
                     if hasGoal {
                         Text(" / \(formatNumber(goal))")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                         Text("  \(percentage)%")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: AppLook.fs(11), weight: .bold))
                             .foregroundColor(displayColor)
                             .contentTransition(.numericText())
                             .appAnimation(.easeOut(duration: 0.15), value: percentage)

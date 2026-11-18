@@ -401,7 +401,7 @@ struct ChartView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Graphiques")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text(selectedProject.map { "Projet : \($0.name)" } ?? "Vue globale")
                     .font(.system(size: 12))
@@ -1470,7 +1470,7 @@ struct ChartSnapshotView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.white)
                     Text("Période : \(period)  ·  Total : \(DataStore.formatNumber(total)) car.  ·  Jours actifs : \(active)")
                         .font(.system(size: 11)).foregroundColor(.white.opacity(0.5))

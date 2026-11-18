@@ -238,7 +238,7 @@ struct SearchView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Recherche")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                 Text("Chapitres, plan, idées, blocages et notes quotidiennes")
                     .font(.system(size: 12))
                     .foregroundColor(.labelMuted)
@@ -296,7 +296,7 @@ struct SearchView: View {
             // Sort selector
             HStack(spacing: 8) {
                 Text("Trier par :")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
@@ -305,7 +305,7 @@ struct SearchView: View {
                                 withAppAnimation(.easeInOut(duration: 0.15)) { sortOrder = order }
                             } label: {
                                 Text(order.rawValue)
-                                    .font(.system(size: 11, weight: sortOrder == order ? .semibold : .regular))
+                                    .font(.system(size: AppLook.fs(11), weight: sortOrder == order ? .semibold : .regular))
                                     .lineLimit(1)
                                     .foregroundColor(sortOrder == order ? .white : .labelMuted)
                                     .padding(.horizontal, 10).padding(.vertical, 5)
@@ -327,9 +327,9 @@ struct SearchView: View {
         let sel = selectedProjectId == id
         return Button { selectedProjectId = id } label: {
             HStack(spacing: 4) {
-                Image(systemName: icon).font(.system(size: 10))
+                Image(systemName: icon).font(.system(size: AppLook.fs(10)))
                 Text(name)
-                    .font(.system(size: 11, weight: sel ? .semibold : .regular))
+                    .font(.system(size: AppLook.fs(11), weight: sel ? .semibold : .regular))
                     .lineLimit(1)
             }
             .foregroundColor(sel ? .white : .labelMuted)
@@ -377,7 +377,7 @@ struct SearchView: View {
                                 // #48 — source label pill
                                 if result.source != .chapterName && result.source != .projectNote {
                                     Text(result.source.rawValue)
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                                         .foregroundColor(result.source.color)
                                         .padding(.horizontal, 6).padding(.vertical, 2)
                                         .background(result.source.color.opacity(0.12))
@@ -388,7 +388,7 @@ struct SearchView: View {
                             // Date
                             if let date = result.date, let parsed = DataStore.parseDate(date) {
                                 Text(DataStore.formatDate(parsed))
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.labelMuted)
                             }
 
@@ -413,7 +413,7 @@ struct SearchView: View {
                         if result.charCount > 0 {
                             VStack(alignment: .trailing, spacing: 2) {
                                 Text(store.formatCount(result.charCount))
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                                     .foregroundColor(.accent)
                                     .lineLimit(1)
                             }

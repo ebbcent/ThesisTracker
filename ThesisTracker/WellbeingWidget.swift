@@ -35,7 +35,7 @@ struct WellbeingWidget: View {
                     Spacer()
                     if let avg = avgEnergy {
                         Text("Moy. 7j · \(String(format: "%.1f", avg))/5")
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: AppLook.fs(10), weight: .medium))
                             .foregroundColor(.labelMuted)
                     }
                 }
@@ -65,11 +65,11 @@ struct WellbeingWidget: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("Niveau d'énergie aujourd'hui")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                 Spacer()
                 if let lvl = localEnergy {
                     Text(energyLabel(lvl))
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(energyColor(lvl))
                 }
             }
@@ -89,7 +89,7 @@ struct WellbeingWidget: View {
                                 .fill(localEnergy ?? 0 >= lvl ? energyColor(lvl).opacity(0.85) : Color.labelMuted.opacity(0.12))
                                 .frame(width: 26, height: 26)
                             Text("\(lvl)")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.system(size: AppLook.fs(11), weight: .semibold))
                                 .foregroundColor(localEnergy ?? 0 >= lvl ? .white : .labelMuted)
                         }
                     }
@@ -108,7 +108,7 @@ struct WellbeingWidget: View {
                 Text("Jour de repos planifié")
                     .font(.system(size: 12, weight: .semibold))
                 Text("Pas d'objectif. Tu reviens demain.")
-                    .font(.system(size: 10)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
             }
             Spacer()
         }
@@ -120,7 +120,7 @@ struct WellbeingWidget: View {
     private var miniHistory: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("14 DERNIERS JOURS")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted.opacity(0.7))
                 .kerning(0.6)
             HStack(alignment: .bottom, spacing: 3) {
@@ -163,9 +163,9 @@ struct WellbeingWidget: View {
             } label: {
                 HStack(spacing: 5) {
                     Image(systemName: isRest ? "checkmark.circle.fill" : "moon")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                     Text(isRest ? "Annuler le repos" : "Jour de repos")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                 }
                 .foregroundColor(isRest ? .white : Color.labelMuted)
                 .padding(.horizontal, 10).padding(.vertical, 6)

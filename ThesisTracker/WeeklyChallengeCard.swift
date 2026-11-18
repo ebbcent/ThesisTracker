@@ -26,12 +26,12 @@ struct WeeklyChallengeCard: View {
                             .foregroundColor(challengeColor)
                     }
                     Text("Défi de la semaine")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                         .foregroundColor(.primary)
                     Spacer()
                     if let c = challenge, c.isCompleted {
                         Label("Relevé", systemImage: "checkmark.circle.fill")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(Color.semGreen)
                             .padding(.horizontal, 7).padding(.vertical, 3)
                             .background(Color.semGreen.opacity(0.12))
@@ -49,11 +49,11 @@ struct WeeklyChallengeCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             Text("\(progress) / \(c.target) \(c.kind.unit)")
-                                .font(.system(size: 11, weight: .medium))
+                                .font(.system(size: AppLook.fs(11), weight: .medium))
                                 .foregroundColor(.primary)
                             Spacer()
                             Text("\(Int(ratio * 100))%")
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.system(size: AppLook.fs(11), weight: .bold))
                                 .foregroundColor(challengeColor)
                         }
                         GeometryReader { geo in
@@ -77,14 +77,14 @@ struct WeeklyChallengeCard: View {
 
                     // Week range
                     Text(weekRangeLabel)
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted.opacity(0.7))
                 } else {
                     Text("Aucun défi cette semaine")
                         .font(.system(size: 12))
                         .foregroundColor(.labelMuted)
                     Text("Lance une session d'écriture pour générer ton défi.")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted.opacity(0.7))
                 }
             }

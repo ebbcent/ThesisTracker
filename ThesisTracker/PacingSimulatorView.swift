@@ -24,7 +24,7 @@ struct PacingSimulatorView: View {
                 summary(plan)
             } else {
                 Text("Indique un objectif et une date limite pour calculer un rythme.")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
             }
             weekdayPicker
@@ -47,8 +47,8 @@ struct PacingSimulatorView: View {
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: profile.symbol).font(.system(size: 10))
-                        Text(profile.label).font(.system(size: 11, weight: selected ? .semibold : .regular))
+                        Image(systemName: profile.symbol).font(.system(size: AppLook.fs(10)))
+                        Text(profile.label).font(.system(size: AppLook.fs(11), weight: selected ? .semibold : .regular))
                         if profile == savedProfile {
                             Circle().fill(Color.accentGreen).frame(width: 5, height: 5)
                         }
@@ -76,7 +76,7 @@ struct PacingSimulatorView: View {
                     store.updatePacing(chapterId: chapter.id, in: projectId) { $0.profile = nil; $0.startDate = nil }
                 }
                 .buttonStyle(.pressable)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
                 .help("Revenir au calcul linéaire d'avant")
             }
@@ -87,21 +87,21 @@ struct PacingSimulatorView: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 6) {
                 Text("Aujourd'hui")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                 Text(store.formatCount(plan.todayQuota))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.accentWarm)
                 if let pages = store.formatPages(plan.todayQuota) {
-                    Text("(\(pages))").font(.system(size: 11)).foregroundColor(.labelMuted)
+                    Text("(\(pages))").font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                 }
                 Spacer()
                 Text("\(plan.workingDaysLeft) jour(s) ouvré(s) · reste \(store.formatCount(plan.remaining))")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
             }
             Text(shownProfile.summary + (preview != nil ? " Aperçu : rien n'est enregistré." : ""))
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -118,7 +118,7 @@ struct PacingSimulatorView: View {
         let selected = Set(chapter.pacing?.workWeekdays ?? [])
         return HStack(spacing: 4) {
             Text("Jours ouvrés")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
             ForEach(Self.weekdays, id: \.value) { day in
                 let on = selected.contains(day.value)
@@ -130,7 +130,7 @@ struct PacingSimulatorView: View {
                     }
                 } label: {
                     Text(day.letter)
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .frame(width: 20, height: 20)
                         .foregroundColor(on ? .black : .labelMuted)
                         .background(Circle().fill(on ? Color.accentWarm : Color.cardBg))
@@ -142,7 +142,7 @@ struct PacingSimulatorView: View {
                 .accessibilityAddTraits(on ? .isSelected : [])
             }
             Text(selected.isEmpty ? "Calendrier général" : "Propres à ce chapitre")
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted)
                 .padding(.leading, 4)
         }
@@ -219,7 +219,7 @@ struct PacingCurveView: View {
                         .shadow(color: Color.accentWarm.opacity(0.9), radius: 5)
                         .position(x: tx, y: ty)
                     Text("Aujourd'hui")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.system(size: AppLook.fs(10), weight: .medium))
                         .foregroundColor(.labelMuted)
                         .fixedSize()
                         .position(x: min(max(tx, 30), g.width - 30), y: 6)

@@ -43,7 +43,7 @@ struct CooldownSheet: View {
                     Text("Cooldown").font(.system(size: 16, weight: .semibold))
                 }
                 Text("2 minutes pour fixer la mémoire de session.")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Button { dismiss() } label: {
@@ -62,7 +62,7 @@ struct CooldownSheet: View {
         VStack(alignment: .leading, spacing: 4) {
             if let chapter {
                 Text("CHAPITRE")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(0.6)
                 Text(chapter.name)
@@ -103,7 +103,7 @@ struct CooldownSheet: View {
             Text(title)
                 .font(.system(size: 12, weight: .semibold))
             Text(hint)
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted)
             TextEditor(text: text)
                 .font(.system(size: 12))
@@ -116,7 +116,7 @@ struct CooldownSheet: View {
                     withAppAnimation { focusStep += 1 }
                 } label: {
                     Text(focusStep == 2 ? "Voir le résumé" : "Continuer")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 12).padding(.vertical, 6)
                         .background(Color.accent)
@@ -131,22 +131,22 @@ struct CooldownSheet: View {
         VStack(alignment: .leading, spacing: 8) {
             Divider()
             Text("RÉSUMÉ — ce qui sera enregistré")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.6)
             VStack(alignment: .leading, spacing: 6) {
                 if !accomplishment.isEmpty {
-                    Label { Text("Journal : \(accomplishment)").font(.system(size: 11)) } icon: {
+                    Label { Text("Journal : \(accomplishment)").font(.system(size: AppLook.fs(11))) } icon: {
                         Image(systemName: "book.closed.fill").foregroundColor(Color.semPurple)
                     }
                 }
                 if !blocker.isEmpty {
-                    Label { Text("Blockers du chapitre : \(blocker)").font(.system(size: 11)) } icon: {
+                    Label { Text("Blockers du chapitre : \(blocker)").font(.system(size: AppLook.fs(11))) } icon: {
                         Image(systemName: "exclamationmark.triangle").foregroundColor(Color.semRed)
                     }
                 }
                 if !nextAction.isEmpty {
-                    Label { Text("Prochaine étape : \(nextAction)").font(.system(size: 11)) } icon: {
+                    Label { Text("Prochaine étape : \(nextAction)").font(.system(size: AppLook.fs(11))) } icon: {
                         Image(systemName: "arrow.right.circle.fill").foregroundColor(.accent)
                     }
                 }

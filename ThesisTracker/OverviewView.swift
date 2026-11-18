@@ -60,7 +60,7 @@ struct OverviewView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Vue d'ensemble")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                 Text("\(activeProjects.count) projet(s) · \(totalChapters) chapitre(s)")
                     .font(.system(size: 12))
                     .foregroundColor(.labelMuted)
@@ -133,17 +133,17 @@ struct OverviewView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Label("Progression globale", systemImage: "chart.bar.fill")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .font(.system(size: 12, weight: .semibold, design: AppLook.fontDesign))
                             .foregroundColor(.primary)
                         Spacer()
                         Text("\(Int(ratio * 100))%")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(.system(size: 13, weight: .bold, design: AppLook.fontDesign))
                             .foregroundColor(ratio >= 1 ? .accentGreen : .accent)
                         Text("·")
                             .font(.system(size: 12))
                             .foregroundColor(.labelMuted.opacity(0.4))
                         Text(store.formatCount(totalWritten) + " / " + store.formatCount(totalGoal))
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
                     GeometryReader { geo in
@@ -184,11 +184,11 @@ struct OverviewView: View {
                                             .fill(Color.chapterColor(at: idx))
                                             .frame(width: 10, height: 10)
                                         Text(project.name)
-                                            .font(.system(size: 10))
+                                            .font(.system(size: AppLook.fs(10)))
                                             .foregroundColor(.labelMuted)
                                             .lineLimit(1)
                                         Text("\(Int(pRatio * 100))%")
-                                            .font(.system(size: 10, weight: .semibold))
+                                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                                             .foregroundColor(.secondary)
                                     }
                                 }
@@ -230,16 +230,16 @@ struct OverviewView: View {
                     // Titre
                     HStack {
                         Label("Pipeline de thèse", systemImage: "chart.bar.xaxis")
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                             .foregroundColor(.primary)
                         Spacer()
                         if velocity > 0 {
                             HStack(spacing: 4) {
                                 Image(systemName: "bolt.fill")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                     .foregroundColor(.accentWarm)
                                 Text(store.formatCountShort(velocity) + " / semaine")
-                                    .font(.system(size: 11, weight: .medium))
+                                    .font(.system(size: AppLook.fs(11), weight: .medium))
                                     .foregroundColor(.accentWarm)
                             }
                             .padding(.horizontal, 8).padding(.vertical, 4)
@@ -275,7 +275,7 @@ struct OverviewView: View {
                             HStack(spacing: 5) {
                                 Circle().fill(Color(hex: st.color)).frame(width: 7, height: 7)
                                 Text("\(count) \(st.label)")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.labelMuted)
                             }
                         }
@@ -283,13 +283,13 @@ struct OverviewView: View {
                             HStack(spacing: 5) {
                                 Circle().fill(Color.primary.opacity(0.25)).frame(width: 7, height: 7)
                                 Text("\(noStatus) Non défini")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.labelMuted)
                             }
                         }
                         Spacer()
                         Text("\(total) chapitres")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppLook.fs(11), weight: .medium))
                             .foregroundColor(.labelMuted)
                     }
                 }
@@ -331,7 +331,7 @@ struct OverviewView: View {
                                 .foregroundColor(.labelMuted)
                             Spacer()
                             Image(systemName: showArchivedOverview ? "chevron.up" : "chevron.down")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.labelMuted.opacity(0.6))
                         }
                         .padding(.horizontal, 14).padding(.vertical, 10)
@@ -350,9 +350,9 @@ struct OverviewView: View {
                                         store.unarchiveProject(project.id)
                                     } label: {
                                         HStack(spacing: 4) {
-                                            Image(systemName: "arrow.uturn.up").font(.system(size: 10))
+                                            Image(systemName: "arrow.uturn.up").font(.system(size: AppLook.fs(10)))
                                             Text("Restaurer")
-                                                .font(.system(size: 10, weight: .medium))
+                                                .font(.system(size: AppLook.fs(10), weight: .medium))
                                                 .lineLimit(1)
                                         }
                                         .foregroundColor(.accent)
@@ -399,11 +399,11 @@ struct OverviewView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 6) {
                             Text(project.name)
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                                 .foregroundColor(.primary)
                             if isActive {
                                 Text("actif")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 6).padding(.vertical, 2)
                                     .background(Color.accent.opacity(0.85))
@@ -411,7 +411,7 @@ struct OverviewView: View {
                             }
                             if overdueCount > 0 {
                                 Text("\(overdueCount) en retard")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 6).padding(.vertical, 2)
                                     .background(Color.red.opacity(0.85))
@@ -422,15 +422,15 @@ struct OverviewView: View {
                         if let supervisor = project.supervisor, !supervisor.isEmpty {
                             HStack(spacing: 4) {
                                 Image(systemName: "person.fill")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                     .foregroundColor(.labelMuted.opacity(0.7))
                                 Text(supervisor)
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.labelMuted)
                             }
                         } else {
                             Text("\(chapters.count) chapitre(s)")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.labelMuted)
                         }
                     }
@@ -456,7 +456,7 @@ struct OverviewView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         HStack {
                             Text(store.formatCount(totalChars) + " / " + store.formatCount(totalGoal))
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.labelMuted)
                             Spacer()
                             Text("\(Int(ratio * 100))%")
@@ -486,7 +486,7 @@ struct OverviewView: View {
                         }
                         if chapters.count > 4 {
                             Text("+ \(chapters.count - 4) chapitre(s)")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.labelMuted)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
@@ -498,10 +498,10 @@ struct OverviewView: View {
                     Divider()
                     HStack(spacing: 6) {
                         Image(systemName: "note.text")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted.opacity(0.6))
                         Text(notes)
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
@@ -514,16 +514,16 @@ struct OverviewView: View {
                 HStack(spacing: 16) {
                     if let lastDate = lastActivity {
                         Label(DataStore.formatDate(lastDate), systemImage: "clock")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     } else {
                         Label("Aucune activité", systemImage: "clock")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
                     if let etaDate = eta {
                         Label("Fin ~" + DataStore.formatDate(etaDate), systemImage: "flag.fill")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.accentWarm)
                     }
                     Spacer()
@@ -559,16 +559,16 @@ struct OverviewView: View {
                 }
                 .frame(width: 80, height: 4)
                 Text("\(Int(ratio * 100))%")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(.labelMuted)
                     .frame(width: 32, alignment: .trailing)
             } else if chapter.isCompleted {
                 Text("Terminé")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(.accentGreen)
             } else {
                 Text(store.formatCountShort(latest))
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
         }

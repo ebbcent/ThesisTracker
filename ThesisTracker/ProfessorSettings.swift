@@ -121,7 +121,7 @@ struct ProfessorSettingsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("PROFESSEUR")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(1.2)
             VStack(alignment: .leading, spacing: 12) {
@@ -135,7 +135,7 @@ struct ProfessorSettingsSection: View {
                             .font(.system(size: 13, weight: .medium))
                         Text(settings.hasKey ? "Clé API enregistrée dans le Trousseau de ce Mac." :
                                 "Ajoute ta clé API Anthropic (une fois par Mac).")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
                     Spacer()
@@ -177,7 +177,7 @@ struct ProfessorSettingsSection: View {
                         Text("Notifier quand il répond")
                             .font(.system(size: 12, weight: .medium))
                         Text("Seulement si la réponse arrive hors de vue (autre app, autre onglet).")
-                            .font(.system(size: 11)).foregroundColor(.labelMuted)
+                            .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                     }
                 }
                 .toggleStyle(.switch)
@@ -192,17 +192,17 @@ struct ProfessorSettingsSection: View {
                             .buttonStyle(AccentPillButtonStyle())
                     }
                     Text(settings.folderPath)
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(.system(size: AppLook.fs(10), design: .monospaced))
                         .foregroundColor(settings.folderExists ? .labelMuted : .orange)
                         .lineLimit(2)
                         .truncationMode(.middle)
                     if !settings.folderExists {
                         Text("Dossier introuvable sur ce Mac.")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.semOrange)
                     }
                     Text("Le professeur lit ce dossier sans le modifier ; il écrit seulement dans « Échanges app/ ».")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .fixedSize(horizontal: false, vertical: true)
                 }

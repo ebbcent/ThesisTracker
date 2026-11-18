@@ -6,7 +6,7 @@ struct CockpitButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 13, weight: .semibold, design: .rounded))
+            .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
             .lineLimit(1)
             .fixedSize(horizontal: true, vertical: false)
             .foregroundStyle(prominent ? Color.white : CockpitTheme.textPrimary(for: colorScheme))
@@ -69,16 +69,16 @@ struct PremiumMenuPicker: View {
                     )
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title.uppercased())
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .font(.system(size: AppLook.fs(10), weight: .bold, design: AppLook.fontDesign))
                         .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
                     Text(value)
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                         .foregroundStyle(CockpitTheme.textPrimary(for: colorScheme))
                         .lineLimit(1)
                 }
                 Spacer()
                 Image(systemName: "chevron.up.chevron.down")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: AppLook.fs(11), weight: .bold))
                     .foregroundStyle(CockpitTheme.textTertiary(for: colorScheme))
             }
             .padding(.horizontal, 12)

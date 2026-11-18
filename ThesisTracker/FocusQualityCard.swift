@@ -106,7 +106,7 @@ struct PomodoroIntentionField: View {
                 Image(systemName: "scope")
                     .foregroundColor(.accent)
                 Text(intention)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign))
                     .lineLimit(2)
             }
             .frame(maxWidth: .infinity, alignment: .center)
@@ -194,7 +194,7 @@ struct FocusQualityCard: View {
                     ForEach(weeks) { week in
                         HStack(spacing: 10) {
                             Text("Sem. du \(Self.weekFormatter.string(from: week.weekStart))")
-                                .font(.system(size: 11, design: .rounded))
+                                .font(.system(size: AppLook.fs(11), design: AppLook.fontDesign))
                                 .foregroundStyle(.secondary)
                                 .frame(width: 110, alignment: .leading)
                             GeometryReader { geo in
@@ -212,7 +212,7 @@ struct FocusQualityCard: View {
                             }
                             .frame(height: 12)
                             Text("\(week.total)")
-                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                .font(.system(size: AppLook.fs(11), weight: .semibold, design: AppLook.fontDesign))
                                 .frame(width: 24, alignment: .trailing)
                         }
                     }
@@ -220,7 +220,7 @@ struct FocusQualityCard: View {
                         ForEach(FocusQualityLevel.allCases, id: \.rawValue) { level in
                             HStack(spacing: 4) {
                                 Circle().fill(level.color).frame(width: 7, height: 7)
-                                Text(level.label).font(.system(size: 11)).foregroundStyle(.secondary)
+                                Text(level.label).font(.system(size: AppLook.fs(11))).foregroundStyle(.secondary)
                             }
                         }
                     }

@@ -38,7 +38,7 @@ struct PomodoroQuickControl: View {
                 HStack(spacing: 6) {
                     leadingGlyph
                     Text(primaryLabel)
-                        .font(.system(size: 11, weight: .semibold).monospacedDigit())
+                        .font(.system(size: AppLook.fs(11), weight: .semibold).monospacedDigit())
                         .contentTransition(.numericText(countsDown: true))
                         .lineLimit(1)
                         .fixedSize()
@@ -99,9 +99,9 @@ struct PomodoroQuickControl: View {
             }
             .frame(width: 13, height: 13)
         } else if controller.pendingNextMode != nil && controller.pendingNextMode != .focus {
-            Image(systemName: "cup.and.saucer.fill").font(.system(size: 11))
+            Image(systemName: "cup.and.saucer.fill").font(.system(size: AppLook.fs(11)))
         } else {
-            Image(systemName: "timer").font(.system(size: 11, weight: .medium))
+            Image(systemName: "timer").font(.system(size: AppLook.fs(11), weight: .medium))
         }
     }
 

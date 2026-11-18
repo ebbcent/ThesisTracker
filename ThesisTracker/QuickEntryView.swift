@@ -137,15 +137,15 @@ struct QuickEntryView: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.accent)
                     Text("Saisie rapide")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                         .foregroundColor(.primary)
                     Spacer()
                     Text("⎋ Fermer")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                     Button { onDismiss() } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(.labelMuted)
                             .padding(5)
                             .background(Color.glassFill)
@@ -171,7 +171,7 @@ struct QuickEntryView: View {
                     Spacer()
                     if targetIsYesterday {
                         Label("Saisie passée", systemImage: "clock.arrow.circlepath")
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: AppLook.fs(10), weight: .medium))
                             .foregroundColor(.semOrange)
                     }
                     // Raccourci invisible ⌘Y → bascule la cible
@@ -189,7 +189,7 @@ struct QuickEntryView: View {
                 if store.data.projects.count > 1 {
                     HStack(spacing: 8) {
                         Image(systemName: "folder.fill")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.accent.opacity(0.8))
                         Picker("", selection: Binding(
                             get: { selectedProjectId ?? store.data.activeProjectId ?? store.data.projects.first?.id },
@@ -212,7 +212,7 @@ struct QuickEntryView: View {
                     if let project = selectedProject, project.chapters.count > 1 {
                         HStack(spacing: 8) {
                             Image(systemName: "book.closed.fill")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.accentWarm.opacity(0.8))
                             Picker("", selection: Binding(
                                 get: { selectedChapterId ?? project.activeChapterId ?? project.chapters.first?.id },
@@ -231,7 +231,7 @@ struct QuickEntryView: View {
                     } else if let chapter = selectedChapter {
                         HStack(spacing: 6) {
                             Image(systemName: "book.closed.fill")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.accentWarm.opacity(0.8))
                             Text(chapter.name)
                                 .font(.system(size: 12, weight: .medium))
@@ -258,7 +258,7 @@ struct QuickEntryView: View {
                         text: $inputText
                     )
                     .textFieldStyle(.plain)
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .font(.system(size: 28, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                     .focused($inputFocused)
                     .onSubmit { saveEntry() }
@@ -271,12 +271,12 @@ struct QuickEntryView: View {
                             .foregroundColor(.labelMuted)
                         if currentTotal > 0 {
                             Text("actuel : \(store.formatCountShort(currentTotal))")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted.opacity(0.7))
                         }
                         if let delta = pendingDelta {
                             Text(deltaLabel(delta))
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: AppLook.fs(10), weight: .semibold))
                                 .foregroundColor(delta >= 0 ? .accentGreen : .accentWarm)
                         }
                     }
@@ -312,7 +312,7 @@ struct QuickEntryView: View {
                         }
                         .frame(height: 4)
                         Text(goalContextLabel(total: total, goal: store.effectiveDailyGoal))
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted.opacity(0.75))
                     }
                 }
@@ -320,9 +320,9 @@ struct QuickEntryView: View {
                 // Contexte : moyenne 7 jours
                 HStack(spacing: 4) {
                     Image(systemName: "chart.line.uptrend.xyaxis")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                     Text("Moy. 7j : \(store.formatCountShort(store.sevenDayAverage)) / jour")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                 }
                 .foregroundColor(.labelMuted.opacity(0.7))
             }
@@ -364,7 +364,7 @@ struct QuickEntryView: View {
     private func quickEntryDateChip(_ label: String, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
-                .font(.system(size: 10, weight: selected ? .semibold : .regular))
+                .font(.system(size: AppLook.fs(10), weight: selected ? .semibold : .regular))
                 .foregroundColor(selected ? .white : .labelMuted)
                 .padding(.horizontal, 9).padding(.vertical, 4)
                 .background(selected ? Color.accent.opacity(0.85) : Color.white.opacity(0.05))

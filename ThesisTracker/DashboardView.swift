@@ -391,8 +391,8 @@ struct DashboardView: View {
                     withAppAnimation(.easeOut(duration: 0.15)) { isCustomizing = false }
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: "checkmark").font(.system(size: 10, weight: .semibold))
-                        Text("Terminer").font(.system(size: 10, weight: .semibold))
+                        Image(systemName: "checkmark").font(.system(size: AppLook.fs(10), weight: .semibold))
+                        Text("Terminer").font(.system(size: AppLook.fs(10), weight: .semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 9).padding(.vertical, 4)
@@ -405,8 +405,8 @@ struct DashboardView: View {
                     showCustomizeSheet = true
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: "slider.horizontal.3").font(.system(size: 10))
-                        Text("Personnaliser").font(.system(size: 10, weight: .medium))
+                        Image(systemName: "slider.horizontal.3").font(.system(size: AppLook.fs(10)))
+                        Text("Personnaliser").font(.system(size: AppLook.fs(10), weight: .medium))
                     }
                     .foregroundColor(.labelMuted)
                     .padding(.horizontal, 9).padding(.vertical, 4)
@@ -551,9 +551,9 @@ struct DashboardView: View {
         } label: {
             HStack(spacing: 3) {
                 Image(systemName: column == .right ? "arrow.left" : "arrow.right")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                 Text(column == .right ? "← Gauche" : "Droite →")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: AppLook.fs(10), weight: .medium))
             }
             .foregroundColor(.accent)
             .padding(.horizontal, 7).padding(.vertical, 4)
@@ -599,7 +599,7 @@ struct DashboardView: View {
                         .padding(.horizontal, 20)
                 } else if isLast {
                     Text("Déposer ici")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.system(size: AppLook.fs(10), weight: .medium))
                         .foregroundColor(.labelMuted.opacity(0.6))
                 }
             }
@@ -677,7 +677,7 @@ struct DashboardView: View {
                 .font(.system(size: 18))
                 .foregroundColor(.labelMuted.opacity(0.3))
             Text("Dépose une carte ici")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted.opacity(0.4))
         }
         .frame(maxWidth: .infinity)
@@ -759,17 +759,17 @@ struct DashboardView: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("Tableau de bord")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(TypeScale.pageTitle)
                     .foregroundColor(.primary)
 
                 HStack(spacing: 5) {
                     Text(formattedDate)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
 
                     if let project = activeProject {
                         Text("·")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted.opacity(0.4))
                         Circle()
                             .fill(Color.accentWarm)
@@ -779,7 +779,7 @@ struct DashboardView: View {
                         Button { showProjectPicker.toggle() } label: {
                             HStack(spacing: 3) {
                                 Text(project.name)
-                                    .font(.system(size: 11, weight: .medium))
+                                    .font(.system(size: AppLook.fs(11), weight: .medium))
                                     .foregroundColor(.labelMuted)
                                     .lineLimit(1)
                                 Image(systemName: "chevron.down")
@@ -801,14 +801,14 @@ struct DashboardView: View {
 
                         if let chapter = activeChapter {
                             Text("›")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: AppLook.fs(10), weight: .semibold))
                                 .foregroundColor(.labelMuted.opacity(0.4))
 
                             // Bouton breadcrumb : chapitre (cliquable, ouvre popover)
                             Button { showChapterPicker.toggle() } label: {
                                 HStack(spacing: 3) {
                                     Text(chapter.name)
-                                        .font(.system(size: 11, weight: .semibold))
+                                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                                         .foregroundColor(.secondary)
                                         .lineLimit(1)
                                         .truncationMode(.tail)
@@ -845,9 +845,9 @@ struct DashboardView: View {
             Button { showDirectorReport = true } label: {
                 HStack(spacing: 5) {
                     Image(systemName: "person.text.rectangle")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                     Text("Rapport")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: AppLook.fs(11), weight: .medium))
                 }
                 .foregroundColor(.primary.opacity(0.85))   // 5.18 : plus de bleu isolé ; même style que les autres boutons d'en-tête
                 .padding(.horizontal, 9).padding(.vertical, 5)
@@ -937,7 +937,7 @@ struct DashboardView: View {
                         withAppAnimation(.easeOut(duration: 0.15)) { showSidebar = true }
                     } label: {
                         HStack(spacing: 5) {
-                            Image(systemName: "folder.badge.gearshape").font(.system(size: 11))
+                            Image(systemName: "folder.badge.gearshape").font(.system(size: AppLook.fs(11)))
                             Text("Projets").font(.system(size: 12, weight: .medium))
                         }
                         .foregroundColor(.accent)
@@ -977,7 +977,7 @@ struct DashboardView: View {
                                     store.moveChapter(chapter.id, direction: -1, in: project.id)
                                 } label: {
                                     Image(systemName: "chevron.up")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                                         .foregroundColor(idx > 0 ? .secondary : .labelMuted.opacity(0.3))
                                         .frame(width: 22, height: 22)
                                         .background(Color.glassFill)
@@ -993,7 +993,7 @@ struct DashboardView: View {
                                     store.moveChapter(chapter.id, direction: 1, in: project.id)
                                 } label: {
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                                         .foregroundColor(idx < chapters.count - 1 ? .secondary : .labelMuted.opacity(0.3))
                                         .frame(width: 22, height: 22)
                                         .background(Color.glassFill)
@@ -1013,7 +1013,7 @@ struct DashboardView: View {
                                 withAppAnimation(.easeOut(duration: 0.15)) { showChapterNotes.toggle() }
                             } label: {
                                 Image(systemName: showChapterNotes ? "note.text.badge.plus" : "note.text")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(showChapterNotes ? .accentWarm : .labelMuted)
                                     .frame(width: 28, height: 28)
                                     .background(showChapterNotes ? Color.accentWarm.opacity(0.10) : Color.glassFill)
@@ -1032,7 +1032,7 @@ struct DashboardView: View {
                         Divider()
                         HStack(spacing: 8) {
                             Image(systemName: "arrow.right.circle.fill")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(nextStepText.isEmpty ? .labelMuted.opacity(0.35) : .accent)
                             if editingNextStep {
                                 TextField("Prochaine étape…", text: $nextStepText)
@@ -1062,7 +1062,7 @@ struct DashboardView: View {
                                         store.updateNextStep(nil, for: chapter.id, in: project.id)
                                     } label: {
                                         Image(systemName: "checkmark.circle")
-                                            .font(.system(size: 11))
+                                            .font(.system(size: AppLook.fs(11)))
                                             .foregroundColor(.accentGreen)
                                     }
                                     .buttonStyle(.pressable)
@@ -1097,9 +1097,9 @@ struct DashboardView: View {
                                     } label: {
                                         HStack(spacing: 4) {
                                             Image(systemName: icons[i])
-                                                .font(.system(size: 10))
+                                                .font(.system(size: AppLook.fs(10)))
                                             Text(label)
-                                                .font(.system(size: 11, weight: notesTabIndex == i ? .semibold : .regular))
+                                                .font(.system(size: AppLook.fs(11), weight: notesTabIndex == i ? .semibold : .regular))
                                             if hasContent && notesTabIndex != i {
                                                 Circle().fill(Color.accentWarm).frame(width: 4, height: 4)
                                             }
@@ -1132,8 +1132,8 @@ struct DashboardView: View {
                                                 scheduleNotesSave(chapter: chapter, project: project)
                                             } label: {
                                                 HStack(spacing: 4) {
-                                                    Image(systemName: tmpl.icon).font(.system(size: 10))
-                                                    Text(tmpl.name).font(.system(size: 10, weight: .medium))
+                                                    Image(systemName: tmpl.icon).font(.system(size: AppLook.fs(10)))
+                                                    Text(tmpl.name).font(.system(size: AppLook.fs(10), weight: .medium))
                                                 }
                                                 .foregroundColor(.accent)
                                                 .padding(.horizontal, 8).padding(.vertical, 4)
@@ -1237,7 +1237,7 @@ struct DashboardView: View {
                     DayOffMenuButton(store: store, date: selectedDateStr)
                     if !isToday {
                         Label("Passé", systemImage: "clock.arrow.circlepath")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppLook.fs(11), weight: .medium))
                             .foregroundColor(.semOrange)
                             .padding(.horizontal, 8).padding(.vertical, 3)
                             .background(Capsule().fill(Color.orange.opacity(0.12))
@@ -1247,7 +1247,7 @@ struct DashboardView: View {
                     if hasExistingEntry {
                         Button { showDeleteConfirm = true } label: {
                             Image(systemName: "trash")
-                                .font(.system(size: 11, weight: .medium))
+                                .font(.system(size: AppLook.fs(11), weight: .medium))
                                 .foregroundColor(Color(red: 1, green: 0.35, blue: 0.35))
                                 .frame(width: 28, height: 28)
                                 .background(Color.red.opacity(0.08))
@@ -1271,7 +1271,7 @@ struct DashboardView: View {
                         Text(store.data.useWordCount
                              ? DataStore.formatNumber(currentEntryTotal / 5)
                              : DataStore.formatNumber(currentEntryTotal))
-                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .font(.system(size: 42, weight: .bold, design: AppLook.fontDesign))
                             .tracking(-0.8)   // 5.18 : grands chiffres resserrés
                             .foregroundStyle(
                                 LinearGradient(
@@ -1291,16 +1291,16 @@ struct DashboardView: View {
                     // 5.12 — équivalent en pages de thèse
                     if let line = heroPagesLine {
                         Text(line)
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
 
                     if currentEntryDelta > 0 {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.up")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: AppLook.fs(10), weight: .bold))
                             Text("+\(store.formatCount(currentEntryDelta)) aujourd'hui")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                         }
                         .foregroundColor(.accentGreen)
                         .transition(.scale(scale: 0.95).combined(with: .opacity))
@@ -1309,9 +1309,9 @@ struct DashboardView: View {
                         if isNewPersonalRecord {
                             HStack(spacing: 4) {
                                 Image(systemName: "trophy.fill")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                 Text("Nouveau record personnel !")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                             }
                             .foregroundColor(.accentWarm)   // 5.18 : palette restreinte
                             .padding(.horizontal, 8).padding(.vertical, 3)
@@ -1321,12 +1321,12 @@ struct DashboardView: View {
                     } else if currentEntryNet < 0 {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.down")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: AppLook.fs(10), weight: .bold))
                             Text("\(store.formatCount(currentEntryNet)) \(isToday ? "aujourd'hui" : "ce jour-là")")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                             if activeChapter?.entryForDate(selectedDateStr)?.isCorrection == true {
                                 Text("Correction")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .padding(.horizontal, 6).padding(.vertical, 1)
                                     .background(Capsule().fill(Color.accentWarm.opacity(0.15)))
                             }
@@ -1335,7 +1335,7 @@ struct DashboardView: View {
                         .transition(.scale(scale: 0.95).combined(with: .opacity))
                     } else if currentEntryTotal == 0 {
                         Text(isToday ? "Aucune entrée pour aujourd'hui" : "Aucune entrée ce jour-là")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)   // 5.18 : contraste suffisant
                     }
 
@@ -1343,9 +1343,9 @@ struct DashboardView: View {
                     if let days = daysSinceLastEntry {
                         HStack(spacing: 4) {
                             Image(systemName: "clock")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                             Text("Dernière écriture : il y a \(days) jour\(days > 1 ? "s" : "")")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                         }
                         .foregroundColor(.orange.opacity(0.8))
                         .transition(.opacity)
@@ -1360,11 +1360,11 @@ struct DashboardView: View {
                     VStack(spacing: 5) {
                         HStack {
                             Text("Objectif — \(store.formatCount(store.effectiveDailyGoal))")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted)
                             Spacer()
                             Text("\(Int(ratio * 100))%")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: AppLook.fs(10), weight: .semibold))
                                 .foregroundColor(ratio >= 1.0 ? .accentGreen : .accent)
                         }
                         GeometryReader { geo in
@@ -1394,14 +1394,14 @@ struct DashboardView: View {
                    let warn = store.regressionWarning(for: chapter.id, in: project.id, date: selectedDateStr) {
                     HStack(spacing: 8) {
                         Image(systemName: "chart.line.downtrend.xyaxis")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.accentWarm)
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Rythme en baisse")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.system(size: AppLook.fs(11), weight: .semibold))
                                 .foregroundColor(.accentWarm)
                             Text("Aujourd'hui \(store.formatCount(warn.todayDelta)) vs moy. \(store.formatCount(warn.avg7))/j sur 7j (\(Int(warn.ratio * 100))%)")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.accentWarm.opacity(0.8))
                         }
                         Spacer()
@@ -1432,7 +1432,7 @@ struct DashboardView: View {
                 // ── Note du jour ──────────────────────────────
                 Divider().padding(.top, 10)
                 HStack(spacing: 8) {
-                    Image(systemName: "note.text").foregroundColor(.labelMuted).font(.system(size: 11))
+                    Image(systemName: "note.text").foregroundColor(.labelMuted).font(.system(size: AppLook.fs(11)))
                     TextField("Note du jour (optionnel)…", text: $noteText)
                         .textFieldStyle(.plain)
                         .font(.system(size: 12))
@@ -1456,9 +1456,9 @@ struct DashboardView: View {
                     } label: {
                         HStack(spacing: 5) {
                             Image(systemName: "doc.badge.arrow.up")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                             Text("Importer depuis un fichier…")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                         }
                         .foregroundColor(.accent)
                     }
@@ -1470,9 +1470,9 @@ struct DashboardView: View {
                     if let name = importedFileName {
                         HStack(spacing: 4) {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 10)).foregroundColor(.accentGreen)
+                                .font(.system(size: AppLook.fs(10))).foregroundColor(.accentGreen)
                             Text(name)
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.labelMuted)
                                 .lineLimit(1)
                         }
@@ -1480,9 +1480,9 @@ struct DashboardView: View {
                     } else if let err = importError {
                         HStack(spacing: 4) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.system(size: 10)).foregroundColor(.accentWarm)
+                                .font(.system(size: AppLook.fs(10))).foregroundColor(.accentWarm)
                             Text(err)
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.accentWarm)
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1549,13 +1549,13 @@ struct DashboardView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             HStack(spacing: 4) {
                                 Text("14 derniers jours · \(project.name)")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.labelMuted)
                                     .lineLimit(1)
                                 Spacer()
                                 let total = data.reduce(0, +)
                                 Text(store.formatCount(total))
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                                     .foregroundColor(.primary)
                             }
                             MiniBarChartView(data: data, color: .accent, goal: store.data.dailyGoal)
@@ -1598,9 +1598,9 @@ struct DashboardView: View {
                     if let ddg = store.deadlineDailyGoal, store.deadlineDailyGoalDiffers {
                         HStack(spacing: 5) {
                             Image(systemName: "calendar.badge.exclamationmark")
-                                .font(.system(size: 10)).foregroundColor(.accentWarm)   // 5.18 : avertissement, pas erreur
+                                .font(.system(size: AppLook.fs(10))).foregroundColor(.accentWarm)   // 5.18 : avertissement, pas erreur
                             Text(echeanceLabel(ddg))   // 5.18 : le but d'abord, l'effort ensuite
-                                .font(.system(size: 10)).foregroundColor(.labelMuted)
+                                .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 5)
                         .background(Color.semRed.opacity(0.07))
@@ -1610,9 +1610,9 @@ struct DashboardView: View {
                     } else if store.adaptedDailyGoalDiffers {
                         HStack(spacing: 5) {
                             Image(systemName: "bolt.fill")
-                                .font(.system(size: 10)).foregroundColor(.accentWarm)
+                                .font(.system(size: AppLook.fs(10))).foregroundColor(.accentWarm)
                             Text("Objectif adaptatif : \(store.formatCount(store.adaptedDailyGoal)) aujourd'hui")
-                                .font(.system(size: 10)).foregroundColor(.labelMuted)
+                                .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 5)
                         .background(Color.accentWarm.opacity(0.07))
@@ -1774,20 +1774,20 @@ struct DashboardView: View {
                             .lineLimit(1)
                         if ratio >= 1.0 {
                             Label("Projet terminé", systemImage: "checkmark.circle.fill")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.accentGreen)
                         } else if let eta {
                             HStack(spacing: 4) {
                                 Image(systemName: isOnTrack ? "arrow.right.circle.fill" : "exclamationmark.circle.fill")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                     .foregroundColor(statusColor)
                                 Text("Fin estimée : \(DataStore.formatDate(eta))")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.secondary)
                             }
                         } else {
                             Text("Pas assez de données pour projeter")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.labelMuted)
                         }
                     }
@@ -1796,10 +1796,10 @@ struct DashboardView: View {
 
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(store.formatCountShort(totalWritten))
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .font(.system(size: 12, weight: .bold, design: AppLook.fontDesign))
                             .foregroundColor(.primary)
                         Text("/ \(store.formatCountShort(totalGoal))")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                     }
                 }
@@ -1897,7 +1897,7 @@ struct DashboardView: View {
         VStack(spacing: 8) {
             HStack(spacing: 0) {
                 Text("À MON RYTHME")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1)
                 Spacer()
@@ -1907,7 +1907,7 @@ struct DashboardView: View {
                 // Current velocity
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Cadence actuelle")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted)
                     Text(vel > 0 ? store.formatCount(vel) + "/j" : "—")
                         .font(.system(size: 13, weight: .bold))
@@ -1920,7 +1920,7 @@ struct DashboardView: View {
                     // Required velocity
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Rythme pour l'échéance")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                         Text(store.formatCount(req) + "/j")
                             .font(.system(size: 13, weight: .bold))
@@ -1932,7 +1932,7 @@ struct DashboardView: View {
                     Divider().frame(height: 30)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Jours restants")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted)
                         Text("\(days) j")
                             .font(.system(size: 13, weight: .bold))
@@ -1947,10 +1947,10 @@ struct DashboardView: View {
             if let msg = adaptiveMessage(vel: vel, req: req, daysLeft: daysToChapterDeadline) {
                 HStack(spacing: 6) {
                     Image(systemName: vel > 0 && req > 0 && vel >= req ? "checkmark.circle.fill" : "info.circle.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(vel > 0 && req > 0 && vel >= req ? .accentGreen : .accentWarm)
                     Text(msg)
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -1982,11 +1982,11 @@ struct DashboardView: View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title.uppercased())
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: AppLook.fs(10), weight: .bold))
                     .foregroundColor(.labelMuted)
                     .kerning(1)
                 Text(subtitle)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
             }
             Spacer()
@@ -2058,7 +2058,7 @@ struct DashboardView: View {
         return VStack(spacing: 5) {
             // Lettre du jour
             Text(day.letter)
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: AppLook.fs(10), weight: .semibold))
                 .foregroundColor(day.isToday ? .accent : .labelMuted)
 
             // Numéro du jour
@@ -2071,7 +2071,7 @@ struct DashboardView: View {
                 Circle().fill(circleColor).frame(width: 26, height: 26)
                 if reached {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 10, weight: .bold)).foregroundColor(.white)
+                        .font(.system(size: AppLook.fs(10), weight: .bold)).foregroundColor(.white)
                 } else if hasWriting && !day.isFuture {
                     Text("\(Int(ratio * 100))%")
                         .font(.system(size: 7, weight: .bold)).foregroundColor(.white)
@@ -2162,7 +2162,7 @@ struct DashboardView: View {
     private func insightRow(icon: String, color: Color, title: String, value: String, subtitle: String) -> some View {
         HStack(spacing: 10) {
             Image(systemName: icon)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(color)
                 .frame(width: 18)
             Text(title)
@@ -2175,7 +2175,7 @@ struct DashboardView: View {
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 Text(subtitle)
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
                     .lineLimit(1)
             }
@@ -2536,7 +2536,7 @@ private struct WritingEntryInputCluster: View {
                     showEntryHistory = true
                 } label: {
                     Image(systemName: "clock.arrow.circlepath")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 }
                 .buttonStyle(.pressable)
@@ -2602,7 +2602,7 @@ private struct WritingEntryInputCluster: View {
                         .font(.system(size: 12))
                         .foregroundColor(isCorrection ? .accentWarm : .labelMuted)
                     Text("Correction")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(isCorrection ? .accentWarm : .primary)
                 }
             }
@@ -2610,7 +2610,7 @@ private struct WritingEntryInputCluster: View {
             .help("Jour de correction : du texte a été retiré. Le jour compte dans la série.")
             .accessibilityAddTraits(isCorrection ? .isSelected : [])
             Text("\(DataStore.formatNumber(delta)) \(useWordCount ? "mots" : "car.") par rapport au total précédent")
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted)
             Spacer()
         }
@@ -2622,16 +2622,16 @@ private struct WritingEntryInputCluster: View {
         HStack(spacing: 10) {
             if useWordCount {
                 Label("\(DataStore.formatNumber(n)) mots", systemImage: "text.word.spacing")
-                    .font(.system(size: 10)).foregroundColor(.accent)
-                Text("·").foregroundColor(.labelMuted).font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.accent)
+                Text("·").foregroundColor(.labelMuted).font(.system(size: AppLook.fs(10)))
                 Label("≈ \(DataStore.formatNumber(n * 5)) car.", systemImage: "textformat.123")
-                    .font(.system(size: 10)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
             } else {
                 Label("\(DataStore.formatNumber(n)) car.", systemImage: "textformat.123")
-                    .font(.system(size: 10)).foregroundColor(.accent)
-                Text("·").foregroundColor(.labelMuted).font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.accent)
+                Text("·").foregroundColor(.labelMuted).font(.system(size: AppLook.fs(10)))
                 Label("≈ \(DataStore.formatNumber(max(1, n / 5))) mots", systemImage: "text.word.spacing")
-                    .font(.system(size: 10)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(10))).foregroundColor(.labelMuted)
             }
             Spacer()
         }
@@ -2809,13 +2809,13 @@ private struct StatMiniCard: View {
                         .fill(iconBg)
                         .frame(width: 26, height: 26)
                     Image(systemName: icon)
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(iconColor)
                 }
                 Spacer()
                 if let badge {
                     Text(badge)
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: AppLook.fs(10), weight: .bold))
                         .foregroundColor(badgeColor)
                         .padding(.horizontal, 5).padding(.vertical, 2)
                         .background(badgeColor.opacity(0.12))
@@ -2824,12 +2824,12 @@ private struct StatMiniCard: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(value)
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
                 Text(label)
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -2882,9 +2882,9 @@ struct DashboardCustomizeSheet: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Personnaliser la colonne droite")
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .font(.system(size: 16, weight: .bold, design: AppLook.fontDesign))
                         Text("Glisse pour réorganiser · drag depuis le tableau pour déplacer")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
                     Spacer()
@@ -2908,7 +2908,7 @@ struct DashboardCustomizeSheet: View {
                 // Profils prédéfinis
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Profils")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .textCase(.uppercase)
                         .tracking(0.5)
@@ -2919,9 +2919,9 @@ struct DashboardCustomizeSheet: View {
                             } label: {
                                 HStack(spacing: 5) {
                                     Image(systemName: profile.icon)
-                                        .font(.system(size: 10, weight: .medium))
+                                        .font(.system(size: AppLook.fs(10), weight: .medium))
                                     Text(profile.name)
-                                        .font(.system(size: 11, weight: .medium))
+                                        .font(.system(size: AppLook.fs(11), weight: .medium))
                                 }
                                 .foregroundColor(.accent)
                                 .padding(.horizontal, 10).padding(.vertical, 5)
@@ -2991,12 +2991,12 @@ struct DashboardCustomizeSheet: View {
     private func sectionHeader(_ title: String, count: Int) -> some View {
         HStack {
             Text(title)
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: AppLook.fs(10), weight: .bold))
                 .foregroundColor(.labelMuted)
                 .kerning(0.8)
             Spacer()
             Text("\(count)")
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: AppLook.fs(10), weight: .semibold))
                 .foregroundColor(.labelMuted.opacity(0.7))
                 .padding(.horizontal, 6).padding(.vertical, 1)
                 .background(Color.labelMuted.opacity(0.10))
@@ -3040,7 +3040,7 @@ struct DashboardCustomizeSheet: View {
             .help("Retirer du tableau de bord")
             .accessibilityLabel("Retirer du tableau de bord")
             Image(systemName: "line.3.horizontal")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted.opacity(0.35))
         }
         .padding(.horizontal, 16).padding(.vertical, 10)
@@ -3089,7 +3089,7 @@ struct DashboardCustomizeSheet: View {
                         HStack(spacing: 4) {
                             Image(systemName: "plus.circle.fill")
                             Text("Ajouter")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.system(size: AppLook.fs(11), weight: .semibold))
                         }
                         .foregroundColor(.accent)
                         .padding(.horizontal, 8).padding(.vertical, 3)

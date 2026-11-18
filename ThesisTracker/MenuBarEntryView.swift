@@ -30,7 +30,7 @@ struct MenuBarEntryView: View {
                 Image(systemName: "text.book.closed.fill")
                     .foregroundColor(.accent).font(.system(size: 13, weight: .semibold))
                 Text("Writing Process")
-                    .font(.system(size: 13, weight: .bold, design: .rounded)).foregroundColor(.primary)
+                    .font(.system(size: 13, weight: .bold, design: AppLook.fontDesign)).foregroundColor(.primary)
                 Spacer()
                 if store.currentStreak > 0 {
                     HStack(spacing: 3) {
@@ -153,6 +153,7 @@ struct MenuBarEntryView: View {
             .padding(.horizontal, 14).padding(.vertical, 10)
         }
         .frame(width: 300)
+        .tint(Color.accent)   // 5.27
         .background(Color(nsColor: .windowBackgroundColor))
     }
 

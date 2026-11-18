@@ -63,7 +63,7 @@ struct PomodoroTimerSettingsView: View {
                             Text("Mode deep work (Concentration via Raccourcis)")
                                 .font(.system(size: 13, weight: .medium))
                             Text("Crée dans l'app Raccourcis deux raccourcis qui activent/désactivent ta Concentration, puis indique leurs noms ci-dessous. Ils seront lancés au début et à la fin de chaque session.")
-                                .font(.system(size: 11)).foregroundColor(.secondary)
+                                .font(.system(size: AppLook.fs(11))).foregroundColor(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -88,7 +88,7 @@ struct PomodoroTimerSettingsView: View {
                     }
                     HStack {
                         Text("Volume : \(Int(controller.data.settings.soundVolume * 100))%")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .font(.system(size: 13, weight: .medium, design: AppLook.fontDesign))
                             .frame(width: 120, alignment: .leading)
                         Slider(value: $controller.data.settings.soundVolume, in: 0...1, step: 0.05)
                     }
@@ -168,7 +168,7 @@ struct PomodoroTimerSettingsView: View {
                             .onChange(of: goalTarget) { _, _ in controller.clearGoalValidationError() }
                         if let error = controller.goalValidationError {
                             Text(error)
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .font(.system(size: 12, weight: .medium, design: AppLook.fontDesign))
                                 .foregroundStyle(.red)
                         }
                         Button("Ajouter l'objectif") {
@@ -208,7 +208,7 @@ struct PomodoroTimerSettingsView: View {
     private func soundRow(label: String, sound: Binding<PomodoroSound>) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(.system(size: 12, weight: .semibold, design: AppLook.fontDesign))
                 .foregroundStyle(.secondary)
             HStack(spacing: 6) {
                 Picker("", selection: sound) {

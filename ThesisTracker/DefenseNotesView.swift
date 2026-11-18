@@ -37,7 +37,7 @@ struct DefenseNotesWidget: View {
                     Spacer()
                     if totalNotes > 0 {
                         Text("\(totalNotes)")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.system(size: AppLook.fs(10), weight: .semibold))
                             .foregroundColor(Color.semPurple)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Color.semPurple.opacity(0.12))
@@ -47,7 +47,7 @@ struct DefenseNotesWidget: View {
 
                 if totalNotes == 0 {
                     Text("Capture au fil de la rédaction les points à défendre, les questions probables et les contre-arguments — pour préparer la soutenance dès maintenant.")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 } else {
                     HStack(spacing: 10) {
@@ -55,10 +55,10 @@ struct DefenseNotesWidget: View {
                             let count = byKind[kind] ?? 0
                             HStack(spacing: 4) {
                                 Image(systemName: kind.icon)
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                     .foregroundColor(kind.color)
                                 Text("\(count)")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .foregroundColor(.labelMuted)
                             }
                             .help(kind.label)
@@ -69,9 +69,9 @@ struct DefenseNotesWidget: View {
                 Button { showSheet = true } label: {
                     HStack(spacing: 5) {
                         Image(systemName: totalNotes == 0 ? "plus.circle.fill" : "doc.text.magnifyingglass")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                         Text(totalNotes == 0 ? "Première note" : "Voir toutes les notes")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)
@@ -132,7 +132,7 @@ struct DefenseNotesSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Notes de soutenance").font(.system(size: 16, weight: .semibold))
                 Text(project?.name ?? "Aucun projet")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Spacer()
             Button { dismiss() } label: {
@@ -153,8 +153,8 @@ struct DefenseNotesSheet: View {
                 let isActive = selectedKind == kind
                 Button { selectedKind = kind } label: {
                     HStack(spacing: 5) {
-                        Image(systemName: kind.icon).font(.system(size: 11))
-                        Text(kind.label).font(.system(size: 11, weight: .semibold))
+                        Image(systemName: kind.icon).font(.system(size: AppLook.fs(11)))
+                        Text(kind.label).font(.system(size: AppLook.fs(11), weight: .semibold))
                     }
                     .foregroundColor(isActive ? .white : kind.color)
                     .padding(.horizontal, 10).padding(.vertical, 6)
@@ -187,7 +187,7 @@ struct DefenseNotesSheet: View {
                     ForEach(filteredNotes, id: \.chapter.id) { entry in
                         VStack(alignment: .leading, spacing: 6) {
                             Text(entry.chapter.name)
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.system(size: AppLook.fs(11), weight: .bold))
                                 .foregroundColor(.labelMuted)
                                 .kerning(0.5)
                             VStack(alignment: .leading, spacing: 4) {
@@ -220,7 +220,7 @@ struct DefenseNotesSheet: View {
                         .clipShape(RoundedRectangle(cornerRadius: AppLook.r(6, 10)))
                     HStack(spacing: 6) {
                         Button("Annuler") { editingNoteId = nil }
-                            .buttonStyle(.pressable).font(.system(size: 11)).foregroundColor(.labelMuted)
+                            .buttonStyle(.pressable).font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
                         Button("Enregistrer") {
                             if let proj = project {
                                 store.updateDefenseNote(noteId: note.id, chapterId: chapter.id, in: proj.id, text: editingText)
@@ -228,7 +228,7 @@ struct DefenseNotesSheet: View {
                             editingNoteId = nil
                         }
                         .buttonStyle(.pressable)
-                        .font(.system(size: 11, weight: .semibold)).foregroundColor(.white)
+                        .font(.system(size: AppLook.fs(11), weight: .semibold)).foregroundColor(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(Color.accent)
                         .clipShape(Capsule())
@@ -250,7 +250,7 @@ struct DefenseNotesSheet: View {
                 }
             } label: {
                 Image(systemName: "trash")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted.opacity(0.5))
             }
             .buttonStyle(.pressable)
@@ -263,10 +263,10 @@ struct DefenseNotesSheet: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
                 Image(systemName: selectedKind.icon)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(selectedKind.color)
                 Text("Pour")
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.labelMuted)
                 Picker("", selection: $selectedChapterId) {
                     ForEach(chapters) { chapter in
@@ -286,7 +286,7 @@ struct DefenseNotesSheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: AppLook.r(8, 12)))
                 Button(action: addNote) {
                     Text("Ajouter")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 10).padding(.vertical, 6)
                         .background(selectedKind.color)

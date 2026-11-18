@@ -21,7 +21,7 @@ struct SupervisorReviewCard: View {
                     body(for: chapter)
                 } else {
                     Text("Aucun chapitre sélectionné")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                 }
             }
@@ -59,7 +59,7 @@ struct SupervisorReviewCard: View {
             Spacer()
             if let chapter {
                 Text(chapter.reviewState.label)
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(stateColor)
                     .padding(.horizontal, 8).padding(.vertical, 3)
                     .background(stateColor.opacity(0.10))
@@ -70,7 +70,7 @@ struct SupervisorReviewCard: View {
                     ProfessorSession.shared.prepare(question: "Je voudrais faire le point sur « \(chapter.name) ». ")
                 } label: {
                     Image(systemName: "graduationcap.fill")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.accentWarm)
                 }
                 .buttonStyle(.pressable)
@@ -107,7 +107,7 @@ struct SupervisorReviewCard: View {
             HStack {
                 Button { showSendSheet = true } label: {
                     Label("Envoyer en relecture", systemImage: "paperplane.fill")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 10).padding(.vertical, 6)
                         .background(Color.accent)
@@ -116,7 +116,7 @@ struct SupervisorReviewCard: View {
                 .buttonStyle(.pressable)
                 if !chapter.supervisorReviews.isEmpty {
                     Text("Cycle précédent : v\(chapter.supervisorReviews.last?.draftVersion ?? 1)")
-                        .font(.system(size: 10))
+                        .font(.system(size: AppLook.fs(10)))
                         .foregroundColor(.labelMuted.opacity(0.7))
                 }
             }
@@ -137,7 +137,7 @@ struct SupervisorReviewCard: View {
             HStack(spacing: 6) {
                 Button { showReceiveSheet = true } label: {
                     Label("Marquer reçu", systemImage: "envelope.open.fill")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 10).padding(.vertical, 6)
                         .background(Color.accent)
@@ -150,7 +150,7 @@ struct SupervisorReviewCard: View {
                     }
                 } label: {
                     Text("Annuler")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.labelMuted)
                         .padding(.horizontal, 8).padding(.vertical, 6)
                 }
@@ -167,7 +167,7 @@ struct SupervisorReviewCard: View {
                      text: "Retour reçu le \(formatDateShort(review.receivedDate))")
             if let notes = review.feedbackNotes, !notes.isEmpty {
                 Text(notes)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppLook.fs(11)))
                     .foregroundColor(.primary.opacity(0.85))
                     .lineLimit(3)
                     .padding(8)
@@ -176,7 +176,7 @@ struct SupervisorReviewCard: View {
             } else {
                 Button { showNotesSheet = true } label: {
                     Label("Ajouter notes du feedback", systemImage: "text.bubble")
-                        .font(.system(size: 11))
+                        .font(.system(size: AppLook.fs(11)))
                         .foregroundColor(.accent)
                 }
                 .buttonStyle(.pressable)
@@ -188,7 +188,7 @@ struct SupervisorReviewCard: View {
                     }
                 } label: {
                     Label("Feedback intégré", systemImage: "checkmark.seal.fill")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: AppLook.fs(11), weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 10).padding(.vertical, 6)
                         .background(Color.accentGreen)
@@ -198,7 +198,7 @@ struct SupervisorReviewCard: View {
                 if review.feedbackNotes?.isEmpty == false {
                     Button { showNotesSheet = true } label: {
                         Text("Modifier notes")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                     }
                     .buttonStyle(.pressable)
@@ -214,11 +214,11 @@ struct SupervisorReviewCard: View {
             statLine(icon: "checkmark.seal.fill",
                      text: "Feedback v\(review.draftVersion) intégré le \(formatDateShort(review.addressedDate))")
             Text("Draft courant : v\(chapter.draftVersion)")
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
             Button { showSendSheet = true } label: {
                 Label("Nouveau cycle de relecture", systemImage: "paperplane.fill")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: AppLook.fs(11), weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 10).padding(.vertical, 6)
                     .background(Color.accent)
@@ -233,11 +233,11 @@ struct SupervisorReviewCard: View {
     private func statLine(icon: String, text: String) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 10))
+                .font(.system(size: AppLook.fs(10)))
                 .foregroundColor(.labelMuted.opacity(0.6))
                 .frame(width: 12)
             Text(text)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.labelMuted)
         }
     }
@@ -268,7 +268,7 @@ private struct SendForReviewSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(chapter.name).font(.system(size: 13, weight: .semibold))
                 Text("Projet : \(project.name) · Draft v\(chapter.draftVersion)")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Toggle(isOn: $hasReturnDate) {
                 Text("Date prévue du retour").font(.system(size: 12))
@@ -323,10 +323,10 @@ private struct ReceiveReviewSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(chapter.name).font(.system(size: 13, weight: .semibold))
                 Text("Projet : \(project.name)")
-                    .font(.system(size: 11)).foregroundColor(.labelMuted)
+                    .font(.system(size: AppLook.fs(11))).foregroundColor(.labelMuted)
             }
             Text("Notes du feedback (optionnel)")
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: AppLook.fs(11), weight: .medium))
                 .foregroundColor(.labelMuted)
             TextEditor(text: $feedbackNotes)
                 .font(.system(size: 12))

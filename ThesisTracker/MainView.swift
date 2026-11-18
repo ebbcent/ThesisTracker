@@ -1027,7 +1027,7 @@ struct WeeklySummaryOverlay: View {
                         }
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Récap de la semaine")
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                                 .foregroundColor(.primary)
                             Text(weekLabel)
                                 .font(.system(size: 11))
@@ -1130,7 +1130,7 @@ struct WeeklySummaryOverlay: View {
                 .font(.system(size: 12))
                 .foregroundColor(.accentWarm)
             Text(value)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .font(.system(size: 12, weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -1169,7 +1169,7 @@ struct DailySummaryOverlay: View {
                         }
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Bilan du jour")
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .font(.system(size: 15, weight: .bold, design: AppLook.fontDesign))
                                 .foregroundColor(.primary)
                             Text(DataStore.formatLongDate(Date(), capitalize: true))
                                 .font(.system(size: 11))
@@ -1246,7 +1246,7 @@ struct DailySummaryOverlay: View {
                 .font(.system(size: 12))
                 .foregroundColor(.accent)
             Text(value)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .font(.system(size: 13, weight: .bold, design: AppLook.fontDesign))
                 .foregroundColor(.primary)
                 .lineLimit(1)
             Text(label)
@@ -1387,7 +1387,7 @@ struct MilestoneToastView: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text(subtitle)
                     .font(.system(size: 12))
@@ -1450,7 +1450,7 @@ struct PostSessionPromptView: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text("Session focus terminée")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("Tu as écrit combien de caractères ?")
                     .font(.system(size: 12))

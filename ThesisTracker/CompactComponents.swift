@@ -90,7 +90,7 @@ struct ProgressRingView: View {
                 .appAnimation(.easeOut(duration: 0.25), value: ratio)
             if let label {
                 Text(label)
-                    .font(.system(size: size * 0.28, weight: .bold, design: .rounded))
+                    .font(.system(size: size * 0.28, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(color)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
@@ -104,13 +104,13 @@ struct ProgressRingView: View {
 
 extension Font {
     /// Métriques hero (streak, total) — SF Pro Rounded Bold 40pt
-    static var appDisplayXL: Font { .system(size: 40, weight: .bold, design: .rounded) }
+    static var appDisplayXL: Font { .system(size: 40, weight: .bold, design: AppLook.fontDesign) }
     /// Grands chiffres clés — SF Pro Rounded Bold 28pt
-    static var appDisplay: Font { .system(size: 28, weight: .bold, design: .rounded) }
+    static var appDisplay: Font { .system(size: 28, weight: .bold, design: AppLook.fontDesign) }
     /// Valeurs de stat proéminentes — SF Pro Rounded Semibold 22pt
-    static var appMetric: Font { .system(size: 22, weight: .semibold, design: .rounded) }
+    static var appMetric: Font { .system(size: 22, weight: .semibold, design: AppLook.fontDesign) }
     /// Valeurs secondaires — SF Pro Rounded Semibold 17pt
-    static var appMetricSm: Font { .system(size: 17, weight: .semibold, design: .rounded) }
+    static var appMetricSm: Font { .system(size: 17, weight: .semibold, design: AppLook.fontDesign) }
     /// Titres de section — SF Pro Semibold 17pt
     static var appTitle: Font { .system(size: 17, weight: .semibold) }
     /// Sous-titres — SF Pro Semibold 15pt
@@ -120,9 +120,9 @@ extension Font {
     /// Texte accentué — SF Pro Medium 13pt
     static var appBodyMedium: Font { .system(size: 13, weight: .medium) }
     /// Labels secondaires — SF Pro Medium 11pt
-    static var appLabel: Font { .system(size: 11, weight: .medium) }
+    static var appLabel: Font { .system(size: AppLook.fs(11), weight: .medium) }
     /// Texte tertiaire — SF Pro Regular 10pt
-    static var appCaption: Font { .system(size: 10) }
+    static var appCaption: Font { .system(size: AppLook.fs(10)) }
 }
 
 // MARK: - CompactDatePicker
@@ -175,7 +175,7 @@ struct CompactDatePicker: View {
             // ← jour précédent
             Button { adjustDate(by: -1) } label: {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(canGoPrev ? .labelMuted : .labelMuted.opacity(0.25))
                     .frame(width: 28, height: 30)
             }
@@ -207,7 +207,7 @@ struct CompactDatePicker: View {
             // → jour suivant
             Button { adjustDate(by: 1) } label: {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(canGoNext ? .labelMuted : .labelMuted.opacity(0.25))
                     .frame(width: 28, height: 30)
             }
@@ -242,7 +242,7 @@ struct CompactDatePicker: View {
             HStack(spacing: 0) {
                 Button { changeMonth(by: -1) } label: {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .frame(width: 26, height: 26)
                         .background(Color.glassFill)
@@ -260,7 +260,7 @@ struct CompactDatePicker: View {
 
                 Button { changeMonth(by: 1) } label: {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(canGoNextMonth ? .labelMuted : .labelMuted.opacity(0.25))
                         .frame(width: 26, height: 26)
                         .background(Color.glassFill)
@@ -276,7 +276,7 @@ struct CompactDatePicker: View {
             HStack(spacing: 0) {
                 ForEach(["L","M","M","J","V","S","D"], id: \.self) { d in
                     Text(d)
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
                         .foregroundColor(.labelMuted)
                         .frame(maxWidth: .infinity)
                 }
@@ -302,7 +302,7 @@ struct CompactDatePicker: View {
             // Saisie clavier
             HStack(spacing: 8) {
                 Image(systemName: "keyboard")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
                 TextField("jj/mm ou jj/mm/aaaa", text: $rawInput)
                     .textFieldStyle(.plain)
@@ -312,7 +312,7 @@ struct CompactDatePicker: View {
                 if !rawInput.isEmpty {
                     Button { parseRawInput() } label: {
                         Image(systemName: "return")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.accent)
                     }
                     .buttonStyle(.pressable)
@@ -338,7 +338,7 @@ struct CompactDatePicker: View {
             if !disabled { selectDate(cellDate) }
         } label: {
             Text("\(cal.component(.day, from: cellDate))")
-                .font(.system(size: 11, weight: isSelected || isToday ? .bold : .regular))
+                .font(.system(size: AppLook.fs(11), weight: isSelected || isToday ? .bold : .regular))
                 .foregroundColor(
                     disabled  ? .labelMuted.opacity(0.25)
                     : isSelected ? .white
@@ -368,7 +368,7 @@ struct CompactDatePicker: View {
             if available { selectDate(target) }
         } label: {
             Text(label)
-                .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                .font(.system(size: AppLook.fs(11), weight: isSelected ? .semibold : .regular))
                 .foregroundColor(isSelected ? .white : (available ? .labelMuted : .labelMuted.opacity(0.3)))
                 .padding(.horizontal, 8).padding(.vertical, 4)
                 .background(isSelected ? Color.accent.opacity(0.85) : Color.white.opacity(0.06))
@@ -503,7 +503,7 @@ struct CompactDropdownPicker: View {
                     .lineLimit(1)
                 Spacer(minLength: 4)
                 Image(systemName: "chevron.up.chevron.down")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                     .foregroundColor(.labelMuted)
             }
             .padding(.horizontal, 12).padding(.vertical, 8)
@@ -524,7 +524,7 @@ struct CompactDropdownPicker: View {
                     } label: {
                         HStack(spacing: 10) {
                             Image(systemName: icon)
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(item.id == selectedId ? iconColor : .labelMuted)
                                 .frame(width: 16)
                             Text(item.name)
@@ -534,7 +534,7 @@ struct CompactDropdownPicker: View {
                             Spacer()
                             if item.id == selectedId {
                                 Image(systemName: "checkmark")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .foregroundColor(iconColor)
                             }
                         }

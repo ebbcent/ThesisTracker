@@ -45,7 +45,7 @@ struct ThesisHealthWidget: View {
                                         .fill(Color.labelMuted.opacity(0.4))
                                         .frame(width: 4, height: 4)
                                     Text(detail)
-                                        .font(.system(size: 11))
+                                        .font(.system(size: AppLook.fs(11)))
                                         .foregroundColor(.labelMuted)
                                         .lineLimit(2)
                                 }
@@ -53,7 +53,7 @@ struct ThesisHealthWidget: View {
                         }
                         if health.details.isEmpty {
                             Text("Continue comme ça !")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.labelMuted)
                         }
                     }
@@ -90,10 +90,10 @@ struct ThesisHealthWidget: View {
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 0) {
                 Text("\(health.score)")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 17, weight: .bold, design: AppLook.fontDesign))
                     .foregroundColor(.primary)
                 Text("/100")
-                    .font(.system(size: 10))
+                    .font(.system(size: AppLook.fs(10)))
                     .foregroundColor(.labelMuted)
             }
         }
@@ -101,7 +101,7 @@ struct ThesisHealthWidget: View {
 
     private var statusBadge: some View {
         Text(statusLabel)
-            .font(.system(size: 10, weight: .semibold))
+            .font(.system(size: AppLook.fs(10), weight: .semibold))
             .foregroundColor(statusColor)
             .padding(.horizontal, 8).padding(.vertical, 3)
             .background(statusColor.opacity(0.10))

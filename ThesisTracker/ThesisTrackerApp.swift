@@ -302,7 +302,7 @@ struct ThesisTrackerApp: App {
                     let ratio = snap.totalDuration > 0 ? 1 - snap.remainingTime / snap.totalDuration : 0
                     Image(nsImage: MenuBarRing.image(progress: ratio, paused: snap.phase.isPaused))
                     Text(pomodoroController.formattedDuration(snap.remainingTime))
-                        .font(.system(size: 13, weight: .semibold, design: .rounded).monospacedDigit())
+                        .font(.system(size: 13, weight: .semibold, design: AppLook.fontDesign).monospacedDigit())
                 }
             }
             .help(store.currentStreak > 0 ? "Série : \(store.currentStreak) jours · Record : \(store.longestStreak) jours · ⌃⌥N pour saisie rapide" : "Writing Process · ⌃⌥N pour saisie rapide")

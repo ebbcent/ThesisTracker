@@ -23,7 +23,7 @@ struct HistoryView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Historique")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
                             .foregroundColor(.primary)
                         Text(chapter.name)
                             .font(.system(size: 13))
@@ -57,7 +57,7 @@ struct HistoryView: View {
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.labelMuted)
                         Text("Les saisies quotidiennes apparaîtront ici dès que tu en enregistreras une.")
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted.opacity(0.75))
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)
@@ -147,20 +147,20 @@ struct HistoryRow: View {
                     if increment > 0 {
                         HStack(spacing: 3) {
                             Image(systemName: "arrow.up")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                             Text("+\(formatNumber(increment))")
-                                .font(.system(size: 11, weight: .medium))
+                                .font(.system(size: AppLook.fs(11), weight: .medium))
                         }
                         .foregroundColor(Color.accentGreen)
                     } else if let chapter, chapter.netChange(for: entry.date) < 0 {
                         HStack(spacing: 3) {
                             Image(systemName: "arrow.down")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                             Text(formatNumber(chapter.netChange(for: entry.date)))
-                                .font(.system(size: 11, weight: .medium))
+                                .font(.system(size: AppLook.fs(11), weight: .medium))
                             if entry.isCorrection {
                                 Text("Correction")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .font(.system(size: AppLook.fs(10), weight: .semibold))
                                     .padding(.horizontal, 6).padding(.vertical, 1)
                                     .background(Capsule().fill(Color.accentWarm.opacity(0.15)))
                             }
@@ -173,10 +173,10 @@ struct HistoryRow: View {
                 if let note = entry.note, !note.isEmpty {
                     HStack(spacing: 4) {
                         Image(systemName: "note.text")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppLook.fs(10)))
                             .foregroundColor(.labelMuted.opacity(0.6))
                         Text(note)
-                            .font(.system(size: 11))
+                            .font(.system(size: AppLook.fs(11)))
                             .foregroundColor(.labelMuted)
                             .italic()
                             .lineLimit(2)

@@ -104,7 +104,7 @@ struct FocusWritingView: View {
                             HStack(spacing: 6) {
                                 if let type = project.projectType {
                                     Image(systemName: type.icon)
-                                        .font(.system(size: 10))
+                                        .font(.system(size: AppLook.fs(10)))
                                         .foregroundColor(.white.opacity(0.4))
                                 }
                                 Text(project.name)
@@ -112,7 +112,7 @@ struct FocusWritingView: View {
                                     .foregroundColor(.white.opacity(0.4))
                                 if let ch = activeChapter {
                                     Text("›")
-                                        .font(.system(size: 10))
+                                        .font(.system(size: AppLook.fs(10)))
                                         .foregroundColor(.white.opacity(0.25))
                                     Text(ch.name)
                                         .font(.system(size: 12, weight: .semibold))
@@ -120,7 +120,7 @@ struct FocusWritingView: View {
                                     // Version brouillon si > 1
                                     if ch.draftVersion > 1 {
                                         Text("v\(ch.draftVersion)")
-                                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                            .font(.system(size: AppLook.fs(10), weight: .bold, design: .monospaced))
                                             .foregroundColor(.accent.opacity(0.7))
                                             .padding(.horizontal, 5).padding(.vertical, 1)
                                             .background(Color.accent.opacity(0.15))
@@ -132,7 +132,7 @@ struct FocusWritingView: View {
 
                         // Horloge
                         Text(currentTimeString)
-                            .font(.system(size: 11, design: .monospaced))
+                            .font(.system(size: AppLook.fs(11), design: .monospaced))
                             .foregroundColor(.white.opacity(0.25))
                     }
 
@@ -140,7 +140,7 @@ struct FocusWritingView: View {
                     VStack(spacing: 8) {
                         HStack(alignment: .lastTextBaseline, spacing: 8) {
                             Text(DataStore.formatNumber(currentTotal))
-                                .font(.system(size: counterSize, weight: .bold, design: .rounded))
+                                .font(.system(size: counterSize, weight: .bold, design: AppLook.fontDesign))
                                 .foregroundColor(.white)
                                 .contentTransition(.numericText())
                                 .appAnimation(Motion.progress, value: currentTotal)
@@ -153,7 +153,7 @@ struct FocusWritingView: View {
                         if todayDelta > 0 {
                             HStack(spacing: 5) {
                                 Image(systemName: "arrow.up")
-                                    .font(.system(size: 11, weight: .bold))
+                                    .font(.system(size: AppLook.fs(11), weight: .bold))
                                 Text("+\(store.formatCount(todayDelta)) aujourd'hui")
                                     .font(.system(size: 13, weight: .medium))
                             }
@@ -177,7 +177,7 @@ struct FocusWritingView: View {
                                 }
                                 .frame(width: 280, height: 4)
                                 Text("Objectif journalier : \(Int(ratio * 100))%")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                     .foregroundColor(.white.opacity(0.3))
                                     .help("\(store.formatCount(todayDelta)) / \(store.formatCount(store.data.dailyGoal)) \(store.data.useWordCount ? "mots" : "car.") · \(Int(ratio * 100))% de l'objectif journalier")
                             }
@@ -241,17 +241,17 @@ struct FocusWritingView: View {
                     if inputText.isEmpty, let suggested = suggestedTotal {
                         HStack(spacing: 6) {
                             Image(systemName: "sparkles")
-                                .font(.system(size: 10))
+                                .font(.system(size: AppLook.fs(10)))
                                 .foregroundColor(.accentWarm.opacity(0.8))
                             Text("Suggéré :")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.white.opacity(0.35))
                             Button {
                                 inputText = "\(suggested)"
                                 fieldFocused = true
                             } label: {
                                 Text(DataStore.formatNumber(suggested))
-                                    .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                                    .font(.system(size: AppLook.fs(11), weight: .semibold, design: .monospaced))
                                     .foregroundColor(.accentWarm)
                                     .padding(.horizontal, 8).padding(.vertical, 3)
                                     .background(Color.accentWarm.opacity(0.12))
@@ -260,7 +260,7 @@ struct FocusWritingView: View {
                             }
                             .buttonStyle(.pressable)
                             Text(store.data.useWordCount ? "mots" : "car.")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.white.opacity(0.25))
                         }
                         .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .leading)))
@@ -270,7 +270,7 @@ struct FocusWritingView: View {
                     if !recentTotals.isEmpty {
                         HStack(spacing: 6) {
                             Text("Récent :")
-                                .font(.system(size: 11))
+                                .font(.system(size: AppLook.fs(11)))
                                 .foregroundColor(.white.opacity(0.3))
                             ForEach(recentTotals, id: \.self) { val in
                                 Button {
@@ -278,7 +278,7 @@ struct FocusWritingView: View {
                                     fieldFocused = true
                                 } label: {
                                     Text(DataStore.formatNumber(val))
-                                        .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                        .font(.system(size: AppLook.fs(11), weight: .medium, design: .monospaced))
                                         .foregroundColor(.white.opacity(0.6))
                                         .padding(.horizontal, 8).padding(.vertical, 3)
                                         .background(Color.white.opacity(0.07))
@@ -315,7 +315,7 @@ struct FocusWritingView: View {
                         VStack(spacing: 0) {
                             HStack(spacing: 8) {
                                 Image(systemName: "lightbulb.fill")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                                     .foregroundColor(.yellow.opacity(0.8))
                                 TextField("Capture une idée…", text: $ideaText)
                                     .font(.system(size: 13))
@@ -326,7 +326,7 @@ struct FocusWritingView: View {
                                 if !ideaText.isEmpty {
                                     Button(action: saveIdea) {
                                         Text("Capturer")
-                                            .font(.system(size: 11, weight: .semibold))
+                                            .font(.system(size: AppLook.fs(11), weight: .semibold))
                                             .foregroundColor(.semYellow)
                                             .padding(.horizontal, 10).padding(.vertical, 4)
                                             .background(Color.yellow.opacity(0.15))
@@ -339,7 +339,7 @@ struct FocusWritingView: View {
                                     ideaText = ""
                                 } label: {
                                     Image(systemName: "xmark")
-                                        .font(.system(size: 10))
+                                        .font(.system(size: AppLook.fs(10)))
                                         .foregroundColor(.white.opacity(0.3))
                                 }
                                 .buttonStyle(.pressable)
@@ -375,9 +375,9 @@ struct FocusWritingView: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: showIdeaZone ? "lightbulb.fill" : "lightbulb")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: AppLook.fs(10)))
                                 Text("Idée rapide")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: AppLook.fs(11)))
                             }
                             .foregroundColor(showIdeaZone ? .yellow : .white.opacity(0.3))
                             .padding(.horizontal, 9).padding(.vertical, 4)
@@ -475,13 +475,13 @@ struct FocusWritingView: View {
     private func shortcutHint(_ key: String, _ label: String) -> some View {
         HStack(spacing: 4) {
             Text(key)
-                .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                .font(.system(size: AppLook.fs(11), weight: .semibold, design: .monospaced))
                 .foregroundColor(.white.opacity(0.5))
                 .padding(.horizontal, 5).padding(.vertical, 2)
                 .background(Color.white.opacity(0.08))
                 .clipShape(RoundedRectangle(cornerRadius: 4))
             Text(label)
-                .font(.system(size: 11))
+                .font(.system(size: AppLook.fs(11)))
                 .foregroundColor(.white.opacity(0.3))
         }
     }

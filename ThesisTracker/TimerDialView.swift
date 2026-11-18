@@ -43,7 +43,7 @@ struct TimerDialView: View {
 
             VStack(spacing: size * 0.025) {
                 Text(title.uppercased())
-                    .font(.system(size: max(10, size * 0.05), weight: .semibold, design: .rounded))
+                    .font(.system(size: max(10, size * 0.05), weight: .semibold, design: AppLook.fontDesign))
                     .kerning(size < 160 ? 0.4 : 1.1)
                     .foregroundStyle(accentColor)
                     .lineLimit(1)
@@ -52,7 +52,7 @@ struct TimerDialView: View {
                     .appAnimation(Motion.quick, value: title)
 
                 Text(timeText)
-                    .font(.system(size: size * 0.2, weight: .semibold, design: .rounded))
+                    .font(.system(size: size * 0.2, weight: .semibold, design: AppLook.fontDesign))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                     .monospacedDigit()

@@ -331,6 +331,7 @@ struct AppLookRefresher: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .tint(Color.accent)   // 5.27 — interrupteurs, curseurs et sélecteurs à la couleur d'accent
             .id(token)
             .onChange(of: interfaceMode) { _, _ in redraw() }
             .onChange(of: paper) { _, _ in redraw() }
