@@ -416,7 +416,7 @@ struct MainView: View {
 
             VStack(spacing: 0) {
                 // ── Barre de statut persistante ──────────────────
-                StatusBarView(store: store)
+                StatusBarView(store: store, onDashboard: selectedNav == .dashboard)
 
                 Divider()
                     .overlay(Color.cardBorder)
@@ -684,6 +684,8 @@ struct MainView: View {
 
 struct StatusBarView: View {
     @ObservedObject var store: DataStore
+    /// 5.38 — sur l'accueil Tuiles, série et total du jour sont déjà en grand : la barre ne les répète pas.
+    var onDashboard: Bool = false
     /// 5.18 : pages, vitesse et hebdo affichés sur demande (chevron) ; série, aujourd'hui, chapitre toujours.
     @AppStorage("statusBarExpanded") private var expanded = false
     @ObservedObject private var notifStore: AppNotificationStore = .shared
@@ -741,8 +743,10 @@ struct StatusBarView: View {
             // à toute la fenêtre (contenu coupé des deux côtés sur un petit écran).
             ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 24) {
-            marker("Série", streakText)
-            marker("Aujourd'hui", todayText, goalText)
+            if !onDashboard {
+                marker("Série", streakText)
+                marker("Aujourd'hui", todayText, goalText)
+            }
             if let eta = store.thesisEndDate ?? store.estimatedCompletionDate(for: store.data.activeProjectId ?? UUID()) {
                 let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: eta).day ?? 0
                 let inDays: String? = days >= 0 ? (days > 1 ? "· dans \(days) jours" : "· dans \(days) jour") : nil

@@ -26,7 +26,7 @@ struct ChapterHistoryView: View {
                 HStack(alignment: .firstTextBaseline) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Historique")
-                            .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                            .font(TypeScale.sheetTitle)
                             .foregroundColor(.primary)
                         Text(chapter.name)
                             .font(.system(size: 12))

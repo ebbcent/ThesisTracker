@@ -190,8 +190,9 @@ struct WidgetLibraryView: View {
 
     private var widgetsGrid: some View {
         LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: 340, maximum: 520), spacing: 16)],
-            spacing: 16
+            // 5.38 — colonnes qui remplissent la largeur, widgets alignés en haut de leur ligne
+            columns: [GridItem(.adaptive(minimum: 340, maximum: AppLook.tiles ? 640 : 520), spacing: 14, alignment: .top)],
+            spacing: 14
         ) {
             ForEach(visibleWidgets, id: \.self) { widget in
                 widgetWithVisibilityControls(widget)

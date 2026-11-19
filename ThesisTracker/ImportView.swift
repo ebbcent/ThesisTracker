@@ -42,7 +42,7 @@ struct ImportView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Importer des données")
-                            .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                            .font(TypeScale.sheetTitle)
                             .foregroundColor(.primary)
                         Text("Collez depuis Excel ou choisissez un fichier CSV")
                             .font(.system(size: 12))

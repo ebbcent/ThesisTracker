@@ -91,7 +91,7 @@ struct ProjectFormView: View {
 
             VStack(alignment: .leading, spacing: 24) {
                 Text(isEditing ? "Renommer le projet" : "Nouveau projet")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.sheetTitle)
                     .foregroundColor(.primary)
 
                 DarkFormField(label: "Nom du projet", placeholder: "ex: Ma thèse, Article Nature…", text: $name, onSubmit: save)
@@ -343,7 +343,7 @@ struct ChapterFormView: View {
 
             VStack(alignment: .leading, spacing: 24) {
                 Text(isEditing ? "Modifier le chapitre" : "Nouveau chapitre")
-                    .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                    .font(TypeScale.sheetTitle)
                     .foregroundColor(.primary)
 
                 DarkFormField(label: "Nom du chapitre", placeholder: "ex: Chapitre 1 — Introduction", text: $name)
