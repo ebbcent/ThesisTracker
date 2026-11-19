@@ -1213,7 +1213,7 @@ struct GoalRow: View {
                     .overlay(RoundedRectangle(cornerRadius: AppLook.r(8, 12)).stroke(Color.cardBorder, lineWidth: 1))
                 Text(useWordCount ? "mots" : "signes")
                     .font(.system(size: 12)).foregroundColor(.labelMuted)
-                    .frame(width: 30)
+                    .fixedSize().frame(minWidth: 44, alignment: .leading)   // 5.37 : « signes » se coupait en deux lignes
             }
         }
         .padding(14)

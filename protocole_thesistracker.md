@@ -405,3 +405,5 @@ Troisième tour (écran entier, avec l'accord de Clem) : panneau de la barre des
 - À la demande de Clem : au premier lancement, toute saisie passée qui ajoute plus de 80 000 signes d'un coup est cochée « import » (`autoFlagLargeImportsIfNeeded`). Le passage ne se fait qu'une fois : la marque `importsAutoFlagged` est dans les données, donc valable sur les deux Mac, et une case décochée ensuite le reste. Les saisies futures ne sont jamais cochées d'office.
 - Santé de la thèse : les échéances dépassées se comptent comme sur la page Échéances (chapitres terminés, archivés ou de projets archivés exclus) ; elle en annonçait 4 contre 2.
 - Barre du haut : « Vitesse 14 j », pour la distinguer de la moyenne sur 7 jours actifs du widget et du panneau de la barre des menus.
+- Réglages : l'unité « signes » des objectifs se coupait en deux lignes (largeur prévue pour « car. »).
+Vérifié à l'écran sur la 5.36 installée : boutons Sprint et Sanctuaire, menu du chapitre et libellés en gris, dossiers sans fond, Réglages en une colonne sans débordement.
