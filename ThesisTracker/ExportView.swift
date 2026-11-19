@@ -104,7 +104,7 @@ struct ExportView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Exporter les données")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .font(TypeScale.sheetTitle)
                             .foregroundColor(.primary)
                         Text("\(totalEntries) entrées · \(store.data.projects.count) projet(s)")
                             .font(.system(size: 12)).foregroundColor(.labelMuted)

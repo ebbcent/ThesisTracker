@@ -127,7 +127,7 @@ struct TilesChapterList: View {
         }
         .padding(.horizontal, 32)
         .padding(.vertical, 26)
-        .background(RoundedRectangle(cornerRadius: 32, style: .continuous).fill(TilesTheme.card))
+        .tilesSurface(RoundedRectangle(cornerRadius: 32, style: .continuous))
     }
 
     private func row(_ chapter: Chapter) -> some View {
@@ -137,7 +137,7 @@ struct TilesChapterList: View {
         let state = chapter.goalState(total: total)
         let color: Color = {
             switch state {
-            case .reached:     return TilesTheme.green
+            case .reached:     return TilesTheme.muted   // 5.38 : un chapitre fini ne doit pas attirer plus l'œil que le chapitre en cours
             case .overCeiling: return TilesTheme.red
             default:           return isActive ? TilesTheme.blue : TilesTheme.ink
             }
@@ -149,10 +149,18 @@ struct TilesChapterList: View {
                     .foregroundColor(isActive ? TilesTheme.blue : TilesTheme.muted)
                     .frame(width: 22, alignment: .leading)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(parts.title)
-                        .font(.system(size: 16, design: .serif))
-                        .foregroundColor(TilesTheme.ink)
-                        .lineLimit(1)
+                    HStack(spacing: 6) {
+                        Text(parts.title)
+                            .font(.system(size: 16, design: .serif))
+                            .foregroundColor(isActive ? TilesTheme.ink : TilesTheme.ink.opacity(0.86))
+                            .lineLimit(1)
+                        if state == .reached || chapter.isCompleted {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(TilesTheme.muted)
+                                .accessibilityLabel("Objectif atteint")
+                        }
+                    }
                     Text(caption(chapter))
                         .font(.system(size: 12))
                         .foregroundColor(TilesTheme.muted)
@@ -216,6 +224,111 @@ struct TilesChapterList: View {
             .frame(height: geo.size.height)
         }
         .accessibilityHidden(true)
+    }
+}
+
+// MARK: Rythme des 30 derniers jours (5.38)
+
+/// Les trente derniers jours, sans les imports : apports quotidiens et jours écrits.
+struct TilesMonthData {
+    let values: [Int]          // du plus ancien à aujourd'hui
+    let goal: Int
+    var writtenDays: Int { values.filter { $0 > 0 }.count }
+    var average: Int { values.isEmpty ? 0 : values.reduce(0, +) / values.count }
+
+    init(store: DataStore, days: Int = 30) {
+        let cal = DataStore.gregorianCal
+        let today = cal.startOfDay(for: Date())
+        let totals = store.writtenTotals()
+        var out: [Int] = []
+        for offset in (0..<days).reversed() {
+            guard let d = cal.date(byAdding: .day, value: -offset, to: today) else { continue }
+            out.append(max(0, totals[DataStore.dateString(from: d)] ?? 0))
+        }
+        values = out
+        goal = store.effectiveDailyGoal
+    }
+}
+
+/// Tuile « Rythme » : moyenne par jour et nombre de jours écrits sur trente.
+struct TilesPaceContent: View {
+    @ObservedObject var store: DataStore
+
+    var body: some View {
+        let data = TilesMonthData(store: store)
+        let divisor = store.data.useWordCount ? 5 : 1
+        VStack(alignment: .leading, spacing: 5) {
+            Text("Rythme · 30 jours")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(TilesTheme.muted)
+                .lineLimit(1)
+            Text(TilesTheme.spaced(DataStore.formatNumber(data.average / divisor)))
+                .font(.system(size: 26, weight: .heavy).monospacedDigit())
+                .foregroundColor(TilesTheme.ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+            Text("par jour · \(data.writtenDays) jours écrits")
+                .font(.system(size: 12))
+                .foregroundColor(TilesTheme.muted)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Bande pleine largeur : une barre par jour, la ligne de l'objectif, aujourd'hui à la couleur d'accent.
+struct TilesMonthBand: View {
+    @ObservedObject var store: DataStore
+
+    var body: some View {
+        let data = TilesMonthData(store: store)
+        let divisor = store.data.useWordCount ? 5 : 1
+        let top = max(1, data.values.max() ?? 0, data.goal)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("30 derniers jours")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(TilesTheme.muted)
+                Spacer()
+                if data.goal > 0 {
+                    Text("objectif \(TilesTheme.spaced(DataStore.formatNumber(data.goal / divisor))) par jour")
+                        .font(.system(size: 12))
+                        .foregroundColor(TilesTheme.muted)
+                }
+            }
+            GeometryReader { geo in
+                let count = max(1, data.values.count)
+                let gap: CGFloat = 4
+                let width = max(2, (geo.size.width - gap * CGFloat(count - 1)) / CGFloat(count))
+                ZStack(alignment: .bottomLeading) {
+                    HStack(alignment: .bottom, spacing: gap) {
+                        ForEach(Array(data.values.enumerated()), id: \.offset) { index, value in
+                            let ratio = CGFloat(value) / CGFloat(top)
+                            let isToday = index == count - 1
+                            RoundedRectangle(cornerRadius: min(4, width / 2), style: .continuous)
+                                .fill(value == 0 ? TilesTheme.line : (isToday ? TilesTheme.blue : TilesTheme.ink.opacity(0.62)))
+                                .frame(width: width, height: value == 0 ? 3 : max(4, geo.size.height * ratio))
+                        }
+                    }
+                    if data.goal > 0 {
+                        Rectangle()
+                            .fill(TilesTheme.muted.opacity(0.55))
+                            .frame(height: 1)
+                            .offset(y: -geo.size.height * CGFloat(data.goal) / CGFloat(top))
+                    }
+                }
+                .frame(width: geo.size.width, height: geo.size.height, alignment: .bottomLeading)
+            }
+            .frame(height: 64)
+            .accessibilityElement()
+            .accessibilityLabel("Écriture des 30 derniers jours")
+            .accessibilityValue("\(data.writtenDays) jours écrits, \(DataStore.formatNumber(data.average / divisor)) par jour en moyenne")
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .tilesSurface(RoundedRectangle(cornerRadius: TilesTheme.radius, style: .continuous))
     }
 }
 

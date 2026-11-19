@@ -182,7 +182,30 @@ struct DeadlineBoardView: View {
 
     // MARK: - Chapitres tab
 
-    private var summaryRow: some View {
+    @ViewBuilder private var summaryRow: some View {
+        if AppLook.tiles {
+            // 5.38 — une ligne de texte : trois cartes dont deux à zéro repoussaient la liste
+            HStack(spacing: 18) {
+                summaryItem("\(overdueCount)", overdueCount > 1 ? "en retard" : "en retard", color: overdueCount > 0 ? .semRed : .primary)
+                summaryItem("\(dueThisWeekCount)", "cette semaine", color: .primary)
+                summaryItem("\(completedCount)", completedCount > 1 ? "terminés" : "terminé", color: .primary)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 4)
+        } else {
+            classicSummaryRow
+        }
+    }
+
+    private func summaryItem(_ value: String, _ label: String, color: Color) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Text(value).font(.system(size: 17, weight: .bold).monospacedDigit()).foregroundColor(color)
+            Text(label).font(.system(size: 13)).foregroundColor(.labelMuted)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private var classicSummaryRow: some View {
         HStack(spacing: 12) {
             MiniStatCard(label: "En retard", value: "\(overdueCount)", unit: "", color: .red)
             MiniStatCard(label: "Cette semaine", value: "\(dueThisWeekCount)", unit: "", color: .accentWarm)

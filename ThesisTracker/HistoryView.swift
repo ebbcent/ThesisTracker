@@ -23,7 +23,7 @@ struct HistoryView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Historique")
-                            .font(.system(size: 20, weight: .bold, design: AppLook.fontDesign))
+                            .font(TypeScale.sheetTitle)
                             .foregroundColor(.primary)
                         Text(chapter.name)
                             .font(.system(size: 13))

@@ -15,7 +15,7 @@ struct PomodoroTodayView: View {
                         timerCard
                         predictionsCard
                     }
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: AppLook.tiles ? 460 : .infinity)   // 5.38 : le cadran ne prend plus la moitié de l'écran
 
                     VStack(spacing: 16) {
                         todaySummaryColumn

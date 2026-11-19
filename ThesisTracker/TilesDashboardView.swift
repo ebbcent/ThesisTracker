@@ -160,7 +160,9 @@ struct TilesDashboardView: View {
                              goal: store.data.monthlyGoal, color: TilesTheme.ink)
                     streakTile
                     tile { TilesSlotContent(store: store) }
+                    tile { TilesPaceContent(store: store) }   // 5.38 : sixième tuile, la ligne est pleine sur grand écran
                 }
+                TilesMonthBand(store: store)   // 5.38 : le rythme des 30 derniers jours, d'un coup d'œil
                 if let project {
                     sectionLabel("Projet")
                     TilesChapterList(store: store, project: project) { picked in
@@ -329,7 +331,7 @@ struct TilesDashboardView: View {
                          alignment: .leading, spacing: 12) {
             fact("Aujourd'hui", (today < 0 ? "−" : "+") + num(abs(today)), color: TilesTheme.blue)
             fact("Reste", chapter.goal > 0 ? num(remaining) : "—")
-            fact("Échéance", deadline?.short ?? "—", color: deadline == nil ? TilesTheme.ink : TilesTheme.red)
+            fact("Échéance", deadline?.short ?? "—")   // 5.38 : le rouge reste au seul rappel du haut de la carte
             fact("À écrire par jour", pace.map { num($0) } ?? "—")
             fact("Avancement", chapter.goal > 0 ? "\(Int(Double(latest) / Double(chapter.goal) * 100)) %" : "—")
             fact("Dernière saisie", lastEntry.map(Self.dayMonth) ?? "—")

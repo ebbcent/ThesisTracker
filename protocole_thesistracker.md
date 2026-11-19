@@ -214,6 +214,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.35** — Case « Import » sur une saisie : c'est elle, et plus un seuil, qui décide de ce qui ne compte pas comme écriture
 - **5.36** — Corrections après le tour à l'écran de la 5.35 : Réglages qui débordaient, badge d'échéance en double, saisie du Professeur, libellés
 - **5.37** — Grosses saisies passées cochées « import » d'office (une fois), échéances dépassées comptées pareil partout
+- **5.38** — Améliorations visuelles : tuile Rythme et bande des 30 jours sur l'accueil, chapitres allégés, un seul rouge, barre du haut sans doublon, Échéances, Minuteur, widgets, titres de fenêtre
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -407,3 +408,17 @@ Troisième tour (écran entier, avec l'accord de Clem) : panneau de la barre des
 - Barre du haut : « Vitesse 14 j », pour la distinguer de la moyenne sur 7 jours actifs du widget et du panneau de la barre des menus.
 - Réglages : l'unité « signes » des objectifs se coupait en deux lignes (largeur prévue pour « car. »).
 Vérifié à l'écran sur la 5.36 installée : boutons Sprint et Sanctuaire, menu du chapitre et libellés en gris, dossiers sans fond, Réglages en une colonne sans débordement.
+
+
+## 2026-11-19 — 5.38 : améliorations visuelles (liste validée par Clem : « implante tout »)
+- Accueil : sixième tuile « Rythme · 30 jours » (moyenne par jour, jours écrits) qui remplit la ligne sur grand écran ; bande « 30 derniers jours » (une barre par jour, ligne de l'objectif, aujourd'hui à la couleur d'accent, imports exclus).
+- Liste « Chapitres » : les chapitres à l'objectif passent en gris avec une coche ; l'accent reste au chapitre en cours ; même surface (ombre, reflet) que les autres tuiles.
+- Un seul rouge pour l'échéance : le rappel en haut de la carte. Le fait « Échéance » passe en neutre ; la date de la carte épinglée n'est rouge que si elle est dépassée.
+- Barre du haut : sur l'accueil, elle ne répète plus la série ni le total du jour.
+- Barre latérale Tuiles : titre « Projets » comme les autres sections ; bouton « + » des dossiers au survol.
+- Échéances (Tuiles) : les trois cartes de compteurs deviennent une ligne.
+- Minuteur (Tuiles) : colonne du cadran limitée à 460 points, la journée prend le reste.
+- Widgets : colonnes qui remplissent la largeur, widgets alignés en haut.
+- Fenêtres secondaires : même titre (`TypeScale.sheetTitle`) pour nouveau projet, export, import, historique.
+Déjà en place, rien à ajouter : fondu entre les pages, anneau et total animés à l'enregistrement.
+Non fait : refonte des pages Statistiques et Widgets sur le modèle des tuiles (chantier à maquetter d'abord) ; les fenêtres secondaires gardent chacune leur mise en page et leurs boutons.

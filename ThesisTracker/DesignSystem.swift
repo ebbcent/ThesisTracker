@@ -248,6 +248,17 @@ struct RevealOnRowHover: ViewModifier {
     }
 }
 
+/// 5.38 — comme `RevealOnRowHover`, mais seulement quand `active` est vrai (apparence Tuiles).
+struct RevealOnRowHoverIf: ViewModifier {
+    let active: Bool
+    @Environment(\.rowHovered) private var hovered
+    func body(content: Content) -> some View {
+        content
+            .opacity(!active || hovered ? 1 : 0)
+            .animation(Motion.reduce ? nil : .easeOut(duration: 0.1), value: hovered)
+    }
+}
+
 /// 5.28 — groupe d'actions de ligne : hors survol, il ne réserve aucune largeur
 /// (les boutons restent lus par VoiceOver et atteignables au clavier).
 struct CollapseOffRowHover: ViewModifier {
@@ -291,6 +302,10 @@ enum TypeScale {
     /// 5.33 — un seul titre de page : en Tuiles, le même que « Aujourd'hui » sur l'accueil.
     static var pageTitle: Font {
         AppLook.tiles ? .system(size: 26, weight: .heavy) : .system(size: 20, weight: .bold, design: AppLook.fontDesign)
+    }
+    /// 5.38 — titre d'une fenêtre secondaire (nouveau projet, export, import, historique) : le même partout.
+    static var sheetTitle: Font {
+        AppLook.tiles ? .system(size: 22, weight: .heavy) : .system(size: 20, weight: .bold, design: AppLook.fontDesign)
     }
     /// Titre de section (« Progression »).
     static var sectionTitle: Font { .system(size: AppLook.tiles ? 13 : 12, weight: .semibold) }

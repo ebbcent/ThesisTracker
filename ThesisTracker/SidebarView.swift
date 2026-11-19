@@ -317,11 +317,17 @@ struct SidebarView: View {
     private var projectSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 5) {
-                Image(systemName: "folder.fill")
-                    .font(.system(size: AppLook.fs(10), weight: .semibold))
-                    .foregroundColor(.labelMuted)
-                Text("PROJETS")
-                    .font(.system(size: AppLook.fs(10), weight: .bold)).foregroundColor(.labelMuted).kerning(1.0)
+                if AppLook.tiles {
+                    // 5.38 — même titre de section que le reste de l'apparence Tuiles
+                    Text("Projets")
+                        .font(.system(size: 13, weight: .bold)).foregroundColor(.labelMuted)
+                } else {
+                    Image(systemName: "folder.fill")
+                        .font(.system(size: AppLook.fs(10), weight: .semibold))
+                        .foregroundColor(.labelMuted)
+                    Text("PROJETS")
+                        .font(.system(size: AppLook.fs(10), weight: .bold)).foregroundColor(.labelMuted).kerning(1.0)
+                }
                 Spacer()
                 // 5.18 : un seul menu « Affichage » au lieu de quatre icônes sans libellé
                 Menu {
@@ -2193,6 +2199,7 @@ private struct ChapterFolderSidebarRow: View {
                     .buttonStyle(.pressable)
                     .help("Nouveau chapitre")
                     .accessibilityLabel("Nouveau chapitre")
+                    .modifier(RevealOnRowHoverIf(active: AppLook.tiles))   // 5.38 : au survol en Tuiles
 
                     Menu {
                         Button("Renommer") { renameDraft = folder.name }

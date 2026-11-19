@@ -164,7 +164,7 @@ struct TilesPinnedChapterCard: View {
                 if let deadline = deadlineText(chapter) {
                     Text(deadline)
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.semRed)
+                        .foregroundColor(deadlineIsLate(chapter) ? .semRed : .labelMuted)   // 5.38 : rouge seulement si la date est dépassée
                         .fixedSize()
                 }
             }
@@ -196,6 +196,11 @@ struct TilesPinnedChapterCard: View {
                 .contentShape(Capsule())
         }
         .buttonStyle(.pressable)
+    }
+
+    private func deadlineIsLate(_ chapter: Chapter) -> Bool {
+        guard let date = chapter.deadline.flatMap(DataStore.parseDate) else { return false }
+        return date < Calendar.current.startOfDay(for: Date())
     }
 
     private func deadlineText(_ chapter: Chapter) -> String? {
