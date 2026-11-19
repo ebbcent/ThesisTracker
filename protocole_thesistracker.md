@@ -213,6 +213,7 @@ Les anciennes copies `[conflicted]` ne sont plus dans le projet. Le dossier du p
 - **5.34** — Titre de page unique, report d'une échéance dépassée, bouton de rythme, questions de départ du Professeur
 - **5.35** — Case « Import » sur une saisie : c'est elle, et plus un seuil, qui décide de ce qui ne compte pas comme écriture
 - **5.36** — Corrections après le tour à l'écran de la 5.35 : Réglages qui débordaient, badge d'échéance en double, saisie du Professeur, libellés
+- **5.37** — Grosses saisies passées cochées « import » d'office (une fois), échéances dépassées comptées pareil partout
 
 Publication : chaque fusion dans `main` publie une version dans Releases. Si l'exécution échoue sans démarrer (aucune étape, aucun journal), la relancer depuis Actions → l'exécution → *Re-run all jobs*, ou via *Run workflow* avec « publier » coché.
 
@@ -398,3 +399,9 @@ Troisième tour (écran entier, avec l'accord de Clem) : panneau de la barre des
 - Petite fenêtre : barre du haut dépliée, ses repères à largeur fixe imposaient une largeur minimale à toute la fenêtre ; le rail et le bord droit étaient coupés vers 980 points. Les repères défilent maintenant à l'horizontale ; repliée, la barre ne posait pas de problème.
 - Sprint d'écriture : fond plein, comme l'écriture immersive.
 - Accueil : deux boutons dans l'en-tête, à côté du passage clair / sombre, pour lancer le Sprint d'écriture et le Sanctuaire (demande de Clem).
+
+
+## 2026-11-19 — 5.37 : imports passés cochés d'office, chiffres accordés
+- À la demande de Clem : au premier lancement, toute saisie passée qui ajoute plus de 80 000 signes d'un coup est cochée « import » (`autoFlagLargeImportsIfNeeded`). Le passage ne se fait qu'une fois : la marque `importsAutoFlagged` est dans les données, donc valable sur les deux Mac, et une case décochée ensuite le reste. Les saisies futures ne sont jamais cochées d'office.
+- Santé de la thèse : les échéances dépassées se comptent comme sur la page Échéances (chapitres terminés, archivés ou de projets archivés exclus) ; elle en annonçait 4 contre 2.
+- Barre du haut : « Vitesse 14 j », pour la distinguer de la moyenne sur 7 jours actifs du widget et du panneau de la barre des menus.

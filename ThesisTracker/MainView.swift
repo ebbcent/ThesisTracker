@@ -131,6 +131,7 @@ struct MainView: View {
         // projets — garde interne dans `checkAndGenerateMonthlyReport`. Délai
         // pour laisser load() async finir d'abord.
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.5) {
+            store.autoFlagLargeImportsIfNeeded()   // 5.37 — grosses saisies passées cochées « import », une seule fois
             store.checkAndGenerateMonthlyReport()
             MonthlyRecap.notifyIfDue(store: store)   // 5.26 — récap du mois écoulé : une notification par mois
             AchievementCatalog.announceNew(store: store, sessions: pomodoroController.data.sessions)   // 5.30
@@ -751,7 +752,7 @@ struct StatusBarView: View {
                 if let pages = store.pagesNumber(store.thesisWrittenChars, digits: 0), store.thesisWrittenChars > 0 {
                     marker("Thèse", "\(pages) p.")
                 }
-                marker("Vitesse", store.formatCount(store.velocity14Days) + "/j")
+                marker("Vitesse 14 j", store.formatCount(store.velocity14Days) + "/j")   // 5.37 : période dite (le widget donne 7 jours)
                 if store.data.weeklyGoal > 0 {
                     let weekPct: Int = min(100, Int(Double(store.weeklyProgress) / Double(store.data.weeklyGoal) * 100))
                     marker("Semaine", "\(weekPct) %")

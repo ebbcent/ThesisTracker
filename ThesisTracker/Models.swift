@@ -988,6 +988,8 @@ struct ResearchEntry: Codable, Identifiable {
 
 struct AppData: Codable {
     var hubReceipts: [String: String]? = nil // UUID des saisies Hub déjà intégrées
+    /// 5.37 — vrai une fois les grosses saisies passées cochées « import » d'office (une seule fois, tous Mac confondus).
+    var importsAutoFlagged: Bool? = nil
     var dailyGoal: Int = 500
     var weeklyGoal: Int = 3000
     var monthlyGoal: Int = 15000
@@ -1016,7 +1018,7 @@ struct AppData: Codable {
     var legacyActiveChapterId: UUID?
 
     enum CodingKeys: String, CodingKey {
-        case hubReceipts
+        case hubReceipts, importsAutoFlagged
         case dailyGoal, weeklyGoal, monthlyGoal, projects, activeProjectId
         case folders, sortProjectsAlphabetically, sortChaptersAlphabetically, useWordCount
         case pinnedDates, weeklyChallenges, researchEntries
@@ -1032,6 +1034,7 @@ extension AppData {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         hubReceipts = try? c.decodeIfPresent([String: String].self, forKey: .hubReceipts)
+        importsAutoFlagged = try? c.decodeIfPresent(Bool.self, forKey: .importsAutoFlagged)
         dailyGoal                  = (try? c.decodeIfPresent(Int.self,                  forKey: .dailyGoal))                  ?? 500
         weeklyGoal                 = (try? c.decodeIfPresent(Int.self,                  forKey: .weeklyGoal))                 ?? 3000
         monthlyGoal                = (try? c.decodeIfPresent(Int.self,                  forKey: .monthlyGoal))                ?? 15000
