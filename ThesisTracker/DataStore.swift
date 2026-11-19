@@ -3032,6 +3032,31 @@ class DataStore: ObservableObject {
         }
     }
 
+    /// 5.37 — à la demande de Clem : une fois pour toutes, les saisies passées de plus de 80 000 signes
+    /// d'un coup sont cochées « import ». Chacune reste décochable dans l'historique ; le passage ne
+    /// se refait jamais (marque enregistrée dans les données, donc valable sur les deux Mac).
+    static let autoImportFlagThreshold = 80_000
+    func autoFlagLargeImportsIfNeeded() {
+        guard data.importsAutoFlagged != true, !data.projects.isEmpty else { return }
+        for p in data.projects.indices {
+            for c in data.projects[p].chapters.indices {
+                var previous = 0
+                let order = data.projects[p].chapters[c].entries.indices.sorted {
+                    data.projects[p].chapters[c].entries[$0].date < data.projects[p].chapters[c].entries[$1].date
+                }
+                for e in order {
+                    let total = data.projects[p].chapters[c].entries[e].totalCount
+                    if total - previous > Self.autoImportFlagThreshold {
+                        data.projects[p].chapters[c].entries[e].isImport = true
+                    }
+                    previous = total
+                }
+            }
+        }
+        data.importsAutoFlagged = true
+        save()
+    }
+
     /// 5.35 — même chose pour la saisie d'un chapitre à une date donnée.
     func setEntryImport(_ flag: Bool, chapterId: UUID, date: String) {
         for project in data.projects {
@@ -4560,12 +4585,12 @@ class DataStore: ObservableObject {
         }
 
         // 2. Deadlines dépassées
-        let overdueChapters = data.projects
-            .flatMap { p in p.chapters.map { (p, $0) } }
-            .filter { _, ch in
-                guard let dl = ch.deadline, let d = Self.parseDate(dl) else { return false }
-                return d < Date() && ch.status != .termine
-            }
+        // 5.37 — même décompte que la page Échéances (chapitres terminés ou archivés exclus)
+        let startOfToday = DataStore.gregorianCal.startOfDay(for: Date())
+        let overdueChapters = chaptersWithDeadlines.filter { item in
+            guard let dl = item.chapter.deadline, let d = Self.parseDate(dl) else { return false }
+            return d < startOfToday && item.chapter.status != .termine
+        }
         if !overdueChapters.isEmpty {
             score -= min(30, overdueChapters.count * 15)
             details.append("\(overdueChapters.count) échéance\(overdueChapters.count > 1 ? "s" : "") dépassée\(overdueChapters.count > 1 ? "s" : "")")
